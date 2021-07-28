@@ -51,15 +51,15 @@ internal class APIClient {
         }
     }
     
-    internal func post(payload: [[String: Any]], callback: APICallback){
-        let postApiCallback = PostAPICallback(callback: callback, apiClient: self, payload: payload)
-        self.getAccessToken(callback: postApiCallback)
+    internal func post(records: [[String: Any]], callback: APICallback){
+        let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records)
+        self.getAccessToken(callback: collectApiCallback)
     }
     
-    internal func constructBatchRequestBody(payload: [[String: Any]]) -> [Any]{
+    internal func constructBatchRequestBody(records: [[String: Any]]) -> [Any]{
         var postPayload:[Any] = []
         var insertTokenPayload:[Any] = []
-        for (index,record) in payload.enumerated(){
+        for (index,record) in records.enumerated(){
             var temp:[String: Any] = [:]
             temp = record
             temp["method"] = "POST"

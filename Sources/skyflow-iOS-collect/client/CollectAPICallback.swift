@@ -7,14 +7,14 @@
 
 import Foundation
 
-internal class PostAPICallback: APICallback {
+internal class CollectAPICallback: APICallback {
     
     var apiClient: APIClient
-    var payload: [[String:Any]]
+    var records: [[String:Any]]
     var callback: APICallback
     
-    internal init(callback: APICallback, apiClient: APIClient, payload: [[String:Any]]){
-        self.payload = payload
+    internal init(callback: APICallback, apiClient: APIClient, records: [[String:Any]]){
+        self.records = records
         self.apiClient = apiClient
         self.callback = callback
     }
@@ -26,7 +26,7 @@ internal class PostAPICallback: APICallback {
             request.httpMethod = "POST"
             
             do {
-                let data = try JSONSerialization.data(withJSONObject: ["records" : self.apiClient.constructBatchRequestBody(payload: self.payload)])
+                let data = try JSONSerialization.data(withJSONObject: ["records" : self.apiClient.constructBatchRequestBody(records: self.records)])
                 request.httpBody = data
             } catch let error {
                 print(error.localizedDescription)
