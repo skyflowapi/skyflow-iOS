@@ -6,5 +6,5 @@
 //
 
 public protocol TokenProvider {
-    func getAccessToken(_ apiCallback: APICallback)
+    func getAccessToken(_ apiCallback: SkyflowCallback)
 }
