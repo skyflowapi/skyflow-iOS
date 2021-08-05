@@ -2,7 +2,7 @@
 import Foundation
 
 
-public struct SkyflowValidationSet {
+internal struct SkyflowValidationSet {
     
     internal var rules = [SkyflowValidationProtocol]()
     

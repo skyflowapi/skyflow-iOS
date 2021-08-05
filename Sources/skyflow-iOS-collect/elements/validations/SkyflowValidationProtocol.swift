@@ -2,10 +2,10 @@
 
 import Foundation
 
-public protocol SkyflowValidationProtocol {
+internal protocol SkyflowValidationProtocol {
   
     /// Validation Error
     var error: SkyflowValidationError { get }
-    func validate(input: String?) -> Bool
+    func validate(text: String?) -> Bool
 
 }

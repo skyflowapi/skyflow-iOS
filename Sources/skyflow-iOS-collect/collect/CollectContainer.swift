@@ -12,18 +12,39 @@ public class CollectContainer:ContainerProtocol {}
 
 public extension Container {
     
-    func create(type: SkyflowElementType, table: String, column: String) -> SkyflowTextField where T:CollectContainer {
-        let skyflowTextField = SkyflowTextField()
-        skyflowTextField.tableName = table
-        skyflowTextField.columnName = column
-        elements.append(skyflowTextField)
-        return skyflowTextField
+     func create(input : CollectElementInput,options : CollectElementOptions) -> SkyflowElement where T:CollectContainer {
+        let skyflowElement = SkyflowTextField(input: input, options: options)
+        elements.append(skyflowElement)
+        return skyflowElement
     }
     
     func insert(callback: SkyflowCallback, options: InsertOptions? = InsertOptions()) where T:CollectContainer {
+        
+        var errors = ""
+        for element in self.elements
+        {
+            let state = element.getState()
+            let error = state["validationErrors"]
+            if((state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool))
+            {
+                errors += element.columnName+" is empty"+"\n"
+            }
+            if( !(state["isValid"] as! Bool))
+            {
+               
+                errors += "for " + element.columnName + " " + (error as! String) + "\n"
+            }
+        }
+        if(errors != "")
+        {
+            callback.onFailure(NSError(domain:"", code:400, userInfo:[NSLocalizedDescriptionKey: errors]))
+            return
+        }
         let records = CollectRequestBody.createRequestBody(elements: self.elements)
         print(records)
         self.skyflow.insert(records: records, options: options, callback: callback)
     }
+    
+    
     
 }
