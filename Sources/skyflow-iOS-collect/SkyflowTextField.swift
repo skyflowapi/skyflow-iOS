@@ -26,8 +26,8 @@ public class SkyflowTextField: UIView, SkyflowField {
     internal var verticalConstraint = [NSLayoutConstraint]()
     internal var validationRules = SkyflowValidationSet()
 
-    internal(set) var tableName: String?
-    internal(set) var columnName: String?
+    internal var tableName: String?
+    internal var columnName: String?
     
     /// Textfield placeholder string.
     public var placeholder: String? {
@@ -73,7 +73,7 @@ public class SkyflowTextField: UIView, SkyflowField {
   
     
     /// Specifies `SkyflowTextField` configuration parameters to work with `SkyflowCollect`.
-    public var configuration: SkyflowConfiguration? {
+    public var configuration: CollectElementOptions? {
         didSet {
           setupField(with: configuration!)
         }
@@ -127,11 +127,11 @@ public class SkyflowTextField: UIView, SkyflowField {
   }
     
   internal func getValue() -> Any {
-        return getOutputText()
+        return getOutputText() ?? ""
     }
   
   /// Field Configuration
-  internal func setupField(with configuration: SkyflowConfiguration) {
+  internal func setupField(with configuration: CollectElementOptions) {
     // config text field
     fieldName = configuration.fieldName
     isRequired = configuration.isRequired

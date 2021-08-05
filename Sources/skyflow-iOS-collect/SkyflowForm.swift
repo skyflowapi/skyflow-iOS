@@ -13,9 +13,9 @@ public class SkyflowForm
         
     }
     
-    public func createElement(fieldname:String) -> (view:SkyflowTextField,configuration:SkyflowConfiguration)
+    public func createElement(fieldname:String) -> (view:SkyflowTextField,configuration:CollectElementOptions)
     {
-        let config = SkyflowConfiguration(fieldName: fieldname)
+        let config = CollectElementOptions(fieldName: fieldname)
         let tx = SkyflowTextField()
         //tx.configuration = config
         return (tx,config)

@@ -5,7 +5,7 @@ import UIKit
 #endif
 
 /// A class responsible for configuration SkyflowTextField.
-public class SkyflowConfiguration {
+public class CollectElementOptions {
     
   
     /// Type of field congfiguration. Default is `FieldType.none`.

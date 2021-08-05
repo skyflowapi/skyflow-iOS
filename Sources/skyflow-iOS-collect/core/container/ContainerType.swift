@@ -7,7 +7,6 @@
 
 import Foundation
 
-public enum ContainerType {
-    case collect
-    case reveal
+public class ContainerTypes {
+    public static var COLLECT = CollectContainer.self
 }

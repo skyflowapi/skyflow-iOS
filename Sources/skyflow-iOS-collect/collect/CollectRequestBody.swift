@@ -7,11 +7,10 @@
 
 import Foundation
 
-internal class RequestBody {
-    internal static func createRequestBody(elements: [SkyflowTextField]) -> [[String: Any]]{
+internal class CollectRequestBody {
+    internal static func createRequestBody(elements: [SkyflowTextField]) -> [String: Any]{
         var tableMap: [String: Int] = [:]
         var payload: [[String: Any]] = []
-        var tokenPayload: [[String: Any]] = []
         var index: Int = 0
         for element in elements {
             if tableMap[(element.tableName)!] != nil{
@@ -31,7 +30,7 @@ internal class RequestBody {
             }
         }
         
-        return payload
+        return ["records": payload]
     }
 }
 
