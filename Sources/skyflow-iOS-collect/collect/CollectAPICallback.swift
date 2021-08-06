@@ -43,7 +43,6 @@ internal class CollectAPICallback: SkyflowCallback {
                     self.callback.onFailure(error!)
                     return
                 }
-                print(String(decoding: data!, as: UTF8.self),response,error)
             
                 if let safeData = data {
                     let originalString = String(decoding: safeData, as: UTF8.self)
