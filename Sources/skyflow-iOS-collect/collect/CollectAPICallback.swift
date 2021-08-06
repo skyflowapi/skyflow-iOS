@@ -43,7 +43,7 @@ internal class CollectAPICallback: SkyflowCallback {
                     self.callback.onFailure(error!)
                     return
                 }
-                
+            
                 if let safeData = data {
                     let originalString = String(decoding: safeData, as: UTF8.self)
                     let replacedString = originalString.replacingOccurrences(of: "\"*\":", with: "\"skyflow_id\":")
@@ -71,8 +71,9 @@ internal class CollectAPICallback: SkyflowCallback {
                         }
                         
                         let dataString = String(data: try JSONSerialization.data(withJSONObject: ["records": responseEntries]), encoding: .utf8)
-                        self.callback.onSuccess(dataString!)
                         
+                        self.callback.onSuccess(dataString!)
+                                                
                     } catch let error {
                         self.callback.onFailure(error)
                         print(error)

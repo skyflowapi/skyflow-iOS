@@ -15,7 +15,7 @@ internal class CollectRequestBody {
         for element in elements {
             if tableMap[(element.tableName)!] != nil{
                 var temp = payload[tableMap[(element.tableName)!]!]
-                temp[keyPath: "fields." + (element.columnName)!] = element.getOutputText()
+                temp[keyPath: "fields." + (element.columnName)!] = element.getOutput()
                 payload[tableMap[(element.tableName)!]!] = temp
             }
             else{
@@ -25,7 +25,7 @@ internal class CollectRequestBody {
                     "tableName": element.tableName!,
                     "fields": [:]
                 ]
-                temp[keyPath: "fields." + element.columnName!] = element.getOutputText()
+                temp[keyPath: "fields." + element.columnName!] = element.getOutput()
                 payload.append(temp)
             }
         }
