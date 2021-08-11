@@ -1,3 +1,3 @@
-struct skyflow_iOS_collect {
+struct skyflow_iOS {
     var text = "Hello, World!"
 }

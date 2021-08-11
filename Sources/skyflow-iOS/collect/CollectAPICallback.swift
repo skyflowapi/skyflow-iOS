@@ -39,11 +39,25 @@ internal class CollectAPICallback: SkyflowCallback {
             let session = URLSession(configuration: .default)
             
             let task = session.dataTask(with: request) { data, response, error in
-                if(error != nil){
+                if(error != nil || response == nil){
                     self.callback.onFailure(error!)
                     return
                 }
             
+                if let httpResponse = response as? HTTPURLResponse{
+                    let range = 400...599
+                    if range ~= httpResponse.statusCode {
+                        var desc = "Insert call failed with the following status code" + String(httpResponse.statusCode)
+                        
+                        if let safeData = data{
+                            desc = String(decoding: safeData, as: UTF8.self)
+                        }
+                        
+                        self.callback.onFailure(NSError(domain:"", code:httpResponse.statusCode, userInfo:[NSLocalizedDescriptionKey: desc]))
+                        return
+                    }
+                }
+                
                 if let safeData = data {
                     let originalString = String(decoding: safeData, as: UTF8.self)
                     let replacedString = originalString.replacingOccurrences(of: "\"*\":", with: "\"skyflow_id\":")

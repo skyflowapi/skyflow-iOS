@@ -79,7 +79,7 @@ extension SkyflowTextField: UITextFieldDelegate {
      /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         textFieldValueChanged()
-        self.textField.textColor = collectInput!.styles.base?.textColor ?? .none
+        self.textField.textColor = collectInput!.styles.focus?.textColor ?? .none
         borderColor = collectInput!.styles.base?.borderColor
         
     }
@@ -94,7 +94,7 @@ extension SkyflowTextField: UITextFieldDelegate {
       /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         textFieldValueChanged()
-        let state = state.getState()
+        let state = self.state.getState()
         if(state["isEmpty"] as! Bool)
         {
             self.textField.textColor = collectInput!.styles.empty?.textColor ?? .none
