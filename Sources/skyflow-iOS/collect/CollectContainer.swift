@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 
-public class CollectContainer:ContainerProtocol {}
+public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
     
-     func create(input : CollectElementInput,options : CollectElementOptions) -> SkyflowElement where T:CollectContainer {
+     func create(input : CollectElementInput, options : CollectElementOptions) -> SkyflowElement where T:CollectContainer {
         let skyflowElement = SkyflowTextField(input: input, options: options)
         elements.append(skyflowElement)
         return skyflowElement
@@ -29,7 +29,7 @@ public extension Container {
             {
                 errors += element.columnName+" is empty"+"\n"
             }
-            if( !(state["isValid"] as! Bool))
+            if(!(state["isValid"] as! Bool))
             {
                
                 errors += "for " + element.columnName + " " + (error as! String) + "\n"

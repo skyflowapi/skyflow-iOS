@@ -7,4 +7,4 @@
 
 import Foundation
 
-public class RevealContainer:ContainerProtocol{}
+public class RevealContainer: ContainerProtocol {}

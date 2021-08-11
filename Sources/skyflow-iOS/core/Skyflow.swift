@@ -10,12 +10,6 @@ public class Skyflow {
     var apiClient: APIClient
     var vaultURL: String
     
-//    public init(vaultId: String, workspaceURL: String, tokenProvider: TokenProvider, options: SkyflowOptions? = nil){
-//        self.vaultId = vaultId
-//        self.workspaceURL = workspaceURL
-//        self.apiClient = APIClient(vaultId: vaultId, workspaceURL: workspaceURL, tokenProvider: tokenProvider)
-//    }
-    
     public init(_ skyflowConfig: SkyflowConfiguration){
         self.vaultId = skyflowConfig.vaultId
         self.vaultURL = skyflowConfig.vaultURL
