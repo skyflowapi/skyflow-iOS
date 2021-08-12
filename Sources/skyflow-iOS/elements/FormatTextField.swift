@@ -66,7 +66,7 @@ internal class FormatTextField: UITextField {
     /** returns text with format pattern*/
     internal var getTextwithFormatPattern : String?
     {
-        return textwithFormatPattern
+        return formatPattern.isEmpty ? secureText : textwithFormatPattern
     }
     
     var padding: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)

@@ -71,7 +71,7 @@ public enum SkyflowElementType: Int, CaseIterable {
             
         case .none :
             return Type(formatPattern: "", regex: "",
-                        validation: rules, keyboardType: .numberPad)
+                        validation: rules, keyboardType: .alphabet)
         }
     }
   

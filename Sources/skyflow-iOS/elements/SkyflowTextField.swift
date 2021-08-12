@@ -44,6 +44,7 @@ public class SkyflowTextField: SkyflowElement {
             textField.textColor = collectInput.styles.base?.textColor ?? .none
             textField.formatPattern = fieldType.instance.formatPattern
             validationRules = fieldType.instance.validation
+            textField.keyboardType = fieldType.instance.keyboardType
         
         }
         
