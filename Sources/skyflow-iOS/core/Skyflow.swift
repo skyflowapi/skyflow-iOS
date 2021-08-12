@@ -32,4 +32,10 @@ public class Skyflow {
 
         return nil
     }
+    
+    public func reveal(tokens: [String: String], options: RevealElementOptions, callback: SkyflowCallback, redactionType: String)   {
+        print("reveal method")
+        let token_ids = tokens.keys.joined(separator: "&token_ids=")
+        self.apiClient.get(queryString: "/tokens?token_ids=" + token_ids + "&redaction=\(redactionType)", callback: callback)
+    }
 }

@@ -44,7 +44,4 @@ public extension Container {
         print(records)
         self.skyflow.insert(records: records, options: options, callback: callback)
     }
-    
-    
-    
 }

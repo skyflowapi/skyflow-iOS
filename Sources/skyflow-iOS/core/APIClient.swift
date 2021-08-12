@@ -78,5 +78,11 @@ internal class APIClient {
         }
         return ["records": postPayload + insertTokenPayload]
     }
+        
+    internal func get(queryString:String, callback : SkyflowCallback){
+        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self,connectionUrl: URL(string: (vaultURL+vaultId+queryString))!,requestBody: "",method: "GET")
+        self.getAccessToken(callback: revealApiCallback)
+        print("get method")
+    }
     
 }
