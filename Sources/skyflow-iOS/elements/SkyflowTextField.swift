@@ -81,7 +81,7 @@ extension SkyflowTextField: UITextFieldDelegate {
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         textFieldValueChanged()
         self.textField.textColor = collectInput!.styles.focus?.textColor ?? .none
-        borderColor = collectInput!.styles.base?.borderColor
+        borderColor = collectInput!.styles.focus?.borderColor
         
     }
   

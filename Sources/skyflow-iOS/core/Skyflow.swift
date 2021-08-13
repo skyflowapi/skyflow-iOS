@@ -33,9 +33,13 @@ public class Skyflow {
         return nil
     }
     
-    public func reveal(tokens: [String: String], options: RevealElementOptions, callback: SkyflowCallback, redactionType: String)   {
-        print("reveal method")
-        let token_ids = tokens.keys.joined(separator: "&token_ids=")
-        self.apiClient.get(queryString: "/tokens?token_ids=" + token_ids + "&redaction=\(redactionType)", callback: callback)
+    public func reveal(records: [String: Any], options: RevealElementOptions? = RevealElementOptions(), callback: SkyflowCallback)   {
+        let tokens : [[String : Any]] = records["records"] as! [[String : Any]]
+        var list : [RevealRequestRecord] = []
+        for token in tokens
+        {
+            list.append(RevealRequestRecord(token: token["id"] as! String, redaction: token["redaction"] as! String))
+        }
+        self.apiClient.get(records: list, callback: callback)
     }
 }
