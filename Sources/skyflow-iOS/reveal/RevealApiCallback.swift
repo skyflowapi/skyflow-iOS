@@ -39,7 +39,8 @@ class RevealApiCallback : SkyflowCallback {
             request.addValue("application/json", forHTTPHeaderField: "Accept");
             request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization");
             let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: request) { data, response, error in
+
+            let task =  session.dataTask(with: request) { data, response, error in
                 count += 1
                 if(error != nil || response == nil){
                     self.callback.onFailure(error!)
@@ -48,14 +49,23 @@ class RevealApiCallback : SkyflowCallback {
                 if let httpResponse = response as? HTTPURLResponse{
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
-                        var desc = "Reveal call failed with the following status code" + String(httpResponse.statusCode)
+                        var description = "Reveal call failed with the following status code" + String(httpResponse.statusCode)
                         
-                        if let safeData = data{
-                            desc = String(decoding: safeData, as: UTF8.self)
+                        if let safeData = data
+                        {
+                            do{
+                                let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
+                                let error = desc["error"] as! [String:Any]
+                                description = error["message"] as! String
+                            }
+                            catch let error
+                            {
+                                print(error)
+                            }
                         }
                         var error:[String:String] = [:]
                         error["code"] = String(httpResponse.statusCode)
-                        error["description"] = desc
+                        error["description"] = description
                         let errorRecord = RevealErrorRecord(id: record.token, error: error )
                         list_error.append(errorRecord)
                         return
