@@ -80,9 +80,8 @@ internal class APIClient {
     }
         
     internal func get(records:[RevealRequestRecord], callback : SkyflowCallback){
-        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self,connectionUrl: (vaultURL+vaultId),requestBody: "",method: "GET",records : records)
+        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL+vaultId), requestBody: "", method: "GET", records : records)
         self.getAccessToken(callback: revealApiCallback)
-        
     }
     
 }

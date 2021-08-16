@@ -14,13 +14,15 @@ public struct RevealElementInput {
     internal var styles: SkyflowStyles?
     internal var label: String
     internal var type: String
+    internal var redaction: String
     
-    internal init(table: String?, column: String?, id: String, styles: SkyflowStyles?, label: String, type: String) {
+    public init(table: String?, column: String?, id: String, styles: SkyflowStyles?, label: String, type: String, redaction: String) {
         self.table = table
         self.column = column
         self.id = id
         self.styles = styles
         self.label = label
         self.type = type
+        self.redaction = redaction
     }
 }

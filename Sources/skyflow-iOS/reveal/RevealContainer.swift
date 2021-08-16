@@ -12,16 +12,25 @@ public class RevealContainer: ContainerProtocol {
 }
 
 public extension Container {
-    func create(input : RevealElementInput, options : RevealElementOptions) -> RevealElement where T:RevealContainer {
-        //       let skyflowElement = SkyflowTextField(input: input, options: options)
-        let revealElement = RevealElement(input: input, options: options)
+    func create(input : RevealElementInput, options : RevealElementOptions) -> SkyflowLabel where T:RevealContainer {
+        let revealElement = SkyflowLabel(input: input, options: options)
         revealElements.append(revealElement)
         return revealElement
     }
     
     func reveal(callback: SkyflowCallback, options: RevealOptions? = RevealOptions()) where T:RevealContainer {
         
-        //TO-DO
+//        for revealElement in revealElements {
+//            print("secureText", revealElement.label.secureText)
+//            revealElement.updateVal()
+//            print("revealedSecureText", revealElement.label.secureText)
+//        }
+        
+        let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
+        
+        let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
+        print(records)
+        self.skyflow.reveal(records: records, options: options, callback: revealValueCallback)
     }
 }
 

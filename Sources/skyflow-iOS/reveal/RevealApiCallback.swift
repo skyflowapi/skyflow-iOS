@@ -88,35 +88,70 @@ class RevealApiCallback : SkyflowCallback {
                 }
                 if(count == self.records.count)
                 {
-                    var response = "{\"records\": ["
-                    for record in list_success
-                    {
-                        response = response + "{"
-                        response = response + "id:" + record.token_id+","
+//                    var response = "{\"records\": ["
+//                    for record in list_success
+//                    {
+//                        response = response + "{"
+//                        response = response + "id:" + record.token_id+","
+//                        for field in record.fields
+//                        {
+//                            response = response + field.key+":"+field.value+","
+//                        }
+//                        response = response+"},"
+//                    }
+//                    var x = response.prefix(response.count-1)
+//                    response = x + "],"
+//                    response = response + " \"errors\": ["
+//                    for record in list_error
+//                    {
+//                        response = response + "{"
+//                        response = response + "id:" + record.id+","
+//                        response = response + " error : ["
+//                        for field in record.error
+//                        {
+//                            response = response + field.key+":"+field.value+","
+//                        }
+//                        response = response + "]"
+//                        response = response+"},"
+//                    }
+//                    x = response.prefix(response.count-1)
+//                    response = x + "]}"
+//                    print("string concat response", response)
+//                    self.callback.onSuccess(response)
+                    
+                    var records: [Any] = []
+                    for record in list_success {
+                        var entry: [String: Any] = [:]
+                        entry["id"] = record.token_id
+                        var fields: [String: Any] = [:]
                         for field in record.fields
                         {
-                            response = response + field.key+":"+field.value+","
+                            fields[field.key] = field.value
                         }
-                        response = response+"},"
+                        entry["fields"] = fields
+                        records.append(entry)
                     }
-                    var x = response.prefix(response.count-1)
-                    response = x + "],"
-                    response = response + " \"errors\": ["
+                    var errors: [Any] = []
                     for record in list_error
                     {
-                        response = response + "{"
-                        response = response + "id:" + record.id+","
-                        response = response + " error : ["
-                        for field in record.error
-                        {
-                            response = response + field.key+":"+field.value+","
+                        var entry: [String: Any] = [:]
+                        entry["id"] = record.id
+                        var error: [Any] = []
+                        for field in record.error {
+                            var temp: [String: Any] = [:]
+                            temp[field.key] = field.value
+                            error.append(temp)
                         }
-                        response = response + "]"
-                        response = response+"},"
+                        errors.append(entry)
                     }
-                    x = response.prefix(response.count-1)
-                    response = x + "]}"
-                    self.callback.onSuccess(response)
+                    var modifiedResponse: [String: Any] = [:]
+                    modifiedResponse["records"] = records
+                    modifiedResponse["errors"] = errors
+
+                    let dataString = String(data: try! JSONSerialization.data(withJSONObject: modifiedResponse), encoding: .utf8)
+
+                    print("dict response", dataString)
+                    self.callback.onSuccess(dataString!)
                 }
                                
                 }

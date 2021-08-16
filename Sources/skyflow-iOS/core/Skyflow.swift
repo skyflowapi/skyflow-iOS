@@ -26,14 +26,14 @@ public class Skyflow {
             //Set options
         }
         
-        if T.self == CollectContainer.self {
+        if T.self == CollectContainer.self || T.self == RevealContainer.self {
             return Container<T>(skyflow: self)
         }
 
         return nil
     }
     
-    public func reveal(records: [String: Any], options: RevealElementOptions? = RevealElementOptions(), callback: SkyflowCallback)   {
+    public func reveal(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: SkyflowCallback)   {
         let tokens : [[String : Any]] = records["records"] as! [[String : Any]]
         var list : [RevealRequestRecord] = []
         for token in tokens
