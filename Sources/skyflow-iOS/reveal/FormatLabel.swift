@@ -11,7 +11,6 @@ import UIKit
 public class FormatLabel: UILabel {
     internal var secureText: String? {
         set {
-            print("tried to set securetext")
             super.text = newValue
         }
         get {

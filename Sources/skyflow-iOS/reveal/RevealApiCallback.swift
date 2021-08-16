@@ -29,19 +29,23 @@ class RevealApiCallback : SkyflowCallback {
     internal func onSuccess(_ token: String) {
         var list_success : [RevealSuccessRecord] = []
         var list_error : [RevealErrorRecord] = []
-        var count = 0
+        let revealRequestGroup = DispatchGroup()
         for record in records
         {
             let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))
+            revealRequestGroup.enter()
             var request = URLRequest(url: url!)
             request.httpMethod = method
             request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type");
             request.addValue("application/json", forHTTPHeaderField: "Accept");
             request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization");
             let session = URLSession(configuration: .default)
-
+            
             let task =  session.dataTask(with: request) { data, response, error in
-                count += 1
+                defer
+                {
+                    revealRequestGroup.leave()
+                }
                 if(error != nil || response == nil){
                     self.callback.onFailure(error!)
                     return
@@ -80,84 +84,49 @@ class RevealApiCallback : SkyflowCallback {
                         let receivedResponseArray : [Any]  = (jsonData[keyPath: "records"] as! [Any])
                         let records : [String:Any]  = receivedResponseArray[0] as! [String : Any]
                         list_success.append(RevealSuccessRecord(token_id: records["token_id"] as! String, fields:records["fields"] as! [String : String]))
-                        }
-                        catch let error {
-                            self.callback.onFailure(error)
-                            print(error)
-                                }
-                }
-                if(count == self.records.count)
-                {
-//                    var response = "{\"records\": ["
-//                    for record in list_success
-//                    {
-//                        response = response + "{"
-//                        response = response + "id:" + record.token_id+","
-//                        for field in record.fields
-//                        {
-//                            response = response + field.key+":"+field.value+","
-//                        }
-//                        response = response+"},"
-//                    }
-//                    var x = response.prefix(response.count-1)
-//                    response = x + "],"
-//                    response = response + " \"errors\": ["
-//                    for record in list_error
-//                    {
-//                        response = response + "{"
-//                        response = response + "id:" + record.id+","
-//                        response = response + " error : ["
-//                        for field in record.error
-//                        {
-//                            response = response + field.key+":"+field.value+","
-//                        }
-//                        response = response + "]"
-//                        response = response+"},"
-//                    }
-//                    x = response.prefix(response.count-1)
-//                    response = x + "]}"
-//                    print("string concat response", response)
-//                    self.callback.onSuccess(response)
-                    
-                    var records: [Any] = []
-                    for record in list_success {
-                        var entry: [String: Any] = [:]
-                        entry["id"] = record.token_id
-                        var fields: [String: Any] = [:]
-                        for field in record.fields
-                        {
-                            fields[field.key] = field.value
-                        }
-                        entry["fields"] = fields
-                        records.append(entry)
                     }
-                    var errors: [Any] = []
-                    for record in list_error
-                    {
-                        var entry: [String: Any] = [:]
-                        entry["id"] = record.id
-                        var error: [Any] = []
-                        for field in record.error {
-                            var temp: [String: Any] = [:]
-                            temp[field.key] = field.value
-                            error.append(temp)
-                        }
-                        errors.append(entry)
+                    catch let error {
+                        self.callback.onFailure(error)
+                        print(error)
                     }
-                    var modifiedResponse: [String: Any] = [:]
-                    modifiedResponse["records"] = records
-                    modifiedResponse["errors"] = errors
-
-                    let dataString = String(data: try! JSONSerialization.data(withJSONObject: modifiedResponse), encoding: .utf8)
-
-                    print("dict response", dataString)
-                    self.callback.onSuccess(dataString!)
                 }
-                               
-                }
-
+            }
+            
             task.resume()
             
+        }
+        
+        revealRequestGroup.notify(queue: .main) {
+            var records: [Any] = []
+            for record in list_success {
+                var entry: [String: Any] = [:]
+                entry["id"] = record.token_id
+                var fields: [String: Any] = [:]
+                for field in record.fields
+                {
+                    fields[field.key] = field.value
+                }
+                entry["fields"] = fields
+                records.append(entry)
+            }
+            var errors: [Any] = []
+            for record in list_error
+            {
+                var entry: [String: Any] = [:]
+                entry["id"] = record.id
+                var error: [Any] = []
+                for field in record.error {
+                    var temp: [String: Any] = [:]
+                    temp[field.key] = field.value
+                    error.append(temp)
+                }
+                errors.append(entry)
+            }
+            var modifiedResponse: [String: Any] = [:]
+            modifiedResponse["records"] = records
+            modifiedResponse["errors"] = errors
+            let dataString = String(data: try! JSONSerialization.data(withJSONObject: modifiedResponse), encoding: .utf8)
+            self.callback.onSuccess(dataString!)
         }
     }
     internal func onFailure(_ error: Error) {

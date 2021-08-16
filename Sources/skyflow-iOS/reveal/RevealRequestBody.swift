@@ -9,13 +9,11 @@ import Foundation
 
 internal class RevealRequestBody {
     internal static func createRequestBody(elements: [SkyflowLabel]) -> [String: Any] {
-        print("creating reveal request body")
         
         var payload: [[String: String]] = []
-        
         for element in elements {
             var entry: [String: String] = [:]
-            entry["id"] = element.label.secureText
+            entry["id"] = element.revealInput.id
             entry["redaction"] = element.revealInput.redaction
             payload.append(entry)
         }

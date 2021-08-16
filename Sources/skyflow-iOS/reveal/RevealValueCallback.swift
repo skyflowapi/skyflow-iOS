@@ -40,7 +40,7 @@ internal class RevealValueCallback : SkyflowCallback {
             }
         }
         
-        clientCallback.onSuccess(responseBody)
+        clientCallback.onSuccess("Revealed Successfully.")
     }
     
     func onFailure(_ error: Error) {

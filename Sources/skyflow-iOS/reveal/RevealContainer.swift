@@ -20,16 +20,8 @@ public extension Container {
     
     func reveal(callback: SkyflowCallback, options: RevealOptions? = RevealOptions()) where T:RevealContainer {
         
-//        for revealElement in revealElements {
-//            print("secureText", revealElement.label.secureText)
-//            revealElement.updateVal()
-//            print("revealedSecureText", revealElement.label.secureText)
-//        }
-        
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
-        
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
-        print(records)
         self.skyflow.reveal(records: records, options: options, callback: revealValueCallback)
     }
 }
