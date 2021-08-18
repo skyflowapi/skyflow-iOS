@@ -41,10 +41,6 @@ public extension Container {
             return
         }
         let records = CollectRequestBody.createRequestBody(elements: self.elements)
-        print(records)
         self.skyflow.insert(records: records, options: options, callback: callback)
     }
-    
-    
-    
 }

@@ -44,6 +44,7 @@ public class SkyflowTextField: SkyflowElement {
             textField.textColor = collectInput.styles.base?.textColor ?? .none
             textField.formatPattern = fieldType.instance.formatPattern
             validationRules = fieldType.instance.validation
+            textField.keyboardType = fieldType.instance.keyboardType
         
         }
         
@@ -80,7 +81,7 @@ extension SkyflowTextField: UITextFieldDelegate {
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         textFieldValueChanged()
         self.textField.textColor = collectInput!.styles.focus?.textColor ?? .none
-        borderColor = collectInput!.styles.base?.borderColor
+        borderColor = collectInput!.styles.focus?.borderColor
         
     }
   
