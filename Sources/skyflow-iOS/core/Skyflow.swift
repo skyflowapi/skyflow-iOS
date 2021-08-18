@@ -33,7 +33,7 @@ public class Skyflow {
         return nil
     }
     
-    public func reveal(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: SkyflowCallback)   {
+    public func get(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: SkyflowCallback)   {
         let tokens : [[String : Any]] = records["records"] as! [[String : Any]]
         var list : [RevealRequestRecord] = []
         for token in tokens

@@ -12,17 +12,13 @@ class RevealApiCallback : SkyflowCallback {
     var apiClient: APIClient
     var callback: SkyflowCallback
     var connectionUrl : String
-    var requestBody : String
-    var method : String
     var records : [RevealRequestRecord]
     
     internal init(callback: SkyflowCallback, apiClient: APIClient, connectionUrl: String,
-                  requestBody: String!, method: String,records : [RevealRequestRecord]){
+                  records : [RevealRequestRecord]){
         self.apiClient = apiClient
         self.callback = callback
         self.connectionUrl = connectionUrl
-        self.requestBody = requestBody
-        self.method = method
         self.records = records
     }
     
@@ -35,7 +31,7 @@ class RevealApiCallback : SkyflowCallback {
             let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))
             revealRequestGroup.enter()
             var request = URLRequest(url: url!)
-            request.httpMethod = method
+            request.httpMethod = "GET"
             request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type");
             request.addValue("application/json", forHTTPHeaderField: "Accept");
             request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization");
@@ -114,12 +110,11 @@ class RevealApiCallback : SkyflowCallback {
             {
                 var entry: [String: Any] = [:]
                 entry["id"] = record.id
-                var error: [Any] = []
+                var temp: [String: Any] = [:]
                 for field in record.error {
-                    var temp: [String: Any] = [:]
                     temp[field.key] = field.value
-                    error.append(temp)
                 }
+                entry["error"] = temp
                 errors.append(entry)
             }
             var modifiedResponse: [String: Any] = [:]

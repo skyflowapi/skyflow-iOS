@@ -14,6 +14,130 @@ public class SkyflowLabel: UIView {
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!
     
+    internal var horizontalConstraints = [NSLayoutConstraint]()
+    
+    internal var verticalConstraint = [NSLayoutConstraint]()
+    
+    internal func setTextPaddings() {
+        NSLayoutConstraint.deactivate(verticalConstraint)
+        NSLayoutConstraint.deactivate(horizontalConstraints)
+        
+        let views = ["view": self, "label": label]
+        
+        horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(padding.left)-[label]-\(padding.right)-|",
+                                                               options: .alignAllCenterY,
+                                                               metrics: nil,
+                                                               views: views)
+        NSLayoutConstraint.activate(horizontalConstraints)
+        
+        verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(padding.top)-[label]-\(padding.bottom)-|",
+                                                            options: .alignAllCenterX,
+                                                            metrics: nil,
+                                                            views: views)
+        NSLayoutConstraint.activate(verticalConstraint)
+        self.layoutIfNeeded()
+    }
+    
+    internal var padding = UIEdgeInsets.zero {
+        didSet {
+            setTextPaddings()
+        }
+    }
+    
+    internal var font: UIFont? {
+        get {
+            return label.font
+        }
+        set {
+            label.font = newValue
+        }
+    }
+    
+    internal var numberOfLines: Int {
+        get {
+            return label.numberOfLines
+        }
+        set {
+            label.numberOfLines = newValue
+        }
+    }
+    
+    internal var textColor: UIColor? {
+        get {
+            return label.textColor
+        }
+        set {
+            label.textColor = newValue
+        }
+    }
+    
+    internal var textAlignment: NSTextAlignment {
+        get {
+            return label.textAlignment
+        }
+        set {
+            label.textAlignment = newValue
+        }
+    }
+    
+    internal var lineBreakMode: NSLineBreakMode {
+        get {
+            return label.lineBreakMode
+        }
+        set {
+            label.lineBreakMode = newValue
+        }
+    }
+    
+    internal var cornerRadius: CGFloat {
+        get {
+            return layer.cornerRadius
+        }
+        set {
+            layer.cornerRadius = newValue
+            layer.masksToBounds = newValue > 0
+        }
+    }
+    
+    internal var borderWidth: CGFloat {
+        get {
+            return layer.borderWidth
+        }
+        set {
+            layer.borderWidth = newValue
+        }
+    }
+    
+    internal var borderColor: UIColor? {
+        get {
+            guard let cgcolor = layer.borderColor else {
+                return nil
+            }
+            return UIColor(cgColor: cgcolor)
+        }
+        set {
+            layer.borderColor = newValue?.cgColor
+        }
+    }
+    
+    internal var adjustsFontSizeToFitWidth: Bool {
+        get {
+            return label.adjustsFontSizeToFitWidth
+        }
+        set {
+            label.adjustsFontSizeToFitWidth = newValue
+        }
+    }
+    
+    internal var baselineAlignment: UIBaselineAdjustment {
+        get {
+            return label.baselineAdjustment
+        }
+        set {
+            label.baselineAdjustment = newValue
+        }
+    }
+    
     internal init(input: RevealElementInput, options: RevealElementOptions){
         super.init(frame: CGRect())
         self.revealInput = input
@@ -35,7 +159,14 @@ public class SkyflowLabel: UIView {
     
     internal func buildLabel(){
         self.label.secureText = self.revealInput.id
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.label.translatesAutoresizingMaskIntoConstraints = false
+        self.textAlignment = revealInput.styles?.base?.textAlignment ?? .natural
+        self.textColor = revealInput.styles?.base?.textColor ?? .none
+        self.borderColor = revealInput.styles?.base?.borderColor ?? .none
+        self.cornerRadius = revealInput.styles?.base?.cornerRadius ?? 0
+        self.borderWidth = revealInput.styles?.base?.borderWidth ?? 0
         addSubview(self.label)
+        self.padding = revealInput.styles?.base?.padding ?? .zero
     }
 }

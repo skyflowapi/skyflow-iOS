@@ -23,6 +23,8 @@ internal class RevealValueCallback : SkyflowCallback {
         let responseJson = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
         
         let records = responseJson["records"] as! [Any]
+        var response: [String: Any] = [:]
+        var successResponses: [Any] = []
         
         for record in records {
             let dict = record as! [String: Any]
@@ -31,7 +33,9 @@ internal class RevealValueCallback : SkyflowCallback {
             for (_, value) in fields {
                 tokens[token] = value as? String ?? token
             }
-            
+            var successEntry: [String: String] = [:]
+            successEntry["id"] = token
+            successResponses.append(successEntry)
         }
         
         DispatchQueue.main.async {
@@ -40,7 +44,12 @@ internal class RevealValueCallback : SkyflowCallback {
             }
         }
         
-        clientCallback.onSuccess("Revealed Successfully.")
+        response["success"] = successResponses
+        response["errors"] = responseJson["errors"] as! [Any]
+        
+        let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
+        
+        clientCallback.onSuccess(dataString!)
     }
     
     func onFailure(_ error: Error) {

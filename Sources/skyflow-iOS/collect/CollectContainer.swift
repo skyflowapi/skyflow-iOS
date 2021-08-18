@@ -18,7 +18,7 @@ public extension Container {
         return skyflowElement
     }
     
-    func insert(callback: SkyflowCallback, options: InsertOptions? = InsertOptions()) where T:CollectContainer {
+    func collect(callback: SkyflowCallback, options: InsertOptions? = InsertOptions()) where T:CollectContainer {
         
         var errors = ""
         for element in self.elements
