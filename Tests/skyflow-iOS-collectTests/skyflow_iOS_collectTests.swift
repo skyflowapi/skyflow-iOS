@@ -102,7 +102,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", styles: styles, placeholder: "card number", type: .cardNumber)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", styles: styles, placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options) as? SkyflowTextField
         
@@ -118,7 +118,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options) as? SkyflowTextField
         
@@ -135,7 +135,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options) as? SkyflowTextField
         
@@ -152,12 +152,12 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
         XCTAssertEqual(container?.elements.count, 1)
-        XCTAssertTrue(container?.elements[0].fieldType == SkyflowElementType.cardNumber)
+        XCTAssertTrue(container?.elements[0].fieldType == SkyflowElementType.CARDNUMBER)
     }
     
     func testContainerInsert() {
@@ -166,13 +166,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options) as! SkyflowTextField
         
         cardNumber.textField.secureText = "4111 1111 1111 1111"
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .cvv)
+        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options) as! SkyflowTextField
         
@@ -205,13 +205,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options) as! SkyflowTextField
         
         cardNumber.textField.secureText = "411"
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .cvv)
+        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options) as! SkyflowTextField
         
@@ -234,13 +234,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options) as! SkyflowTextField
         
         cardNumber.textField.secureText = "4111 1111 1111 1111"
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .cvv)
+        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options) as! SkyflowTextField
         
@@ -263,7 +263,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: true)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -285,7 +285,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: true)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .cardNumber)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options) as! SkyflowTextField
         

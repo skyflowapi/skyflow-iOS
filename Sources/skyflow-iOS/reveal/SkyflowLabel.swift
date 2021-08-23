@@ -53,15 +53,6 @@ public class SkyflowLabel: UIView {
         }
     }
     
-    internal var numberOfLines: Int {
-        get {
-            return label.numberOfLines
-        }
-        set {
-            label.numberOfLines = newValue
-        }
-    }
-    
     internal var textColor: UIColor? {
         get {
             return label.textColor
@@ -77,15 +68,6 @@ public class SkyflowLabel: UIView {
         }
         set {
             label.textAlignment = newValue
-        }
-    }
-    
-    internal var lineBreakMode: NSLineBreakMode {
-        get {
-            return label.lineBreakMode
-        }
-        set {
-            label.lineBreakMode = newValue
         }
     }
     
@@ -117,24 +99,6 @@ public class SkyflowLabel: UIView {
         }
         set {
             layer.borderColor = newValue?.cgColor
-        }
-    }
-    
-    internal var adjustsFontSizeToFitWidth: Bool {
-        get {
-            return label.adjustsFontSizeToFitWidth
-        }
-        set {
-            label.adjustsFontSizeToFitWidth = newValue
-        }
-    }
-    
-    internal var baselineAlignment: UIBaselineAdjustment {
-        get {
-            return label.baselineAdjustment
-        }
-        set {
-            label.baselineAdjustment = newValue
         }
     }
     

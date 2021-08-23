@@ -16,10 +16,10 @@ internal enum SkyflowValidationErrorType: String {
     case pattern = "INVALID_PATTERN"
   
     /// Default Validation error for `SkyflowValidateLengthMatch`
-    case lengthMathes = "INVALID_LENGTH_MATCH"
+    case lengthMatches = "INVALID_LENGTH_MATCH"
     
-    /// Default Validation error for `SkyflowValidateExpireDate`
-    case expireDate = "INVALID_EXPIRE_DATE"
+    /// Default Validation error for `SkyflowValidateCardExpirationDate`
+    case expirationDate = "INVALID_EXPIRATION_DATE"
     
     
     
