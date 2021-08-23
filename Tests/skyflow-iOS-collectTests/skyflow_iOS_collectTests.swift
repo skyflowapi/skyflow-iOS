@@ -182,7 +182,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.insert(callback: callback)
+        container?.collect(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -221,7 +221,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.insert(callback: callback)
+        container?.collect(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
 
@@ -250,7 +250,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.insert(callback: callback)
+        container?.collect(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
 
@@ -271,7 +271,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.insert(callback: callback)
+        container?.collect(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -295,7 +295,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.insert(callback: callback)
+        container?.collect(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         

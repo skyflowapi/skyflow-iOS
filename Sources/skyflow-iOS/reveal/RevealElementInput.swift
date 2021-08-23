@@ -8,21 +8,15 @@
 import Foundation
 
 public struct RevealElementInput {
-    internal var table: String?
-    internal var column: String?
     internal var id: String
     internal var styles: SkyflowStyles?
     internal var label: String
-    internal var type: String
     internal var redaction: String
     
-    public init(table: String?, column: String?, id: String, styles: SkyflowStyles?, label: String, type: String, redaction: String) {
-        self.table = table
-        self.column = column
+    public init(id: String, styles: SkyflowStyles?, label: String, redaction: RedactionTypes) {
         self.id = id
         self.styles = styles
         self.label = label
-        self.type = type
-        self.redaction = redaction
+        self.redaction = redaction.rawValue
     }
 }

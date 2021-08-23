@@ -42,7 +42,7 @@ public class SkyflowTextField: SkyflowElement {
             textField.placeholder = collectInput.placeholder
             textField.textAlignment = collectInput.styles.base?.textAlignment ?? .natural
             textField.textColor = collectInput.styles.base?.textColor ?? .none
-            textField.formatPattern = fieldType.instance.formatPattern
+//            textField.formatPattern = fieldType.instance.formatPattern
             validationRules = fieldType.instance.validation
             textField.keyboardType = fieldType.instance.keyboardType
         
@@ -176,15 +176,15 @@ internal extension SkyflowTextField {
     @objc
     func textFieldValueChanged() {
         /// update format pattern after field input changed
-        if self.fieldType == .cardNumber {
-            let card = CardType.forCardNumber(cardNumber: getOutput()!)
-            if card.defaultName != "Empty"  {
-                self.textField.formatPattern = card.formatPattern
-              } else {
-                self.textField.formatPattern = CardType.UNKNOWN.instance.formatPattern
-              }
-        }
-        textField.updateTextFormat()
+//        if self.fieldType == .cardNumber {
+//            let card = CardType.forCardNumber(cardNumber: getOutput()!)
+//            if card.defaultName != "Empty"  {
+//                self.textField.formatPattern = card.formatPattern
+//              } else {
+//                self.textField.formatPattern = CardType.UNKNOWN.instance.formatPattern
+//              }
+//        }
+//        textField.updateTextFormat()
     }
   
     /// change focus here

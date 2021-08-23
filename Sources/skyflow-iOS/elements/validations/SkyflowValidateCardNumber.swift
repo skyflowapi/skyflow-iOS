@@ -21,10 +21,10 @@ internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
         if (text!.isEmpty) {
             return true
         }
-        let number = Int(text!)
-        if number == nil {
-            return false
-        }
+//        let number = Int(text!)
+//        if number == nil {
+//            return false
+//        }
     
         let card = CardType.forCardNumber(cardNumber: text!)
         let numberLength = text!.count
