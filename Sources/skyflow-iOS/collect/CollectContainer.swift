@@ -34,6 +34,9 @@ public extension Container {
                
                 errors += "for " + element.columnName + " " + (error as! String) + "\n"
             }
+            if(element.isFirstResponder) {
+                element.resignFirstResponder()
+            }
         }
         if(errors != "")
         {

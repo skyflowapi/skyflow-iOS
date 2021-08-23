@@ -8,7 +8,7 @@ import UIKit
 public class SkyflowElement: UIView {
     
     internal var isRequired: Bool = false
-    internal var fieldType: SkyflowElementType = .none
+    internal var fieldType: SkyflowElementType!
     internal var columnName: String!
     internal var tableName: String?
     internal var horizontalConstraints = [NSLayoutConstraint]()
@@ -56,11 +56,6 @@ public class SkyflowElement: UIView {
             columnName = collectInput.column
             fieldType = collectInput.type
             isRequired = options.required
-            borderWidth = (collectInput.styles.base?.borderWidth)!
-            borderColor = collectInput.styles.base?.borderColor
-            padding = (collectInput.styles.base?.padding)!
-            cornerRadius = (collectInput.styles.base?.cornerRadius)!
-        
       }
     
     internal func getOutput() -> String? {
@@ -117,9 +112,6 @@ public extension SkyflowElement
       ///  Prepare `SkyflowElement` for IB with custom styles.
      override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
-        layer.borderWidth = borderWidth
-        layer.borderColor = borderColor?.cgColor
-        layer.cornerRadius = cornerRadius
     }
   
 }
@@ -142,9 +134,6 @@ internal extension SkyflowElement {
 extension UIView {
     func mainStyle() {
         clipsToBounds = true
-        layer.borderColor = UIColor.lightGray.cgColor
-        layer.borderWidth = 1
-        layer.cornerRadius = 4
     }
 }
 
