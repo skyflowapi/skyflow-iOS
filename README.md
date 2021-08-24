@@ -1,3 +1,3 @@
-# skyflow-iOS-collect
+# skyflow-iOS
 
 A description of this package.
