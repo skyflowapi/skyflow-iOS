@@ -7,11 +7,11 @@
 
 import Foundation
 
-internal class TokenAPICallback: APICallback {
-    var callback: APICallback
+internal class TokenAPICallback: SkyflowCallback {
+    var callback: SkyflowCallback
     var apiClient: APIClient
     
-    internal init(callback: APICallback, apiClient: APIClient){
+    internal init(callback: SkyflowCallback, apiClient: APIClient){
         self.callback = callback
         self.apiClient = apiClient
     }

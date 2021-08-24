@@ -9,13 +9,13 @@ import Foundation
 
 internal class APIClient {
     var vaultId: String
-    var workspaceURL: String
+    var vaultURL: String
     var tokenProvider: TokenProvider
     var token: String = ""
     
-    internal init(vaultId: String, workspaceURL: String, tokenProvider: TokenProvider) {
+    internal init(vaultId: String, vaultURL: String, tokenProvider: TokenProvider) {
         self.vaultId = vaultId
-        self.workspaceURL = workspaceURL
+        self.vaultURL = vaultURL
         self.tokenProvider = tokenProvider
     }
     
@@ -26,11 +26,11 @@ internal class APIClient {
         }
         
         var payload64 = token.components(separatedBy: ".")[1]
-
+        
         while payload64.count % 4 != 0 {
             payload64 += "="
         }
-
+        
         let payloadData = Data(base64Encoded: payload64,
                                options:.ignoreUnknownCharacters)!
         
@@ -41,7 +41,7 @@ internal class APIClient {
         return expDate.compare(Date()) == .orderedDescending
     }
     
-    internal func getAccessToken(callback: APICallback) {
+    internal func getAccessToken(callback: SkyflowCallback) {
         if !isTokenValid() {
             let tokenApiCallback = TokenAPICallback(callback: callback, apiClient: self)
             tokenProvider.getAccessToken(tokenApiCallback)
@@ -51,28 +51,37 @@ internal class APIClient {
         }
     }
     
-    internal func post(payload: [[String: Any]], callback: APICallback){
-        let postApiCallback = PostAPICallback(callback: callback, apiClient: self, payload: payload)
-        self.getAccessToken(callback: postApiCallback)
+    internal func post(records: [String: Any], callback: SkyflowCallback, options: InsertOptions){
+        let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options)
+        self.getAccessToken(callback: collectApiCallback)
     }
     
-    internal func constructBatchRequestBody(payload: [[String: Any]]) -> [Any]{
+    internal func constructBatchRequestBody(records: [String: Any], options: InsertOptions) -> [String: Any]{
         var postPayload:[Any] = []
         var insertTokenPayload:[Any] = []
-        for (index,record) in payload.enumerated(){
+        for (index,record) in (records["records"] as! [Any]).enumerated(){
+            
             var temp:[String: Any] = [:]
-            temp = record
+            temp = record as! [String:Any]
             temp["method"] = "POST"
             temp["quorum"] = true
             postPayload.append(temp)
-            var temp2:[String: Any] = [:]
-            temp2["method"] = "GET"
-            temp2["tableName"] = record["tableName"]
-            temp2["ID"] = "$responses." + String(index) + ".records.0.skyflow_id"
-            temp2["tokenization"] = true
-            insertTokenPayload.append(temp2)
+            
+            if(options.tokens){
+                var temp2:[String: Any] = [:]
+                temp2["method"] = "GET"
+                temp2["tableName"] = (record as! [String:Any])["tableName"]
+                temp2["ID"] = "$responses." + String(index) + ".records.0.skyflow_id"
+                temp2["tokenization"] = true
+                insertTokenPayload.append(temp2)
+            }
         }
-        return postPayload + insertTokenPayload
+        return ["records": postPayload + insertTokenPayload]
+    }
+        
+    internal func get(records:[RevealRequestRecord], callback : SkyflowCallback){
+        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL+vaultId), records : records)
+        self.getAccessToken(callback: revealApiCallback)
     }
     
 }
