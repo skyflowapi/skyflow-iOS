@@ -7,11 +7,11 @@
 
 import Foundation
 import XCTest
-import skyflow_iOS
+import Skyflow
 
 public class DemoTokenProvider : TokenProvider {
     
-    public func getAccessToken(_ apiCallback: SkyflowCallback) {
+    public func getAccessToken(_ apiCallback: Callback) {
         if let url = URL(string: "http://localhost:8000/js/analystToken") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url){ data, response, error in
@@ -36,7 +36,7 @@ public class DemoTokenProvider : TokenProvider {
     }
 }
 
-public class DemoAPICallback: SkyflowCallback {
+public class DemoAPICallback: Callback {
     
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
