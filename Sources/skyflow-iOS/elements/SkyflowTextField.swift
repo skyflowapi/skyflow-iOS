@@ -12,6 +12,7 @@ public class SkyflowTextField: SkyflowElement {
     internal var isDirty: Bool = false
     internal var validationRules = SkyflowValidationSet()
     internal var stackView = UIStackView()
+    internal var textFieldLabel = UILabel(frame: .zero)
     
     internal var textFieldCornerRadius: CGFloat {
         get {
@@ -186,6 +187,9 @@ internal extension SkyflowTextField {
         print("em", "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "elements"))
         errorMessage.textColor = UIColor.red
         
+        textFieldLabel.text = collectInput.label
+        
+        stackView.addArrangedSubview(textFieldLabel)
         stackView.addArrangedSubview(textField)
         stackView.addArrangedSubview(errorMessage)
 
