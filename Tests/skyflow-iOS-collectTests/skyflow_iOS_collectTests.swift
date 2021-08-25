@@ -1,12 +1,12 @@
 import XCTest
-@testable import skyflow_iOS
+@testable import Skyflow
 
 final class skyflow_iOS_collectTests: XCTestCase {
     
-    var skyflow: Skyflow!
+    var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = Skyflow(SkyflowConfiguration(vaultId: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultId: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
     }
     
     override func tearDown() {
@@ -58,7 +58,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testInvalidVault() {
         
-        let skyflow = Skyflow(SkyflowConfiguration(vaultId: "ff", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
+        let skyflow = Client(Configuration(vaultId: "ff", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
         
         let records: [[String: Any]] = [
             ["tableName": "persons",
@@ -94,17 +94,17 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testCreateSkyflowElement(){
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let bstyle = SkyflowStyle(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
         
-        let styles = SkyflowStyles(base: bstyle)
+        let styles = Styles(base: bstyle)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", styles: styles, placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as? SkyflowTextField
+        let cardNumber = container?.create(input: collectInput, options: options) as? TextField
         
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
 
@@ -114,13 +114,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testValidValueSkyflowElement() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as? SkyflowTextField
+        let cardNumber = container?.create(input: collectInput, options: options) as? TextField
         
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         
@@ -131,13 +131,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testInvalidValueSkyflowElement() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as? SkyflowTextField
+        let cardNumber = container?.create(input: collectInput, options: options) as? TextField
         
         cardNumber?.textField.secureText = "411"
         
@@ -148,7 +148,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testCheckElementsArray() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
@@ -157,24 +157,24 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput, options: options)
         
         XCTAssertEqual(container?.elements.count, 1)
-        XCTAssertTrue(container?.elements[0].fieldType == SkyflowElementType.CARDNUMBER)
+        XCTAssertTrue(container?.elements[0].fieldType == ElementType.CARDNUMBER)
     }
     
     func testContainerInsert() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput1, options: options) as! SkyflowTextField
+        let cardNumber = container?.create(input: collectInput1, options: options) as! TextField
         
         cardNumber.textField.secureText = "4111 1111 1111 1111"
         
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
-        let cvv = container?.create(input: collectInput2, options: options) as! SkyflowTextField
+        let cvv = container?.create(input: collectInput2, options: options) as! TextField
         
         cvv.textField.secureText = "211"
         
@@ -201,19 +201,19 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertInvalidInput() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput1, options: options) as! SkyflowTextField
+        let cardNumber = container?.create(input: collectInput1, options: options) as! TextField
         
         cardNumber.textField.secureText = "411"
         
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
-        let cvv = container?.create(input: collectInput2, options: options) as! SkyflowTextField
+        let cvv = container?.create(input: collectInput2, options: options) as! TextField
         
         cvv.textField.secureText = "2"
         
@@ -230,19 +230,19 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertMixedInvalidInput() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput1, options: options) as! SkyflowTextField
+        let cardNumber = container?.create(input: collectInput1, options: options) as! TextField
         
         cardNumber.textField.secureText = "4111 1111 1111 1111"
         
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
-        let cvv = container?.create(input: collectInput2, options: options) as! SkyflowTextField
+        let cvv = container?.create(input: collectInput2, options: options) as! TextField
         
         cvv.textField.secureText = "2"
         
@@ -259,7 +259,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertIsRequiredAndEmpty() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: true)
         
@@ -281,13 +281,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertIsRequiredAndNotEmpty() {
         
-        let container = skyflow.container(type: ContainerTypes.COLLECT, options: nil)
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: true)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARDNUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as! SkyflowTextField
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
         
         cardNumber.textField.secureText = "4111 1111 1111 1111"
         
