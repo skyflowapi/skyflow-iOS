@@ -58,5 +58,19 @@ public class SkyflowLabel: UIView {
         
         addSubview(stackView);
         
+        setMainPaddings();
     }
+    
+    func setMainPaddings() {
+                
+        let views = ["view": self, "stackView": stackView]
+        
+        horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
+                                                               options: .alignAllCenterY,
+                                                               metrics: nil,
+                                                               views: views)
+        NSLayoutConstraint.activate(horizontalConstraints)
+        
+    }
+
 }
