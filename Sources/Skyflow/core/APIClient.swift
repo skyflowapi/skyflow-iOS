@@ -62,7 +62,8 @@ internal class APIClient {
         for (index,record) in (records["records"] as! [Any]).enumerated(){
             
             var temp:[String: Any] = [:]
-            temp = record as! [String:Any]
+            temp["fields"] = (record as! [String:Any])["fields"]
+            temp["tableName"] = (record as! [String:Any])["table"]
             temp["method"] = "POST"
             temp["quorum"] = true
             postPayload.append(temp)
@@ -70,7 +71,7 @@ internal class APIClient {
             if(options.tokens){
                 var temp2:[String: Any] = [:]
                 temp2["method"] = "GET"
-                temp2["tableName"] = (record as! [String:Any])["tableName"]
+                temp2["tableName"] = (record as! [String:Any])["table"]
                 temp2["ID"] = "$responses." + String(index) + ".records.0.skyflow_id"
                 temp2["tokenization"] = true
                 insertTokenPayload.append(temp2)

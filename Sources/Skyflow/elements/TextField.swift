@@ -184,7 +184,6 @@ internal extension TextField {
         
         errorMessage.alpha = 0.0
         errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "elements")
-        print("em", "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "elements"))
         errorMessage.textColor = UIColor.red
         
         textFieldLabel.text = collectInput.label

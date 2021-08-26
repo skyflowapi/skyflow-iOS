@@ -20,7 +20,7 @@ public class Client {
         self.apiClient.post(records: records, callback: callback, options: options!)
     }
     
-    public func container<T>(type: T.Type, options: ContainerOptions?) -> Container<T>? {
+    public func container<T>(type: T.Type, options: ContainerOptions? = ContainerOptions()) -> Container<T>? {
         
         if options != nil {
             //Set options
