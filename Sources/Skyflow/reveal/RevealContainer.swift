@@ -12,8 +12,8 @@ public class RevealContainer: ContainerProtocol {
 }
 
 public extension Container {
-    func create(input : RevealElementInput, options : RevealElementOptions) -> Label where T:RevealContainer {
-        let revealElement = Label(input: input, options: options)
+    func create(input : RevealElementInput, options : RevealElementOptions? = RevealElementOptions()) -> Label where T:RevealContainer {
+        let revealElement = Label(input: input, options: options!)
         revealElements.append(revealElement)
         return revealElement
     }

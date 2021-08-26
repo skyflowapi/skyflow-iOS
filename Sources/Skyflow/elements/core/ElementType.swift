@@ -25,13 +25,13 @@ public enum ElementType: Int, CaseIterable {
     
     
     /// Field type that requires Cardholder Name input formatting and validation.
-    case CARDHOLDERNAME
+    case CARDHOLDER_NAME
     
     /// Field type that requires Credit Card Number input formatting and validation.
-    case CARDNUMBER
+    case CARD_NUMBER
     
     /// Field type that requires Card Expiration Date input formatting and validation.
-    case EXPIRATIONDATE
+    case EXPIRATION_DATE
     
     /// Field type that requires Card CVV input formatting and validation.
     case CVV
@@ -39,19 +39,19 @@ public enum ElementType: Int, CaseIterable {
     var instance: Type {
         var rules = SkyflowValidationSet()
         switch self {
-        case .CARDHOLDERNAME :
+        case .CARDHOLDER_NAME :
             rules.add(rule: SkyflowValidatePattern(regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
                                                    error: SkyflowValidationErrorType.pattern.rawValue))
             return Type(formatPattern: "", regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
                         validation: rules, keyboardType: .alphabet)
             
-        case .CARDNUMBER :
+        case .CARD_NUMBER :
             rules.add(rule: SkyflowValidateCardNumber(error: SkyflowValidationErrorType.cardNumber.rawValue, regex: "^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$"))
             return Type(formatPattern: "#### #### #### ####",
                         regex:"^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$",
                         validation: rules, keyboardType: .numberPad)
             
-        case .EXPIRATIONDATE :
+        case .EXPIRATION_DATE :
             rules.add(rule: SkyflowValidatePattern(regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
                                                    error: SkyflowValidationErrorType.pattern.rawValue))
             rules.add(rule: SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue))

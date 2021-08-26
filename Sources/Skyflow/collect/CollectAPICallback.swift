@@ -35,7 +35,7 @@ internal class CollectAPICallback: Callback {
             }
             
             request.addValue("Bearer " + (self.apiClient.token), forHTTPHeaderField: "Authorization")
-            
+
             let session = URLSession(configuration: .default)
             
             let task = session.dataTask(with: request) { data, response, error in
@@ -74,7 +74,7 @@ internal class CollectAPICallback: Callback {
                         let length = inputRecords.count
                         for (index, _) in inputRecords.enumerated(){
                             var tempEntry:[String:Any] = [:]
-                            tempEntry["table"] = (inputRecords[index] as! [String:Any])["tableName"]
+                            tempEntry["table"] = (inputRecords[index] as! [String:Any])["table"]
                             if(self.options.tokens){
                                 tempEntry["fields"] = (receivedResponseArray[length + index] as! [String:Any])["fields"] ?? nil
                             }
