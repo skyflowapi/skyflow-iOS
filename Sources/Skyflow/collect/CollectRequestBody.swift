@@ -22,7 +22,7 @@ internal class CollectRequestBody {
                 tableMap[(element.tableName)!] = index
                 index += 1
                 var temp:[String:Any] = [
-                    "tableName": element.tableName!,
+                    "table": element.tableName!,
                     "fields": [:]
                 ]
                 temp[keyPath: "fields." + element.columnName!] = element.getOutput()
