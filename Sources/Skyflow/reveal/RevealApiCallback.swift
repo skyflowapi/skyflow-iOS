@@ -22,10 +22,11 @@ class RevealApiCallback : Callback {
         self.records = records
     }
     
-    internal func onSuccess(_ token: String) {
+    internal func onSuccess(_ token: Any) {
         var list_success : [RevealSuccessRecord] = []
         var list_error : [RevealErrorRecord] = []
         let revealRequestGroup = DispatchGroup()
+        
         for record in records
         {
             let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))
@@ -34,7 +35,7 @@ class RevealApiCallback : Callback {
             request.httpMethod = "GET"
             request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type");
             request.addValue("application/json", forHTTPHeaderField: "Accept");
-            request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization");
+            request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization");
             let session = URLSession(configuration: .default)
             
             let task =  session.dataTask(with: request) { data, response, error in
@@ -120,8 +121,8 @@ class RevealApiCallback : Callback {
             var modifiedResponse: [String: Any] = [:]
             modifiedResponse["records"] = records
             modifiedResponse["errors"] = errors
-            let dataString = String(data: try! JSONSerialization.data(withJSONObject: modifiedResponse), encoding: .utf8)
-            self.callback.onSuccess(dataString!)
+
+            self.callback.onSuccess(modifiedResponse)
         }
     }
     internal func onFailure(_ error: Error) {
