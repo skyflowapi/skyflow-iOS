@@ -16,10 +16,12 @@ internal class RevealValueCallback : Callback {
         self.revealElements = revealElements
     }
     
-    func onSuccess(_ responseBody: Any) {
+    func onSuccess(_ responseBody: String) {
         var tokens: [String: String] = [:]
         
-        let responseJson = responseBody as! [String: Any]
+        let responseData = Data(responseBody.utf8)
+        let responseJson = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+        
         let records = responseJson["records"] as! [Any]
         var response: [String: Any] = [:]
         var successResponses: [Any] = []
