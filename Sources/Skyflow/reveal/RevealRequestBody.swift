@@ -10,9 +10,9 @@ import Foundation
 internal class RevealRequestBody {
     internal static func createRequestBody(elements: [Label]) -> [String: Any] {
         
-        var payload: [[String: String]] = []
+        var payload: [[String: Any]] = []
         for element in elements {
-            var entry: [String: String] = [:]
+            var entry: [String: Any] = [:]
             entry["id"] = element.revealInput.id
             entry["redaction"] = element.revealInput.redaction
             payload.append(entry)
