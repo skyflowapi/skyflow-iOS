@@ -21,8 +21,8 @@ internal class CollectAPICallback: Callback {
         self.options = options
     }
     
-    internal func onSuccess(_ responseBody: Any) {
-        if let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) {
+    internal func onSuccess(_ responseBody: String) {
+        if let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultId) {
             
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -34,7 +34,7 @@ internal class CollectAPICallback: Callback {
                 print(error.localizedDescription)
             }
             
-            request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+            request.addValue("Bearer " + (self.apiClient.token), forHTTPHeaderField: "Authorization")
 
             let session = URLSession(configuration: .default)
             
@@ -76,13 +76,7 @@ internal class CollectAPICallback: Callback {
                             var tempEntry:[String:Any] = [:]
                             tempEntry["table"] = (inputRecords[index] as! [String:Any])["table"]
                             if(self.options.tokens){
-                                var fieldsDict = (receivedResponseArray[length + index] as! [String:Any])["fields"] ?? nil
-                                if fieldsDict != nil {
-                                    let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict)
-                                    let fieldsObj = try JSONSerialization.jsonObject(with: fieldsData, options: .allowFragments)
-                                    tempEntry["fields"] = self.buildFieldsDict(dict: fieldsObj as? [String: Any] ?? [:])
-                                }
-
+                                tempEntry["fields"] = (receivedResponseArray[length + index] as! [String:Any])["fields"] ?? nil
                             }
                             else{
                                 tempEntry["skyflow_id"] = (((receivedResponseArray[index] as! [String:Any])["records"] as! [Any])[0] as! [String:Any])["skyflow_id"]
@@ -90,7 +84,9 @@ internal class CollectAPICallback: Callback {
                             responseEntries.append(tempEntry)
                         }
                         
-                        self.callback.onSuccess(["records": responseEntries])
+                        let dataString = String(data: try JSONSerialization.data(withJSONObject: ["records": responseEntries]), encoding: .utf8)
+                        
+                        self.callback.onSuccess(dataString!)
                                                 
                     } catch let error {
                         self.callback.onFailure(error)
@@ -104,18 +100,5 @@ internal class CollectAPICallback: Callback {
     
     internal func onFailure(_ error: Error) {
         self.callback.onFailure(error)
-    }
-    
-    internal func buildFieldsDict(dict: [String: Any]) -> [String: Any]{
-        var temp: [String: Any] = [:]
-        for (key, val) in dict {
-            if let v = val as? [String: Any]{
-                temp[key] = buildFieldsDict(dict: v)
-            }
-            else{
-                temp[key] = val
-            }
-        }
-        return temp
     }
 }

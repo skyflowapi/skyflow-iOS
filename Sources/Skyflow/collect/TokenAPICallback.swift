@@ -16,15 +16,9 @@ internal class TokenAPICallback: Callback {
         self.apiClient = apiClient
     }
     
-    internal func onSuccess(_ responseBody: Any) {
-        if let token = responseBody as? String {
-            self.apiClient.token = responseBody as! String
-            callback.onSuccess(responseBody as! String)
-        }
-        else{
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Token Format"]))
-        }
-        
+    internal func onSuccess(_ responseBody: String) {
+        self.apiClient.token = responseBody
+        callback.onSuccess(responseBody)
     }
     
     internal func onFailure(_ error: Error) {

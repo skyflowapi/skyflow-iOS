@@ -11,12 +11,12 @@ public struct RevealElementInput {
     internal var id: String
     internal var styles: Styles?
     internal var label: String
-    internal var redaction: RedactionType
+    internal var redaction: String
     
     public init(id: String, styles: Styles?, label: String, redaction: RedactionType) {
         self.id = id
         self.styles = styles
         self.label = label
-        self.redaction = redaction
+        self.redaction = redaction.rawValue
     }
 }

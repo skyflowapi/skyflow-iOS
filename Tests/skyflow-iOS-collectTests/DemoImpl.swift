@@ -11,7 +11,7 @@ import Skyflow
 
 public class DemoTokenProvider : TokenProvider {
     
-    public func getBearerToken(_ apiCallback: Callback) {
+    public func getAccessToken(_ apiCallback: Callback) {
         if let url = URL(string: "http://localhost:8000/js/analystToken") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url){ data, response, error in
@@ -22,7 +22,7 @@ public class DemoTokenProvider : TokenProvider {
                 if let safeData = data {
                     do{
                         let x = try JSONSerialization.jsonObject(with: safeData, options:[]) as? [String: String]
-                        if let accessToken = x?["accessToken"] {
+                        if let accessToken = x?["accessToken"]{
                             apiCallback.onSuccess(accessToken)
                         }
                     }
@@ -45,9 +45,9 @@ public class DemoAPICallback: Callback {
         self.expectation = expectation
     }
     
-    public func onSuccess(_ responseBody: Any) {
-        let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
-        self.receivedResponse = dataString!
+    public func onSuccess(_ responseBody: String) {
+        print(responseBody)
+        self.receivedResponse = responseBody
         expectation.fulfill()
     }
     
