@@ -13,7 +13,7 @@ public class Client {
     
     public init(_ skyflowConfig: Configuration){
         self.vaultID = skyflowConfig.vaultID
-        self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL : skyflowConfig.vaultURL + "/"
+        self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
         self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: self.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
     }
     

@@ -22,7 +22,7 @@ internal class CollectAPICallback: Callback {
     }
     
     internal func onSuccess(_ responseBody: Any) {
-        if let url = URL(string: self.apiClient.vaultURL + "v1/vaults/" + self.apiClient.vaultID) {
+        if let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) {
             
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
