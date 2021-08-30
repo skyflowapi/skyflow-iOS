@@ -1,12 +1,12 @@
 Pod::Spec.new do |spec|
 
-  spec.name         = "skyflow-iOS"
+  spec.name         = "Skyflow"
   spec.version      = "1.0.0"
   spec.summary      = "skyflow-iOS"
 
-  spec.description  = "skyflow-iOS SDK"
+  spec.description  = "Skyflow iOS SDK"
 
-  spec.homepage     = "https://www.skyflow.com"
+  spec.homepage     = "https://github.com/skyflowapi/skyflow-iOS.git"
 
   spec.license      = { :type => "MIT", :file => "LICENSE" }
 
