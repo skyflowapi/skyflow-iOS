@@ -8,13 +8,13 @@
 import Foundation
 
 internal class APIClient {
-    var vaultId: String
+    var vaultID: String
     var vaultURL: String
     var tokenProvider: TokenProvider
     var token: String = ""
     
-    internal init(vaultId: String, vaultURL: String, tokenProvider: TokenProvider) {
-        self.vaultId = vaultId
+    internal init(vaultID: String, vaultURL: String, tokenProvider: TokenProvider) {
+        self.vaultID = vaultID
         self.vaultURL = vaultURL
         self.tokenProvider = tokenProvider
     }
@@ -44,7 +44,7 @@ internal class APIClient {
     internal func getAccessToken(callback: Callback) {
         if !isTokenValid() {
             let tokenApiCallback = TokenAPICallback(callback: callback, apiClient: self)
-            tokenProvider.getAccessToken(tokenApiCallback)
+            tokenProvider.getBearerToken(tokenApiCallback)
         }
         else{
             callback.onSuccess(token)
@@ -81,7 +81,7 @@ internal class APIClient {
     }
         
     internal func get(records:[RevealRequestRecord], callback : Callback){
-        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL+vaultId), records : records)
+        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL+vaultID), records : records)
         self.getAccessToken(callback: revealApiCallback)
     }
     
