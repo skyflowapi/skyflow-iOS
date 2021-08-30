@@ -7,8 +7,6 @@
 
 import XCTest
 @testable import Skyflow
-//vaultID: ffe21f44f68a4ae3b4fe55ee7f0a85d6
-//Url: https://na1.area51.vault.skyflowapis.com/v1/vaults
 
 
 class skyflow_iOS_revealTests: XCTestCase {
@@ -113,7 +111,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions());
         
-        let revealedOutput = "4111-1111-1111-1111"
+        let revealedOutput = "2429-2390-5964-3689"
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
         
         revealContainer?.reveal(callback: callback)
@@ -122,6 +120,75 @@ class skyflow_iOS_revealTests: XCTestCase {
         
     }
     
+//    func testGetWithoutURLTrailingSlash() {
+//        let noTrailingSlashSkyflow = Client(Configuration(vaultId: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults", tokenProvider: DemoTokenProvider()))
+//        let defaultRecords = ["records": [["id": revealTestId, "redaction": "DEFAULT"]]]
+//
+//        let expectRecords = XCTestExpectation(description: "Should get errors")
+//        let callback = DemoAPICallback(expectation: expectRecords)
+//        noTrailingSlashSkyflow.get(records: defaultRecords, callback: callback)
+//
+//        wait(for: [expectRecords], timeout: 10.0)
+//        let responseData =  Data(callback.receivedResponse.utf8)
+//
+//        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+//
+//        let responseEntries = jsonData["records"] as! [Any]
+//        let count = responseEntries.count
+//
+//        XCTAssertNotNil(jsonData)
+//        XCTAssertEqual(count, 0)
+//    }
+    
+    func testWithWrongVaultURL() {
+        let noTrailingSlashSkyflow = Client(Configuration(vaultId: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/vq1/vaults/", tokenProvider: DemoTokenProvider()))
+        let defaultRecords = ["records": [["id": revealTestId, "redaction": "DEFAULT"]]]
+        
+        let expectRecords = XCTestExpectation(description: "Should get errors")
+        let callback = DemoAPICallback(expectation: expectRecords)
+        noTrailingSlashSkyflow.get(records: defaultRecords, callback: callback)
+        
+        wait(for: [expectRecords], timeout: 10.0)
+        let responseData =  Data(callback.receivedResponse.utf8)
+
+        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+
+        let responseEntries = jsonData["records"] as! [Any]
+        let errors = jsonData["errors"] as! [Any]
+        let count = responseEntries.count
+        let errorCount = errors.count
+        
+        XCTAssertNotNil(jsonData)
+        XCTAssertEqual(count, 0)
+        XCTAssertEqual(errorCount, 1)
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"] ?? nil) as! [String: Any])["code"] as! String, "501")
+        
+
+    }
+    
+    func testWithInvalidVaultID() {
+        let noTrailingSlashSkyflow = Client(Configuration(vaultId: "invalid-vault-id", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
+        let defaultRecords = ["records": [["id": revealTestId, "redaction": "DEFAULT"]]]
+        
+        let expectRecords = XCTestExpectation(description: "Should get errors")
+        let callback = DemoAPICallback(expectation: expectRecords)
+        noTrailingSlashSkyflow.get(records: defaultRecords, callback: callback)
+        
+        wait(for: [expectRecords], timeout: 10.0)
+        let responseData =  Data(callback.receivedResponse.utf8)
+
+        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+
+        let responseEntries = jsonData["records"] as! [Any]
+        let errors = jsonData["errors"] as! [Any]
+        let count = responseEntries.count
+        let errorCount = errors.count
+        
+        XCTAssertNotNil(jsonData)
+        XCTAssertEqual(count, 0)
+        XCTAssertEqual(errorCount, 1)
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"] ?? nil) as! [String: Any])["code"] as! Int, 500)
+    }
     
 }
 
