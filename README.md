@@ -17,7 +17,11 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
 ### Cocoapods
 - To integrate skyflow-iOS into your Xcode project using CocoaPods, specify it in your Podfile:
     ```
-    pod 'skyflow-iOS'
+    #Mentioning the below source will pick the podspec from Skyflow repo
+    #Otherwise it will be picked from cocoapod trunk
+    #source 'https://github.com/skyflowapi/skyflow-iOS-spec.git'
+    
+    pod 'Skyflow'
     ```
 
 
