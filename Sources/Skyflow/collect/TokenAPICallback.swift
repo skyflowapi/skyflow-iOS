@@ -17,7 +17,7 @@ internal class TokenAPICallback: Callback {
     }
     
     internal func onSuccess(_ responseBody: Any) {
-        if let token = responseBody as? String {
+        if responseBody is String {
             self.apiClient.token = responseBody as! String
             callback.onSuccess(responseBody as! String)
         }

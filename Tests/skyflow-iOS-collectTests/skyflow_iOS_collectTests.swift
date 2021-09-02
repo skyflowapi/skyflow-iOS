@@ -62,7 +62,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let skyflow = Client(Configuration(vaultID: "ff", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
         
         let records: [[String: Any]] = [
-            ["tableName": "persons",
+            ["table": "persons",
              "fields":
                 ["cvv": "123",
                  "cardExpiration":"1221",
@@ -70,7 +70,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
                  "name": ["first_name": "Bob"]
                 ]
             ],
-            ["tableName": "persons",
+            ["table": "persons",
              "fields":
                 ["cvv": "123",
                  "cardExpiration":"1221",
