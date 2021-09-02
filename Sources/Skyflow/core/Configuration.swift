@@ -8,13 +8,13 @@
 import Foundation
 
 public struct Configuration {
-    var vaultId: String
+    var vaultID: String
     var vaultURL: String
     var tokenProvider: TokenProvider
     var options: Options?
     
-    public init(vaultId: String, vaultURL: String, tokenProvider: TokenProvider, options: Options? = Options()) {
-        self.vaultId = vaultId
+    public init(vaultID: String, vaultURL: String, tokenProvider: TokenProvider, options: Options? = Options()) {
+        self.vaultID = vaultID
         self.vaultURL = vaultURL
         self.tokenProvider = tokenProvider
         self.options = options

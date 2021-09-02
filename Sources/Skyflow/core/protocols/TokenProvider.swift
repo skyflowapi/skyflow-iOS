@@ -6,5 +6,5 @@
 //
 
 public protocol TokenProvider {
-    func getAccessToken(_ apiCallback: Callback)
+    func getBearerToken(_ apiCallback: Callback)
 }

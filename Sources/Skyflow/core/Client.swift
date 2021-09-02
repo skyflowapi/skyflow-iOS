@@ -4,16 +4,17 @@
 //
 //  Created by Akhil Anil Mangala on 19/07/21.
 //
+import Foundation
 
 public class Client {
-    var vaultId: String
+    var vaultID: String
     var apiClient: APIClient
     var vaultURL: String
     
     public init(_ skyflowConfig: Configuration){
-        self.vaultId = skyflowConfig.vaultId
-        self.vaultURL = skyflowConfig.vaultURL
-        self.apiClient = APIClient(vaultId: skyflowConfig.vaultId, vaultURL: skyflowConfig.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
+        self.vaultID = skyflowConfig.vaultID
+        self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
+        self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: self.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
     }
     
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback){
@@ -38,7 +39,12 @@ public class Client {
         var list : [RevealRequestRecord] = []
         for token in tokens
         {
-            list.append(RevealRequestRecord(token: token["id"] as! String, redaction: token["redaction"] as! String))
+            if let redaction = token["redaction"] as? RedactionType, let id = token["id"] as? String {
+            list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
+            }
+            else {
+                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid ID or RedactionType format"]))
+            }
         }
         self.apiClient.get(records: list, callback: callback)
     }
