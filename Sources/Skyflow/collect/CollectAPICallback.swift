@@ -76,9 +76,9 @@ internal class CollectAPICallback: Callback {
                             var tempEntry:[String:Any] = [:]
                             tempEntry["table"] = (inputRecords[index] as! [String:Any])["table"]
                             if(self.options.tokens){
-                                var fieldsDict = (receivedResponseArray[length + index] as! [String:Any])["fields"] ?? nil
+                                let fieldsDict = (receivedResponseArray[length + index] as! [String:Any])["fields"] ?? nil
                                 if fieldsDict != nil {
-                                    let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict)
+                                    let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict!)
                                     let fieldsObj = try JSONSerialization.jsonObject(with: fieldsData, options: .allowFragments)
                                     tempEntry["fields"] = self.buildFieldsDict(dict: fieldsObj as? [String: Any] ?? [:])
                                 }
