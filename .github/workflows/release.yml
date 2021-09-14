@@ -3,12 +3,14 @@ name: Public Release
 on:
   push:
     tags: '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - main
 
 
 jobs:
   deploy_private_pod:
     runs-on: ubuntu-latest
-        steps:
+    steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
