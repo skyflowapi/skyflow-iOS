@@ -1,0 +1,55 @@
+
+name: Internal Release
+
+on:
+  push:
+    tags-ignore:
+      - '*'
+    paths-ignore:
+      - 'Skyflow.podspec'
+      - '*.md'
+    branches:
+      - 'main'
+      - 'cicd'
+
+
+jobs:
+  deploy_private_pod:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.PAT_ACTIONS }}
+      
+    - name: Get Previous tag
+      id: previoustag
+      uses: WyriHaximus/github-action-get-previous-tag@v1
+      with:
+        fallback: 1.0.0
+
+    - name: Bump Version
+      run: |
+           chmod +x ./scripts/bump_version.sh
+           ./scripts/bump_version.sh "${{ steps.previoustag.outputs.tag }}" "$(git rev-parse --short "$GITHUB_SHA")"
+    
+    - name: Commit changes
+      run: |
+           git config user.name ${{ github.actor }}
+           git config user.email ${{ github.actor }}@users.noreply.github.com
+           git add Skyflow.podspec
+           git commit -m "[AUTOMATED] Private Release ${{ steps.previoustag.outputs.tag }}.$(git rev-parse --short $GITHUB_SHA)"
+           git push origin main
+
+
+          
+    - name: Add SSH key to Agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_ACTIONS }}
+
+    - name: Push updated spec file
+      run: |
+           pod repo add private_spec git@github.com:skyflowapi/skyflow-iOS-private-spec.git
+           pod repo push private_spec ./Skyflow.podspec
+           echo "Published as Private pod"
