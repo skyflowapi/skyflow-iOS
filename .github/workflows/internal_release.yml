@@ -10,8 +10,6 @@ on:
       - '*.md'
     branches:
       - 'main'
-      - 'cicd'
-
 
 jobs:
   deploy_private_pod:
