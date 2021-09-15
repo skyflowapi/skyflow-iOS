@@ -3,9 +3,18 @@ name: CI Checks
 on: [pull_request]
 
 jobs:
+  SwiftLint:
+   runs-on: ubuntu-latest
+   steps:
+     - uses: actions/checkout@v1
+     - name: SwiftLint (Only files changed in the PR)
+       uses: norio-nomura/action-swiftlint@3.2.1
+       env:
+         DIFF_BASE: ${{ github.base_ref }}
   xcode-build:
     name: Xcode Build
     runs-on: macOS-10.15
+    timeout-minutes: 30
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
