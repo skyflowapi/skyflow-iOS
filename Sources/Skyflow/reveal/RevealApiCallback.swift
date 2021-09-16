@@ -97,7 +97,7 @@ class RevealApiCallback : Callback {
             var records: [Any] = []
             for record in list_success {
                 var entry: [String: Any] = [:]
-                entry["id"] = record.token_id
+                entry["token"] = record.token_id
                 var fields: [String: Any] = [:]
                 for field in record.fields
                 {
@@ -110,7 +110,7 @@ class RevealApiCallback : Callback {
             for record in list_error
             {
                 var entry: [String: Any] = [:]
-                entry["id"] = record.id
+                entry["token"] = record.id
                 var temp: [String: Any] = [:]
                 for field in record.error {
                     temp[field.key] = field.value

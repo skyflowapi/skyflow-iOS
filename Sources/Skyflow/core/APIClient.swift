@@ -51,12 +51,12 @@ internal class APIClient {
         }
     }
     
-    internal func post(records: [String: Any], callback: Callback, options: InsertOptions){
+    internal func post(records: [String: Any], callback: Callback, options: ICOptions){
         let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options)
         self.getAccessToken(callback: collectApiCallback)
     }
     
-    internal func constructBatchRequestBody(records: [String: Any], options: InsertOptions) -> [String: Any]{
+    internal func constructBatchRequestBody(records: [String: Any], options: ICOptions) -> [String: Any]{
         var postPayload:[Any] = []
         var insertTokenPayload:[Any] = []
         for (index,record) in (records["records"] as! [Any]).enumerated(){
