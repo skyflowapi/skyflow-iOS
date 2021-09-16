@@ -78,11 +78,18 @@ public class Label: UIView {
                 
         let views = ["view": self, "stackView": stackView]
         
+        verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
+                                                            options: .alignAllCenterX,
+                                                            metrics: nil,
+                                                            views: views)
+
+        
         horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
                                                                options: .alignAllCenterY,
                                                                metrics: nil,
                                                                views: views)
         NSLayoutConstraint.activate(horizontalConstraints)
-        
+        NSLayoutConstraint.activate(verticalConstraint)
+
     }
 }
