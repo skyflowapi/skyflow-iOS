@@ -1,3 +1,4 @@
+import Foundation
 import Skyflow
 
 public class ExampleTokenProvider : TokenProvider {
