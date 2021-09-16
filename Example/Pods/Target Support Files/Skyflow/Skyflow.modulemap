@@ -1,6 +1,0 @@
-framework module Skyflow {
-  umbrella header "Skyflow-umbrella.h"
-
-  export *
-  module * { export * }
-}

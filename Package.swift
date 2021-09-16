@@ -20,8 +20,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Skyflow",
-            dependencies: [],
-            sources: ["Sources"]),
+            dependencies: []),
         .testTarget(
             name: "skyflow-iOS-collectTests",
             dependencies: ["Skyflow"]),
