@@ -1,0 +1,233 @@
+//
+//  ViewController.swift
+//  App
+//
+//  Created by Tejesh Reddy Allampati on 16/09/21.
+//
+
+
+import UIKit
+import Skyflow
+
+
+
+class ViewController: UIViewController {
+    
+    private var skyflow: Skyflow.Client?
+    private var container: Skyflow.Container<Skyflow.CollectContainer>?
+    private var revealContainer: Skyflow.Container<Skyflow.RevealContainer>?
+    private var b: UIButton?
+    
+    private var stackView: UIStackView!
+    
+    private var revealCVV: Label?
+    private var revealCardNumber: Label?
+    private var revealName: Label?
+    private var revealExpirationDate: Label?
+    private var revealButton: UIButton!
+
+    
+    override func loadView() {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        self.view = view
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let tokenProvider = ExampleTokenProvider()
+        
+        
+        let config = Skyflow.Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: tokenProvider)
+
+        self.skyflow = Skyflow.initialize(config)
+
+        if self.skyflow != nil {
+            
+            let container = self.skyflow?.container(type: Skyflow.ContainerType.COLLECT, options: nil)
+            self.container = container
+            self.stackView = UIStackView()
+            
+            let baseStyle = Skyflow.Style(cornerRadius: 2, padding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10), borderWidth: 1, textAlignment: .left, textColor: .blue)
+            
+            let focusStyle = Skyflow.Style(borderColor: .blue)
+            
+            let completedStyle = Skyflow.Style(borderColor: UIColor.green, textColor: UIColor.green)
+
+            let invalidStyle = Skyflow.Style(borderColor: UIColor.red, textColor: UIColor.red)
+            
+            let styles = Skyflow.Styles(base: baseStyle,completed: completedStyle, focus: focusStyle, invalid: invalidStyle)
+            
+            
+            let collectCardNumberInput = Skyflow.CollectElementInput(table: "persons", column: "cardNumber", styles: styles, label: "Card Number", placeholder: "4111-1111-1111-1111", type: Skyflow.ElementType.CARD_NUMBER)
+            let collectNameInput = Skyflow.CollectElementInput(table: "persons", column: "name.first_name", styles: styles, label: "Card Holder Name", placeholder: "John Doe", type: Skyflow.ElementType.CARDHOLDER_NAME)
+            let collectCVVInput = Skyflow.CollectElementInput(table: "persons", column: "cvv", styles: styles, label: "CVV", placeholder: "***", type: .CVV)
+            let collectExpDateInput = Skyflow.CollectElementInput(table: "persons", column: "cardExpiration", styles: styles, label: "Expiration Date", placeholder: "MM/YY", type: .EXPIRATION_DATE)
+            
+            let requiredOption = Skyflow.CollectElementOptions(required: true)
+            let collectCardNumber = container?.create(input: collectCardNumberInput)
+            let collectName = container?.create(input: collectNameInput)
+            let collectCVV = container?.create(input: collectCVVInput, options: requiredOption)
+            let collectExpDate = container?.create(input: collectExpDateInput)
+            
+            let collectButton:UIButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 30))
+            collectButton.backgroundColor = .blue
+            collectButton.setTitle("Submit", for: .normal)
+            collectButton.addTarget(self, action:#selector(submitForm) , for: .touchUpInside)
+            
+            
+            self.revealContainer = skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+                        
+            let revealBaseStyle = Skyflow.Style(borderColor: .black, cornerRadius: 10, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 1, textAlignment: .left, textColor: UIColor.blue)
+            
+            let revealStyles = Skyflow.Styles(base: revealBaseStyle)
+            
+            let revealCardNumberInput = Skyflow.RevealElementInput(id: "Enter Data To Reveal", styles: revealStyles, label: "Card Number", redaction: .DEFAULT)
+            
+            revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: Skyflow.RevealElementOptions())
+            
+            let revealCVVInput = Skyflow.RevealElementInput(id: "Enter Data To Reveal", styles: revealStyles, label: "CVV", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+            
+            revealCVV = revealContainer?.create(input: revealCVVInput)
+            
+            let revealNameInput = Skyflow.RevealElementInput(id: "Enter Data To Reveal", styles: revealStyles, label: "Card Holder Name", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+            
+            revealName = revealContainer?.create(input: revealNameInput)
+
+            let revealExpirationDateInput = Skyflow.RevealElementInput(id: "Enter Data To Reveal", styles: revealStyles, label: "Expiration Date", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+            
+            revealExpirationDate = revealContainer?.create(input: revealExpirationDateInput)
+
+            
+            self.revealButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 30))
+            revealButton.backgroundColor = .blue
+            revealButton.setTitle("Reveal", for: .normal)
+            revealButton.addTarget(self, action:#selector(revealForm) , for: .touchUpInside)
+
+            
+            stackView.addArrangedSubview(collectCardNumber!)
+            stackView.addArrangedSubview(collectName!)
+            stackView.addArrangedSubview(collectCVV!)
+            stackView.addArrangedSubview(collectExpDate!)
+            stackView.addArrangedSubview(collectButton)
+
+            addRevealElements()
+                        
+            stackView.axis = .vertical
+            stackView.distribution = .fillEqually
+            stackView.spacing = 10
+            stackView.alignment = .fill
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let scrollView = UIScrollView(frame: .zero)
+            scrollView.isScrollEnabled = true
+            scrollView.backgroundColor = .white
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(scrollView)
+            
+            
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true
+            scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor,
+                                            constant: 10).isActive = true
+            scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            
+            scrollView.addSubview(stackView)
+
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -10).isActive = true
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+            stackView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
+            stackView.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -10).isActive = true
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        }
+    }
+    
+    
+    @objc func revealForm() {
+        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        
+    }
+    
+    
+    @objc func submitForm() {
+        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
+        container!.collect(callback: exampleAPICallback, options: Skyflow.InsertOptions(tokens: true))
+    }
+    
+    internal func updateSuccess(_ response: SuccessResponse) {
+        
+        updateRevealInputs(tokens: response.records[0].fields)
+        
+        print("Successfully got response:", response)
+    }
+    
+    internal func updateFailure() {
+        print("Failed Operation")
+    }
+    
+    internal func updateRevealInputs(tokens: Fields) {
+        let revealBaseStyle = Skyflow.Style(borderColor: UIColor.black, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textAlignment: .left, textColor: UIColor.blue)
+        
+        let revealStyles = Skyflow.Styles(base: revealBaseStyle)
+        
+        DispatchQueue.main.async {
+            
+            self.removeRevealElements()
+
+            let revealCardNumberInput = Skyflow.RevealElementInput(id: tokens.cardNumber, styles: revealStyles, label: "Card Number", redaction: .DEFAULT)
+        
+            self.revealCardNumber = self.revealContainer?.create(input: revealCardNumberInput, options: Skyflow.RevealElementOptions())
+        
+            let revealCVVtInput = Skyflow.RevealElementInput(id: tokens.cvv, styles: revealStyles, label: "CVV", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+        
+            self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
+        
+            let revealNameInput = Skyflow.RevealElementInput(id: tokens.name.first_name, styles: revealStyles, label: "Card Holder Name", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+        
+            self.revealName = self.revealContainer?.create(input: revealNameInput)
+
+            let revealExpirationDateInput = Skyflow.RevealElementInput(id: tokens.cardExpiration, styles: revealStyles, label: "Expiration Date", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+        
+            self.revealExpirationDate = self.revealContainer?.create(input: revealExpirationDateInput)
+        
+            self.addRevealElements()
+        }
+
+    }
+    
+    internal func removeRevealElements() {
+        self.stackView.removeArrangedSubview(self.revealCardNumber!)
+        self.stackView.removeArrangedSubview(self.revealName!)
+        self.stackView.removeArrangedSubview(self.revealCVV!)
+        self.stackView.removeArrangedSubview(self.revealExpirationDate!)
+        self.stackView.removeArrangedSubview(self.revealButton)
+
+
+        self.revealCardNumber?.removeFromSuperview()
+        self.revealName?.removeFromSuperview()
+        self.revealCVV?.removeFromSuperview()
+        self.revealExpirationDate?.removeFromSuperview()
+        self.revealButton.removeFromSuperview()
+
+        self.revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+
+    }
+    
+    internal func addRevealElements() {
+        DispatchQueue.main.async {
+            self.stackView.addArrangedSubview(self.revealName!)
+            self.stackView.addArrangedSubview(self.revealCardNumber!)
+            self.stackView.addArrangedSubview(self.revealCVV!)
+            self.stackView.addArrangedSubview(self.revealExpirationDate!)
+            self.stackView.addArrangedSubview(self.revealButton)
+
+        }
+    }
+    
+}
+
+
+
+
