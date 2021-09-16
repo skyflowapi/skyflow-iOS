@@ -3,8 +3,8 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-target 'Example' do
-  use_frameworks!
+target 'App' do
+  #use_frameworks!
 
   # Pods for skyflow-iOS-sample-app
   pod 'Skyflow'

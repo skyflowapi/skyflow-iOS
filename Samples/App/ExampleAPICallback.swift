@@ -1,6 +1,7 @@
 import Foundation
 import Skyflow
 
+
 public class ExampleAPICallback: Skyflow.Callback {
     
     private var updateSuccess: ((SuccessResponse) -> Void)?
