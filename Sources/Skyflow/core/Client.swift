@@ -18,6 +18,9 @@ public class Client {
     }
     
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback){
+        
+        var icOptions = ICOptions(tokens: options!.tokens)
+        
         if let recordEntries = records["records"] as? [[String: Any]]{
             for record in recordEntries {
                 if(!(record["table"] is String) || !(record["fields"] is [String: Any])){
@@ -25,7 +28,7 @@ public class Client {
                     return
                 }
             }
-            self.apiClient.post(records: records, callback: callback, options: options!)
+            self.apiClient.post(records: records, callback: callback, options: icOptions)
         }
         else {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
@@ -51,7 +54,7 @@ public class Client {
             var list : [RevealRequestRecord] = []
             for token in tokens
             {
-                if let redaction = token["redaction"] as? RedactionType, let id = token["id"] as? String {
+                if let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 }
                 else {

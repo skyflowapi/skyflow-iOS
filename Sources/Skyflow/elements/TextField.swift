@@ -8,11 +8,11 @@ import UIKit
 public class TextField: Element {
     
     internal var textField = FormatTextField(frame: .zero)
-    internal var errorMessage = UILabel(frame: .zero)
+    internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty: Bool = false
     internal var validationRules = SkyflowValidationSet()
     internal var stackView = UIStackView()
-    internal var textFieldLabel = UILabel(frame: .zero)
+    internal var textFieldLabel = PaddingLabel(frame: .zero)
 
     internal var textFieldCornerRadius: CGFloat {
         get {
@@ -88,6 +88,18 @@ public class TextField: Element {
         validationRules = fieldType.instance.validation
         textField.keyboardType = fieldType.instance.keyboardType
         
+        
+        //Base label styles
+        self.textFieldLabel.textColor = collectInput.labelStyles.base?.textColor ?? .none
+        self.textFieldLabel.font = collectInput.labelStyles.base?.font ?? .none
+        self.textFieldLabel.textAlignment = collectInput.labelStyles.base?.textAlignment ?? .left
+        self.textFieldLabel.insets = collectInput.labelStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
+        //Base errorText styles
+        self.errorMessage.textColor = collectInput.errorTextStyles.base?.textColor ?? .none
+        self.errorMessage.font = collectInput.errorTextStyles.base?.font ?? .none
+        self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
+        self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     
@@ -122,8 +134,16 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         textFieldValueChanged()
+        //element styles on focus
         self.textField.textColor = collectInput!.styles.focus?.textColor ?? .none
         self.textFieldBorderColor = collectInput!.styles.focus?.borderColor ?? .none
+        
+        //label styles on focus
+        self.textFieldLabel.textColor = collectInput!.labelStyles.focus?.textColor ?? .none
+        self.textFieldLabel.font = collectInput!.labelStyles.focus?.font ?? .none
+        self.textFieldLabel.textAlignment = collectInput!.labelStyles.focus?.textAlignment ?? .left
+        self.textFieldLabel.insets = collectInput.labelStyles.focus?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
         
     }
     
@@ -138,6 +158,13 @@ extension TextField: UITextFieldDelegate {
     public func textFieldDidEndEditing(_ textField: UITextField) {
         textFieldValueChanged()
         let state = self.state.getState()
+        
+        //Set label styles to base
+        self.textFieldLabel.textColor = collectInput!.labelStyles.base?.textColor ?? .none
+        self.textFieldLabel.font = collectInput!.labelStyles.base?.font ?? .none
+        self.textFieldLabel.textAlignment = collectInput!.labelStyles.base?.textAlignment ?? .left
+        self.textFieldLabel.insets = collectInput.labelStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
         if(state["isEmpty"] as! Bool)
         {
             self.textField.textColor = collectInput!.styles.empty?.textColor ?? .none
@@ -149,11 +176,12 @@ extension TextField: UITextFieldDelegate {
             self.textField.textColor = collectInput!.styles.invalid?.textColor ?? .none
             self.textFieldBorderColor = collectInput!.styles.invalid?.borderColor
             errorMessage.alpha = 1.0 //Show error message
+            
         }
         else
         {
-            self.textField.textColor = collectInput!.styles.completed?.textColor ?? .none
-            self.textFieldBorderColor = collectInput!.styles.completed?.borderColor
+            self.textField.textColor = collectInput!.styles.complete?.textColor ?? .none
+            self.textFieldBorderColor = collectInput!.styles.complete?.borderColor
             errorMessage.alpha = 0.0 //Hide error message
         }
         
@@ -184,7 +212,6 @@ internal extension TextField {
         
         errorMessage.alpha = 0.0
         errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "elements")
-        errorMessage.textColor = UIColor.red
         
         textFieldLabel.text = collectInput.label
         
@@ -220,15 +247,15 @@ internal extension TextField {
     override func setMainPaddings() {
         
         super.setMainPaddings()
-        
+
         let views = ["view": self, "stackView": stackView]
-        
+
         horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
                                                                options: .alignAllCenterY,
                                                                metrics: nil,
                                                                views: views)
         NSLayoutConstraint.activate(horizontalConstraints)
-        
+
         verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
                                                             options: .alignAllCenterX,
                                                             metrics: nil,

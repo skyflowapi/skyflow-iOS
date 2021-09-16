@@ -27,18 +27,18 @@ internal class RevealValueCallback : Callback {
         for record in records {
             let dict = record as! [String: Any]
             let fields = dict["fields"] as! [String: Any]
-            let token = dict["id"] as! String
+            let token = dict["token"] as! String
             for (_, value) in fields {
                 tokens[token] = value as? String ?? token
             }
             var successEntry: [String: String] = [:]
-            successEntry["id"] = token
+            successEntry["token"] = token
             successResponses.append(successEntry)
         }
         
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
-                revealElement.updateVal(value: tokens[revealElement.revealInput.id] ?? revealElement.revealInput.id)
+                revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
             }
         }
         
