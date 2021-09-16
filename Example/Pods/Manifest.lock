@@ -1,0 +1,16 @@
+PODS:
+  - Skyflow (1.0.1)
+
+DEPENDENCIES:
+  - Skyflow
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Skyflow
+
+SPEC CHECKSUMS:
+  Skyflow: 178687d9a5c0c00393f0ee2a13c0ab1d0b4123f3
+
+PODFILE CHECKSUM: 26bf0d1f62b2b0d965e14c8cc86f1036f02d0e07
+
+COCOAPODS: 1.11.0
