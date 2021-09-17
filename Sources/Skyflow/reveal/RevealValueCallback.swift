@@ -6,6 +6,17 @@
 //
 
 import Foundation
+/* For reference
+struct ErrorStruct {
+    var errors: [String: String]
+    var token: String
+}
+
+struct SkyflowError {
+    var code: Int
+    var description: String
+}
+*/
 
 internal class RevealValueCallback : Callback {
     var clientCallback: Callback
@@ -36,14 +47,25 @@ internal class RevealValueCallback : Callback {
             successResponses.append(successEntry)
         }
         
+        response["success"] = successResponses
+        let errors = responseJson["errors"] as! [[String: Any]]
+        print("errors:", errors)
+        response["errors"] = errors
         DispatchQueue.main.async {
-            for revealElement in self.revealElements {
-                revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
+            
+            if errors.count > 0 {
+                for revealElement in self.revealElements {
+                    revealElement.showError(message: (errors[0]["error"] as! [String:String])["description"]!)
+                }
+            }
+            else {
+                for revealElement in self.revealElements {
+                    revealElement.hideError()
+                    revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? revealElement.revealInput.token)
+                }
             }
         }
-        
-        response["success"] = successResponses
-        response["errors"] = responseJson["errors"] as! [Any]
+
         
         let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
         

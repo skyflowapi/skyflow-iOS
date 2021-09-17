@@ -52,7 +52,7 @@ public class Label: UIView {
         self.labelField.insets = self.revealInput.labelStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         //Set errorText base styles
-        self.errorMessage.text = "Invalid token"
+        self.errorMessage.alpha = 0.0
         self.errorMessage.textColor = self.revealInput.errorTextStyles?.base?.textColor ?? .none
         self.errorMessage.textAlignment = self.revealInput.errorTextStyles?.base?.textAlignment ?? .natural
         self.errorMessage.font = self.revealInput.errorTextStyles?.base?.font ?? .none
@@ -91,5 +91,14 @@ public class Label: UIView {
         NSLayoutConstraint.activate(horizontalConstraints)
         NSLayoutConstraint.activate(verticalConstraint)
 
+    }
+    
+    func showError(message: String) {
+        self.errorMessage.text = message
+        self.errorMessage.alpha = 1.0
+    }
+    
+    func hideError() {
+        self.errorMessage.alpha = 0.0
     }
 }
