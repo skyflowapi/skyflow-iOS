@@ -25,6 +25,8 @@ class RevealApiCallback : Callback {
     internal func onSuccess(_ token: Any) {
         var list_success : [RevealSuccessRecord] = []
         var list_error : [RevealErrorRecord] = []
+        var isSuccess = true
+        var errorObject: Error!
         let revealRequestGroup = DispatchGroup()
         
         for record in records
@@ -44,7 +46,8 @@ class RevealApiCallback : Callback {
                     revealRequestGroup.leave()
                 }
                 if(error != nil || response == nil){
-                    self.callback.onFailure(error!)
+                    isSuccess = false
+                    errorObject = error!
                     return
                 }
                 if let httpResponse = response as? HTTPURLResponse{
@@ -61,6 +64,8 @@ class RevealApiCallback : Callback {
                             }
                             catch let error
                             {
+                                isSuccess = false
+                                errorObject = error
                                 print(error)
                             }
                         }
@@ -83,7 +88,8 @@ class RevealApiCallback : Callback {
                         list_success.append(RevealSuccessRecord(token_id: records["token_id"] as! String, fields:records["fields"] as! [String : String]))
                     }
                     catch let error {
-                        self.callback.onFailure(error)
+                        isSuccess = false
+                        errorObject = error
                         print(error)
                     }
                 }
@@ -122,7 +128,12 @@ class RevealApiCallback : Callback {
             modifiedResponse["records"] = records
             modifiedResponse["errors"] = errors
 
-            self.callback.onSuccess(modifiedResponse)
+            if isSuccess {
+                self.callback.onSuccess(modifiedResponse)
+            }
+            else {
+                self.callback.onFailure(errorObject)
+            }
         }
     }
     internal func onFailure(_ error: Error) {

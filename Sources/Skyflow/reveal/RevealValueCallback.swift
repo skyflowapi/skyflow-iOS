@@ -49,32 +49,43 @@ internal class RevealValueCallback : Callback {
         
         response["success"] = successResponses
         let errors = responseJson["errors"] as! [[String: Any]]
-        print("errors:", errors)
+        let tokensToErrors = getTokensToErrors(errors)
+
         response["errors"] = errors
         DispatchQueue.main.async {
+
+            for revealElement in self.revealElements {
+                let inputToken = revealElement.revealInput.token
+                revealElement.hideError()
+                revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
+                if let errorMessage = tokensToErrors[inputToken] {
+                    revealElement.showError(message: errorMessage)
+                }
+            }
             
-            if errors.count > 0 {
-                for revealElement in self.revealElements {
-                    revealElement.showError(message: (errors[0]["error"] as! [String:String])["description"]!)
-                }
-            }
-            else {
-                for revealElement in self.revealElements {
-                    revealElement.hideError()
-                    revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? revealElement.revealInput.token)
-                }
-            }
+            let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
+
+            self.clientCallback.onSuccess(dataString!)
         }
 
-        
-        let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
-        
-        clientCallback.onSuccess(dataString!)
     }
     
     func onFailure(_ error: Error) {
         print(error)
         clientCallback.onFailure(error)
+    }
+    
+    
+    func getTokensToErrors(_ errors: [[String: Any]]) -> [String: String]{
+        var result = [String: String]()
+        for error in errors {
+            print("error is:", error)
+            let token = error["token"] as! String
+            
+            result[token] = "Invalid Token"
+        }
+        
+        return result
     }
     
     
