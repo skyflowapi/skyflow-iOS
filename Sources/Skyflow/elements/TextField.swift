@@ -87,7 +87,7 @@ public class TextField: Element {
         //            textField.formatPattern = fieldType.instance.formatPattern
         validationRules = fieldType.instance.validation
         textField.keyboardType = fieldType.instance.keyboardType
-        
+
         
         //Base label styles
         self.textFieldLabel.textColor = collectInput.labelStyles.base?.textColor ?? .none
@@ -100,6 +100,12 @@ public class TextField: Element {
         self.errorMessage.font = collectInput.errorTextStyles.base?.font ?? .none
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
         self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
+        
+        if let altText = self.collectInput.altText {
+            self.textField.secureText = altText
+        }
+        
     }
     
     
