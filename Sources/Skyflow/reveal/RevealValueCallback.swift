@@ -27,33 +27,52 @@ internal class RevealValueCallback : Callback {
         for record in records {
             let dict = record as! [String: Any]
             let fields = dict["fields"] as! [String: Any]
-            let token = dict["id"] as! String
+            let token = dict["token"] as! String
             for (_, value) in fields {
                 tokens[token] = value as? String ?? token
             }
             var successEntry: [String: String] = [:]
-            successEntry["id"] = token
+            successEntry["token"] = token
             successResponses.append(successEntry)
         }
         
+        response["success"] = successResponses
+        let errors = responseJson["errors"] as! [[String: Any]]
+        let tokensToErrors = getTokensToErrors(errors)
+        response["errors"] = errors
+        
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
-                revealElement.updateVal(value: tokens[revealElement.revealInput.id] ?? revealElement.revealInput.id)
+                revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
+                let inputToken = revealElement.revealInput.token
+                revealElement.hideError()
+                revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
+                if let errorMessage = tokensToErrors[inputToken] {
+                    revealElement.showError(message: errorMessage)
+                }
             }
+
+            let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
+
+            self.clientCallback.onSuccess(dataString!)
         }
         
-        response["success"] = successResponses
-        response["errors"] = responseJson["errors"] as! [Any]
-        
-        let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
-        
-        clientCallback.onSuccess(dataString!)
-    }
+}
     
     func onFailure(_ error: Error) {
         print(error)
         clientCallback.onFailure(error)
     }
     
+    func getTokensToErrors(_ errors: [[String: Any]]) -> [String: String]{
+            var result = [String: String]()
+            for error in errors {
+                let token = error["token"] as! String
+
+                result[token] = "Invalid Token"
+            }
+
+            return result
+        }
     
 }

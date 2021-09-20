@@ -14,6 +14,7 @@ class RevealApiCallback : Callback {
     var connectionUrl : String
     var records : [RevealRequestRecord]
     
+    
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
                   records : [RevealRequestRecord]){
         self.apiClient = apiClient
@@ -26,6 +27,9 @@ class RevealApiCallback : Callback {
         var list_success : [RevealSuccessRecord] = []
         var list_error : [RevealErrorRecord] = []
         let revealRequestGroup = DispatchGroup()
+        
+        var isSuccess = true
+        var errorObject: Error!
         
         for record in records
         {
@@ -44,7 +48,8 @@ class RevealApiCallback : Callback {
                     revealRequestGroup.leave()
                 }
                 if(error != nil || response == nil){
-                    self.callback.onFailure(error!)
+                    isSuccess = false
+                    errorObject = error!
                     return
                 }
                 if let httpResponse = response as? HTTPURLResponse{
@@ -61,6 +66,8 @@ class RevealApiCallback : Callback {
                             }
                             catch let error
                             {
+                                isSuccess = false
+                                errorObject = error
                                 print(error)
                             }
                         }
@@ -83,7 +90,8 @@ class RevealApiCallback : Callback {
                         list_success.append(RevealSuccessRecord(token_id: records["token_id"] as! String, fields:records["fields"] as! [String : String]))
                     }
                     catch let error {
-                        self.callback.onFailure(error)
+                        isSuccess = false
+                        errorObject = error
                         print(error)
                     }
                 }
@@ -97,7 +105,7 @@ class RevealApiCallback : Callback {
             var records: [Any] = []
             for record in list_success {
                 var entry: [String: Any] = [:]
-                entry["id"] = record.token_id
+                entry["token"] = record.token_id
                 var fields: [String: Any] = [:]
                 for field in record.fields
                 {
@@ -110,7 +118,7 @@ class RevealApiCallback : Callback {
             for record in list_error
             {
                 var entry: [String: Any] = [:]
-                entry["id"] = record.id
+                entry["token"] = record.id
                 var temp: [String: Any] = [:]
                 for field in record.error {
                     temp[field.key] = field.value
@@ -122,7 +130,12 @@ class RevealApiCallback : Callback {
             modifiedResponse["records"] = records
             modifiedResponse["errors"] = errors
 
-            self.callback.onSuccess(modifiedResponse)
+            if isSuccess {
+                self.callback.onSuccess(modifiedResponse)
+            }
+            else {
+                self.callback.onFailure(errorObject)
+            }
         }
     }
     internal func onFailure(_ error: Error) {

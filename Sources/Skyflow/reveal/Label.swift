@@ -14,7 +14,8 @@ public class Label: UIView {
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!
     internal var stackView = UIStackView()
-    internal var labelField = UILabel(frame: .zero)
+    internal var labelField = PaddingLabel(frame: .zero)
+    internal var errorMessage = PaddingLabel(frame: .zero)
   
     internal var horizontalConstraints = [NSLayoutConstraint]()
     
@@ -43,19 +44,32 @@ public class Label: UIView {
     internal func buildLabel(){
         self.translatesAutoresizingMaskIntoConstraints = false
         
-        labelField.text = revealInput.label
-
-        stackView.axis = .vertical
+        //Set label base styles
+        self.labelField.text = self.revealInput.label
+        self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
+        self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
+        self.labelField.font = self.revealInput.labelStyles?.base?.font ?? .none
+        self.labelField.insets = self.revealInput.labelStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
+        //Set errorText base styles
+        self.errorMessage.alpha = 0.0
+        self.errorMessage.textColor = self.revealInput.errorTextStyles?.base?.textColor ?? .none
+        self.errorMessage.textAlignment = self.revealInput.errorTextStyles?.base?.textAlignment ?? .natural
+        self.errorMessage.font = self.revealInput.errorTextStyles?.base?.font ?? .none
+        self.errorMessage.insets = self.revealInput.errorTextStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
+        self.stackView.axis = .vertical
 //        stackView.distribution = .equalSpacing
-        stackView.spacing = 0
-        stackView.alignment = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.stackView.spacing = 0
+        self.stackView.alignment = .fill
+        self.stackView.translatesAutoresizingMaskIntoConstraints = false
 
         
-        stackView.addArrangedSubview(labelField)
-        stackView.addArrangedSubview(skyflowLabelView)
+        self.stackView.addArrangedSubview(self.labelField)
+        self.stackView.addArrangedSubview(self.skyflowLabelView)
+        self.stackView.addArrangedSubview(self.errorMessage)
         
-        addSubview(stackView);
+        addSubview(self.stackView);
         
         setMainPaddings();
     }
@@ -64,11 +78,27 @@ public class Label: UIView {
                 
         let views = ["view": self, "stackView": stackView]
         
+        verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
+                                                            options: .alignAllCenterX,
+                                                            metrics: nil,
+                                                            views: views)
+
+        
         horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
                                                                options: .alignAllCenterY,
                                                                metrics: nil,
                                                                views: views)
         NSLayoutConstraint.activate(horizontalConstraints)
-        
+        NSLayoutConstraint.activate(verticalConstraint)
+
+    }
+    
+    func showError(message: String) {
+        self.errorMessage.text = message
+        self.errorMessage.alpha = 1.0
+    }
+
+    func hideError() {
+        self.errorMessage.alpha = 0.0
     }
 }
