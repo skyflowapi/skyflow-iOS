@@ -19,7 +19,7 @@ public class Client {
     
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback){
         
-        var icOptions = ICOptions(tokens: options!.tokens)
+        let icOptions = ICOptions(tokens: options!.tokens)
         
         if let recordEntries = records["records"] as? [[String: Any]]{
             for record in recordEntries {
