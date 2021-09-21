@@ -262,8 +262,8 @@ When the form is ready to be submitted, call the `collect(options: Skyflow.Inser
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 
-// Send the Non-PCI records as extraData of InsertOptions (optional)
-let options = Skyflow.CollectOptions(tokens: true, extraData: nonPCIRecords)
+// Send the Non-PCI records as additionalFields of InsertOptions (optional)
+let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
 
 //Custom callback - implementation of Skyflow.callback
 let insertCallback = InsertCallback() 
@@ -317,8 +317,8 @@ let skyflowElement = container.create(input: input, options: requiredOption)
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 
-// Send the Non-PCI records as extraData of InsertOptions (optional)
-let collectOptions = Skyflow.CollectOptions(tokens: true, extraData: nonPCIRecords) 
+// Send the Non-PCI records as additionalFields of InsertOptions (optional)
+let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords) 
 
  
 //Implement a custom Skyflow.Callback to be called on Insertion success/failure
