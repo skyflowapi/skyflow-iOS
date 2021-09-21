@@ -133,4 +133,15 @@ public class SkyflowLabelView: UIView {
         addSubview(self.label)
         self.padding = revealInput.styles?.base?.padding ?? .zero
     }
+    
+    internal func updateStyle() {
+        let style = revealInput.styles?.invalid
+        let fallbackStyle = revealInput.styles?.base
+        
+        self.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
+        self.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
+        self.borderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
+        self.cornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
+        self.borderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
+    }
 }

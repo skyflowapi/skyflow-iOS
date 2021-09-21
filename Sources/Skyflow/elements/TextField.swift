@@ -76,15 +76,9 @@ public class TextField: Element {
     /// Field Configuration
     override func setupField() {
         super.setupField()
-        textField.font = collectInput.styles.base?.font ?? .none
         textField.placeholder = collectInput.placeholder
-        textField.textAlignment = collectInput.styles.base?.textAlignment ?? .natural
-        textField.textColor = collectInput.styles.base?.textColor ?? .none
-        textField.padding = collectInput.styles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        self.textFieldBorderWidth = collectInput.styles.base?.borderWidth ?? 0
-        self.textFieldBorderColor = collectInput.styles.base?.borderColor ?? .none
-        self.textFieldCornerRadius = collectInput.styles.base?.cornerRadius ?? 0
-        //            textField.formatPattern = fieldType.instance.formatPattern
+        updateInputStyle()
+        // textField.formatPattern = fieldType.instance.formatPattern
         validationRules = fieldType.instance.validation
         textField.keyboardType = fieldType.instance.keyboardType
 
@@ -134,22 +128,38 @@ extension TextField {
     }
 }
 
-/// Textfiled delegate
+/// Textfield delegate
 extension TextField: UITextFieldDelegate {
+    
+    private func updateInputStyle(_ style: Style? = nil) {
+        let fallbackStyle = self.collectInput.inputStyles.base
+        self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
+        self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
+        self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
+        self.textField.padding = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
+        self.textFieldBorderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
+        self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ??  0
+    }
+    
+    private func updateLabelStyle(_ style: Style? = nil) {
+        let fallbackStyle = self.collectInput!.labelStyles.base
+        self.textFieldLabel.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
+        self.textFieldLabel.font = style?.font ?? fallbackStyle?.font ?? .none
+        self.textFieldLabel.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .left
+        self.textFieldLabel.insets = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
+    }
+    
     
     /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         textFieldValueChanged()
         //element styles on focus
-        self.textField.textColor = collectInput!.styles.focus?.textColor ?? .none
-        self.textFieldBorderColor = collectInput!.styles.focus?.borderColor ?? .none
+        updateInputStyle(collectInput.inputStyles.focus)
         
         //label styles on focus
-        self.textFieldLabel.textColor = collectInput!.labelStyles.focus?.textColor ?? .none
-        self.textFieldLabel.font = collectInput!.labelStyles.focus?.font ?? .none
-        self.textFieldLabel.textAlignment = collectInput!.labelStyles.focus?.textAlignment ?? .left
-        self.textFieldLabel.insets = collectInput.labelStyles.focus?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        
+        updateLabelStyle(collectInput!.labelStyles.focus)
         
     }
     
@@ -166,28 +176,22 @@ extension TextField: UITextFieldDelegate {
         let state = self.state.getState()
         
         //Set label styles to base
-        self.textFieldLabel.textColor = collectInput!.labelStyles.base?.textColor ?? .none
-        self.textFieldLabel.font = collectInput!.labelStyles.base?.font ?? .none
-        self.textFieldLabel.textAlignment = collectInput!.labelStyles.base?.textAlignment ?? .left
-        self.textFieldLabel.insets = collectInput.labelStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        updateLabelStyle()
         
         if(state["isEmpty"] as! Bool)
         {
-            self.textField.textColor = collectInput!.styles.empty?.textColor ?? .none
-            self.textFieldBorderColor = collectInput!.styles.empty?.borderColor
+            updateInputStyle(collectInput!.inputStyles.empty)
             errorMessage.alpha = 0.0 //Hide error message
         }
         else if(!(state["isValid"] as! Bool))
         {
-            self.textField.textColor = collectInput!.styles.invalid?.textColor ?? .none
-            self.textFieldBorderColor = collectInput!.styles.invalid?.borderColor
+            updateInputStyle(collectInput!.inputStyles.invalid)
             errorMessage.alpha = 1.0 //Show error message
             
         }
         else
         {
-            self.textField.textColor = collectInput!.styles.complete?.textColor ?? .none
-            self.textFieldBorderColor = collectInput!.styles.complete?.borderColor
+            updateInputStyle(collectInput!.inputStyles.complete)
             errorMessage.alpha = 0.0 //Hide error message
         }
         
