@@ -157,7 +157,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
    table : String,                  //the table this data belongs to
    column : String,                 //the column into which this data should be inserted
    type: Skyflow.ElementType        //Skyflow.ElementType enum
-   styles: Skyflow.Styles,          //optional styles that should be applied to the form element
+   inputStyles: Skyflow.Styles,     //optional styles that should be applied to the form element
    labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
    errorTextStyles: Skyflow.Styles,  //optional styles that will be applied to the errorText of the collect element
    label: String,                   //optional label for the form element
@@ -168,7 +168,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
 The `table` and `column` parameters indicate which table and column in the vault the Element corresponds to.
 Note: Use dot delimited strings to specify columns nested inside JSON fields (e.g. address.street.line1).
 
-The `styles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
+The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
 
 - `base`: all other variants inherit from these styles
 - `complete`: applied when the Element has valid input
@@ -228,7 +228,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
     table : String,                  //the table this data belongs to
     column : String,                 //the column into which this data should be inserted
     type: Skyflow.ElementType        //Skyflow.ElementType enum
-    styles: Skyflow.Styles,          //optional styles that should be applied to the form element
+    inputStyles: Skyflow.Styles,          //optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles,  //optional styles that will be applied to the errorText of the collect element
     label: String,                   //optional label for the form element
@@ -290,20 +290,20 @@ let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
 let completedStyle = Skyflow.Style(borderColor: UIColor.green)
 val focusTextStyle = Skyflow.Style(textColor = UIColor.red)
-let styles = Skyflow.Styles(base: baseStyle, completed: completedStyle)
+let inputStyles = Skyflow.Styles(base: baseStyle, completed: completedStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle, focus: focusTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
  
 // Create a CollectElementInput
 let input = Skyflow.CollectElementInput(
-table: "cards",
-column: "cardNumber",
-type: Skyflow.ElementType.CARD_NUMBER
-inputStyles: inputStyles,
-labelStyles: labelStyles,
-errorTextStyles: errorTextStyles,
-label: "card number",
-placeholder: "card number",
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER
+    inputStyles: inputStyles,
+    labelStyles: labelStyles,
+    errorTextStyles: errorTextStyles,
+    label: "card number",
+    placeholder: "card number"
 )
 
 // Create option to make the element required
@@ -491,24 +491,24 @@ To create a reveal Element, we must first construct a Skyflow.RevealElementInput
 let revealElementInput = Skyflow.RevealElementInput(
     token: "string",
     redaction: Skyflow.RedactionType.DEFAULT,
-    styles: Skyflow.Styles(),        //optional, styles to be applied to the element
+    inputStyles: Skyflow.Styles(),        //optional, styles to be applied to the element
     labelStyles: Skyflow.Styles(),  //optional, styles to be applied to the label of the reveal element
     errorTextStyles: Skyflow.Styles(),  //optional styles that will be applied to the errorText of the reveal element
     label: "cardNumber"            //optional, label for the element,
     altText: "XXXX XXXX XXXX XXXX" //optional, string that is shown before reveal, will show token if altText is not provided
 ```
-The `styles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
+The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
 
 The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyflow.Styles` object as described in the [previous section](#step-2-create-a-collect-element), the only state available for a reveal element is the base state.
 
 For a list of acceptable redaction types, see the [section above](#Retrieving-data-from-the-vault).
 
-The `styles`, `labelStyles` and  `errorTextStyles` parameters accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but only a single variant is available i.e. base. 
+The `inputStyles`, `labelStyles` and  `errorTextStyles` parameters accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but only a single variant is available i.e. base. 
 
 An example of a inputStyles object:
 
 ```swift
-let styles = Skyflow.Styles(base: Skyflow.Style(borderColor = Color.BLUE))
+let inputStyles = Skyflow.Styles(base: Skyflow.Style(borderColor = Color.BLUE))
 ```
 
 An example of a labelStyles object:
@@ -554,7 +554,6 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.REVEAL)
 
 //Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
-let styles = Skyflow.Styles(base: baseStyle)
 val baseTextStyle = Skyflow.Style(textColor: UIColor.BLACK)
 val inputStyles = Skyflow.Styles(base: baseStyle)
 val labelStyles = Skyflow.Styles(base: baseTextStyle)
@@ -564,7 +563,7 @@ val errorTextStyles = Skyflow.Styles(base: baseTextStyle)
 let cardNumberInput = Skyflow.RevealElementInput(
     token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
     redaction: Skyflow.RedactionType.PLAIN_TEXT,
-    styles: inputStyles,
+    inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
     label: "cardnumber",
@@ -576,7 +575,7 @@ let cardNumberElement = container.create(input: cardNumberInput)
 let cvvInput = Skyflow.RevealElementInput(
     token: "89024714-6a26-4256-b9d4-55ad69aa4047",
     redaction: Skyflow.RedactionType.PLAIN_TEXT
-    styles: inputStyles,
+    inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
     label: "cvv",
