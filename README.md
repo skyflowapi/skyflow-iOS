@@ -156,10 +156,10 @@ To create a collect Element, we must first construct a Skyflow.CollectElementInp
 let collectElementInput =  Skyflow.CollectElementInput(
    table : String,                  //the table this data belongs to
    column : String,                 //the column into which this data should be inserted
-   type: Skyflow.ElementType        //Skyflow.ElementType enum
+   type: Skyflow.ElementType,       //Skyflow.ElementType enum
    inputStyles: Skyflow.Styles,     //optional styles that should be applied to the form element
    labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
-   errorTextStyles: Skyflow.Styles,  //optional styles that will be applied to the errorText of the collect element
+   errorTextStyles: Skyflow.Styles, //optional styles that will be applied to the errorText of the collect element
    label: String,                   //optional label for the form element
    placeholder: String,             //optional placeholder for the form element
    altText: String,                 //optional string that acts as an initial value for the collect element
@@ -227,8 +227,8 @@ Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objec
 let collectElementInput =  Skyflow.CollectElementInput(
     table : String,                  //the table this data belongs to
     column : String,                 //the column into which this data should be inserted
-    type: Skyflow.ElementType        //Skyflow.ElementType enum
-    inputStyles: Skyflow.Styles,          //optional styles that should be applied to the form element
+    type: Skyflow.ElementType,       //Skyflow.ElementType enum
+    inputStyles: Skyflow.Styles,     //optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles,  //optional styles that will be applied to the errorText of the collect element
     label: String,                   //optional label for the form element
@@ -298,7 +298,7 @@ let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
 let input = Skyflow.CollectElementInput(
     table: "cards",
     column: "cardNumber",
-    type: Skyflow.ElementType.CARD_NUMBER
+    type: Skyflow.ElementType.CARD_NUMBER,
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -423,12 +423,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     let invalidID = ["invalid skyflow ID"] 
     let badRecord = ["ids": invalidID, "table": "cards", "redaction": "PLAIN_TEXT"]
 
-
-    let recordSkyflowIDs = ["invalid skyflow id"]   // invalid skyflow ID
-    record1.put("ids",recordSkyflowIDs)
-    recordsArray = [record1]
-    val records = JSONObject()
-    records.put("records",recordsArray)
+    let records = ["records": [record, badRecord]]
 
     skyflowClient.getById(records = records, callback = getCallback)
     ```
