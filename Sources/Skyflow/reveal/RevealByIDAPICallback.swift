@@ -86,7 +86,6 @@ class RevealByIDAPICallback : Callback {
                             {
                                 isSuccess = false
                                 errorObject = error
-                                print(error.localizedDescription)
                             }
                         }
                         return
@@ -112,7 +111,6 @@ class RevealByIDAPICallback : Callback {
                     catch let error {
                         isSuccess = false
                         errorObject = error
-                        print(error.localizedDescription)
                     }
                 }
             }

@@ -68,7 +68,6 @@ class RevealApiCallback : Callback {
                             {
                                 isSuccess = false
                                 errorObject = error
-                                print(error.localizedDescription)
                             }
                         }
                         var error:[String:String] = [:]
@@ -92,7 +91,6 @@ class RevealApiCallback : Callback {
                     catch let error {
                         isSuccess = false
                         errorObject = error
-                        print(error.localizedDescription)
                     }
                 }
             }
