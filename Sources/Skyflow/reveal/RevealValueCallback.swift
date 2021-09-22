@@ -19,29 +19,31 @@ internal class RevealValueCallback : Callback {
     func onSuccess(_ responseBody: Any) {
         var tokens: [String: String] = [:]
         
-        let responseJson = responseBody as! [String: Any]
-        let records = responseJson["records"] as! [Any]
+        
+        let responseJson = responseBody as? [String: Any]
         var response: [String: Any] = [:]
         var successResponses: [Any] = []
         
-        for record in records {
-            let dict = record as! [String: Any]
-            let fields = dict["fields"] as! [String: Any]
-            let token = dict["token"] as! String
-            for (_, value) in fields {
-                tokens[token] = value as? String ?? token
+        if let records = responseJson?["records"] as? [Any] {
+            for record in records {
+                let dict = record as! [String: Any]
+                let fields = dict["fields"] as! [String: Any]
+                let token = dict["token"] as! String
+                for (_, value) in fields {
+                    tokens[token] = value as? String ?? token
+                }
+                var successEntry: [String: String] = [:]
+                successEntry["token"] = token
+                successResponses.append(successEntry)
             }
-            var successEntry: [String: String] = [:]
-            successEntry["token"] = token
-            successResponses.append(successEntry)
         }
         
         if(successResponses.count != 0){
             response["success"] = successResponses
         }
-        let errors = responseJson["errors"] as! [[String: Any]]
+        let errors = responseJson?["errors"] as? [[String: Any]]
         let tokensToErrors = getTokensToErrors(errors)
-        if(errors.count != 0){
+        if(errors?.count != 0){
             response["errors"] = errors
         }
         
@@ -67,15 +69,17 @@ internal class RevealValueCallback : Callback {
         clientCallback.onFailure(error)
     }
     
-    func getTokensToErrors(_ errors: [[String: Any]]) -> [String: String]{
+    func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String]{
+
             var result = [String: String]()
-            for error in errors {
-                let token = error["token"] as! String
+            if let errorsObj = errors{
+                    for error in errorsObj {
+                        let token = error["token"] as! String
 
-                result[token] = "Invalid Token"
+                        result[token] = "Invalid Token"
+                    }
+                }
+                return result
             }
-
-            return result
-        }
     
 }
