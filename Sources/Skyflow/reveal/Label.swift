@@ -95,6 +95,7 @@ public class Label: UIView {
     
     func showError(message: String) {
         self.errorMessage.text = message
+        self.skyflowLabelView.updateStyle()
         self.errorMessage.alpha = 1.0
     }
 
