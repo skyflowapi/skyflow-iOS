@@ -125,18 +125,18 @@ public class SkyflowLabelView: UIView {
         self.label.secureText = self.revealInput.altText ?? self.revealInput.token
         self.translatesAutoresizingMaskIntoConstraints = false
         self.label.translatesAutoresizingMaskIntoConstraints = false
-        self.textAlignment = revealInput.styles?.base?.textAlignment ?? .natural
-        self.textColor = revealInput.styles?.base?.textColor ?? .none
-        self.borderColor = revealInput.styles?.base?.borderColor ?? .none
-        self.cornerRadius = revealInput.styles?.base?.cornerRadius ?? 0
-        self.borderWidth = revealInput.styles?.base?.borderWidth ?? 0
+        self.textAlignment = revealInput.inputStyles?.base?.textAlignment ?? .natural
+        self.textColor = revealInput.inputStyles?.base?.textColor ?? .none
+        self.borderColor = revealInput.inputStyles?.base?.borderColor ?? .none
+        self.cornerRadius = revealInput.inputStyles?.base?.cornerRadius ?? 0
+        self.borderWidth = revealInput.inputStyles?.base?.borderWidth ?? 0
         addSubview(self.label)
-        self.padding = revealInput.styles?.base?.padding ?? .zero
+        self.padding = revealInput.inputStyles?.base?.padding ?? .zero
     }
     
     internal func updateStyle() {
-        let style = revealInput.styles?.invalid
-        let fallbackStyle = revealInput.styles?.base
+        let style = revealInput.inputStyles?.invalid
+        let fallbackStyle = revealInput.inputStyles?.base
         
         self.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
