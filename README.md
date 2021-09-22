@@ -29,17 +29,19 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
 ----
 Use the ```initialize()``` method to initialize a Skyflow client as shown below. 
 ```swift
-let demoTokenProvider = DemoTokenProvider() //DemoTokenProvider is an implementation of the Skyflow.TokenProvider protocol
+//DemoTokenProvider is an implementation of the Skyflow.TokenProvider protocol
+let demoTokenProvider = DemoTokenProvider() 
 
-let config = Skyflow.Configuration(vaultID: <VAULT_ID>,
-vaultURL: <VAULT_URL>,
-tokenProvider: demoTokenProvider
+let config = Skyflow.Configuration(
+    vaultID: <VAULT_ID>,
+    vaultURL: <VAULT_URL>,
+    tokenProvider: demoTokenProvider
 )
 
 let skyflowClient = Skyflow.initialize(config)
 ```
 
-For the tokenProvider parameter, pass in an implementation of the Skyflow.TokenProvider protocol that declares a getBearerToken method which retrieves a Skyflow bearer token from your backend. This function will be invoked when the SDK needs to insert or retrieve data from the vault.
+For the tokenProvider parameter, pass in an implementation of the `Skyflow.TokenProvider` protocol that declares a getBearerToken method which retrieves a Skyflow bearer token from your backend. This function will be invoked when the SDK needs to insert or retrieve data from the vault.
 
 For example, if the response of the consumer tokenAPI is in the below format
 
@@ -94,7 +96,7 @@ To insert data into the vault from the integrated application, use the ```insert
 ```swift
 let records = [
   [
-    table: "string",    //table into which record should be inserted
+    table: "string",        //table into which record should be inserted
     fields: [                         
       column1 : "value",    //column names should match vault column names
       //...additional fields here
@@ -103,7 +105,7 @@ let records = [
   //...additional records here
 ]
 let insertOptions = Skyflow.InsertOptions(tokens: false) //indicates whether or not tokens should be returned for the inserted data. Defaults to 'true'
-let insertCallback = InsertCallback()       //Custom callback - implementation of Skyflow.Callback
+let insertCallback = InsertCallback()                   //Custom callback - implementation of Skyflow.Callback
 skyflowClient.insert(records: records, options: insertOptions, callback: insertCallback)
 ```
 
@@ -221,7 +223,7 @@ Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the
 - `EXPIRATION_DATE`
 - `CVV`
 
-Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a Skyflow.CollectElementInput object as defined above and the `options` parameter takes an Skyflow.CollectElementOptions object as described below:
+Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
 
 ```swift
 let collectElementInput =  Skyflow.CollectElementInput(
@@ -230,7 +232,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
     type: Skyflow.ElementType,       //Skyflow.ElementType enum
     inputStyles: Skyflow.Styles,     //optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
-    errorTextStyles: Skyflow.Styles,  //optional styles that will be applied to the errorText of the collect element
+    errorTextStyles: Skyflow.Styles, //optional styles that will be applied to the errorText of the collect element
     label: String,                   //optional label for the form element
     placeholder: String,             //optional placeholder for the form element
     altText: String,                 //optional string that acts as an initial value for the collect element
@@ -257,7 +259,7 @@ stackView.addArrangedSubview(element)
 The Skyflow Element is an implementation of the UIView so it can be used/mounted similarly.
 
 #### Step 4 :  Collect data from Elements
-When the form is ready to be submitted, call the `collect(options: Skyflow.InsertOptions? = nil, callback: Skyflow.Callback)` method on the container object. The options parameter takes a Skyflow.InsertOptions object as shown below:
+When the form is ready to be submitted, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 ```swift
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
@@ -317,7 +319,7 @@ let skyflowElement = container.create(input: input, options: requiredOption)
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 
-// Send the Non-PCI records as additionalFields of InsertOptions (optional)
+// Send the Non-PCI records as additionalFields of CollectOptions (optional)
 let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords) 
 
  
@@ -372,7 +374,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     {
       "records":[
         {
-          token: "string",                 // token for the record to be fetched
+          token: "string",                    // token for the record to be fetched
           redaction: Skyflow.RedactionType    //redaction to be applied to retrieved data
         }
       ]
@@ -381,7 +383,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
    
   An example of a detokenize call:
   ```swift
-  let getCallback = GetCallback() //Custom callback - implementation of Skyflow.Callback
+  let getCallback = GetCallback()   //Custom callback - implementation of Skyflow.Callback
 
   let records = ["records": ["token": "45012507-f72b-4f5c-9bf9-86b133bae719", "redaction": RedactionType.PLAIN_TEXT]]
 
@@ -486,11 +488,11 @@ To create a reveal Element, we must first construct a Skyflow.RevealElementInput
 let revealElementInput = Skyflow.RevealElementInput(
     token: "string",
     redaction: Skyflow.RedactionType.DEFAULT,
-    inputStyles: Skyflow.Styles(),        //optional, styles to be applied to the element
-    labelStyles: Skyflow.Styles(),  //optional, styles to be applied to the label of the reveal element
-    errorTextStyles: Skyflow.Styles(),  //optional styles that will be applied to the errorText of the reveal element
-    label: "cardNumber"            //optional, label for the element,
-    altText: "XXXX XXXX XXXX XXXX" //optional, string that is shown before reveal, will show token if altText is not provided
+    inputStyles: Skyflow.Styles(),       //optional, styles to be applied to the element
+    labelStyles: Skyflow.Styles(),       //optional, styles to be applied to the label of the reveal element
+    errorTextStyles: Skyflow.Styles(),   //optional styles that will be applied to the errorText of the reveal element
+    label: "cardNumber"                  //optional, label for the element,
+    altText: "XXXX XXXX XXXX XXXX"       //optional, string that is shown before reveal, will show token if altText is not provided
 ```
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
 
