@@ -130,8 +130,12 @@ class RevealApiCallback : Callback {
                 errors.append(entry)
             }
             var modifiedResponse: [String: Any] = [:]
+            if(records.count != 0){
             modifiedResponse["records"] = records
+            }
+            if(errors.count != 0){
             modifiedResponse["errors"] = errors
+            }
 
             if isSuccess {
                 self.callback.onSuccess(modifiedResponse)

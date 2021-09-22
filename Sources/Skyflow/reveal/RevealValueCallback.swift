@@ -36,10 +36,14 @@ internal class RevealValueCallback : Callback {
             successResponses.append(successEntry)
         }
         
-        response["success"] = successResponses
+        if(successResponses.count != 0){
+            response["success"] = successResponses
+        }
         let errors = responseJson["errors"] as! [[String: Any]]
         let tokensToErrors = getTokensToErrors(errors)
-        response["errors"] = errors
+        if(errors.count != 0){
+            response["errors"] = errors
+        }
         
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
