@@ -60,7 +60,7 @@ internal class RevealValueCallback : Callback {
 }
     
     func onFailure(_ error: Error) {
-        print(error)
+        print(error.localizedDescription)
         clientCallback.onFailure(error)
     }
     

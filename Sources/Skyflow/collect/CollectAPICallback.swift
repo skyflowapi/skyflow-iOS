@@ -94,7 +94,7 @@ internal class CollectAPICallback: Callback {
                                                 
                     } catch let error {
                         self.callback.onFailure(error)
-                        print(error)
+                        print(error.localizedDescription)
                     }
                 }
             }

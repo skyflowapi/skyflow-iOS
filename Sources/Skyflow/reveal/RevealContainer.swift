@@ -23,7 +23,7 @@ public extension Container {
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
         //Create GetOptions object from RevealOptions object
-        self.skyflow.get(records: records, options: options, callback: revealValueCallback)
+        self.skyflow.detokenize(records: records, options: options, callback: revealValueCallback)
     }
 }
 
