@@ -100,6 +100,9 @@ internal class CollectAPICallback: Callback {
             }
             task.resume()
         }
+        else {
+            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+        }
     }
     
     internal func onFailure(_ error: Error) {

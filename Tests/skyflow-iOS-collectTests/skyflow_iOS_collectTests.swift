@@ -103,7 +103,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", styles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options) as? TextField
         
