@@ -369,7 +369,7 @@ container.collect(options: collectOptions, callback: insertCallback)
 For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
 
 - ### Using Skyflow tokens
-    For retrieving using tokens, use the `detokenize(records)` method. The records parameter takes a JSON object that contains `records` to be fetched as shown below.
+    For retrieving using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
     ```json5
     {
       "records":[
@@ -385,9 +385,9 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
   ```swift
   let getCallback = GetCallback()   //Custom callback - implementation of Skyflow.Callback
 
-  let records = ["records": ["token": "45012507-f72b-4f5c-9bf9-86b133bae719", "redaction": RedactionType.PLAIN_TEXT]]
+  let records = ["records": ["token": "45012507-f72b-4f5c-9bf9-86b133bae719", "redaction": RedactionType.PLAIN_TEXT]] as [String: Any]
 
-  skyflowClient.detokenize(records = records, callback = getCallback)
+  skyflowClient.detokenize(records: records, callback: getCallback)
   ```
   The sample response:
   ```json
@@ -402,7 +402,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
   ```
 
 - ### Using Skyflow ID's
-    For retrieving using SkyflowID's, use the `getById(records)` method.The records parameter takes a JSON object that contains `records` to be fetched as shown below.
+    For retrieving using SkyflowID's, use the `getById(records)` method.The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
     ```json5
     {
       "records":[
@@ -420,14 +420,14 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     let getCallback = GetCallback() //Custom callback - implementation of Skyflow.Callback
 
     let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
-    let record = ["ids": skyflowIDs, "table": "cards", "redaction": "PLAIN_TEXT"]
+    let record = ["ids": skyflowIDs, "table": "cards", "redaction": "PLAIN_TEXT"] as [String : Any]
 
-    let invalidID = ["invalid skyflow ID"] 
-    let badRecord = ["ids": invalidID, "table": "cards", "redaction": "PLAIN_TEXT"]
+    let invalidID = ["invalid skyflow ID"]
+    let badRecord = ["ids": invalidID, "table": "cards", "redaction": "ab"] as [String : Any]
 
     let records = ["records": [record, badRecord]]
 
-    skyflowClient.getById(records = records, callback = getCallback)
+    skyflowClient.getById(records: records, callback: getCallBack)
     ```
 
   The sample response:
