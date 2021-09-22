@@ -31,6 +31,11 @@ class RevealApiCallback : Callback {
         var isSuccess = true
         var errorObject: Error!
         
+        if (URL(string: (connectionUrl+"/tokens")) == nil) {
+            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            return
+        }
+        
         for record in records
         {
             let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))

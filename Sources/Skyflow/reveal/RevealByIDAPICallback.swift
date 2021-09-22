@@ -31,6 +31,11 @@ class RevealByIDAPICallback : Callback {
         var isSuccess = true
         var errorObject: Error!
         
+        if (URL(string: (connectionUrl + "/")) == nil) {
+            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            return
+        }
+        
         for record in records {
             var urlComponents = URLComponents(string: (connectionUrl + "/" + record.table))
             
@@ -42,6 +47,19 @@ class RevealByIDAPICallback : Callback {
             
             urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
             
+            
+            if(urlComponents?.url?.absoluteURL == nil){
+                var errorEntryDict: [String: Any] = [
+                    "ids": record.ids
+                ]
+                let errorDict: [String: Any] = [
+                    "code": 400,
+                    "description": "Table name or id is invalid"
+                ]
+                errorEntryDict["error"] = errorDict
+                errorArray.append(errorEntryDict)
+                continue
+            }
             getByIdRequestGroup.enter()
             var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
             request.httpMethod = "GET"
@@ -80,7 +98,6 @@ class RevealByIDAPICallback : Callback {
                                     errorEntryDict["error"] = errorDict
                                     errorArray.append(errorEntryDict)
                                 }
-                                self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: description]))
                             }
                             catch let error
                             {
