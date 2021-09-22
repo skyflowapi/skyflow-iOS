@@ -58,7 +58,7 @@ public class Client {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 }
                 else {
-                    callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing ID or RedactionType format"]))
+                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing ID or RedactionType format"]))
                 }
             }
             self.apiClient.get(records: list, callback: callback)
@@ -77,7 +77,7 @@ public class Client {
                     list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
                 }
                 else {
-                    callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing IDs, Table Name or RedactionType format"]))
+                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing IDs, Table Name or RedactionType format"]))
                 }
             }
             self.apiClient.getById(records: list, callback: callback)
