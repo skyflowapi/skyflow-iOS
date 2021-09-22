@@ -31,7 +31,8 @@ internal class CollectAPICallback: Callback {
                 let data = try JSONSerialization.data(withJSONObject:  self.apiClient.constructBatchRequestBody(records: self.records, options: options))
                 request.httpBody = data
             } catch let error {
-                print(error.localizedDescription)
+                self.callback.onFailure(error)
+                return
             }
             
             request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
@@ -94,7 +95,6 @@ internal class CollectAPICallback: Callback {
                                                 
                     } catch let error {
                         self.callback.onFailure(error)
-                        print(error)
                     }
                 }
             }

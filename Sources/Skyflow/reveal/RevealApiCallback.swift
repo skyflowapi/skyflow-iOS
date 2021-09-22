@@ -42,7 +42,7 @@ class RevealApiCallback : Callback {
             request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization");
             let session = URLSession(configuration: .default)
             
-            let task =  session.dataTask(with: request) { data, response, error in
+            let task = session.dataTask(with: request) { data, response, error in
                 defer
                 {
                     revealRequestGroup.leave()
@@ -68,7 +68,6 @@ class RevealApiCallback : Callback {
                             {
                                 isSuccess = false
                                 errorObject = error
-                                print(error)
                             }
                         }
                         var error:[String:String] = [:]
@@ -92,7 +91,6 @@ class RevealApiCallback : Callback {
                     catch let error {
                         isSuccess = false
                         errorObject = error
-                        print(error)
                     }
                 }
             }

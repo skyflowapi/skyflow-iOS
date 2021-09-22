@@ -48,7 +48,7 @@ public class Client {
         return nil
     }
     
-    public func get(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback)   {
+    public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback)   {
         
         if let tokens = records["records"] as? [[String : Any]] {
             var list : [RevealRequestRecord] = []
@@ -62,6 +62,25 @@ public class Client {
                 }
             }
             self.apiClient.get(records: list, callback: callback)
+        }
+        else{
+            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+        }
+    }
+    
+    public func getById(records: [String: Any], callback: Callback){
+        if let entries = records["records"] as? [[String : Any]] {
+            var list : [GetByIdRecord] = []
+            for entry in entries
+            {
+                if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
+                    list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
+                }
+                else {
+                    callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing IDs, Table Name or RedactionType format"]))
+                }
+            }
+            self.apiClient.getById(records: list, callback: callback)
         }
         else{
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
