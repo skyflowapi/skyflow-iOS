@@ -1,7 +1,6 @@
 import Foundation
 
 internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
-
     public let error: SkyflowValidationError
     internal let regex: String
 
@@ -12,7 +11,6 @@ internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
 
     /// Validate the text (returns true if it is valid card number)
     public  func validate(text: String?) -> Bool {
-
         if text!.isEmpty {
             return true
         }
@@ -30,7 +28,6 @@ internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
         }
 
         return isLuhnValid(cardNumber: trimmedText!)
-
     }
 
     /// Luhn Algorithm to validate card number

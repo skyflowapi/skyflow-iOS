@@ -61,7 +61,6 @@ internal class RevealValueCallback: Callback {
 
             self.clientCallback.onSuccess(dataString!)
         }
-
 }
 
     func onFailure(_ error: Error) {
@@ -69,7 +68,6 @@ internal class RevealValueCallback: Callback {
     }
 
     func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String] {
-
             var result = [String: String]()
             if let errorsObj = errors {
                     for error in errorsObj {
@@ -80,5 +78,4 @@ internal class RevealValueCallback: Callback {
                 }
                 return result
             }
-
 }

@@ -4,7 +4,6 @@ import Foundation
 Validate input in scope of multiple lengths, e.x.: [10, 15].
 */
 internal struct SkyflowValidateLengthMatch: SkyflowValidationProtocol {
-
     /// Array of valid length ranges
     public let lengths: [Int]
 
@@ -18,7 +17,6 @@ internal struct SkyflowValidateLengthMatch: SkyflowValidationProtocol {
 
     /// validate the text
      public func validate(text: String?) -> Bool {
-
         if text!.isEmpty {
         return true
         }

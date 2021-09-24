@@ -18,7 +18,6 @@ public class Client {
     }
 
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback) {
-
         let icOptions = ICOptions(tokens: options!.tokens)
 
         if let recordEntries = records["records"] as? [[String: Any]] {
@@ -35,7 +34,6 @@ public class Client {
     }
 
     public func container<T>(type: T.Type, options: ContainerOptions? = ContainerOptions()) -> Container<T>? {
-
         if options != nil {
             // Set options
         }
@@ -48,7 +46,6 @@ public class Client {
     }
 
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
-
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
             for token in tokens {

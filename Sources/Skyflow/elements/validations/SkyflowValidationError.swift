@@ -5,7 +5,6 @@ internal typealias SkyflowValidationError = String
 
 /// Default validation error types
 internal enum SkyflowValidationErrorType: String {
-
     /// Default Validation error for `SkyflowValidateCardNumber`
     case cardNumber = "INVALID_CARD_NUMBER"
 
@@ -20,5 +19,4 @@ internal enum SkyflowValidationErrorType: String {
 
     /// Default Validation error for `SkyflowValidateCardExpirationDate`
     case expirationDate = "INVALID_EXPIRATION_DATE"
-
 }

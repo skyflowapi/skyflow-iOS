@@ -5,10 +5,9 @@ import UIKit
 #endif
 
 public class TextField: Element {
-
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
-    internal var isDirty: Bool = false
+    internal var isDirty = false
     internal var validationRules = SkyflowValidationSet()
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
@@ -94,18 +93,15 @@ public class TextField: Element {
         if let altText = self.collectInput.altText {
             self.textField.secureText = altText
         }
-
     }
 
     override func validate() -> [SkyflowValidationError] {
         let str = textField.getSecureRawText ?? ""
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
-
 }
 /// UIResponder methods
 extension TextField {
-
     /// Make `SkyflowTextField` focused.
     @discardableResult override public func becomeFirstResponder() -> Bool {
         return textField.becomeFirstResponder()
@@ -124,7 +120,6 @@ extension TextField {
 
 /// Textfield delegate
 extension TextField: UITextFieldDelegate {
-
     private func updateInputStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput.inputStyles.base
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
@@ -133,7 +128,7 @@ extension TextField: UITextFieldDelegate {
         self.textField.padding = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
         self.textFieldBorderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
-        self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ??  0
+        self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
     }
 
     private func updateLabelStyle(_ style: Style? = nil) {
@@ -142,7 +137,6 @@ extension TextField: UITextFieldDelegate {
         self.textFieldLabel.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textFieldLabel.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .left
         self.textFieldLabel.insets = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
     }
 
     /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
@@ -153,14 +147,12 @@ extension TextField: UITextFieldDelegate {
 
         // label styles on focus
         updateLabelStyle(collectInput!.labelStyles.focus)
-
     }
 
     /// Wrap native `UITextField` delegate method for `didChange`.
     @objc func textFieldDidChange(_ textField: UITextField) {
         isDirty = true
         textFieldValueChanged()
-
     }
 
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
@@ -182,17 +174,14 @@ extension TextField: UITextFieldDelegate {
             updateInputStyle(collectInput!.inputStyles.complete)
             errorMessage.alpha = 0.0 // Hide error message
         }
-
     }
 
     @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
         textFieldValueChanged()
-
     }
 }
 
 internal extension TextField {
-
     @objc
     override func initialization() {
         super.initialization()
@@ -204,7 +193,6 @@ internal extension TextField {
 
     @objc
     func buildTextFieldUI() {
-
         textField.translatesAutoresizingMaskIntoConstraints = false
         errorMessage.translatesAutoresizingMaskIntoConstraints = false
 
@@ -242,7 +230,6 @@ internal extension TextField {
 
     @objc
     override func setMainPaddings() {
-
         super.setMainPaddings()
 
         let views = ["view": self, "stackView": stackView]
@@ -281,5 +268,4 @@ internal extension TextField {
         textField.becomeFirstResponder()
         textFieldValueChanged()
     }
-
 }

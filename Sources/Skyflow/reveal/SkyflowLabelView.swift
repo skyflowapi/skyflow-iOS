@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 public class SkyflowLabelView: UIView {
-
     internal var label = FormatLabel(frame: .zero)
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!

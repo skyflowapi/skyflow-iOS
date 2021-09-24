@@ -8,7 +8,6 @@
 import Foundation
 
 class RevealByIDAPICallback: Callback {
-
     var apiClient: APIClient
     var callback: Callback
     var connectionUrl: String
@@ -23,7 +22,6 @@ class RevealByIDAPICallback: Callback {
     }
 
     internal func onSuccess(_ token: Any) {
-
         let getByIdRequestGroup = DispatchGroup()
         var outputArray: [[String: Any]] = []
         var errorArray: [[String: Any]] = []

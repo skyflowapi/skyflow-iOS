@@ -5,8 +5,7 @@ import UIKit
 #endif
 
 public class Element: UIView {
-
-    internal var isRequired: Bool = false
+    internal var isRequired = false
     internal var fieldType: ElementType!
     internal var columnName: String!
     internal var tableName: String?
@@ -63,7 +62,6 @@ public class Element: UIView {
    internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) {
         didSet { setMainPaddings() }
     }
-
 }
 
 public extension Element {
@@ -105,11 +103,9 @@ public extension Element {
      override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
     }
-
 }
 
 internal extension Element {
-
     @objc
      func initialization() {
         /// set main style for view

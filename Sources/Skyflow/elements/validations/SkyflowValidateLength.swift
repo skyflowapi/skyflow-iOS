@@ -4,7 +4,6 @@ import Foundation
 Validate input in scope of length.
 */
 internal struct SkyflowValidateLength: SkyflowValidationProtocol {
-
     /// input string minimum length
     public let minLength: Int
 
@@ -22,7 +21,6 @@ internal struct SkyflowValidateLength: SkyflowValidationProtocol {
 
     /// validate length of text
    public  func validate(text: String?) -> Bool {
-
         if text!.isEmpty {
         return true
         }

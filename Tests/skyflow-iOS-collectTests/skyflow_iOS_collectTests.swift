@@ -2,7 +2,6 @@ import XCTest
 @testable import Skyflow
 
 final class skyflow_iOS_collectTests: XCTestCase {
-
     var skyflow: Client!
     var records: [[String: Any]]!
 
@@ -25,8 +24,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
                  "fullname": "Bobb"
                 ]
             ]
-            ]
-
+        ]
     }
 
     override func tearDown() {
@@ -34,7 +32,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testPureInsert() {
-
         let expectation = XCTestExpectation(description: "Pure insert call")
 
         let callback = DemoAPICallback(expectation: expectation)
@@ -61,7 +58,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testInvalidVault() {
-
         let skyflow = Client(Configuration(vaultID: "ff", vaultURL: "https://sb1.area51.vault.skyflowapis.tech/", tokenProvider: DemoTokenProvider()))
 
                 let expectation = XCTestExpectation(description: "Pure insert call")
@@ -100,7 +96,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testValidValueSkyflowElement() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -117,7 +112,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testInvalidValueSkyflowElement() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -134,7 +128,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testCheckElementsArray() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -148,7 +141,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testContainerInsert() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -187,7 +179,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testContainerInsertInvalidInput() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -216,7 +207,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testContainerInsertMixedInvalidInput() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -245,7 +235,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testContainerInsertIsRequiredAndEmpty() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: true)
@@ -263,11 +252,9 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
 
         XCTAssertEqual(callback.receivedResponse, "cardNumber is empty\n")
-
     }
 
     func testContainerInsertIsRequiredAndNotEmpty() {
-
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: true)

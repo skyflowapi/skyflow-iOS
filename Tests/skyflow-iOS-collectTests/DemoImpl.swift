@@ -10,7 +10,6 @@ import XCTest
 import Skyflow
 
 public class DemoTokenProvider: TokenProvider {
-
     public func getBearerToken(_ apiCallback: Callback) {
         if let url = URL(string: "https://go-server.skyflow.dev/token") {
             let session = URLSession(configuration: .default)
@@ -36,7 +35,6 @@ public class DemoTokenProvider: TokenProvider {
 }
 
 public class DemoAPICallback: Callback {
-
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
 

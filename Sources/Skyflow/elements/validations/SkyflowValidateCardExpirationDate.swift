@@ -1,7 +1,6 @@
 import Foundation
 
 internal enum SkyflowCardExpirationDateFormat {
-
     /// Exp.Date in format mm/yy: 01/22
     case shortYear
 
@@ -29,11 +28,9 @@ internal enum SkyflowCardExpirationDateFormat {
             return "yyyy"
         }
     }
-
 }
 
 internal struct SkyflowValidateCardExpirationDate: SkyflowValidationProtocol {
-
     /// Validation Error
     public let error: SkyflowValidationError
 
@@ -44,7 +41,6 @@ internal struct SkyflowValidateCardExpirationDate: SkyflowValidationProtocol {
 
     /// Validation function for expire date.
     public func validate(text: String?) -> Bool {
-
         if text!.isEmpty {
             return true
         }

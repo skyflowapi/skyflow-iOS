@@ -9,7 +9,6 @@ import Foundation
 
 internal class RevealRequestBody {
     internal static func createRequestBody(elements: [Label]) -> [String: Any] {
-
         var payload: [[String: Any]] = []
         for element in elements {
             var entry: [String: Any] = [:]

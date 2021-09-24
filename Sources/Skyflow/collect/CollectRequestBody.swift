@@ -10,7 +10,7 @@ import Foundation
 internal class CollectRequestBody {
     static var tableSet: Set<String> = Set<String>()
     static var callback: Callback?
-    static var breakFlag: Bool = false
+    static var breakFlag = false
     static var mergedDict: [String: Any] = [:]
 
     internal static func addFieldsToTableSet(tableName: String, prefix: String, fields: [String: Any]) {

@@ -14,7 +14,6 @@ public struct CollectElementInput {
     public init(table: String, column: String,
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
                 placeholder: String? = "", type: ElementType, altText: String? = "") {
-
         self.table = table
         self.column = column
         self.inputStyles = inputStyles!

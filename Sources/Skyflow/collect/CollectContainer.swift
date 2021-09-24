@@ -11,7 +11,6 @@ import UIKit
 public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
-
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> Element where T: CollectContainer {
         let skyflowElement = TextField(input: input, options: options!)
         elements.append(skyflowElement)
@@ -19,16 +18,14 @@ public extension Container {
     }
 
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
-
         var errors = ""
         for element in self.elements {
             let state = element.getState()
             let error = state["validationErrors"]
             if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
-                errors += element.columnName+" is empty"+"\n"
+                errors += element.columnName + " is empty" + "\n"
             }
             if !(state["isValid"] as! Bool) {
-
                 errors += "for " + element.columnName + " " + (error as! String) + "\n"
             }
             if element.isFirstResponder {

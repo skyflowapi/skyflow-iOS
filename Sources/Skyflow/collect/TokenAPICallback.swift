@@ -23,7 +23,6 @@ internal class TokenAPICallback: Callback {
         } else {
             self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Token Format"]))
         }
-
     }
 
     internal func onFailure(_ error: Error) {

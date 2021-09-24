@@ -6,12 +6,11 @@ import UIKit
 /// An object that describes `SkyflowTextField` state.
 /// State attributes are read-only.
 internal class State {
-
     /// `CollectElementOptions.columnName` associated  with `SkyflowTextField`
     internal(set) open var columnName: String!
 
     /// set as true if  `SkyflowTextField` input is required to fill
-    internal(set) open var isRequired: Bool = false
+    internal(set) open var isRequired = false
 
     /// true if `SkyflowTextField` input in valid
     // internal(set) open var isValid: Bool = false

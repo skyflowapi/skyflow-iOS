@@ -1,7 +1,6 @@
 import Foundation
 
 public struct Styles {
-
     var base: Style?
     var complete: Style?
     var empty: Style?

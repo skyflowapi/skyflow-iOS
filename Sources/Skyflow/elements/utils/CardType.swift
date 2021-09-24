@@ -1,7 +1,6 @@
 import Foundation
 
 internal class Card {
-
         var defaultName: String
         var regex: String
         var minCardLength: Int
@@ -18,12 +17,10 @@ internal class Card {
             self.securityCodeLength = securityCodeLength
             self.securityCodeName = securityCodeName
         }
-
 }
 
 /// Default Cards and their FormatPatterns and validationrules.
 public enum  CardType: CaseIterable {
-
     case VISA
     case MASTERCARD
     case DISCOVER
@@ -107,7 +104,6 @@ public enum  CardType: CaseIterable {
             }
 
             return CardType.EMPTY.instance
-
         }
 }
 

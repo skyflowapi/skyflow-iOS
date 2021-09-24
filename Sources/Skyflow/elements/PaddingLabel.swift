@@ -9,8 +9,7 @@ import Foundation
 import UIKit
 
 internal class PaddingLabel: UILabel {
-
-    internal var insets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    internal var insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 //    internal var topInset: CGFloat = 20.0
 //    internal var bottomInset: CGFloat = 20.0
 //    internal var leftInset: CGFloat = 7.0

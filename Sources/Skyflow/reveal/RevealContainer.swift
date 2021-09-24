@@ -8,7 +8,6 @@
 import Foundation
 
 public class RevealContainer: ContainerProtocol {
-
 }
 
 public extension Container {
@@ -19,7 +18,6 @@ public extension Container {
     }
 
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
-
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
         // Create GetOptions object from RevealOptions object

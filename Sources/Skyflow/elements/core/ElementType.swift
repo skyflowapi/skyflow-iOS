@@ -20,7 +20,6 @@ internal class Type
 
 /// Type of `SkyflowTextField`.
 public enum ElementType: Int, CaseIterable {
-
     /// Field type that requires Cardholder Name input formatting and validation.
     case CARDHOLDER_NAME
 
@@ -61,8 +60,6 @@ public enum ElementType: Int, CaseIterable {
             rules.add(rule: SkyflowValidateLengthMatch(lengths: [3, 4], error: SkyflowValidationErrorType.lengthMatches.rawValue))
             return Type(formatPattern: "####", regex: "\\d*$",
                         validation: rules, keyboardType: .numberPad)
-
         }
     }
-
 }

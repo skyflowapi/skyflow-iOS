@@ -20,7 +20,6 @@ internal class APIClient {
     }
 
     internal func isTokenValid() -> Bool {
-
         if token == "" {
             return false
         }
@@ -59,7 +58,6 @@ internal class APIClient {
         var postPayload: [Any] = []
         var insertTokenPayload: [Any] = []
         for (index, record) in (records["records"] as! [Any]).enumerated() {
-
             var temp: [String: Any] = [:]
             temp["fields"] = (record as! [String: Any])["fields"]
             temp["tableName"] = (record as! [String: Any])["table"]
@@ -88,5 +86,4 @@ internal class APIClient {
         let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records)
         self.getAccessToken(callback: revealByIdApiCallback)
     }
-
 }

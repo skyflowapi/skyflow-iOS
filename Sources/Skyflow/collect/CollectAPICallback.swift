@@ -8,7 +8,6 @@
 import Foundation
 
 internal class CollectAPICallback: Callback {
-
     var apiClient: APIClient
     var records: [String: Any]
     var callback: Callback
@@ -23,7 +22,6 @@ internal class CollectAPICallback: Callback {
 
     internal func onSuccess(_ responseBody: Any) {
         if let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) {
-
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
 
@@ -77,13 +75,12 @@ internal class CollectAPICallback: Callback {
                             var tempEntry: [String: Any] = [:]
                             tempEntry["table"] = (inputRecords[index] as! [String: Any])["table"]
                             if self.options.tokens {
-                                let fieldsDict = (receivedResponseArray[length + index] as! [String: Any])["fields"] ?? nil
+                                let fieldsDict = (receivedResponseArray[length + index] as! [String: Any])["fields"]
                                 if fieldsDict != nil {
                                     let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict!)
                                     let fieldsObj = try JSONSerialization.jsonObject(with: fieldsData, options: .allowFragments)
                                     tempEntry["fields"] = self.buildFieldsDict(dict: fieldsObj as? [String: Any] ?? [:])
                                 }
-
                             } else {
                                 tempEntry["skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
                             }
@@ -91,7 +88,6 @@ internal class CollectAPICallback: Callback {
                         }
 
                         self.callback.onSuccess(["records": responseEntries])
-
                     } catch let error {
                         self.callback.onFailure(error)
                     }

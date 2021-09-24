@@ -4,7 +4,6 @@ import UIKit
 
 ///  textfield used in SkyflowTextField
 internal class FormatTextField: UITextField {
-
     enum FormatPatternChar: String, CaseIterable {
         case lettersAndDigit = "*"
         case anyLetter = "@"
@@ -66,7 +65,7 @@ internal class FormatTextField: UITextField {
         return formatPattern.isEmpty ? secureText : textwithFormatPattern
     }
 
-    internal var padding: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
     override open func textRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: padding)
@@ -144,7 +143,6 @@ internal class FormatTextField: UITextField {
                     let patternRange = formatterIndex ..< formatPattern.index(after: formatterIndex)
                     let currentFormatCharacter = String(self.formatPattern[patternRange])
                     if let currentFormatCharacterType = FormatPatternChar(rawValue: currentFormatCharacter) {
-
                         let textForFormattingPatterRange = textForFormattingIndex ..< textForFormatting.index(after: textForFormattingIndex)
                         let textForFormattingCharacter = String(textForFormatting[textForFormattingPatterRange])
 
@@ -197,7 +195,7 @@ internal class FormatTextField: UITextField {
             super.text = textwithFormatPattern
             if let text = self.secureText {
                 if text.count > self.maxLength {
-                    super.text = String(text[text.index(text.startIndex, offsetBy: self.maxLength-1)])
+                    super.text = String(text[text.index(text.startIndex, offsetBy: self.maxLength - 1)])
                 }
             }
         }
@@ -211,7 +209,6 @@ extension FormatTextField {
 }
 
 extension FormatTextField {
-
       /// event for textField
     override public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {}
 

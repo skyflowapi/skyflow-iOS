@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 public class Label: UIView {
-
     internal var skyflowLabelView: SkyflowLabelView!
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!
@@ -74,7 +73,6 @@ public class Label: UIView {
     }
 
     func setMainPaddings() {
-
         let views = ["view": self, "stackView": stackView]
 
         verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
@@ -88,7 +86,6 @@ public class Label: UIView {
                                                                views: views)
         NSLayoutConstraint.activate(horizontalConstraints)
         NSLayoutConstraint.activate(verticalConstraint)
-
     }
 
     func showError(message: String) {

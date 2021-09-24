@@ -4,7 +4,6 @@ import Foundation
 Validate input in scope of matching the regex.
 */
 internal struct SkyflowValidatePattern: SkyflowValidationProtocol {
-
     ///  regex to validate input
     public let regex: String
 

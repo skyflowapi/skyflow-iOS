@@ -4,7 +4,6 @@ import UIKit
 #endif
 
 public struct Style {
-
     var borderColor: UIColor?
     var cornerRadius: CGFloat?
     var padding: UIEdgeInsets?

@@ -8,7 +8,6 @@
 import Foundation
 
 class RevealApiCallback: Callback {
-
     var apiClient: APIClient
     var callback: Callback
     var connectionUrl: String
@@ -30,13 +29,13 @@ class RevealApiCallback: Callback {
         var isSuccess = true
         var errorObject: Error!
 
-        if URL(string: (connectionUrl+"/tokens")) == nil {
+        if URL(string: (connectionUrl + "/tokens")) == nil {
             self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
             return
         }
 
         for record in records {
-            var urlComponents = URLComponents(string: (connectionUrl+"/tokens"))
+            var urlComponents = URLComponents(string: (connectionUrl + "/tokens"))
 
             urlComponents?.queryItems = []
 
@@ -102,8 +101,8 @@ class RevealApiCallback: Callback {
                 if let safeData = data {
                     do {
                         let jsonData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-                        let receivedResponseArray: [Any]  = (jsonData[keyPath: "records"] as! [Any])
-                        let records: [String: Any]  = receivedResponseArray[0] as! [String: Any]
+                        let receivedResponseArray: [Any] = (jsonData[keyPath: "records"] as! [Any])
+                        let records: [String: Any] = receivedResponseArray[0] as! [String: Any]
                         list_success.append(RevealSuccessRecord(token_id: records["token_id"] as! String, fields: records["fields"] as! [String: String]))
                     } catch let error {
                         isSuccess = false
@@ -113,7 +112,6 @@ class RevealApiCallback: Callback {
             }
 
             task.resume()
-
         }
 
         revealRequestGroup.notify(queue: .main) {

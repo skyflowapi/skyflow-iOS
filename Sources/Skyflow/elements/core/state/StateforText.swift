@@ -6,19 +6,19 @@ import UIKit
 internal class StateforText: State
 {
     /// true if `SkyflowTextField` input in valid
-    internal(set) open var isValid: Bool = false
+    internal(set) open var isValid = false
 
     /// true  if `SkyflowTextField` input is empty
-    internal(set) open var isEmpty: Bool = false
+    internal(set) open var isEmpty = false
 
     /// true if `SkyflowTextField` was edited
-    internal(set) open var isDirty: Bool = false
+    internal(set) open var isDirty = false
 
     /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
 
     /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
-    internal(set) open var validationErrors =  [SkyflowValidationError]()
+    internal(set) open var validationErrors = [SkyflowValidationError]()
 
     init(tf: TextField) {
         super.init(columnName: tf.columnName, isRequired: tf.isRequired)
