@@ -10,8 +10,6 @@ on:
       - '*.md'
     branches:
       - 'main'
-      - 'cicd'
-
 
 jobs:
   deploy_private_pod:
@@ -39,7 +37,7 @@ jobs:
            git config user.email ${{ github.actor }}@users.noreply.github.com
            git add Skyflow.podspec
            git commit -m "[AUTOMATED] Private Release ${{ steps.previoustag.outputs.tag }}.$(git rev-parse --short $GITHUB_SHA)"
-           git push origin main
+           git push origin
 
 
           
