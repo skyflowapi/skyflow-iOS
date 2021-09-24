@@ -51,12 +51,12 @@ internal class APIClient {
         }
     }
     
-    internal func post(records: [String: Any], callback: Callback, options: InsertOptions){
+    internal func post(records: [String: Any], callback: Callback, options: ICOptions){
         let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options)
         self.getAccessToken(callback: collectApiCallback)
     }
     
-    internal func constructBatchRequestBody(records: [String: Any], options: InsertOptions) -> [String: Any]{
+    internal func constructBatchRequestBody(records: [String: Any], options: ICOptions) -> [String: Any]{
         var postPayload:[Any] = []
         var insertTokenPayload:[Any] = []
         for (index,record) in (records["records"] as! [Any]).enumerated(){
@@ -83,6 +83,11 @@ internal class APIClient {
     internal func get(records:[RevealRequestRecord], callback : Callback){
         let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records : records)
         self.getAccessToken(callback: revealApiCallback)
+    }
+    
+    internal func getById(records:[GetByIdRecord], callback : Callback){
+        let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records : records)
+        self.getAccessToken(callback: revealByIdApiCallback)
     }
     
 }

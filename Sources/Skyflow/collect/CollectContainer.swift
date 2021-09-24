@@ -18,7 +18,7 @@ public extension Container {
         return skyflowElement
     }
     
-    func collect(callback: Callback, options: InsertOptions? = InsertOptions()) where T:CollectContainer {
+    func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T:CollectContainer {
         
         var errors = ""
         for element in self.elements
@@ -43,7 +43,25 @@ public extension Container {
             callback.onFailure(NSError(domain:"", code:400, userInfo:[NSLocalizedDescriptionKey: errors]))
             return
         }
-        let records = CollectRequestBody.createRequestBody(elements: self.elements)
-        self.skyflow.insert(records: records, options: options, callback: callback)
+        if options?.additionalFields != nil {
+            if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
+                for record in additionalFieldEntries {
+                    if(!(record["table"] is String) || !(record["fields"] is [String: Any])){
+                        callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing table or fields"]))
+                        return
+                    }
+                }
+            }
+            else {
+                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+                return
+            }
+        }
+        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback)
+        let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
+
+        if(records != nil) {
+        self.skyflow.apiClient.post(records: records!, callback: callback, options: icOptions)
+        }
     }
 }

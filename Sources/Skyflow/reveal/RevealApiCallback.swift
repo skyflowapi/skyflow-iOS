@@ -14,6 +14,7 @@ class RevealApiCallback : Callback {
     var connectionUrl : String
     var records : [RevealRequestRecord]
     
+    
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
                   records : [RevealRequestRecord]){
         self.apiClient = apiClient
@@ -27,24 +28,55 @@ class RevealApiCallback : Callback {
         var list_error : [RevealErrorRecord] = []
         let revealRequestGroup = DispatchGroup()
         
+        var isSuccess = true
+        var errorObject: Error!
+        
+        if (URL(string: (connectionUrl+"/tokens")) == nil) {
+            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            return
+        }
+        
         for record in records
         {
-            let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))
+            var urlComponents = URLComponents(string: (connectionUrl+"/tokens"))
+            
+            urlComponents?.queryItems = []
+            
+            urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
+            
+            urlComponents?.queryItems?.append(URLQueryItem(name: "token_ids", value: record.token))
+            
+            
+            if(urlComponents?.url?.absoluteURL == nil){
+                var errorEntryDict: [String: Any] = [
+                    "token": record.token
+                ]
+                let errorDict: [String: Any] = [
+                    "code": 400,
+                    "description": "Token is invalid"
+                ]
+                errorEntryDict["error"] = errorDict
+//                errorArray.append(errorEntryDict)
+                continue
+            }
+            
+//            let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))
             revealRequestGroup.enter()
-            var request = URLRequest(url: url!)
+            var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
             request.httpMethod = "GET"
             request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type");
             request.addValue("application/json", forHTTPHeaderField: "Accept");
             request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization");
             let session = URLSession(configuration: .default)
             
-            let task =  session.dataTask(with: request) { data, response, error in
+            let task = session.dataTask(with: request) { data, response, error in
                 defer
                 {
                     revealRequestGroup.leave()
                 }
                 if(error != nil || response == nil){
-                    self.callback.onFailure(error!)
+                    isSuccess = false
+                    errorObject = error!
                     return
                 }
                 if let httpResponse = response as? HTTPURLResponse{
@@ -61,7 +93,8 @@ class RevealApiCallback : Callback {
                             }
                             catch let error
                             {
-                                print(error)
+                                isSuccess = false
+                                errorObject = error
                             }
                         }
                         var error:[String:String] = [:]
@@ -83,8 +116,8 @@ class RevealApiCallback : Callback {
                         list_success.append(RevealSuccessRecord(token_id: records["token_id"] as! String, fields:records["fields"] as! [String : String]))
                     }
                     catch let error {
-                        self.callback.onFailure(error)
-                        print(error)
+                        isSuccess = false
+                        errorObject = error
                     }
                 }
             }
@@ -97,7 +130,7 @@ class RevealApiCallback : Callback {
             var records: [Any] = []
             for record in list_success {
                 var entry: [String: Any] = [:]
-                entry["id"] = record.token_id
+                entry["token"] = record.token_id
                 var fields: [String: Any] = [:]
                 for field in record.fields
                 {
@@ -110,7 +143,7 @@ class RevealApiCallback : Callback {
             for record in list_error
             {
                 var entry: [String: Any] = [:]
-                entry["id"] = record.id
+                entry["token"] = record.id
                 var temp: [String: Any] = [:]
                 for field in record.error {
                     temp[field.key] = field.value
@@ -119,10 +152,19 @@ class RevealApiCallback : Callback {
                 errors.append(entry)
             }
             var modifiedResponse: [String: Any] = [:]
+            if(records.count != 0){
             modifiedResponse["records"] = records
+            }
+            if(errors.count != 0){
             modifiedResponse["errors"] = errors
+            }
 
-            self.callback.onSuccess(modifiedResponse)
+            if isSuccess {
+                self.callback.onSuccess(modifiedResponse)
+            }
+            else {
+                self.callback.onFailure(errorObject)
+            }
         }
     }
     internal func onFailure(_ error: Error) {

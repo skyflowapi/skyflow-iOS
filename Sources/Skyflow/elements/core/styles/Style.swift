@@ -13,13 +13,13 @@ public struct Style{
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
     
-    public init(borderColor: UIColor? = UIColor.lightGray,
-                cornerRadius: CGFloat? = 2,
-                padding: UIEdgeInsets? = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0),
-                borderWidth: CGFloat? = 2,
-                font:  UIFont? = .none,
-                textAlignment: NSTextAlignment? = .none,
-                textColor: UIColor? = .none) {
+    public init(borderColor: UIColor? = nil,
+                cornerRadius: CGFloat? = nil,
+                padding: UIEdgeInsets? = nil,
+                borderWidth: CGFloat? = nil,
+                font:  UIFont? = nil,
+                textAlignment: NSTextAlignment? = nil,
+                textColor: UIColor? = nil) {
         //Assign parametric values to struct members
         self.borderColor = borderColor
         self.cornerRadius = cornerRadius

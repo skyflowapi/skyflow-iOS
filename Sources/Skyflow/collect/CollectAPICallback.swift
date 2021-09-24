@@ -12,9 +12,9 @@ internal class CollectAPICallback: Callback {
     var apiClient: APIClient
     var records: [String:Any]
     var callback: Callback
-    var options: InsertOptions
+    var options: ICOptions
     
-    internal init(callback: Callback, apiClient: APIClient, records: [String:Any], options: InsertOptions){
+    internal init(callback: Callback, apiClient: APIClient, records: [String:Any], options: ICOptions){
         self.records = records
         self.apiClient = apiClient
         self.callback = callback
@@ -31,7 +31,8 @@ internal class CollectAPICallback: Callback {
                 let data = try JSONSerialization.data(withJSONObject:  self.apiClient.constructBatchRequestBody(records: self.records, options: options))
                 request.httpBody = data
             } catch let error {
-                print(error.localizedDescription)
+                self.callback.onFailure(error)
+                return
             }
             
             request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
@@ -94,11 +95,13 @@ internal class CollectAPICallback: Callback {
                                                 
                     } catch let error {
                         self.callback.onFailure(error)
-                        print(error)
                     }
                 }
             }
             task.resume()
+        }
+        else {
+            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
         }
     }
     

@@ -18,6 +18,9 @@ public class Client {
     }
     
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback){
+        
+        let icOptions = ICOptions(tokens: options!.tokens)
+        
         if let recordEntries = records["records"] as? [[String: Any]]{
             for record in recordEntries {
                 if(!(record["table"] is String) || !(record["fields"] is [String: Any])){
@@ -25,7 +28,7 @@ public class Client {
                     return
                 }
             }
-            self.apiClient.post(records: records, callback: callback, options: options!)
+            self.apiClient.post(records: records, callback: callback, options: icOptions)
         }
         else {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
@@ -45,20 +48,39 @@ public class Client {
         return nil
     }
     
-    public func get(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback)   {
+    public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback)   {
         
         if let tokens = records["records"] as? [[String : Any]] {
             var list : [RevealRequestRecord] = []
             for token in tokens
             {
-                if let redaction = token["redaction"] as? RedactionType, let id = token["id"] as? String {
+                if let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 }
                 else {
-                    callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing ID or RedactionType format"]))
+                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing ID or RedactionType format"]))
                 }
             }
             self.apiClient.get(records: list, callback: callback)
+        }
+        else{
+            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+        }
+    }
+    
+    public func getById(records: [String: Any], callback: Callback){
+        if let entries = records["records"] as? [[String : Any]] {
+            var list : [GetByIdRecord] = []
+            for entry in entries
+            {
+                if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
+                    list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
+                }
+                else {
+                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing IDs, Table Name or RedactionType format"]))
+                }
+            }
+            self.apiClient.getById(records: list, callback: callback)
         }
         else{
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
