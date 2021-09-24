@@ -7,12 +7,11 @@
 
 import Foundation
 
-class RevealErrorRecord
-{
+class RevealErrorRecord {
     var id: String
-    var error: [String:String]
-    
-    init(id:String,error:[String:String]) {
+    var error: [String: String]
+
+    init(id: String, error: [String: String]) {
         self.id = id
         self.error = error
     }

@@ -4,52 +4,47 @@ import Foundation
 import UIKit
 #endif
 
-
 public class Element: UIView {
-    
+
     internal var isRequired: Bool = false
     internal var fieldType: ElementType!
     internal var columnName: String!
     internal var tableName: String?
     internal var horizontalConstraints = [NSLayoutConstraint]()
     internal var verticalConstraint = [NSLayoutConstraint]()
-    internal var collectInput : CollectElementInput!
-    internal var options : CollectElementOptions!
+    internal var collectInput: CollectElementInput!
+    internal var options: CollectElementOptions!
 
     /// Describes `SkyflowElement` input   State`
     internal var state: State {
-        return State(columnName: self.columnName,isRequired: self.isRequired)
+        return State(columnName: self.columnName, isRequired: self.isRequired)
     }
-    
-    internal func getState()-> [String:Any]
-    {
+
+    internal func getState() -> [String: Any] {
         return state.getState()
     }
-    
+
     override internal init(frame: CGRect) {
         super.init(frame: frame)
         initialization()
     }
-    
-    internal init(input: CollectElementInput, options: CollectElementOptions)
-    {
+
+    internal init(input: CollectElementInput, options: CollectElementOptions) {
         super.init(frame: CGRect())
         collectInput = input
         self.options = options
         initialization()
     }
-        
+
     required internal init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initialization()
     }
-    
-    
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-  
+
   /// Field Configuration
     internal func setupField() {
             tableName = collectInput.table
@@ -57,24 +52,21 @@ public class Element: UIView {
             fieldType = collectInput.type
             isRequired = options.required
       }
-    
+
     internal func getOutput() -> String? {
             return ""
     }
-    
-    
+
    internal func validate() -> [SkyflowValidationError] {
         return [SkyflowValidationError]()
       }
    internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) {
         didSet { setMainPaddings() }
     }
-    
-    
+
 }
 
-public extension Element
-{
+public extension Element {
     /// `SkyflowElement` layer corner radius
       internal var cornerRadius: CGFloat {
         get {
@@ -85,7 +77,7 @@ public extension Element
             layer.masksToBounds = newValue > 0
         }
     }
-  
+
     /// `SkyflowElement` layer borderWidth
     internal var borderWidth: CGFloat {
         get {
@@ -95,7 +87,7 @@ public extension Element
             layer.borderWidth = newValue
         }
     }
-  
+
     /// `SkyflowElement` layer borderColor
     internal var borderColor: UIColor? {
         get {
@@ -113,17 +105,17 @@ public extension Element
      override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
     }
-  
+
 }
 
 internal extension Element {
-    
+
     @objc
      func initialization() {
         /// set main style for view
         mainStyle()
     }
-    
+
     @objc
     func setMainPaddings() {
       NSLayoutConstraint.deactivate(verticalConstraint)
@@ -136,4 +128,3 @@ extension UIView {
         clipsToBounds = true
     }
 }
-

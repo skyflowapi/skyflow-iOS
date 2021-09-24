@@ -7,23 +7,22 @@
 
 import Foundation
 
-internal class RevealValueCallback : Callback {
+internal class RevealValueCallback: Callback {
     var clientCallback: Callback
     var revealElements: [Label]
-    
-    internal init(callback: Callback, revealElements: [Label]){
+
+    internal init(callback: Callback, revealElements: [Label]) {
         self.clientCallback = callback
         self.revealElements = revealElements
     }
-    
+
     func onSuccess(_ responseBody: Any) {
         var tokens: [String: String] = [:]
-        
-        
+
         let responseJson = responseBody as? [String: Any]
         var response: [String: Any] = [:]
         var successResponses: [Any] = []
-        
+
         if let records = responseJson?["records"] as? [Any] {
             for record in records {
                 let dict = record as! [String: Any]
@@ -37,16 +36,16 @@ internal class RevealValueCallback : Callback {
                 successResponses.append(successEntry)
             }
         }
-        
-        if(successResponses.count != 0){
+
+        if successResponses.count != 0 {
             response["success"] = successResponses
         }
         let errors = responseJson?["errors"] as? [[String: Any]]
         let tokensToErrors = getTokensToErrors(errors)
-        if(errors?.count != 0){
+        if errors?.count != 0 {
             response["errors"] = errors
         }
-        
+
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
                 revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
@@ -62,17 +61,17 @@ internal class RevealValueCallback : Callback {
 
             self.clientCallback.onSuccess(dataString!)
         }
-        
+
 }
-    
+
     func onFailure(_ error: Error) {
         clientCallback.onFailure(error)
     }
-    
-    func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String]{
+
+    func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String] {
 
             var result = [String: String]()
-            if let errorsObj = errors{
+            if let errorsObj = errors {
                     for error in errorsObj {
                         let token = error["token"] as! String
 
@@ -81,5 +80,5 @@ internal class RevealValueCallback : Callback {
                 }
                 return result
             }
-    
+
 }

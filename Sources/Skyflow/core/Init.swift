@@ -7,6 +7,6 @@
 
 import Foundation
 
-public func initialize(_ skyflowConfig: Configuration) -> Client{
+public func initialize(_ skyflowConfig: Configuration) -> Client {
     return Client(skyflowConfig)
 }

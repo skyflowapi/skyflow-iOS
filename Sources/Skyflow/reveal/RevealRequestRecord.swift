@@ -7,10 +7,9 @@
 
 import Foundation
 
-struct RevealRequestRecord
-{
+struct RevealRequestRecord {
     var token: String
-    var redaction : String
+    var redaction: String
     init(token: String, redaction: String) {
         self.token = token
         self.redaction = redaction

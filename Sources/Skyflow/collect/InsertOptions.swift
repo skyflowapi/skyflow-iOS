@@ -8,10 +8,9 @@
 import Foundation
 
 public struct InsertOptions {
-    var tokens : Bool
-    
-    public init(tokens: Bool = true){
+    var tokens: Bool
+
+    public init(tokens: Bool = true) {
         self.tokens = tokens
     }
 }
-

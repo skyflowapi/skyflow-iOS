@@ -13,4 +13,3 @@ public enum RedactionType: String {
     case REDACTED = "REDACTED"
     case MASKED = "MASKED"
 }
-

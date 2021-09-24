@@ -1,7 +1,7 @@
 import Foundation
 
-public struct Styles{
-    
+public struct Styles {
+
     var base: Style?
     var complete: Style?
     var empty: Style?
@@ -12,7 +12,7 @@ public struct Styles{
                empty: Style? =  Style(),
                focus: Style? = Style(),
                invalid: Style? = Style()) {
-       //Assign parametric values to struct members
+       // Assign parametric values to struct members
         self.base = base
         self.complete = complete
         self.empty = empty
