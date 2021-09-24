@@ -12,7 +12,7 @@ import Skyflow
 public class DemoTokenProvider : TokenProvider {
     
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: "http://localhost:8000/js/analystToken") {
+        if let url = URL(string: "https://go-server.skyflow.dev/token") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url){ data, response, error in
                 if(error != nil){
