@@ -2,11 +2,11 @@ import Foundation
 
 
 class ConversionHelpers {
-    static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true) throws -> [String: Any] {
+    static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true) throws -> [String: Any] {
         var convertedRequest = [String: Any]()
         do {
             for (key, value) in requestBody {
-                convertedRequest[key] = try convertValue(value, nested)
+                convertedRequest[key] = try convertValue(value, nested, arraySupport)
             }
         }
         catch {
@@ -15,9 +15,14 @@ class ConversionHelpers {
         return convertedRequest
     }
 
-    private static func convertValue(_ element: Any, _ nested: Bool) throws -> Any{
-        if checkIfPrimitive(element) || element is Array<Any> {
+    private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool) throws -> Any{
+        if checkIfPrimitive(element) {
             return element
+        }
+        else if arraySupport, element is Array<Any> {
+            return try (element as! Array<Any>).map{
+                try convertValue($0, nested, arraySupport)
+            }
         }
         else if element is TextField {
             return (element as! TextField).getValue()
@@ -33,11 +38,11 @@ class ConversionHelpers {
         }
     }
 
-    static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true) throws -> [String: Any]?{
+    static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true, _ arraySupport: Bool = true) throws -> [String: Any]?{
         
         if let unwrappedValue = value {
             do {
-                let convertedValue = try convertJSONValues(unwrappedValue, nested)
+                let convertedValue = try convertJSONValues(unwrappedValue, nested, arraySupport)
                 return convertedValue
             }
         }
@@ -55,5 +60,16 @@ class ConversionHelpers {
         }
         
         return false
+    }
+    
+    static func checkIfValuesArePrimitive(_ dict: [String: Any]) -> Bool {
+        for (key, value) in dict {
+            if !checkIfPrimitive(value),
+               !(value is TextField),
+               !(value is Label){
+                return false
+            }
+        }
+        return true
     }
 }

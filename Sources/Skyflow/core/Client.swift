@@ -89,15 +89,15 @@ public class Client {
     
     public func invokeGateway(config: GatewayConfig, callback: Callback) {
         
+        let gatewayAPIClient = GatewayAPIClient(callback: callback)
+        
         do {
             let convertedConfig = try config.convert()
-            GatewayAPIClient.sendRequest(config: convertedConfig)
+            gatewayAPIClient.invokeGateway(config: convertedConfig)
         }
         catch {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Gateway Config"]))
+            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
         }
-        
-        return callback.onSuccess(["response": "ok"])
     }
     
 }

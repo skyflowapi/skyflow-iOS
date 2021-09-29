@@ -7,10 +7,11 @@
 
 import Foundation
 
-public enum RequestMethod {
+public enum RequestMethod: String {
     case GET
     case POST
     case PUT
     case DELETE
     case PATCH
+    
 }

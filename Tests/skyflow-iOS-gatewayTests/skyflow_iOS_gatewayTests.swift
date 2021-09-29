@@ -52,10 +52,12 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
         
-        let responseBody: [String: Any] = [
+        let customArray: [Any] = ["abc", "def", 12, "4111-1111-1111-1111"]
+        
+        let requestBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
-            "array": ["abc", "def"],
+            "array": ["abc", "def", 12, cardNumber],
             "bool": true,
             "float": 12.234,
             "Int": 1234,
@@ -67,11 +69,18 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
         
         do {
-            let result = try ConversionHelpers.convertJSONValues(responseBody)
+            let result = try ConversionHelpers.convertJSONValues(requestBody)
             XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
             XCTAssertEqual(result["holder_name"] as! String, "john doe")
             XCTAssertEqual(result["reveal"] as! String, "reveal")
             XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as! String, "4111-1111-1111-1111")
+            XCTAssertEqual(result["bool"] as! Bool, true)
+            
+            let resultArray = result["array"] as! [Any]
+            
+            XCTAssertEqual(resultArray[0] as! String, "abc")
+            XCTAssertEqual(resultArray[2] as! Int, 12)
+            XCTAssertEqual(resultArray[3] as! String, "4111-1111-1111-1111")
             XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as! String, "reveal")
         }
         catch {
@@ -115,6 +124,21 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         catch {
         }
         
+    }
+    
+    func testConvertJSONFailsForArrays() {
+        let responseBody: [String: Any] = [
+            "bool": true,
+            "holder_name": "john doe",
+            "array": [12, "string", true]
+        ]
+        
+        do {
+            try ConversionHelpers.convertJSONValues(responseBody, false, false)
+            XCTFail()
+        }
+        catch {}
+
     }
 
     
@@ -166,4 +190,29 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         self.skyflow.invokeGateway(config: gatewayConfig, callback: DemoAPICallback(expectation: XCTestExpectation(description: "should return response")))
 
     }
+    
+    func testAddParams() {
+        do{
+            let modifiedUrl = try RequestHelpers.addPathParams("https://www.skyflow.com/{param}/", ["param": "vault"])
+            XCTAssertEqual(modifiedUrl, "https://www.skyflow.com/vault/")
+
+        }
+        catch {
+            XCTFail()
+        }
+        
+    }
+    
+    func testAddQueryParams() {
+        do{
+            let modifiedUrl = try RequestHelpers.addQueryParams("https://www.skyflow.com/", ["param": "vault"])
+            XCTAssertEqual(modifiedUrl.absoluteString, "https://www.skyflow.com?param=vault")
+
+        }
+        catch {
+            XCTFail()
+        }
+        
+    }
+
 }

@@ -20,7 +20,7 @@ public struct GatewayConfig {
     
     internal func convert() throws -> GatewayConfig {
         do {
-            let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false)
+            let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false)
             let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
             let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody)
             
