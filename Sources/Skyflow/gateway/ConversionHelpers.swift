@@ -16,7 +16,7 @@ class ConversionHelpers {
     }
 
     private static func convertValue(_ element: Any, _ nested: Bool) throws -> Any{
-        if element is String {
+        if checkIfPrimitive(element) || element is Array<Any> {
             return element
         }
         else if element is TextField {
@@ -43,5 +43,17 @@ class ConversionHelpers {
         }
         
         return nil
+    }
+    
+    static func checkIfPrimitive(_ element: Any) -> Bool {
+        let supportedPrimitives: [Any.Type] = [String.self, Int.self, Double.self, Bool.self]
+        
+        for primitive in supportedPrimitives {
+            if type(of: element) == primitive {
+                return true
+            }
+        }
+        
+        return false
     }
 }

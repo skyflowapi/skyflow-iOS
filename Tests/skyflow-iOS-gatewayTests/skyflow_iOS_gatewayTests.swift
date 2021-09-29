@@ -25,6 +25,15 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         XCTAssertNil(gatewayConfig.responseBody)
     }
     
+    func testCheckPrimitive() {
+        XCTAssertEqual(ConversionHelpers.checkIfPrimitive("123"), true)
+        XCTAssertEqual(ConversionHelpers.checkIfPrimitive(123), true)
+        XCTAssertEqual(ConversionHelpers.checkIfPrimitive(12.34), true)
+        XCTAssertEqual(ConversionHelpers.checkIfPrimitive(false), true)
+        XCTAssertEqual(ConversionHelpers.checkIfPrimitive([1,2,3]), false)
+        XCTAssertEqual(ConversionHelpers.checkIfPrimitive(UIColor.red), false)
+    }
+    
     func testConvertJSONValues() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
@@ -46,6 +55,10 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let responseBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
+            "array": ["abc", "def"],
+            "bool": true,
+            "float": 12.234,
+            "Int": 1234,
             "reveal": revealElement as Any,
             "nestedFields": [
                 "card_number": cardNumber,
@@ -54,12 +67,15 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
         
         do {
-            let result = try! ConversionHelpers.convertJSONValues(responseBody)
+            let result = try ConversionHelpers.convertJSONValues(responseBody)
             XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
             XCTAssertEqual(result["holder_name"] as! String, "john doe")
             XCTAssertEqual(result["reveal"] as! String, "reveal")
             XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as! String, "4111-1111-1111-1111")
             XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as! String, "reveal")
+        }
+        catch {
+            XCTFail()
         }
         
     }
@@ -104,7 +120,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
     
     func testConvertJSONValuesWithInvalidValueType() {
         let responseBody: [String: Any] = [
-            "invalidField": [1, 2, 3]
+            "invalidField": UIColor.blue
         ]
         
         do {
