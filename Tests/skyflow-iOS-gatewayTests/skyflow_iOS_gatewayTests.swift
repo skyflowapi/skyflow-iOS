@@ -1,7 +1,7 @@
 import XCTest
 @testable import Skyflow
 
-final class skyflow_iOS_collectTests: XCTestCase {
+final class skyflow_iOS_gatewayTests: XCTestCase {
     
     var skyflow: Client!
     
@@ -15,13 +15,139 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testCreateGatewayConfig() {
         let url = "https://sb.area51.gateway.skyflowapis.dev/v1/outboundIntegrations/abc-1212"
-        let gatewayConfig = GatewayConfig(gatewayURL: url, method: "GET")
+        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .GET)
         XCTAssertEqual(gatewayConfig.gatewayURL, url)
-        XCTAssertEqual(gatewayConfig.method, "GET")
+        XCTAssertEqual(gatewayConfig.method, .GET)
         XCTAssertNil(gatewayConfig.pathParams)
         XCTAssertNil(gatewayConfig.queryParams)
         XCTAssertNil(gatewayConfig.requestBody)
         XCTAssertNil(gatewayConfig.requestHeader)
         XCTAssertNil(gatewayConfig.responseBody)
+    }
+    
+    func testConvertJSONValues() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+        
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement = revealContainer?.create(input: revealInput)
+        
+        let responseBody: [String: Any] = [
+            "card_number": cardNumber,
+            "holder_name": "john doe",
+            "reveal": revealElement as Any,
+            "nestedFields": [
+                "card_number": cardNumber,
+                "reveal": revealElement as Any
+            ]
+        ]
+        
+        do {
+            let result = try! ConversionHelpers.convertJSONValues(responseBody)
+            XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
+            XCTAssertEqual(result["holder_name"] as! String, "john doe")
+            XCTAssertEqual(result["reveal"] as! String, "reveal")
+            XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as! String, "4111-1111-1111-1111")
+            XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as! String, "reveal")
+        }
+        
+    }
+    
+    func testConvertJSONValuesWithoutNestedFields() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+        
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement = revealContainer?.create(input: revealInput)
+        
+        let responseBody: [String: Any] = [
+            "card_number": cardNumber,
+            "holder_name": "john doe",
+            "reveal": revealElement as Any,
+            "nestedFields": [
+                "card_number": cardNumber,
+                "reveal": revealElement as Any
+            ]
+        ]
+        
+        do {
+            try ConversionHelpers.convertJSONValues(responseBody, false)
+            XCTFail()
+        }
+        catch {
+        }
+        
+    }
+
+    
+    func testConvertJSONValuesWithInvalidValueType() {
+        let responseBody: [String: Any] = [
+            "invalidField": [1, 2, 3]
+        ]
+        
+        do {
+            try ConversionHelpers.convertJSONValues(responseBody)
+
+            XCTFail()
+        }
+        catch {
+        }
+    }
+    
+    func testInvokeGateway() {
+        // Incomplete
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+        
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement = revealContainer?.create(input: revealInput)
+        
+        let requestBody: [String: Any] = [
+            "card_number": cardNumber,
+            "holder_name": "john doe",
+            "reveal": revealElement as Any,
+            "nestedFields": [
+                "card_number": cardNumber,
+                "reveal": revealElement as Any
+            ]
+        ]
+        
+        let gatewayConfig = GatewayConfig(gatewayURL: "https://skyflow.com/", method: .POST, requestBody: requestBody)
+        
+        self.skyflow.invokeGateway(config: gatewayConfig, callback: DemoAPICallback(expectation: XCTestExpectation(description: "should return response")))
+
     }
 }

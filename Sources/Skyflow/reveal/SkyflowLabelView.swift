@@ -144,4 +144,8 @@ public class SkyflowLabelView: UIView {
         self.cornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
         self.borderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
     }
+    
+    internal func getValue() -> String {
+        return self.label.secureText!
+    }
 }

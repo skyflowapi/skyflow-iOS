@@ -69,6 +69,10 @@ public class TextField: Element {
         return textField.getTextwithFormatPattern
     }
     
+    internal func getValue() -> String {
+        return textField.secureText!
+    }
+    
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }

@@ -86,4 +86,19 @@ public class Client {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
         }
     }
+    
+    public func invokeGateway(config: GatewayConfig, callback: Callback) {
+        
+        do {
+            let convertedConfig = try config.convert()
+            GatewayAPIClient.sendRequest(config: convertedConfig)
+        }
+        catch {
+            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Gateway Config"]))
+        }
+        
+        return callback.onSuccess(["response": "ok"])
+    }
+    
 }
+

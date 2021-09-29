@@ -102,4 +102,8 @@ public class Label: UIView {
     func hideError() {
         self.errorMessage.alpha = 0.0
     }
+    
+    func getValue() -> String {
+        return self.skyflowLabelView.getValue()
+    }
 }
