@@ -9,8 +9,14 @@ class GatewayAPIClient {
         self.callback = callback
     }
     
-    internal func invokeGateway(config: GatewayConfig) {
-        print("config is:", config)
+    internal func invokeGateway(config: GatewayConfig) throws{
+        do {
+            let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams)
+            let request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader)
+        }
+        catch {
+            throw error
+        }
 //        if let url = URL(string: config.gatewayURL) {
 //            var request = URLRequest(url: url)
 //            request.httpMethod = "POST"

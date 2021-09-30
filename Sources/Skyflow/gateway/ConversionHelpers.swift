@@ -62,14 +62,17 @@ class ConversionHelpers {
         return false
     }
     
-    static func checkIfValuesArePrimitive(_ dict: [String: Any]) -> Bool {
-        for (key, value) in dict {
-            if !checkIfPrimitive(value),
-               !(value is TextField),
-               !(value is Label){
-                return false
+    static func checkIfValuesArePrimitive(_ dict: [String: Any]?) -> Bool {
+        if let unwrappedDict = dict {
+            for (key, value) in unwrappedDict {
+                if !checkIfPrimitive(value),
+                   !(value is TextField),
+                   !(value is Label){
+                    return false
+                }
             }
         }
+        
         return true
     }
 }

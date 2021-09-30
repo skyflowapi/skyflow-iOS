@@ -23,8 +23,9 @@ public struct GatewayConfig {
             let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false)
             let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
             let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody)
+            let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader)
             
-            return GatewayConfig(gatewayURL: self.gatewayURL, method: self.method, pathParams: convertedPathParams, queryParams: convertedQueryParams, requestBody: convertedRequestBody, requestHeader: self.requestHeader, responseBody: self.responseBody)
+            return GatewayConfig(gatewayURL: self.gatewayURL, method: self.method, pathParams: convertedPathParams, queryParams: convertedQueryParams, requestBody: convertedRequestBody, requestHeader: convertedRequestHeader as! [String: String]?, responseBody: self.responseBody)
         }
         catch {
             throw error
