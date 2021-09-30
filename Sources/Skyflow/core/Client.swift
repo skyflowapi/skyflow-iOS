@@ -93,7 +93,7 @@ public class Client {
         
         do {
             let convertedConfig = try config.convert()
-            gatewayAPIClient.invokeGateway(config: convertedConfig)
+            try gatewayAPIClient.invokeGateway(config: convertedConfig)
         }
         catch {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
