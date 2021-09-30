@@ -39,21 +39,21 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
 
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        
+
         let styles = Styles(base: bstyle)
-        
+
         let options = CollectElementOptions(required: false)
-        
+
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
-        
+
         let cardNumber = container?.create(input: collectInput, options: options) as! TextField
         cardNumber.textField.secureText = "4111-1111-1111-1111"
-        
+
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
-        
+
         let customArray: [Any] = ["abc", "def", 12, "4111-1111-1111-1111"]
-        
+
         let requestBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
@@ -67,7 +67,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
                 "reveal": revealElement
             ]
         ]
-        
+
         do {
             let result = try ConversionHelpers.convertJSONValues(requestBody)
             XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
@@ -75,9 +75,9 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTAssertEqual(result["reveal"] as! String, "reveal")
             XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as? String, "4111-1111-1111-1111")
             XCTAssertEqual(result["bool"] as! Bool, true)
-            
+
             let resultArray = result["array"] as! [Any]
-            
+
             XCTAssertEqual(resultArray[0] as! String, "abc")
             XCTAssertEqual(resultArray[2] as! Int, 12)
             XCTAssertEqual(resultArray[3] as! String, "4111-1111-1111-1111")
@@ -86,27 +86,27 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         catch {
             XCTFail()
         }
-        
+
     }
-    
+
     func testConvertJSONValuesWithoutNestedFields() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
 
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        
+
         let styles = Styles(base: bstyle)
-        
+
         let options = CollectElementOptions(required: false)
-        
+
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
-        
+
         let cardNumber = container?.create(input: collectInput, options: options) as! TextField
         cardNumber.textField.secureText = "4111-1111-1111-1111"
-        
+
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
-        
+
         let responseBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
@@ -116,23 +116,23 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
                 "reveal": revealElement as Any
             ]
         ]
-        
+
         do {
             try ConversionHelpers.convertJSONValues(responseBody, false)
             XCTFail()
         }
         catch {
         }
-        
+
     }
-    
+
     func testConvertJSONFailsForArrays() {
         let responseBody: [String: Any] = [
             "bool": true,
             "holder_name": "john doe",
             "array": [12, "string", true]
         ]
-        
+
         do {
             try ConversionHelpers.convertJSONValues(responseBody, false, false)
             XCTFail()
@@ -141,12 +141,12 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
     }
 
-    
+
     func testConvertJSONValuesWithInvalidValueType() {
         let responseBody: [String: Any] = [
             "invalidField": UIColor.blue
         ]
-        
+
         do {
             try ConversionHelpers.convertJSONValues(responseBody)
 
@@ -155,26 +155,26 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         catch {
         }
     }
-    
+
     func testInvokeGateway() {
         // Incomplete
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
 
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        
+
         let styles = Styles(base: bstyle)
-        
+
         let options = CollectElementOptions(required: false)
-        
+
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
-        
+
         let cardNumber = container?.create(input: collectInput, options: options) as! TextField
         cardNumber.textField.secureText = "4111-1111-1111-1111"
-        
+
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
-        
+
         let requestBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
@@ -184,25 +184,25 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
                 "reveal": revealElement as Any
             ]
         ]
-        
+
         let gatewayConfig = GatewayConfig(gatewayURL: "https://skyflow.com/", method: .POST, requestBody: requestBody)
-        
+
         self.skyflow.invokeGateway(config: gatewayConfig, callback: DemoAPICallback(expectation: XCTestExpectation(description: "should return response")))
 
     }
-    
+
     func testAddParams() {
         do{
-            let modifiedUrl = try RequestHelpers.addPathParams("https://www.skyflow.com/{param}/", ["param": "vault"])
-            XCTAssertEqual(modifiedUrl, "https://www.skyflow.com/vault/")
+            let modifiedUrl = try RequestHelpers.addPathParams("https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"])
+            XCTAssertEqual(modifiedUrl, "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/12345/cvv2generation")
 
         }
         catch {
             XCTFail()
         }
-        
+
     }
-    
+
     func testAddQueryParams() {
         do{
             let modifiedUrl = try RequestHelpers.addQueryParams("https://www.skyflow.com/", ["param": "vault"])
@@ -212,71 +212,113 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         catch {
             XCTFail()
         }
-        
+
     }
     
-    func testResponseParse(){
+    func testParseActualResponseAndUpdateElements() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+
         let styles = Styles(base: bstyle)
-        let cvvRevealInput = RevealElementInput(token: "cvv", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
-        let cardNumberRevealInput = RevealElementInput(token: "cardNumber", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
-        let cvvElement = revealContainer?.create(input: cvvRevealInput)
-        let cardNumberElement = revealContainer?.create(input: cardNumberRevealInput)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement: Label? = revealContainer?.create(input: revealInput)
+
+        let customArray: [Any] = ["abc", "def", 12, "4111-1111-1111-1111"]
+
         let responseBody: [String: Any] = [
-            "resource" : [
-                "cvv2": cvvElement,
-                "cardDetails": [
-                    "cardNumber" : cardNumberElement
+            "resource": [
+                "card_number": cardNumber,
+                "reveal": revealElement!,
+                "nestedFields": [
+                    "reveal": revealElement
                 ]
-            ]
+            ],
+            "expirationDate": "12/22"
+        ]
+
+        let response: [String: Any] = [
+            "resource" : [
+                "card_number": "cardNumber",
+                "reveal": "1234",
+                "nestedFields": [
+                    "card_number": "4111-1111-1111-1111",
+                    "reveal": "abcd"
+                ]
+            ],
+            "expirationDate": "12/22"
         ]
         
+        
         do {
-            var paths = RequestHelpers.parseResponse(response: responseBody)
-            print("paths", paths)
-            XCTAssertEqual(paths.count, 2)
-            XCTAssertEqual(paths[0], "resource.cvv2")
-            XCTAssertEqual(paths[1], "resource.cardDetails.cardNumber")
-//            XCTAssertEqual(cvvElement?.getValue().count, 3)
+            let convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: response, responseBody: responseBody)
+        
+            XCTAssertEqual(convertedResponse["expirationDate"] as! String, "12/22")
+            XCTAssertNil((convertedResponse["resource"] as! [String: Any])["card_number"])
+            XCTAssertNil((convertedResponse["resource"] as! [String: Any])["reveal"])
+            XCTAssertEqual(cardNumber.getValue(), "cardNumber")
+            // XCTAssertEqual(revealElement?.getValue(), "1234")
+
         }
-        catch {
+        catch{
             XCTFail()
         }
     }
     
-    func testResponseParseAndUpdate(){
+    func testConvertValue() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+
         let styles = Styles(base: bstyle)
-        let cvvRevealInput = RevealElementInput(token: "cvv", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
-        let cardNumberRevealInput = RevealElementInput(token: "cardNumber", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
-        let cvvElement = revealContainer?.create(input: cvvRevealInput)
-        let cardNumberElement = revealContainer?.create(input: cardNumberRevealInput)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement = revealContainer?.create(input: revealInput)
+
+
         let responseBody: [String: Any] = [
-            "resource" : [
-                "cvv2": cvvElement,
-                "cardDetails": [
-                    "cardNumber" : cardNumberElement
-                ]
-            ]
+                "card_number": cardNumber,
+                "reveal": revealElement as! Label,
+                "nestedFields": [
+                    "card_number": cardNumber,
+                    "reveal": revealElement
+                ],
+            "expirationDate": "12/22"
         ]
+
         let response: [String: Any] = [
-            "resource" : [
-                "cvv2": "456",
-                "cardDetails": [
-                    "cardNumber" : "4111 1111 1111 1112"
-                ]
-            ]
+
+                "card_number": "cardNumber",
+                "reveal": "1234",
+                "nestedFields": [
+                    "card_number": "4111-1111-1111-1111",
+                    "reveal": "revealElement"
+            ],
+            "expirationDate": "12/22"
         ]
-        let paths = ["resource.cvv2", "resource.cardDetails.cardNumber"]
-        
+
         do {
-            RequestHelpers.updateElementsWithResponse(paths: paths, response: response, responseBody: responseBody)
-            print("cvvElement", cvvElement?.getValue())
-            print("cardNumberElement", cardNumberElement?.getValue())
-            XCTAssertEqual(cvvElement?.getValue(), "456")
-            XCTAssertEqual(cardNumberElement?.getValue(), "4111 1111 1111 1111")
+            XCTAssertEqual(try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "expirationDate") as! String, "12/22")
+            let cardConvert = try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "card_number")
+            XCTAssertNil(cardConvert)
+            XCTAssertEqual(cardNumber.textField.secureText, "cardNumber")
         }
         catch {
             XCTFail()

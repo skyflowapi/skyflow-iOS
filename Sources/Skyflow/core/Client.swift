@@ -93,12 +93,39 @@ public class Client {
         
         do {
             let convertedConfig = try config.convert()
-            try gatewayAPIClient.invokeGateway(config: convertedConfig)
+            self.apiClient.getAccessToken(callback: GatewayTokenCallback(client: gatewayAPIClient, config: config, clientCallback: callback))
         }
         catch {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
         }
     }
     
+    
+}
+
+fileprivate class GatewayTokenCallback: Callback {
+    
+    var client: GatewayAPIClient
+    var config: GatewayConfig
+    var clientCallback: Callback
+    
+    init(client: GatewayAPIClient, config: GatewayConfig, clientCallback: Callback) {
+        self.client = client
+        self.config = config
+        self.clientCallback = clientCallback
+    }
+    
+    func onSuccess(_ responseBody: Any) {
+        do {
+            let response = try client.invokeGateway(token: responseBody as! String, config: config)
+        }
+        catch {
+            self.onFailure(error)
+        }
+    }
+    
+    func onFailure(_ error: Error) {
+        clientCallback.onFailure(error)
+    }
 }
 

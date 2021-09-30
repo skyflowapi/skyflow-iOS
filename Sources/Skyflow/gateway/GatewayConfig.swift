@@ -17,8 +17,18 @@ public struct GatewayConfig {
     var requestHeader: [String: String]? = nil
     var responseBody: [String: Any]? = nil
     
+    public init(gatewayURL: String, method: RequestMethod, pathParams: [String: Any]? = nil, queryParams: [String: Any]? = nil, requestBody: [String: Any]? = nil, requestHeader: [String: String]? = nil, responseBody: [String: Any]? = nil) {
+        self.gatewayURL = gatewayURL
+        self.method = method
+        self.pathParams = pathParams
+        self.queryParams = queryParams
+        self.requestBody = requestBody
+        self.requestHeader = requestHeader
+        self.responseBody = responseBody
+    }
     
-    internal func convert() throws -> GatewayConfig {
+    
+    public func convert() throws -> GatewayConfig {
         do {
             let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false)
             let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
