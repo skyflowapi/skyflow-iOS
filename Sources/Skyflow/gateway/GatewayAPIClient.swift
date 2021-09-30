@@ -21,6 +21,7 @@ class GatewayAPIClient {
         do {
             
             let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams)
+            print("body====>", config.requestBody)
             var request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader)
 
             request.addValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")

@@ -117,7 +117,7 @@ fileprivate class GatewayTokenCallback: Callback {
     
     func onSuccess(_ responseBody: Any) {
         do {
-            let response = try client.invokeGateway(token: responseBody as! String, config: config)
+            let response = try client.invokeGateway(token: responseBody as! String, config: config.convert())
         }
         catch {
             self.onFailure(error)
