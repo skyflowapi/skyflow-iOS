@@ -5,7 +5,7 @@ import UIKit
 #endif
 
 
-public class Element: UIView {
+public class SkyflowElement: UIView {
     
     internal var isRequired: Bool = false
     internal var fieldType: ElementType!
@@ -73,7 +73,7 @@ public class Element: UIView {
     
 }
 
-public extension Element
+public extension SkyflowElement
 {
     /// `SkyflowElement` layer corner radius
       internal var cornerRadius: CGFloat {
@@ -116,7 +116,7 @@ public extension Element
   
 }
 
-internal extension Element {
+internal extension SkyflowElement {
     
     @objc
      func initialization() {

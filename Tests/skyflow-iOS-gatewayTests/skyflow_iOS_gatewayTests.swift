@@ -61,10 +61,10 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             "bool": true,
             "float": 12.234,
             "Int": 1234,
-            "reveal": revealElement as Any,
+            "reveal": revealElement as! Label,
             "nestedFields": [
                 "card_number": cardNumber,
-                "reveal": revealElement as Any
+                "reveal": revealElement
             ]
         ]
         
@@ -73,7 +73,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
             XCTAssertEqual(result["holder_name"] as! String, "john doe")
             XCTAssertEqual(result["reveal"] as! String, "reveal")
-            XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as! String, "4111-1111-1111-1111")
+            XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as? String, "4111-1111-1111-1111")
             XCTAssertEqual(result["bool"] as! Bool, true)
             
             let resultArray = result["array"] as! [Any]
@@ -81,7 +81,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTAssertEqual(resultArray[0] as! String, "abc")
             XCTAssertEqual(resultArray[2] as! Int, 12)
             XCTAssertEqual(resultArray[3] as! String, "4111-1111-1111-1111")
-            XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as! String, "reveal")
+            XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as? String, "reveal")
         }
         catch {
             XCTFail()
@@ -214,5 +214,72 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         }
         
     }
-
+    
+    func testResponseParse(){
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        let styles = Styles(base: bstyle)
+        let cvvRevealInput = RevealElementInput(token: "cvv", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
+        let cardNumberRevealInput = RevealElementInput(token: "cardNumber", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
+        let cvvElement = revealContainer?.create(input: cvvRevealInput)
+        let cardNumberElement = revealContainer?.create(input: cardNumberRevealInput)
+        let responseBody: [String: Any] = [
+            "resource" : [
+                "cvv2": cvvElement,
+                "cardDetails": [
+                    "cardNumber" : cardNumberElement
+                ]
+            ]
+        ]
+        
+        do {
+            var paths = RequestHelpers.parseResponse(response: responseBody)
+            print("paths", paths)
+            XCTAssertEqual(paths.count, 2)
+            XCTAssertEqual(paths[0], "resource.cvv2")
+            XCTAssertEqual(paths[1], "resource.cardDetails.cardNumber")
+//            XCTAssertEqual(cvvElement?.getValue().count, 3)
+        }
+        catch {
+            XCTFail()
+        }
+    }
+    
+    func testResponseParseAndUpdate(){
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        let styles = Styles(base: bstyle)
+        let cvvRevealInput = RevealElementInput(token: "cvv", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
+        let cardNumberRevealInput = RevealElementInput(token: "cardNumber", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "Not yet generated")
+        let cvvElement = revealContainer?.create(input: cvvRevealInput)
+        let cardNumberElement = revealContainer?.create(input: cardNumberRevealInput)
+        let responseBody: [String: Any] = [
+            "resource" : [
+                "cvv2": cvvElement,
+                "cardDetails": [
+                    "cardNumber" : cardNumberElement
+                ]
+            ]
+        ]
+        let response: [String: Any] = [
+            "resource" : [
+                "cvv2": "456",
+                "cardDetails": [
+                    "cardNumber" : "4111 1111 1111 1112"
+                ]
+            ]
+        ]
+        let paths = ["resource.cvv2", "resource.cardDetails.cardNumber"]
+        
+        do {
+            RequestHelpers.updateElementsWithResponse(paths: paths, response: response, responseBody: responseBody)
+            print("cvvElement", cvvElement?.getValue())
+            print("cardNumberElement", cardNumberElement?.getValue())
+            XCTAssertEqual(cvvElement?.getValue(), "456")
+            XCTAssertEqual(cardNumberElement?.getValue(), "4111 1111 1111 1111")
+        }
+        catch {
+            XCTFail()
+        }
+    }
 }

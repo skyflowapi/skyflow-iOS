@@ -12,7 +12,7 @@ public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
     
-     func create(input : CollectElementInput, options : CollectElementOptions? = CollectElementOptions()) -> Element where T:CollectContainer {
+     func create(input : CollectElementInput, options : CollectElementOptions? = CollectElementOptions()) -> TextField where T:CollectContainer {
         let skyflowElement = TextField(input: input, options: options!)
         elements.append(skyflowElement)
         return skyflowElement

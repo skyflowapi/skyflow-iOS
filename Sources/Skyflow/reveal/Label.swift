@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class Label: UIView {
+public class Label: UIView, Element {
     
     internal var skyflowLabelView: SkyflowLabelView!
     internal var revealInput: RevealElementInput!
@@ -103,7 +103,7 @@ public class Label: UIView {
         self.errorMessage.alpha = 0.0
     }
     
-    func getValue() -> String {
+    internal func getValue() -> String {
         return self.skyflowLabelView.getValue()
     }
 }

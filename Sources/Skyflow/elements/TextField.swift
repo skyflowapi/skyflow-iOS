@@ -5,7 +5,7 @@ import UIKit
 #endif
 
 
-public class TextField: Element {
+public class TextField: SkyflowElement, Element {
     
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)

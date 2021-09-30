@@ -9,7 +9,9 @@ import Foundation
 
 
 class RequestHelpers {
-    static func createRequest(baseURL: String, pathParams: [String: Any], queryParams: [String: Any]) throws{
+    static var paths: [String] = []
+    static var recursiveFailed: Bool = false
+    static func createRequest(baseURL: String, pathParams: [String: Any], queryParams: [String: Any]) throws -> URL {
         guard !ConversionHelpers.checkIfValuesArePrimitive(pathParams) else {
             throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid path params"])
         }
@@ -21,6 +23,7 @@ class RequestHelpers {
             let URLWithPathParams = try addPathParams(baseURL, pathParams)
             if URL(string: URLWithPathParams) != nil{
                 let finalURL = try addQueryParams(URLWithPathParams, queryParams)
+                return finalURL
             }
             else {
                 throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid path params"])
@@ -71,5 +74,84 @@ class RequestHelpers {
             result.removeLast()
         }
         return result
+    }
+    
+    static func parseResponse(response: [String: Any]) -> [String]{
+        paths = []
+        recursiveFailed = false
+        for (key, value) in response {
+            if let valueDict = value as? [String: Any]{
+                traverseResponseRecursively(currPath: key, response: valueDict)
+            }
+            else if value is TextField {
+                paths.append(key)
+            }
+            else if value is Label {
+                paths.append(key)
+            }
+            else {
+                print("Throw error/Call onfailure, invalid element")
+            }
+        }
+        return paths
+    }
+    
+    static func traverseResponseRecursively(currPath: String, response: [String: Any]){
+        if(!recursiveFailed){
+            for (key, value) in response {
+                if let valueDict = value as? [String: Any]{
+                    traverseResponseRecursively(currPath: currPath + "." + key, response: valueDict)
+                }
+                else if value is TextField {
+                    paths.append(currPath + "." + key)
+                }
+                else if value is Label {
+                    paths.append(currPath + "." + key)
+                }
+                else {
+                    print("Throw error/Call onfailure, invalid element")
+                }
+            }
+        }
+    }
+    
+//    static func validateResponse(response: [String: Any]) -> Bool{
+//        var isValid: Bool = true
+//        for (key, value) in response {
+//            if let valueDict = value as? [String: Any]{
+//                isValid = isValid && validateResponse(response: valueDict)
+//            }
+//            else{
+//
+//            }
+//        }
+//        return isValid
+//    }
+    
+    static func verifyAllPathsInResponse(paths: [String], response: [String: Any]) -> Bool{
+        for path in paths {
+            if response[keyPath: path] == nil {
+                return false
+            }
+        }
+        return true
+    }
+    
+    static func updateElementsWithResponse(paths: [String], response: [String: Any], responseBody: [String: Any]){
+        //Might need to check for dupes, or unexpected value will be updated
+        for path in paths {
+            if(responseBody[keyPath: path] != nil && response[keyPath: path] != nil){
+                let element = responseBody[keyPath: path]
+                if element is TextField {
+                    (element as! TextField).textField.secureText = response[keyPath: path] as? String
+                }
+                else if element is Label {
+                    (element as! Label).skyflowLabelView.label.secureText = response[keyPath: path] as? String
+                }
+                else{
+                    print("throw error update element failed")
+                }
+            }
+        }
     }
 }
