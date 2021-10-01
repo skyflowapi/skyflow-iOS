@@ -25,16 +25,21 @@ class ConversionHelpers {
             }
         }
         else if element is TextField {
-            return (element as! TextField).getValue()
+            let textField = element as! TextField
+            
+            return textField.getValue()
         }
         else if element is Label {
-            return (element as! Label).getValue()
+            
+            let label = element as! Label
+            
+            return label.getValue()
         }
         else if nested, element is [String: Any] {
-            return try! convertJSONValues(element as! [String: Any])
+            return try convertJSONValues(element as! [String: Any], nested, arraySupport)
         }
         else {
-            throw NSError(domain: "Invalid type", code: 400)
+            throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid type"])
         }
     }
 
@@ -91,5 +96,72 @@ class ConversionHelpers {
         }
         
         return result
+    }
+    
+    static func checkElements(_ elements: [String: Any]) throws -> Bool {
+        var traversedElements: [Any] = []
+        
+        func checkElement(_ element: Any) throws {
+            if checkIfPrimitive(element) {
+                return
+            }
+            else if element is Array<Any> {
+                try (element as! Array<Any>).map{
+                        try checkElement($0)
+                    }
+            }
+            else if element is TextField{
+                if presentIn(traversedElements, value: element) {
+                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate elements present"])
+                }
+                if !(element as! TextField).isMounted() {
+                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Unmounted element present"])
+                }
+                traversedElements.append(element)
+            }
+            else if element is Label {
+                if presentIn(traversedElements, value: element) {
+                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate elements present"])
+                }
+                if !(element as! Label).isMounted() {
+                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Unmounted element present"])
+                }
+                traversedElements.append(element)
+            }
+            else if element is [String: Any] {
+                try checkDict((element as! [String: Any]))
+            }
+            else {
+                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid type"])
+            }
+
+        }
+        
+        func checkDict(_ dict: [String: Any]) throws {
+            for (key, value) in dict {
+                try checkElement(value)
+            }
+        }
+        
+        
+        try checkDict(elements)
+        return true
+        
+    }
+    
+    static func presentIn(_ array: [Any], value: Any) -> Bool{
+        for element in array {
+            if element is TextField, value is TextField {
+                if (element as! TextField) === (value as! TextField){
+                    return true
+                }
+            }
+            if element is Label, value is Label {
+                if  (element as! Label) === (value as! Label) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

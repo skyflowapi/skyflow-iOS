@@ -57,7 +57,63 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let requestBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
-            "array": ["abc", "def", 12, cardNumber],
+            "array": ["abc", "def", 12],
+            "bool": true,
+            "float": 12.234,
+            "Int": 1234,
+            "reveal": revealElement as! Label,
+//            "nestedFields": [
+//                "card_number": cardNumber,
+//                "reveal": revealElement
+//            ]
+        ]
+
+        do {
+            let result = try ConversionHelpers.convertJSONValues(requestBody)
+            XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
+            XCTAssertEqual(result["holder_name"] as! String, "john doe")
+            XCTAssertEqual(result["reveal"] as! String, "reveal")
+//            XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as? String, "4111-1111-1111-1111")
+            XCTAssertEqual(result["bool"] as! Bool, true)
+
+            let resultArray = result["array"] as! [Any]
+
+            XCTAssertEqual(resultArray[0] as! String, "abc")
+            XCTAssertEqual(resultArray[2] as! Int, 12)
+//            XCTAssertEqual(resultArray[3] as! String, "4111-1111-1111-1111")
+//            XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as? String, "reveal")
+        }
+        catch {
+            print(error)
+            XCTFail()
+        }
+
+    }
+    
+    func testConvertValuesShouldFailForDuplicateElements() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+
+        let styles = Styles(base: bstyle)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement = revealContainer?.create(input: revealInput)
+
+        let customArray: [Any] = ["abc", "def", 12, "4111-1111-1111-1111"]
+
+        let requestBody: [String: Any] = [
+            "card_number": cardNumber,
+            "holder_name": "john doe",
+            "array": ["abc", "def", 12],
             "bool": true,
             "float": 12.234,
             "Int": 1234,
@@ -70,18 +126,8 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         do {
             let result = try ConversionHelpers.convertJSONValues(requestBody)
-            XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
-            XCTAssertEqual(result["holder_name"] as! String, "john doe")
-            XCTAssertEqual(result["reveal"] as! String, "reveal")
-            XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as? String, "4111-1111-1111-1111")
-            XCTAssertEqual(result["bool"] as! Bool, true)
-
-            let resultArray = result["array"] as! [Any]
-
-            XCTAssertEqual(resultArray[0] as! String, "abc")
-            XCTAssertEqual(resultArray[2] as! Int, 12)
-            XCTAssertEqual(resultArray[3] as! String, "4111-1111-1111-1111")
-            XCTAssertEqual((result["nestedFields"] as! [String: Any])["reveal"] as? String, "reveal")
+            print(result)
+            XCTFail()
         }
         catch {
             XCTFail()
@@ -343,6 +389,30 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         XCTAssertEqual(result["arr"] as! String, "1,2,3,5")
         XCTAssertEqual(result["mixedArr"] as! String, "1,@,aer3,23.4,true")
         XCTAssertEqual(result["withCommas"] as! String, "23,,,,abcd,true,234")
+    }
+    
+    func testCheckPresentIn() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+
+        let styles = Styles(base: bstyle)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealElement = revealContainer?.create(input: revealInput)
+        
+        let array = [cardNumber]
+        XCTAssertEqual(ConversionHelpers.presentIn(array, value: cardNumber), true)
+        XCTAssertEqual(ConversionHelpers.presentIn(array, value: revealElement), false)
+        
     }
 }
 
