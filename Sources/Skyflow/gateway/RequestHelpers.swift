@@ -17,7 +17,7 @@ class RequestHelpers {
         guard ConversionHelpers.checkIfValuesArePrimitive(pathParams) else {
             throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid path params"])
         }
-        guard ConversionHelpers.checkIfValuesArePrimitive(queryParams) else {
+        guard ConversionHelpers.checkIfValuesArePrimitive(queryParams, true) else {
             throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid query params"])
         }
         
@@ -48,15 +48,21 @@ class RequestHelpers {
         return URL
     }
     
-    static func addQueryParams(_ url: String, _ queryParams: [String: Any]?) throws -> URL {
+    static func addQueryParams(_ url: String, _ params: [String: Any]?) throws -> URL {
         var urlComponents = URLComponents(string: removeTrailingSlash(url))
         
         
-        if queryParams != nil {
+        if let queryParams = params {
             urlComponents?.queryItems = []
 
-            for (param, value) in queryParams! {
-                if let stringValue = value as? String {
+            for (param, value) in queryParams {
+                if value is Array<Any> {
+                    let stringedValues: [String] = (value as! [Any]).compactMap{ String(describing: $0) }
+                    for stringValue in stringedValues {
+                        urlComponents?.queryItems?.append(URLQueryItem(name: param, value: stringValue))
+                    }
+                }
+                else if let stringValue = value as? String {
                     urlComponents?.queryItems?.append(URLQueryItem(name: param, value: stringValue))
                 }
                 else {

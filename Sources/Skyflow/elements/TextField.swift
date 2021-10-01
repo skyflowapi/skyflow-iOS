@@ -64,6 +64,9 @@ public class TextField: SkyflowElement, Element {
     }
     
     
+    internal func isMounted() -> Bool {
+        return self.window != nil
+    }
     
     override func getOutput() -> String? {
         return textField.getTextwithFormatPattern

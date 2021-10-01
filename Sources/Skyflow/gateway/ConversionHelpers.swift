@@ -62,17 +62,34 @@ class ConversionHelpers {
         return false
     }
     
-    static func checkIfValuesArePrimitive(_ dict: [String: Any]?) -> Bool {
+    static func checkIfValuesArePrimitive(_ dict: [String: Any]?, _ arraySupport: Bool = false) -> Bool {
         if let unwrappedDict = dict {
             for (key, value) in unwrappedDict {
+                let arraySupportCheck: Bool = (!arraySupport && value is Array<Any>)
                 if !checkIfPrimitive(value),
                    !(value is TextField),
-                   !(value is Label){
+                   !(value is Label),
+                   arraySupportCheck{
                     return false
                 }
             }
         }
         
         return true
+    }
+    
+    static func convertParamArrays(params: [String: Any]) -> [String: Any] {
+        var result: [String: Any] = [:]
+        for (key, value) in params {
+            if value is Array<Any> {
+                let stringedValue: [String] = (value as! [Any]).compactMap{ String(describing: $0) }
+                result[key] = (stringedValue).joined(separator: ",")
+            }
+            else {
+                result[key] = value
+            }
+        }
+        
+        return result
     }
 }

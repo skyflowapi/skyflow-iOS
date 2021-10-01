@@ -16,6 +16,7 @@ public class Label: UIView, Element {
     internal var stackView = UIStackView()
     internal var labelField = PaddingLabel(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
+    
   
     internal var horizontalConstraints = [NSLayoutConstraint]()
     
@@ -29,6 +30,7 @@ public class Label: UIView, Element {
         buildLabel()
     }
     
+   
     override internal init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -39,6 +41,10 @@ public class Label: UIView, Element {
     
     internal func updateVal(value: String){
         self.skyflowLabelView.updateVal(value: value)
+    }
+    
+    internal func isMounted() -> Bool {
+        return self.window != nil
     }
     
     internal func buildLabel(){
