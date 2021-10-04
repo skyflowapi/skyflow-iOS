@@ -9,8 +9,7 @@ import Foundation
 import UIKit
 
 internal class PaddingLabel: UILabel {
-
-    internal var insets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    internal var insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
     override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: insets))

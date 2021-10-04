@@ -3,24 +3,23 @@ import Foundation
 import UIKit
 #endif
 
-public struct Style{
-    
+public struct Style {
     var borderColor: UIColor?
     var cornerRadius: CGFloat?
     var padding: UIEdgeInsets?
     var borderWidth: CGFloat?
-    var font:  UIFont?
+    var font: UIFont?
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
-    
+
     public init(borderColor: UIColor? = nil,
                 cornerRadius: CGFloat? = nil,
                 padding: UIEdgeInsets? = nil,
                 borderWidth: CGFloat? = nil,
-                font:  UIFont? = nil,
+                font: UIFont? = nil,
                 textAlignment: NSTextAlignment? = nil,
                 textColor: UIColor? = nil) {
-        //Assign parametric values to struct members
+        // Assign parametric values to struct members
         self.borderColor = borderColor
         self.cornerRadius = cornerRadius
         self.padding = padding

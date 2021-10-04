@@ -1,17 +1,15 @@
-
 import Foundation
 
 /**
 Validate input in scope of length.
 */
 internal struct SkyflowValidateLength: SkyflowValidationProtocol {
-    
     /// input string minimum length
     public let minLength: Int
-  
+
     /// input string maximum length
     public let maxLength: Int
-  
+
     /// Validation Error
     public let error: SkyflowValidationError
 
@@ -20,12 +18,10 @@ internal struct SkyflowValidateLength: SkyflowValidationProtocol {
         self.maxLength = maxLength
         self.error = error
     }
-    
+
     /// validate length of text
    public  func validate(text: String?) -> Bool {
-
-        if(text!.isEmpty)
-        {
+        if text!.isEmpty {
         return true
         }
         guard let text = text else {
@@ -34,5 +30,3 @@ internal struct SkyflowValidateLength: SkyflowValidationProtocol {
         return text.count >= minLength && text.count <= maxLength
     }
 }
-
-

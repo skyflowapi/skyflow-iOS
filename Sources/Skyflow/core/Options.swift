@@ -1,4 +1,4 @@
 public struct Options {
-    public init(){
+    public init() {
     }
 }

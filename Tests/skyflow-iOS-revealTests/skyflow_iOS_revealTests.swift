@@ -11,14 +11,12 @@ import XCTest
 
 
 class skyflow_iOS_revealTests: XCTestCase {
-
     var skyflow: Client!
     var revealTestId: String!
 
     override func setUp() {
         self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
         self.revealTestId = "6255-9119-4502-5915"
-
     }
 
     override func tearDown() {
@@ -32,10 +30,9 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
 
         return revealElementInput
-
     }
 
-    func getDataFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> Data{
+    func getDataFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> Data {
         let expectRecords = XCTestExpectation(description: description)
         let callback = DemoAPICallback(expectation: expectRecords)
         skyflow.detokenize(records: records, callback: callback)
@@ -56,7 +53,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testCreateSkyflowRevealContainer() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions());
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
         let labelView = revealElement!.skyflowLabelView
         let labelField = revealElement!.labelField
@@ -72,7 +69,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testPureGet() {
         let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
         let responseData = getDataFromClientWithExpectation(records: defaultRecords)
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
@@ -88,7 +85,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testGetWithInvalidToken() {
         let defaultRecords = ["records": [["token": "abc", "redaction": RedactionType.DEFAULT]]]
         let responseData = getDataFromClientWithExpectation(description: "Should get an error", records: defaultRecords)
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
         XCTAssertNotNil(jsonData)
         XCTAssertNotNil(jsonData["errors"])
@@ -101,7 +98,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testCheckRevealElementsArray() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
-        let _ = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        _ = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
 
         XCTAssertEqual(revealContainer?.revealElements.count, 1)
@@ -109,12 +106,11 @@ class skyflow_iOS_revealTests: XCTestCase {
     }
 
     func testRevealContainersReveal() {
-        
         // Invalid test
-        
+
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions());
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
         let revealedOutput = "6255-9119-4502-5915"
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
@@ -122,7 +118,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         revealContainer?.reveal(callback: callback)
 
         XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
-
     }
 
     func testGetWithoutURLTrailingSlash() {
@@ -134,10 +129,10 @@ class skyflow_iOS_revealTests: XCTestCase {
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        let responseData =  Data(callback.receivedResponse.utf8)
+        let responseData = Data(callback.receivedResponse.utf8)
         print("response ====>", callback.receivedResponse.utf8)
 
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
@@ -145,7 +140,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(count, 1)
     }
-    
+
     func testWithWrongVaultURL() {
         let noTrailingSlashSkyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na2.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
@@ -155,7 +150,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        let responseData =  callback.receivedResponse
+        let responseData = callback.receivedResponse
         XCTAssertEqual(responseData, "A server with the specified hostname could not be found.")
     }
 
@@ -169,16 +164,15 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         wait(for: [expectRecords], timeout: 10.0)
         print("resp ===>", callback.receivedResponse.utf8)
-        let responseData =  Data(callback.receivedResponse.utf8)
+        let responseData = Data(callback.receivedResponse.utf8)
 
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String:Any]
+        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
         let errors = jsonData["errors"] as! [Any]
         let errorCount = errors.count
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(errorCount, 1)
-        XCTAssertEqual((((errors[0] as! [String: Any])["error"] ?? nil) as! [String: Any])["code"] as! String, "501")
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! [String: Any])["code"] as! String, "501")
     }
-
 }

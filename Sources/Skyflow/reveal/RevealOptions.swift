@@ -8,5 +8,5 @@
 import Foundation
 
 public struct RevealOptions {
-    public init(){}
+    public init() {}
 }

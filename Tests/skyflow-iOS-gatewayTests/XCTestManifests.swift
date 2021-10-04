@@ -3,7 +3,7 @@ import XCTest
 #if !canImport(ObjectiveC)
 public func allTests() -> [XCTestCaseEntry] {
     return [
-        testCase(skyflow_iOS_gatewayTests.allTests),
+        testCase(skyflow_iOS_gatewayTests.allTests)
     ]
 }
 #endif
