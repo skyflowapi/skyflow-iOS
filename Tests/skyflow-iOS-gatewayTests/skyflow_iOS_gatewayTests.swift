@@ -72,7 +72,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             let result = try ConversionHelpers.convertJSONValues(requestBody)
             XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
             XCTAssertEqual(result["holder_name"] as! String, "john doe")
-            XCTAssertEqual(result["reveal"] as! String, "reveal")
+            XCTAssertEqual(result["reveal"] as! String, "abc")
 //            XCTAssertEqual((result["nestedFields"] as! [String: Any])["card_number"] as? String, "4111-1111-1111-1111")
             XCTAssertEqual(result["bool"] as! Bool, true)
 
