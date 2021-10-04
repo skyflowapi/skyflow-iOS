@@ -108,7 +108,6 @@ class RequestHelpers {
     }
     
 
-
     static func parseActualResponseAndUpdateElements(response: [String: Any], responseBody: [String: Any]) throws -> [String: Any]{
 
         var result: [String: Any] = [:]

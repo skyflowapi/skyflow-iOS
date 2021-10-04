@@ -16,7 +16,7 @@ public struct RevealElementInput {
     internal var redaction: RedactionType
     internal var altText: String?
     
-    public init(token: String, inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String, redaction: RedactionType, altText: String? = nil) {
+    public init(token: String = "", inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String, redaction: RedactionType, altText: String? = nil) {
         self.token = token
         self.inputStyles = inputStyles
         self.labelStyles = labelStyles

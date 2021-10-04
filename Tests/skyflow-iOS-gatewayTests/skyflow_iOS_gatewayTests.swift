@@ -318,7 +318,6 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTAssertEqual(try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "expirationDate") as! String, "12/22")
             let cardConvert = try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "card_number")
             XCTAssertNil(cardConvert)
-            // Undefined behaviour XCTAssertEqual(cardNumber.textField.secureText, "cardNumber")
         }
         catch {
             XCTFail()

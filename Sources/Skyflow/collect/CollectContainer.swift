@@ -26,8 +26,23 @@ public extension Container {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) is not mounted"]))
             return
         }
+
         for element in self.elements
         {
+            if element.collectInput.table.isEmpty {
+                let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
+                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) has empty table value"]))
+                return
+
+            }
+            if element.collectInput.column.isEmpty {
+                let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
+                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) has empty column value"]))
+                return
+
+            }
+            
+            
             let state = element.getState()
             let error = state["validationErrors"]
             if((state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool))

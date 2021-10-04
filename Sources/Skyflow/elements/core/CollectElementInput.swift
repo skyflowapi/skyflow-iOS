@@ -11,7 +11,7 @@ public struct CollectElementInput {
     var type : ElementType
     var altText: String?
     
-    public init(table: String, column: String,
+    public init(table: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
                 placeholder: String? = "", type: ElementType, altText: String? = ""){
         

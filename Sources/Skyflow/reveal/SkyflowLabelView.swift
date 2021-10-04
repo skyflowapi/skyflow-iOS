@@ -146,6 +146,6 @@ public class SkyflowLabelView: UIView {
     }
     
     internal func getValue() -> String {
-        return self.label.secureText!
+        return self.revealInput.token
     }
 }
