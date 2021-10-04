@@ -100,7 +100,7 @@ class RequestHelpers {
 
     static func parseActualResponseAndUpdateElements(response: [String: Any], responseBody: [String: Any]) throws -> [String: Any] {
         var result: [String: Any] = [:]
-        for (key, value) in responseBody {
+        for (key, _) in responseBody {
             if response[key] == nil {
                 throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid response body configuration"])
             }
@@ -130,7 +130,7 @@ class RequestHelpers {
                     return value
                 } else if responseBodyValue is TextField {
                     DispatchQueue.main.async {
-                        (responseBodyValue as! TextField).textField.secureText = value as! String
+                        (responseBodyValue as! TextField).textField.secureText = (value as! String)
                     }
                     return nil
                 } else if responseBodyValue is Label {

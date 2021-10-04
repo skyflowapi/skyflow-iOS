@@ -26,7 +26,7 @@ class GatewayAPIClient {
 
             gatewayRequestGroup.enter()
 
-            let task = try session.dataTask(with: request) { data, response, error in
+            let task = session.dataTask(with: request) { data, response, error in
                 defer {
                     gatewayRequestGroup.leave()
                 }
