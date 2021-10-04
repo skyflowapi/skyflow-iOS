@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 10/08/21.
-//
-
 import Foundation
 import XCTest
 import Skyflow
