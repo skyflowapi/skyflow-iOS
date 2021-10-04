@@ -176,7 +176,7 @@ class ConversionHelpers {
         }
 
         func getValue(_ value: Any) throws -> Any? {
-            if checkIfPrimitive(value) {
+            if value is String || value is Int || value is Double || value is Bool {
                 return value
             } else if value is [Any] {
                 if let arrayValue = value as? [Any], !arrayValue.isEmpty {

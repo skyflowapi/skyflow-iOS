@@ -38,7 +38,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         skyflow.detokenize(records: records, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        print("response ===>", callback.receivedResponse)
         return Data(callback.receivedResponse.utf8)
     }
 
@@ -130,7 +129,6 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         wait(for: [expectRecords], timeout: 10.0)
         let responseData = Data(callback.receivedResponse.utf8)
-        print("response ====>", callback.receivedResponse.utf8)
 
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
@@ -163,7 +161,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        print("resp ===>", callback.receivedResponse.utf8)
         let responseData = Data(callback.receivedResponse.utf8)
 
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
