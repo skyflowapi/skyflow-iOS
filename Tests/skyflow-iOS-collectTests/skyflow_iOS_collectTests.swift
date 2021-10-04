@@ -105,7 +105,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as? TextField
+        let cardNumber = container?.create(input: collectInput, options: options)
         
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
 
@@ -121,7 +121,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as? TextField
+        let cardNumber = container?.create(input: collectInput, options: options)
         
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         
@@ -138,7 +138,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as? TextField
+        let cardNumber = container?.create(input: collectInput, options: options)
         
         cardNumber?.textField.secureText = "411"
         
@@ -155,7 +155,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options)
+        _ = container?.create(input: collectInput, options: options)
         
         XCTAssertEqual(container?.elements.count, 1)
         XCTAssertTrue(container?.elements[0].fieldType == ElementType.CARD_NUMBER)
@@ -163,21 +163,26 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsert() {
         
+        let window = UIWindow()
+        
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput1, options: options) as! TextField
+        let cardNumber = container?.create(input: collectInput1, options: options)
         
-        cardNumber.textField.secureText = "4111 1111 1111 1111"
+        cardNumber?.textField.secureText = "4111 1111 1111 1111"
+        
+        window.addSubview(cardNumber!)
         
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
-        let cvv = container?.create(input: collectInput2, options: options) as! TextField
+        let cvv = container?.create(input: collectInput2, options: options)
         
-        cvv.textField.secureText = "211"
+        cvv?.textField.secureText = "211"
+        window.addSubview(cvv!)
         
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
         
@@ -202,21 +207,27 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertInvalidInput() {
         
+        let window = UIWindow()
+        
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput1, options: options) as! TextField
+        let cardNumber = container?.create(input: collectInput1, options: options)
         
-        cardNumber.textField.secureText = "411"
+        cardNumber?.textField.secureText = "411"
+        
+        window.addSubview(cardNumber!)
         
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
-        let cvv = container?.create(input: collectInput2, options: options) as! TextField
+        let cvv = container?.create(input: collectInput2, options: options)
         
-        cvv.textField.secureText = "2"
+        cvv?.textField.secureText = "2"
+        
+        window.addSubview(cvv!)
         
         let expectation = XCTestExpectation(description: "Container insert call - All Invalid")
         
@@ -231,21 +242,27 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertMixedInvalidInput() {
         
+        let window = UIWindow()
+        
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: false)
         
         let collectInput1 = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput1, options: options) as! TextField
+        let cardNumber = container?.create(input: collectInput1, options: options)
         
-        cardNumber.textField.secureText = "4111 1111 1111 1111"
+        cardNumber?.textField.secureText = "4111 1111 1111 1111"
+        
+        window.addSubview(cardNumber!)
         
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
-        let cvv = container?.create(input: collectInput2, options: options) as! TextField
+        let cvv = container?.create(input: collectInput2, options: options)
         
-        cvv.textField.secureText = "2"
+        cvv?.textField.secureText = "2"
+        
+        window.addSubview(cvv!)
         
         let expectation = XCTestExpectation(description: "Container insert call - Mixed Invalid")
         
@@ -260,6 +277,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertIsRequiredAndEmpty() {
         
+        let window = UIWindow()
+        
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: true)
@@ -267,6 +286,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
+        
+        window.addSubview(cardNumber!)
         
         let expectation = XCTestExpectation(description: "Container insert call - isRequiredAndEmpty")
         
@@ -282,15 +303,19 @@ final class skyflow_iOS_collectTests: XCTestCase {
     
     func testContainerInsertIsRequiredAndNotEmpty() {
         
+        let window = UIWindow()
+        
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let options = CollectElementOptions(required: true)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container?.create(input: collectInput, options: options)
         
-        cardNumber.textField.secureText = "4111 1111 1111 1111"
+        cardNumber?.textField.secureText = "4111 1111 1111 1111"
+        
+        window.addSubview(cardNumber!)
         
         let expectation = XCTestExpectation(description: "Container insert call - isRequiredAndNotEmpty")
         

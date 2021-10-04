@@ -194,12 +194,12 @@ class ConversionHelpers {
                 return value
             }
             else if value is Array<Any> {
-                if let arrayValue = value as! Array<Any>?, !arrayValue.isEmpty {
+                if let arrayValue = value as? Array<Any>, !arrayValue.isEmpty {
                     return arrayValue
                 }
             }
             else if value is [String: Any] {
-                if let dictValue = value as! [String: Any]?, !dictValue.isEmpty {
+                if let dictValue = value as? [String: Any], !dictValue.isEmpty {
                     let dictResult = try recurseDict(dictValue)
                     if !dictResult.isEmpty {
                         return dictResult
