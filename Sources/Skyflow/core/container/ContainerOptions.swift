@@ -8,5 +8,5 @@
 import Foundation
 
 public struct ContainerOptions {
-    public init(){}
+    public init() {}
 }

@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 public class FormatLabel: UILabel {
-    
     internal var secureText: String? {
         set {
             super.text = newValue

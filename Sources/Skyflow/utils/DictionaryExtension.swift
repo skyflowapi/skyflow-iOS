@@ -39,8 +39,7 @@ extension Dictionary {
   private mutating func setValue(_ value: Any, forKeyPath keyPath: [Key]) {
     if keyPath.count == 1 {
       self[keyPath.first!] = value as? Value
-    }
-    else {
+    } else {
       if self[keyPath.first!] == nil {
         self[keyPath.first!] = ([Key: Value]() as? Value)
       }
@@ -51,6 +50,3 @@ extension Dictionary {
     }
   }
 }
-
-
-
