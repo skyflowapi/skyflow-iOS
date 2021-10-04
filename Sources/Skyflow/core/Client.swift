@@ -81,8 +81,7 @@ public class Client {
         let gatewayAPIClient = GatewayAPIClient(callback: callback)
 
         do {
-            let convertedConfig = try config.convert()
-            self.apiClient.getAccessToken(callback: GatewayTokenCallback(client: gatewayAPIClient, config: config, clientCallback: callback))
+            self.apiClient.getAccessToken(callback: GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(), clientCallback: callback))
         } catch {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
         }
@@ -102,7 +101,7 @@ private class GatewayTokenCallback: Callback {
 
     func onSuccess(_ responseBody: Any) {
         do {
-            let response = try client.invokeGateway(token: responseBody as! String, config: config.convert())
+            try client.invokeGateway(token: responseBody as! String, config: config.convert())
         } catch {
             self.onFailure(error)
         }

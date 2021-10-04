@@ -65,7 +65,7 @@ class ConversionHelpers {
 
     static func checkIfValuesArePrimitive(_ dict: [String: Any]?, _ arraySupport: Bool = false) -> Bool {
         if let unwrappedDict = dict {
-            for (key, value) in unwrappedDict {
+            for (_, value) in unwrappedDict {
                 let arraySupportCheck: Bool = (!arraySupport && value is [Any])
                 if !checkIfPrimitive(value),
                    !(value is TextField),
@@ -104,14 +104,14 @@ class ConversionHelpers {
         return nil
     }
 
-    static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false) throws -> Bool {
+    static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false) throws {
         var traversedElements: [Any] = []
 
         func checkElement(_ element: Any) throws {
             if checkIfPrimitive(element) {
                 return
             } else if element is [Any] {
-                try (element as! [Any]).map {
+                try (element as! [Any]).forEach {
                         try checkElement($0)
                 }
             } else if element is TextField {
@@ -138,14 +138,13 @@ class ConversionHelpers {
         }
 
         func checkDict(_ dict: [String: Any]) throws {
-            for (key, value) in dict {
+            for (_, value) in dict {
                 try checkElement(value)
             }
         }
 
 
         try checkDict(elements)
-        return true
     }
 
     static func presentIn(_ array: [Any], value: Any) -> Bool {
