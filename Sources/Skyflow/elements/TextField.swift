@@ -115,6 +115,22 @@ public class TextField: SkyflowElement, Element {
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
     
+    internal func isValid() -> Bool{
+        let state = self.state.getState()
+        let error = state["validationErrors"]
+        if((state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool))
+        {
+            return false
+        }
+        if(!(state["isValid"] as! Bool))
+        {
+           
+            return false
+        }
+        
+        return true
+    }
+    
 }
 /// UIResponder methods
 extension TextField {

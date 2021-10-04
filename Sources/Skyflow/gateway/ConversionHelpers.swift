@@ -27,7 +27,12 @@ class ConversionHelpers {
         else if element is TextField {
             let textField = element as! TextField
             
-            return textField.getValue()
+            if textField.isValid() {
+                return textField.getValue()
+            }
+            else {
+                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Validations failed for collect element with label '\(textField.textFieldLabel.text ?? "")'"])
+            }
         }
         else if element is Label {
             
@@ -110,7 +115,7 @@ class ConversionHelpers {
         return nil
     }
     
-    static func checkElements(_ elements: [String: Any]) throws -> Bool {
+    static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false) throws -> Bool {
         var traversedElements: [Any] = []
         
         func checkElement(_ element: Any) throws {
@@ -123,7 +128,7 @@ class ConversionHelpers {
                     }
             }
             else if element is TextField{
-                if presentIn(traversedElements, value: element) {
+                if !duplicatesAllowed, presentIn(traversedElements, value: element) {
                     throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate elements present"])
                 }
                 if !(element as! TextField).isMounted() {
@@ -132,7 +137,7 @@ class ConversionHelpers {
                 traversedElements.append(element)
             }
             else if element is Label {
-                if presentIn(traversedElements, value: element) {
+                if !duplicatesAllowed, presentIn(traversedElements, value: element) {
                     throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate elements present"])
                 }
                 if !(element as! Label).isMounted() {
