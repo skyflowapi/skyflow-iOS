@@ -713,6 +713,7 @@ Sample Response:
 }
 ```
 In the above example,  CVV is being collected from the user input at the time of checkout and not stored anywhere in the vault
+
 `Note:`  
 - card_number can be either container element or plain text value (tokens or actual value)
 - `table` and `column` names are not required for creating collect element, if it is used for invokeGateway method, since they will not be stored in the vault
