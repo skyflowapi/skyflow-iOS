@@ -19,7 +19,11 @@ public extension Container {
     }
     
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T:RevealContainer {
-        
+        if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
+            let label = element.revealInput.label != "" ? " \(element.revealInput.label)" : ""
+            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element\(label) is not mounted"]))
+            return
+        }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
         //Create GetOptions object from RevealOptions object

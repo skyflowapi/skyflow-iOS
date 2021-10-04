@@ -21,6 +21,11 @@ public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T:CollectContainer {
         
         var errors = ""
+        if let element = ConversionHelpers.checkElementsAreMounted(elements: self.elements) as? TextField {
+            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
+            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) is not mounted"]))
+            return
+        }
         for element in self.elements
         {
             let state = element.getState()

@@ -98,6 +98,18 @@ class ConversionHelpers {
         return result
     }
     
+    static func checkElementsAreMounted(elements: [Any]) -> Any? {
+        for element in elements{
+            if let label = element as? Label, !label.isMounted() {
+                return label
+            }
+            else if let textField = element as? TextField, !textField.isMounted() {
+                return textField
+            }
+        }
+        return nil
+    }
+    
     static func checkElements(_ elements: [String: Any]) throws -> Bool {
         var traversedElements: [Any] = []
         
