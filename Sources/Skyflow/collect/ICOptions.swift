@@ -8,10 +8,10 @@
 import Foundation
 
 public struct ICOptions {
-    var tokens : Bool
+    var tokens: Bool
     var additionalFields: [String: Any]?
-    
-    public init(tokens: Bool = true, additionalFields: [String: Any]? = nil){
+
+    public init(tokens: Bool = true, additionalFields: [String: Any]? = nil) {
         self.tokens = tokens
         self.additionalFields = additionalFields
     }

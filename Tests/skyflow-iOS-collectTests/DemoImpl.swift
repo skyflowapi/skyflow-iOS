@@ -9,24 +9,22 @@ import Foundation
 import XCTest
 import Skyflow
 
-public class DemoTokenProvider : TokenProvider {
-    
+public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: "http://localhost:8000/js/analystToken") {
+        if let url = URL(string: "https://go-server.skyflow.dev/sa-token/ffe21f44f68a4ae3b4fe55ee7f0a85d") {
             let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url){ data, response, error in
-                if(error != nil){
+            let task = session.dataTask(with: url) { data, _, error in
+                if error != nil {
                     print(error!)
                     return
                 }
                 if let safeData = data {
-                    do{
-                        let x = try JSONSerialization.jsonObject(with: safeData, options:[]) as? [String: String]
+                    do {
+                        let x = try JSONSerialization.jsonObject(with: safeData, options: []) as? [String: String]
                         if let accessToken = x?["accessToken"] {
                             apiCallback.onSuccess(accessToken)
                         }
-                    }
-                    catch{
+                    } catch {
                         print("access token wrong format")
                     }
                 }
@@ -37,20 +35,19 @@ public class DemoTokenProvider : TokenProvider {
 }
 
 public class DemoAPICallback: Callback {
-    
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
-    
-    public init(expectation: XCTestExpectation){
+
+    public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
-    
+
     public func onSuccess(_ responseBody: Any) {
         let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
         self.receivedResponse = dataString!
         expectation.fulfill()
     }
-    
+
     public func onFailure(_ error: Error) {
         print(error)
         self.receivedResponse = String(error.localizedDescription)
