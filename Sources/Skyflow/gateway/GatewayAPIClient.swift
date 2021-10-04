@@ -60,7 +60,14 @@ class GatewayAPIClient {
             gatewayRequestGroup.notify(queue: .main) {
 
                 if isSuccess {
-                    self.callback.onSuccess(convertedResponse)
+                    do {
+                        let sanitizedResponse = try ConversionHelpers.removeEmptyValuesFrom(response: convertedResponse)
+
+                        self.callback.onSuccess(sanitizedResponse)
+                    }
+                    catch {
+                        self.callback.onFailure(error)
+                    }
                 }
                 else {
                     self.callback.onFailure(errorObject)

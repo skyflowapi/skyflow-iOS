@@ -176,4 +176,42 @@ class ConversionHelpers {
         }
         return false
     }
+    
+    static func removeEmptyValuesFrom(response: [String: Any])throws -> [String: Any] {
+        func recurseDict(_ dict: [String: Any]) throws -> [String: Any] {
+            var result: [String: Any] = [:]
+            for (key, value) in dict {
+                if let gottenValue = try getValue(value) {
+                    result[key] = gottenValue
+                }
+            }
+            
+            return result
+        }
+        
+        func getValue(_ value: Any) throws -> Any? {
+            if checkIfPrimitive(value) {
+                return value
+            }
+            else if value is Array<Any> {
+                if let arrayValue = value as! Array<Any>?, !arrayValue.isEmpty {
+                    return arrayValue
+                }
+            }
+            else if value is [String: Any] {
+                if let dictValue = value as! [String: Any]?, !dictValue.isEmpty {
+                    let dictResult = try recurseDict(dictValue)
+                    if !dictResult.isEmpty {
+                        return dictResult
+                    }
+                }
+            }
+            else {
+                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid value"])
+            }
+            return nil
+        }
+        
+        return try recurseDict(response)
+    }
 }
