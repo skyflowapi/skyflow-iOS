@@ -648,6 +648,7 @@ let response =  skyflowClient.invokeGateway(gatewayConfig: gatewayConfig);
 - PUT
 - PATCH
 - DELETE
+
 **pathParams, queryParams, requestHeader, requestBody** are the JSON objects represented as dictionaries that will be sent through the gateway integration url.
 The values in the above parameters can contain collect elements, reveal elements or actual values. When elements are provided inplace of values, they get replaced with the value entered in the collect elements or value present in the reveal elements
 **responseBody**:  
@@ -739,9 +740,7 @@ let expiryDateInput = CollectElementInput(
   type: skyflow.ElementType.EXPIRATION_DATE
 )
 
-let expiryDateElement = collectContainer.create(
-  input: expiryDateInput
-)
+let expiryDateElement = collectContainer.create(input: expiryDateInput)
 
 //Can interact with these objects as a normal UIView Object and add to View
 
