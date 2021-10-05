@@ -37,11 +37,38 @@ class GatewayAPIClient {
                     return
                 }
 
+                if let httpResponse = response as? HTTPURLResponse {
+                    let range = 400...599
+                    if range ~= httpResponse.statusCode {
+                        var desc = "Invoke Gateway call failed with the following status code" + String(httpResponse.statusCode)
+
+                        if let safeData = data {
+                            desc = String(decoding: safeData, as: UTF8.self)
+                        }
+
+                        isSuccess = false
+                        errorObject = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: desc])
+                        return
+                    }
+                }
+                
 
                 if let safeData = data {
                     do {
-                        let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-                        convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData, responseBody: config.responseBody ?? [:])
+                        let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments)
+                        if(responseData is [String: Any]){
+                            convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData as! [String : Any], responseBody: config.responseBody ?? [:])
+                        }
+                        else if responseData is String, let httpResponse = response as? HTTPURLResponse {
+                            isSuccess = false
+                            errorObject = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: responseData])
+                            return
+                        }
+                        else {
+                            isSuccess = false
+                            errorObject = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response"])
+                            return
+                        }
                     } catch {
                         isSuccess = false
                         errorObject = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response \(error.localizedDescription)"])

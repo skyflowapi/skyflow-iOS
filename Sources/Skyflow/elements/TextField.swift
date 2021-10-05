@@ -64,7 +64,16 @@ public class TextField: SkyflowElement, Element {
 
 
     internal func isMounted() -> Bool {
-        return self.window != nil
+        var flag = false
+        if Thread.isMainThread {
+            flag = self.window != nil
+        }
+        else {
+            DispatchQueue.main.sync {
+                flag = self.window != nil
+            }
+        }
+        return flag
     }
 
     override func getOutput() -> String? {
