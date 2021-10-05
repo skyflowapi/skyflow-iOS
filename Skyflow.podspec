@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "Skyflow"
-  spec.version      = "1.1.0-dev.1c08ed9"
+  spec.version      = "1.2.0"
   spec.summary      = "skyflow-iOS"
 
   spec.description  = "Skyflow iOS SDK"
