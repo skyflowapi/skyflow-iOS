@@ -126,7 +126,7 @@ public class TextField: SkyflowElement, Element {
 
     internal func isValid() -> Bool {
         let state = self.state.getState()
-        if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
+        if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool || self.actualValue.isEmpty) {
             return false
         }
         if !(state["isValid"] as! Bool) {
