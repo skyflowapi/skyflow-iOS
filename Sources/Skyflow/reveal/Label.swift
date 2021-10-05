@@ -43,7 +43,11 @@ public class Label: UIView, Element {
     }
 
     internal func isMounted() -> Bool {
-        return self.window != nil
+        var flag = false
+        DispatchQueue.main.async {
+            flag = self.window != nil
+        }
+        return flag
     }
 
     internal func buildLabel() {
