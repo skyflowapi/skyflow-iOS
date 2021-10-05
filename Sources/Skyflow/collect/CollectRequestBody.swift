@@ -96,7 +96,7 @@ internal class CollectRequestBody {
         for element in elements {
             if tableMap[(element.tableName)!] != nil {
                 var temp = payload[tableMap[(element.tableName)!]!]
-                temp[keyPath: "fields." + (element.columnName)!] = element.getOutput()
+                temp[keyPath: "fields." + (element.columnName)!] = element.getValue()
                 let tableSetEntry = element.tableName! + "-" + element.columnName
                 if tableSet.contains(tableSetEntry) {
                     self.callback?.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate column " + element.columnName + " found in " + element.tableName!]))
@@ -111,7 +111,7 @@ internal class CollectRequestBody {
                     "table": element.tableName!,
                     "fields": [:]
                 ]
-                temp[keyPath: "fields." + element.columnName!] = element.getOutput()
+                temp[keyPath: "fields." + element.columnName!] = element.getValue()
                 self.tableSet.insert(element.tableName! + "-" + element.columnName)
                 payload.append(temp)
             }
