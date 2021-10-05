@@ -2,12 +2,12 @@ name: Public Release
 
 on:
   push:
-    tags: '[0-9]+.[0-9]+.[0-9]+'
+    tags: '*.*.*'
 
 
 jobs:
   deploy_private_pod:
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v2
       with:
