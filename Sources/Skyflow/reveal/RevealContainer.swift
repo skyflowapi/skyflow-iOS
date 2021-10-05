@@ -28,6 +28,10 @@ public extension Container {
                 callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element \(element.revealInput.label) has no token provided"]))
                 return
             }
+            if element.revealInput.redaction == nil {
+                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element \(element.revealInput.label) has no redaction type provided"]))
+                return
+            }
         }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)

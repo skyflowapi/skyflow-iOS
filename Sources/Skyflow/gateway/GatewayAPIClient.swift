@@ -41,7 +41,6 @@ class GatewayAPIClient {
                 if let safeData = data {
                     do {
                         let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-
                         convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData, responseBody: config.responseBody ?? [:])
                     } catch {
                         isSuccess = false
