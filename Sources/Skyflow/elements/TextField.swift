@@ -188,8 +188,12 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didChange`.
     @objc func textFieldDidChange(_ textField: UITextField) {
         isDirty = true
-        self.actualValue = textField.text ?? ""
+        updateActualValue()
         textFieldValueChanged()
+    }
+    
+    func updateActualValue() {
+        self.actualValue = textField.secureText ?? ""
     }
 
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
