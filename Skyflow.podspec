@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "Skyflow"
-  spec.version      = "1.2.0"
+  spec.version      = "1.2.0-dev.3d6f8ee"
   spec.summary      = "skyflow-iOS"
 
   spec.description  = "Skyflow iOS SDK"
@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
   spec.platform     = :ios, "9.0"
   spec.ios.deployment_target = "9.0"
 
-  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :commit => "" }
+  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :commit => "3d6f8ee" }
 
   spec.source_files  = "Sources/Skyflow/**/*.{swift}"
 
