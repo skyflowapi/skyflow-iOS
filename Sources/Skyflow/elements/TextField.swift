@@ -79,9 +79,11 @@ public class TextField: SkyflowElement, Element {
     override func getOutput() -> String? {
         return textField.getTextwithFormatPattern
     }
-
+    
+    internal var actualValue: String = ""
+    
     internal func getValue() -> String {
-        return textField.secureText!
+        return actualValue
     }
 
     internal func getOutputTextwithoutFormatPattern() -> String? {
@@ -186,6 +188,7 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didChange`.
     @objc func textFieldDidChange(_ textField: UITextField) {
         isDirty = true
+        self.actualValue = textField.text ?? ""
         textFieldValueChanged()
     }
 
