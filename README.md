@@ -629,9 +629,9 @@ The response below shows that some tokens assigned to the reveal elements get re
 
 
 # Securely invoking gateway client-side
-Using Skyflow gateway, end-user applications can integrate checkout/card issuance flow without any of their apps/systems touching the PCI compliant fields like cvv, card number. To invoke gateway, use the `invokeGateway(gatewayConfig)` method of the Skyflow client.
+Using Skyflow gateway, end-user applications can integrate checkout/card issuance flow without any of their apps/systems touching the PCI compliant fields like cvv, card number. To invoke gateway, use the `invokeGateway(config: Skyflow.GatewayConfig, callback: Skyflow.Callback)` method of the Skyflow client.
 ```swift
-let gatewayConfig = {
+let gatewayConfig = Skyflow.GatewayConfig(
   gatewayURL: String, // gateway url recevied when creating a skyflow gateway integration
   methodName: Skyflow.RequestMethod,
   pathParams: [String: Any],	// optional
@@ -639,8 +639,8 @@ let gatewayConfig = {
   requestHeader: [String: String], // optional
   requestBody: [String: Any],	// optional
   responseBody: [String: Any]	// optional
-}
-let response =  skyflowClient.invokeGateway(gatewayConfig: gatewayConfig);
+)
+skyflowClient.invokeGateway(config: gatewayConfig, callback: callback);
 ```
 `methodName` supports the following methods:
 - GET
