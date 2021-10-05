@@ -3,10 +3,10 @@
 version=$1
 SEMVER=$version
 
-if [ -z $2 ]
+if [ -z $3 ]
 then
     sed -E "s/spec.version .+/spec.version      = \"$SEMVER\"/g" "./Skyflow.podspec" > tempfile
-    
+
     echo --------------------------
     echo "Done, Pod now at v$1"
 
@@ -15,7 +15,7 @@ else
     
     echo --------------------------
     echo "Done, Pod now at v$1-dev.$2"
-
 fi
 
-sed -E "s/:commit => \".+\"/:commit => \"$2\"/g" tempfile > "./Skyflow.podspec" && rm -f tempfile
+    sed -E "s/:commit => \".*\"/:commit => \"$2\"/g" tempfile > "./Skyflow.podspec" && rm -f tempfile
+
