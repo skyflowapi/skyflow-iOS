@@ -64,15 +64,26 @@ public class TextField: SkyflowElement, Element {
 
 
     internal func isMounted() -> Bool {
-        return self.window != nil
+        var flag = false
+        if Thread.isMainThread {
+            flag = self.window != nil
+        }
+        else {
+            DispatchQueue.main.sync {
+                flag = self.window != nil
+            }
+        }
+        return flag
     }
 
     override func getOutput() -> String? {
         return textField.getTextwithFormatPattern
     }
-
+    
+    internal var actualValue: String = ""
+    
     internal func getValue() -> String {
-        return textField.secureText!
+        return actualValue
     }
 
     internal func getOutputTextwithoutFormatPattern() -> String? {
@@ -115,7 +126,7 @@ public class TextField: SkyflowElement, Element {
 
     internal func isValid() -> Bool {
         let state = self.state.getState()
-        if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
+        if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool || self.actualValue.isEmpty) {
             return false
         }
         if !(state["isValid"] as! Bool) {
@@ -177,7 +188,12 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didChange`.
     @objc func textFieldDidChange(_ textField: UITextField) {
         isDirty = true
+        updateActualValue()
         textFieldValueChanged()
+    }
+    
+    func updateActualValue() {
+        self.actualValue = textField.secureText ?? ""
     }
 
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
