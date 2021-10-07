@@ -380,4 +380,14 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTFail()
         }
     }
+    
+    func testFormatErrorMessage() {
+        let noValueReplace = ErrorCodes.EMPTY_TABLE_NAME()
+        let singleValueReplace = ErrorCodes.EMPTY_VAULT(value: "vault#123")
+        let multiValueReplace = ErrorCodes.INVALID_TABLE_NAME(values: ["Table#42", "Vault#666"])
+        
+        XCTAssertEqual(noValueReplace.description, "Table Name is empty")
+        XCTAssertEqual(singleValueReplace.description, "Vault ID vault#123 is invalid")
+        XCTAssertEqual(multiValueReplace.description, "Table#42 passed doesn’t exist in the vault with id Vault#666")
+    }
 }
