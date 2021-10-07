@@ -43,7 +43,7 @@ class ViewController: UIViewController {
         let tokenProvider = ExampleTokenProvider()
         
         
-        let config = Skyflow.Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: tokenProvider)
+        let config = Skyflow.Configuration(vaultID: "<VAULT_ID>", vaultURL: "<VAULT_URL>", tokenProvider: tokenProvider)
 
         self.skyflow = Skyflow.initialize(config)
 
@@ -162,19 +162,19 @@ class ViewController: UIViewController {
                 self.revealed = true
             }
             
-            let revealCardNumberInput = Skyflow.RevealElementInput(token: tokens.cardNumber, styles: revealStyles, label: "Card Number", redaction: .DEFAULT)
+            let revealCardNumberInput = Skyflow.RevealElementInput(token: tokens.cardNumber, inputStyles: revealStyles, label: "Card Number", redaction: .DEFAULT)
         
             self.revealCardNumber = self.revealContainer?.create(input: revealCardNumberInput, options: Skyflow.RevealElementOptions())
         
-            let revealCVVtInput = Skyflow.RevealElementInput(token : tokens.cvv, styles: revealStyles, label: "CVV", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+            let revealCVVtInput = Skyflow.RevealElementInput(token : tokens.cvv, inputStyles: revealStyles, label: "CVV", redaction: Skyflow.RedactionType.PLAIN_TEXT)
         
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
         
-            let revealNameInput = Skyflow.RevealElementInput(token: tokens.name.first_name, styles: revealStyles, label: "Card Holder Name", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+            let revealNameInput = Skyflow.RevealElementInput(token: tokens.name.first_name, inputStyles: revealStyles, label: "Card Holder Name", redaction: Skyflow.RedactionType.PLAIN_TEXT)
         
             self.revealName = self.revealContainer?.create(input: revealNameInput)
 
-            let revealExpirationDateInput = Skyflow.RevealElementInput(token: tokens.cardExpiration, styles: revealStyles, label: "Expiration Date", redaction: Skyflow.RedactionType.PLAIN_TEXT)
+            let revealExpirationDateInput = Skyflow.RevealElementInput(token: tokens.cardExpiration, inputStyles: revealStyles, label: "Expiration Date", redaction: Skyflow.RedactionType.PLAIN_TEXT)
         
             self.revealExpirationDate = self.revealContainer?.create(input: revealExpirationDateInput)
         

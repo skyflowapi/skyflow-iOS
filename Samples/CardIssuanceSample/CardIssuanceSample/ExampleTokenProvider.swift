@@ -5,7 +5,7 @@ public class ExampleTokenProvider : TokenProvider {
     
     
     public func getBearerToken(_ apiCallback: Skyflow.Callback) {
-        if let url = URL(string: "http://localhost:8000/js/analystToken") {
+        if let url = URL(string: "<YOUR_TOKEN_PROVIDER_ENDPOINT>") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url){ data, response, error in
                 if(error != nil){

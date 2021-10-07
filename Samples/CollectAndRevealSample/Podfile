@@ -3,7 +3,7 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-target 'App' do
+target 'CollectAndRevealSample' do
   #use_frameworks!
 
   # Pods for skyflow-iOS-sample-app
