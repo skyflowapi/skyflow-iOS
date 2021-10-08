@@ -13,7 +13,7 @@ public struct RevealElementInput {
     internal var labelStyles: Styles?
     internal var errorTextStyles: Styles?
     internal var label: String
-    internal var redaction: RedactionType?
+    internal var redaction: RedactionType
     internal var altText: String?
 
     public init(token: String = "", inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String, redaction: RedactionType = .DEFAULT, altText: String? = nil) {

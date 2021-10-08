@@ -74,18 +74,44 @@ public class Client {
     }
 
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
+        
+        func checkRecord(_ token: [String: Any]) -> ErrorCodes? {
+            if token["redaction"] == nil {
+                return .REDACTION_KEY_ERROR()
+            }
+            if let _ = token["redaction"] as? RedactionType {
+                if token["token"] == nil {
+                    return .ID_KEY_ERROR()
+                }
+                else {
+                    guard let _ = token["token"] as? String else {
+                        return .INVALID_TOKEN_TYPE()
+                    }
+                }
+            }
+            else {
+                return .INVALID_REDACTION_TYPE(value: token["redaction"] as! String )
+            }
+            return nil
+        }
+        
+        
+        if records["records"] == nil {
+            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+        }
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
             for token in tokens {
-                if let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
+                let errorCode = checkRecord(token)
+                if errorCode == nil, let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 } else {
-                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing ID or RedactionType format"]))
+                    return callback.onFailure(errorCode!.errorObject)
                 }
             }
             self.apiClient.get(records: list, callback: callback)
         } else {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
         }
     }
 

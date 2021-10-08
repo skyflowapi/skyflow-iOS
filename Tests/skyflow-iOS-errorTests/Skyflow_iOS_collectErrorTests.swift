@@ -324,7 +324,6 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
                 "table": "persons",
                 "fields": [
                     "duplicate": "123",
-                    "name": "John Doe"
                 ]]
             ]]
         CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback)

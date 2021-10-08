@@ -30,7 +30,7 @@ class RevealByIDAPICallback: Callback {
         var errorObject: Error!
 
         if URL(string: (connectionUrl + "/")) == nil {
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            self.callback.onFailure(ErrorCodes.INVALID_URL().errorObject)
             return
         }
 

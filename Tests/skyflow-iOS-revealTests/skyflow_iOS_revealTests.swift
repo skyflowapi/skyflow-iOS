@@ -67,7 +67,7 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func testPureGet() {
         let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
-        let responseData = getDataFromClientWithExpectation(records: defaultRecords)
+        let responseData = getDataFromClientWithExpectation(description: "Pure Get call",records: defaultRecords)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
         let responseEntries = jsonData["records"] as! [Any]
@@ -83,6 +83,7 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func testGetWithInvalidToken() {
         let defaultRecords = ["records": [["token": "abc", "redaction": RedactionType.DEFAULT]]]
+
         let responseData = getDataFromClientWithExpectation(description: "Should get an error", records: defaultRecords)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
@@ -172,4 +173,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(errorCount, 1)
         XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! [String: Any])["code"] as! String, "501")
     }
+    
+
 }

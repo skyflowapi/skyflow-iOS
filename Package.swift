@@ -29,5 +29,7 @@ let package = Package(
                     dependencies: ["Skyflow"]),
         .testTarget(name: "skyflow-iOS-gatewayTests",
                     dependencies: ["Skyflow"]),
+        .testTarget(name: "skyflow-iOS-errorTests",
+                    dependencies: ["Skyflow"])
     ]
 )

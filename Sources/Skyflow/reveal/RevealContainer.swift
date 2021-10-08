@@ -18,18 +18,17 @@ public extension Container {
     }
 
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
+        var errorCode: ErrorCodes?
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
             let label = element.revealInput.label != "" ? " \(element.revealInput.label)" : ""
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element\(label) is not mounted"]))
+            errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
+            callback.onFailure(errorCode!.errorObject)
             return
         }
         for element in self.revealElements {
             if element.getValue().isEmpty {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element \(element.revealInput.label) has no token provided"]))
-                return
-            }
-            if element.revealInput.redaction == nil {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element \(element.revealInput.label) has no redaction type provided"]))
+                errorCode = .EMPTY_TOKEN_ID()
+                callback.onFailure(errorCode!.errorObject)
                 return
             }
         }
