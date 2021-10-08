@@ -69,7 +69,7 @@ class GatewayAPIClient {
                         }
                     } catch {
                         isSuccess = false
-                        errorObject = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response \(error.localizedDescription)"])
+                        errorObject = error
                         return
                     }
                 }

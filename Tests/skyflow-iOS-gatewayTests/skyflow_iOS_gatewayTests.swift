@@ -390,4 +390,13 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         XCTAssertEqual(singleValueReplace.description, "Vault ID vault#123 is invalid")
         XCTAssertEqual(multiValueReplace.description, "Table#42 passed doesn’t exist in the vault with id Vault#666")
     }
+    
+    func testError() {
+        let errorCode = ErrorCodes.EMPTY_VAULT(value: "Vault#123")
+        let error = errorCode.errorObject
+        
+        XCTAssertEqual(error.domain, "")
+        XCTAssertEqual(error.code, 100)
+        XCTAssertEqual(error.localizedDescription, "Vault ID Vault#123 is invalid")
+    }
 }

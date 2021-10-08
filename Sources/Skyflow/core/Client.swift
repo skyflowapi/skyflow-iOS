@@ -19,17 +19,45 @@ public class Client {
 
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback) {
         let icOptions = ICOptions(tokens: options!.tokens)
+        var errorCode: ErrorCodes? = nil
+        
+        if records["records"] == nil {
+            errorCode = .RECORDS_KEY_ERROR()
+            callback.onFailure(errorCode!.errorObject)
+            return
+        }
 
         if let recordEntries = records["records"] as? [[String: Any]] {
             for record in recordEntries {
-                if !(record["table"] is String) || !(record["fields"] is [String: Any]) {
-                    callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing table or fields"]))
-                    return
+                if record["table"] != nil {
+                    if !(record["table"] is String) {
+                        errorCode = .INVALID_TABLE_NAME_TYPE()
+                    }
+                    else{
+                         if record["fields"] != nil {
+                            if !(record["fields"] is [String: Any]) {
+                                errorCode = .INVALID_FIELDS_TYPE()
+                            }
+                         }
+                         else {
+                            errorCode = .FIELDS_KEY_ERROR()
+                         }
+                    }
+                }
+                else {
+                    errorCode = .TABLE_KEY_ERROR()
                 }
             }
-            self.apiClient.post(records: records, callback: callback, options: icOptions)
+            if errorCode != nil {
+                callback.onFailure(errorCode!.errorObject)
+                return
+            }
+            else {
+                self.apiClient.post(records: records, callback: callback, options: icOptions)
+            }
         } else {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+            errorCode = .INVALID_RECORDS_TYPE()
+            callback.onFailure(errorCode!.errorObject)
         }
     }
 

@@ -22,7 +22,7 @@ internal class CollectRequestBody {
                 let tableSetEntry = tableName + "-" + (prefix == "" ? key : prefix + "." + key)
                 if tableSet.contains(tableSetEntry) {
                     if !self.breakFlag {
-                    self.callback?.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate column " + key + " found in " + tableName]))
+                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).errorObject)
                     self.breakFlag = true
                     return
                     }
@@ -44,7 +44,7 @@ internal class CollectRequestBody {
                     mergedDict[keyPath: keypath] = val
                 } else {
                     if !self.breakFlag {
-                    self.callback?.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate column " + key + " found in " + tableName]))
+                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).errorObject)
                     self.breakFlag = true
                     return
                     }
@@ -99,7 +99,7 @@ internal class CollectRequestBody {
                 temp[keyPath: "fields." + (element.columnName)!] = element.getValue()
                 let tableSetEntry = element.tableName! + "-" + element.columnName
                 if tableSet.contains(tableSetEntry) {
-                    self.callback?.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate column " + element.columnName + " found in " + element.tableName!]))
+                    self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [element.tableName!, element.columnName]).errorObject)
                     return nil
                 }
                 self.tableSet.insert(tableSetEntry)

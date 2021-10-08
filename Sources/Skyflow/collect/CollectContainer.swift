@@ -19,21 +19,11 @@ public extension Container {
 
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var errors = ""
-        if let element = ConversionHelpers.checkElementsAreMounted(elements: self.elements) as? TextField {
-            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) is not mounted"]))
-            return
-        }
-
+        var errorCode: ErrorCodes? = nil
         for element in self.elements {
-            if element.collectInput.table.isEmpty {
-                let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) has empty table value"]))
-                return
-            }
-            if element.collectInput.column.isEmpty {
-                let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) has empty column value"]))
+            errorCode = checkElement(element: element)
+            if errorCode != nil {
+                callback.onFailure(errorCode!.errorObject)
                 return
             }
 
@@ -63,7 +53,8 @@ public extension Container {
                     }
                 }
             } else {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+                errorCode = .MISSING_RECORDS_ARRAY()
+                callback.onFailure(errorCode!.errorObject)
                 return
             }
         }
@@ -71,7 +62,23 @@ public extension Container {
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
 
         if records != nil {
-        self.skyflow.apiClient.post(records: records!, callback: callback, options: icOptions)
+            self.skyflow.apiClient.post(records: records!, callback: callback, options: icOptions)
         }
+    }
+    
+    private func checkElement(element: TextField) -> ErrorCodes?{
+        if element.collectInput.table.isEmpty {
+            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
+            return .EMPTY_TABLE_NAME()
+        }
+        if element.collectInput.column.isEmpty {
+            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
+            return .EMPTY_COLUMN_NAME()
+        }
+        if !element.isMounted() {
+            return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
+        }
+
+        return nil
     }
 }

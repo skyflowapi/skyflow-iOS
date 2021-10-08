@@ -21,7 +21,7 @@ internal class TokenAPICallback: Callback {
             self.apiClient.token = responseBody as! String
             callback.onSuccess(responseBody as! String)
         } else {
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Token Format"]))
+            self.callback.onFailure(ErrorCodes.INVALID_BEARER_TOKEN_FORMAT().errorObject)
         }
     }
 
