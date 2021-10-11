@@ -12,14 +12,16 @@ class RevealApiCallback: Callback {
     var callback: Callback
     var connectionUrl: String
     var records: [RevealRequestRecord]
+    var contextOptions: ContextOptions
 
 
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
-                  records: [RevealRequestRecord]) {
+                  records: [RevealRequestRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
         self.callback = callback
         self.connectionUrl = connectionUrl
         self.records = records
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ token: Any) {

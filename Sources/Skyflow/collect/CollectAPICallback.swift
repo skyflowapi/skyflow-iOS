@@ -12,12 +12,14 @@ internal class CollectAPICallback: Callback {
     var records: [String: Any]
     var callback: Callback
     var options: ICOptions
+    var contextOptions: ContextOptions
 
-    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions) {
+    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions, contextOptions: ContextOptions) {
         self.records = records
         self.apiClient = apiClient
         self.callback = callback
         self.options = options
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ responseBody: Any) {

@@ -12,14 +12,16 @@ class RevealByIDAPICallback: Callback {
     var callback: Callback
     var connectionUrl: String
     var records: [GetByIdRecord]
+    var contextOptions: ContextOptions
 
 
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
-                  records: [GetByIdRecord]) {
+                  records: [GetByIdRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
         self.callback = callback
         self.connectionUrl = connectionUrl
         self.records = records
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ token: Any) {

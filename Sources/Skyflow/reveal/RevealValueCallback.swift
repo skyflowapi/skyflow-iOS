@@ -10,10 +10,12 @@ import Foundation
 internal class RevealValueCallback: Callback {
     var clientCallback: Callback
     var revealElements: [Label]
+    var contextOptions: ContextOptions
 
-    internal init(callback: Callback, revealElements: [Label]) {
+    internal init(callback: Callback, revealElements: [Label], contextOptions: ContextOptions) {
         self.clientCallback = callback
         self.revealElements = revealElements
+        self.contextOptions = contextOptions
     }
 
     func onSuccess(_ responseBody: Any) {
@@ -55,6 +57,9 @@ internal class RevealValueCallback: Callback {
                 revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
                 if let errorMessage = tokensToErrors[inputToken] {
                     revealElement.showError(message: errorMessage)
+                }
+                else{
+                    Log.log(logLevel: .INFO, message: .ELEMENT_REVEALED, values: [revealElement.revealInput.label], contextOptions: self.contextOptions)
                 }
             }
 

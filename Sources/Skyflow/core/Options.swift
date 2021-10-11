@@ -1,4 +1,6 @@
 public struct Options {
-    public init() {
+    var logLevel: LogLevel
+    public init(logLevel: LogLevel? = .DEBUG) {
+        self.logLevel = logLevel!
     }
 }
