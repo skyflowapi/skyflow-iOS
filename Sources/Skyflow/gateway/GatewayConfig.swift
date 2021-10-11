@@ -29,24 +29,20 @@ public struct GatewayConfig {
 
 
     public func convert() throws -> GatewayConfig {
-        do {
-            try verifyRequestAndResponseElements()
+        try verifyRequestAndResponseElements()
 
-            let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false)
-            let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
-            let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody)
-            let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader)  as! [String: String]?
+        let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false)
+        let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
+        let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody)
+        let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader)  as! [String: String]?
 
-            return GatewayConfig(gatewayURL: gatewayURL,
-                                 method: method,
-                                 pathParams: convertedPathParams,
-                                 queryParams: convertedQueryParams,
-                                 requestBody: convertedRequestBody,
-                                 requestHeader: convertedRequestHeader,
-                                 responseBody: responseBody)
-        } catch {
-            throw error
-        }
+        return GatewayConfig(gatewayURL: gatewayURL,
+                             method: method,
+                             pathParams: convertedPathParams,
+                             queryParams: convertedQueryParams,
+                             requestBody: convertedRequestBody,
+                             requestHeader: convertedRequestHeader,
+                             responseBody: responseBody)
     }
 
     public func verifyRequestAndResponseElements() throws {
@@ -54,7 +50,7 @@ public struct GatewayConfig {
             do {
                 try ConversionHelpers.checkElements(requestConfig, true)
             } catch {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription + " in request body"])
+                throw error
             }
         }
 
@@ -62,7 +58,7 @@ public struct GatewayConfig {
             do {
                 try ConversionHelpers.checkElements(responseConfig)
             } catch {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription + " in response body"])
+                throw error
             }
         }
     }

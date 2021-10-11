@@ -2,19 +2,27 @@ import Foundation
 
 
 class ConversionHelpers {
+        
     static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true) throws -> [String: Any] {
         var convertedRequest = [String: Any]()
-        do {
-            for (key, value) in requestBody {
+        var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
+        for (key, value) in requestBody {
+            do {
                 convertedRequest[key] = try convertValue(value, nested, arraySupport)
             }
-        } catch {
-            throw error
+            catch {
+                if error.localizedDescription == errorCode.description {
+                    errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
+                    throw errorCode.errorObject
+                }
+                throw error
+            }
         }
         return convertedRequest
     }
 
     private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool) throws -> Any {
+        var errorCode: ErrorCodes?
         if checkIfPrimitive(element) {
             return element
         } else if arraySupport, element is [Any] {
@@ -27,7 +35,8 @@ class ConversionHelpers {
             if textField.isValid() {
                 return textField.getValue()
             } else {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Validations failed for collect element with label '\(textField.textFieldLabel.text ?? "")'"])
+                errorCode = .VALIDATIONS_FAILED()
+                throw errorCode!.errorObject
             }
         } else if element is Label {
             let label = element as! Label
@@ -36,7 +45,8 @@ class ConversionHelpers {
         } else if nested, element is [String: Any] {
             return try convertJSONValues(element as! [String: Any], nested, arraySupport)
         } else {
-            throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid type"])
+            errorCode = .INVALID_DATA_TYPE_PASSED(value: "")
+            throw errorCode!.errorObject
         }
     }
 
@@ -106,6 +116,7 @@ class ConversionHelpers {
 
     static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false) throws {
         var traversedElements: [Any] = []
+        var errorCode: ErrorCodes?
 
         func checkElement(_ element: Any) throws {
             if checkIfPrimitive(element) {
@@ -115,25 +126,32 @@ class ConversionHelpers {
                         try checkElement($0)
                 }
             } else if element is TextField {
+                let textField = element as! TextField
                 if !duplicatesAllowed, presentIn(traversedElements, value: element) {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate elements present"])
+                    errorCode = .DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: textField.collectInput.label)
+                    throw errorCode!.errorObject
                 }
                 if !(element as! TextField).isMounted() {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Unmounted element present"])
+                    errorCode = .UNMOUNTED_COLLECT_ELEMENT(value: textField.collectInput.column)
+                    throw errorCode!.errorObject
                 }
                 traversedElements.append(element)
             } else if element is Label {
+                let label = element as! Label
                 if !duplicatesAllowed, presentIn(traversedElements, value: element) {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Duplicate elements present"])
+                    errorCode = .DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: label.revealInput.label)
+                    throw errorCode!.errorObject
                 }
                 if !(element as! Label).isMounted() {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Unmounted element present"])
+                    errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: label.revealInput.token)
+                    throw errorCode!.errorObject
                 }
                 traversedElements.append(element)
             } else if element is [String: Any] {
                 try checkDict((element as! [String: Any]))
             } else {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid type"])
+                errorCode = .INVALID_DATA_TYPE_PASSED(value: "")
+                throw errorCode!.errorObject
             }
         }
 
@@ -164,11 +182,22 @@ class ConversionHelpers {
     }
 
     static func removeEmptyValuesFrom(response: [String: Any])throws -> [String: Any] {
+        var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
+
         func recurseDict(_ dict: [String: Any]) throws -> [String: Any] {
             var result: [String: Any] = [:]
             for (key, value) in dict {
-                if let gottenValue = try getValue(value) {
-                    result[key] = gottenValue
+                do {
+                    if let gottenValue = try getValue(value) {
+                        result[key] = gottenValue
+                    }
+                }
+                catch {
+                    if error.localizedDescription == errorCode.description {
+                        errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
+                        throw errorCode.errorObject
+                    }
+                    throw error
                 }
             }
 
@@ -190,7 +219,7 @@ class ConversionHelpers {
                     }
                 }
             } else {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid value"])
+                throw errorCode.errorObject
             }
             return nil
         }

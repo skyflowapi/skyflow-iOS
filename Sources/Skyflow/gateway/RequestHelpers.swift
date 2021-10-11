@@ -13,11 +13,14 @@ class RequestHelpers {
     static var recursiveFailed = false
 
     static func createRequestURL(baseURL: String, pathParams: [String: Any]?, queryParams: [String: Any]?) throws -> URL {
+        var errorCode: ErrorCodes?
         guard ConversionHelpers.checkIfValuesArePrimitive(pathParams) else {
-            throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid path params"])
+            errorCode = .INVALID_PATH_PARAMS()
+            throw errorCode!.errorObject
         }
         guard ConversionHelpers.checkIfValuesArePrimitive(queryParams, true) else {
-            throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid query params"])
+            errorCode = .INVALID_QUERY_PARAMS()
+            throw errorCode!.errorObject
         }
 
         do {
@@ -26,7 +29,8 @@ class RequestHelpers {
                 let finalURL = try addQueryParams(URLWithPathParams, queryParams)
                 return finalURL
             } else {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid path params in URL"])
+                errorCode = .INVALID_PATH_PARAMS()
+                throw errorCode!.errorObject
             }
         }
     }
@@ -38,7 +42,7 @@ class RequestHelpers {
                 if let stringValue = value as? String {
                     URL = URL.replacingOccurrences(of: "{\(param)}", with: stringValue)
                 } else {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "addPathParams"])
+                    throw ErrorCodes.INVALID_PATH_PARAMS().errorObject
                 }
             }
         }
@@ -61,14 +65,14 @@ class RequestHelpers {
                 } else if let stringValue = value as? String {
                     urlComponents?.queryItems?.append(URLQueryItem(name: param, value: stringValue))
                 } else {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "addQueryParams"])
+                    throw ErrorCodes.INVALID_QUERY_PARAMS().errorObject
                 }
             }
         }
         if urlComponents?.url?.absoluteURL != nil {
             return (urlComponents?.url!.absoluteURL)!
         } else {
-            throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Query params"])
+            throw ErrorCodes.INVALID_QUERY_PARAMS().errorObject
         }
     }
 
@@ -82,7 +86,7 @@ class RequestHelpers {
                 request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
             }
         } catch {
-            throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid request body"])
+            throw ErrorCodes.INVALID_REQUEST_BODY().errorObject
         }
 
 
@@ -102,7 +106,7 @@ class RequestHelpers {
         var result: [String: Any] = [:]
         for (key, _) in responseBody {
             if response[key] == nil {
-                throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid response body configuration"])
+                throw ErrorCodes.INVALID_RESPONSE_BODY().errorObject
             }
 
             do {
@@ -141,7 +145,7 @@ class RequestHelpers {
                 } else if let valueDict = value as? [String: Any] {
                     return try parseActualResponseAndUpdateElements(response: valueDict, responseBody: responseBodyValue as! [String: Any])
                 } else {
-                    throw NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Response Body"])
+                    throw ErrorCodes.INVALID_RESPONSE_BODY().errorObject
                 }
             } else {
                 return value
