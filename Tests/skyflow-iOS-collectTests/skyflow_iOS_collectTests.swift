@@ -83,10 +83,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
 
-        let data = Data(callback.receivedResponse.utf8)
-        let jsonData = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-        let errorJson = jsonData["error"] as! [String: Any]
-        let message = errorJson["message"] as! String
+        let data = callback.receivedResponse
+        let message = data
 
         XCTAssertTrue(message.contains("document does not exist"))
     }

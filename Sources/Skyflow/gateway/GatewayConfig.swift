@@ -35,11 +35,14 @@ public struct GatewayConfig {
         let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
         let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody)
         let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader)  as! [String: String]?
+        
+        let stringedPathParams = ConversionHelpers.stringifyDict(convertedPathParams)
+        let stringedQueryParams = ConversionHelpers.stringifyDict(convertedQueryParams)
 
         return GatewayConfig(gatewayURL: gatewayURL,
                              method: method,
-                             pathParams: convertedPathParams,
-                             queryParams: convertedQueryParams,
+                             pathParams: stringedPathParams,
+                             queryParams: stringedQueryParams,
                              requestBody: convertedRequestBody,
                              requestHeader: convertedRequestHeader,
                              responseBody: responseBody)

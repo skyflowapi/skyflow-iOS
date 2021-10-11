@@ -116,28 +116,64 @@ public class Client {
     }
 
     public func getById(records: [String: Any], callback: Callback) {
+        
+        func checkEntry(entry: [String: Any]) -> ErrorCodes? {
+            if entry["ids"] == nil {
+                return .MISSING_KEY_IDS()
+            }
+            if !(entry["ids"] is [String]) {
+                return .INVALID_IDS_TYPE()
+            }
+            if entry["table"] == nil {
+                return .TABLE_KEY_ERROR()
+            }
+            if !(entry["table"] is String) {
+                return .INVALID_TABLE_NAME_TYPE()
+            }
+            if entry["redaction"] == nil {
+                return .REDACTION_KEY_ERROR()
+            }
+            if (entry["redaction"] as? RedactionType) != nil{
+                return nil
+            }
+            else {
+                return .INVALID_REDACTION_TYPE(value: entry["redaction"] as! String)
+            }
+            
+            return nil
+        }
+        
+        if records["records"] == nil {
+            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+        }
+        
         if let entries = records["records"] as? [[String: Any]] {
             var list: [GetByIdRecord] = []
             for entry in entries {
-                if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
-                    list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
-                } else {
-                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing IDs, Table Name or RedactionType format"]))
+                let errorCode = checkEntry(entry: entry)
+                if errorCode != nil {
+                    return callback.onFailure(errorCode!.errorObject)
+                }
+                else{
+                    if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
+                        list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
+                    }
                 }
             }
             self.apiClient.getById(records: list, callback: callback)
         } else {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
         }
     }
 
     public func invokeGateway(config: GatewayConfig, callback: Callback) {
         let gatewayAPIClient = GatewayAPIClient(callback: callback)
+        
 
         do {
             self.apiClient.getAccessToken(callback: GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(), clientCallback: callback))
         } catch {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
+            callback.onFailure(error)
         }
     }
 }
@@ -157,11 +193,11 @@ private class GatewayTokenCallback: Callback {
         do {
             try client.invokeGateway(token: responseBody as! String, config: config.convert())
         } catch {
-            self.onFailure(error)
+            clientCallback.onFailure(error)
         }
     }
 
-    func onFailure(_ error: Error) {
+    func onFailure(_ error: Any) {
         clientCallback.onFailure(error)
     }
 }

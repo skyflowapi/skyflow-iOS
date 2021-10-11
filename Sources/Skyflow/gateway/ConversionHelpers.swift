@@ -226,4 +226,28 @@ class ConversionHelpers {
 
         return try recurseDict(response)
     }
+    
+    public static func stringifyDict(_ dict: [String: Any]?) -> [String: String]?{
+        
+        
+        if let values = dict {
+            var result: [String: String] = [:]
+            for (key, value) in values {
+                if value is String {
+                    result[key] = value as! String
+                } else if value is Int {
+                    result[key] = String(value as! Int)
+                } else if value is Double {
+                    result[key] = String(value as! Double)
+                } else if value is Bool {
+                    result[key] = String(value as! Bool)
+                }
+            }
+            
+            return result
+        }
+        else {
+            return nil
+        }
+    }
 }

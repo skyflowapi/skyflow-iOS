@@ -46,13 +46,20 @@ internal class CollectAPICallback: Callback {
                 if let httpResponse = response as? HTTPURLResponse {
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
-                        var desc = "Insert call failed with the following status code" + String(httpResponse.statusCode)
+                        var description = "Insert call failed with the following status code" + String(httpResponse.statusCode)
+                        var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
 
                         if let safeData = data {
-                            desc = String(decoding: safeData, as: UTF8.self)
+                            do {
+                                let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
+                                let error = desc["error"] as! [String: Any]
+                                description = error["message"] as! String
+                                errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
+                            } catch let error {
+                                errorObject = error
+                            }
                         }
-
-                        self.callback.onFailure(NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: desc]))
+                        self.callback.onFailure(errorObject as Any)
                         return
                     }
                 }
@@ -95,11 +102,11 @@ internal class CollectAPICallback: Callback {
             }
             task.resume()
         } else {
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            self.callback.onFailure(ErrorCodes.INVALID_URL().errorObject)
         }
     }
 
-    internal func onFailure(_ error: Error) {
+    internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }
 

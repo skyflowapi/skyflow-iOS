@@ -41,9 +41,9 @@ public class GatewayAPICallback: Callback {
         expectation.fulfill()
     }
 
-    public func onFailure(_ error: Error) {
+    public func onFailure(_ error: Any) {
         print(error)
-        self.receivedResponse = String(error.localizedDescription)
+        self.receivedResponse = String((error as! Error).localizedDescription)
         expectation.fulfill()
     }
 }

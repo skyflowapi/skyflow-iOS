@@ -25,7 +25,7 @@ internal class TokenAPICallback: Callback {
         }
     }
 
-    internal func onFailure(_ error: Error) {
+    internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }
 }

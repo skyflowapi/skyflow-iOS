@@ -87,10 +87,7 @@ class RevealByIDAPICallback: Callback {
                                     var errorEntryDict: [String: Any] = [
                                         "ids": record.ids
                                     ]
-                                    let errorDict: [String: Any] = [
-                                        "code": httpResponse.statusCode,
-                                        "description": description
-                                    ]
+                                    let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
                                     errorEntryDict["error"] = errorDict
                                     errorArray.append(errorEntryDict)
                                 }
@@ -134,13 +131,17 @@ class RevealByIDAPICallback: Callback {
                 records["errors"] = errorArray
             }
             if isSuccess {
-            self.callback.onSuccess(records)
+                if errorArray.isEmpty {
+                    self.callback.onSuccess(records)
+                } else {
+                    self.callback.onFailure(records)
+                }
             } else {
-                self.callback.onFailure(errorObject)
+                self.callback.onFailure(errorObject!)
             }
         }
     }
-    internal func onFailure(_ error: Error) {
+    internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }
 

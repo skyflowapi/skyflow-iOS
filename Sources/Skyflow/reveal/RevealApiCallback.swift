@@ -93,9 +93,7 @@ class RevealApiCallback: Callback {
                                 errorObject = error
                             }
                         }
-                        var error: [String: String] = [:]
-                        error["code"] = String(httpResponse.statusCode)
-                        error["description"] = description
+                        let error: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
                         let errorRecord = RevealErrorRecord(id: record.token, error: error )
                         list_error.append(errorRecord)
                         return
@@ -134,11 +132,7 @@ class RevealApiCallback: Callback {
             for record in list_error {
                 var entry: [String: Any] = [:]
                 entry["token"] = record.id
-                var temp: [String: Any] = [:]
-                for field in record.error {
-                    temp[field.key] = field.value
-                }
-                entry["error"] = temp
+                entry["error"] = record.error
                 errors.append(entry)
             }
             var modifiedResponse: [String: Any] = [:]
@@ -150,13 +144,18 @@ class RevealApiCallback: Callback {
             }
 
             if isSuccess {
-                self.callback.onSuccess(modifiedResponse)
+                if errors.isEmpty {
+                    self.callback.onSuccess(modifiedResponse)
+                } else {
+                    self.callback.onFailure(modifiedResponse)
+                }
             } else {
                 self.callback.onFailure(errorObject)
             }
         }
     }
-    internal func onFailure(_ error: Error) {
+    internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }
 }
+

@@ -84,15 +84,19 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testGetWithInvalidToken() {
         let defaultRecords = ["records": [["token": "abc", "redaction": RedactionType.DEFAULT]]]
 
-        let responseData = getDataFromClientWithExpectation(description: "Should get an error", records: defaultRecords)
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
+        let expectRecords = XCTestExpectation(description: description)
+        let callback = DemoAPICallback(expectation: expectRecords)
+        skyflow.detokenize(records: defaultRecords, callback: callback)
+
+        wait(for: [expectRecords], timeout: 10.0)
+        let jsonData = callback.data
 
         XCTAssertNotNil(jsonData)
         XCTAssertNotNil(jsonData["errors"])
 
         let error = (jsonData["errors"] as! [[String: Any]])[0]["error"]
         XCTAssertNotNil(error)
-        XCTAssertEqual((error as! [String: String])["code"], "404")
+        XCTAssertEqual((error as! NSError).code, 404)
     }
 
     func testCheckRevealElementsArray() {
@@ -162,16 +166,15 @@ class skyflow_iOS_revealTests: XCTestCase {
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        let responseData = Data(callback.receivedResponse.utf8)
 
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
+        let jsonData = callback.data
 
         let errors = jsonData["errors"] as! [Any]
         let errorCount = errors.count
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(errorCount, 1)
-        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! [String: Any])["code"] as! String, "501")
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 501)
     }
     
 

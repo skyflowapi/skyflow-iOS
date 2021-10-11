@@ -190,6 +190,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTFail()
         }
     }
+    
 
     func testAddQueryParams() {
         do {

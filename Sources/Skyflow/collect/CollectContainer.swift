@@ -45,11 +45,15 @@ public extension Container {
             return
         }
         if options?.additionalFields != nil {
+            if options?.additionalFields!["records"] == nil {
+                errorCode = .INVALID_RECORDS_TYPE()
+                return callback.onFailure(errorCode!.errorObject)
+            }
             if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
                 for record in additionalFieldEntries {
-                    if !(record["table"] is String) || !(record["fields"] is [String: Any]) {
-                        callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing table or fields"]))
-                        return
+                    errorCode = checkRecord(record: record)
+                    if errorCode != nil {
+                        return callback.onFailure(errorCode?.errorObject)
                     }
                 }
             } else {
@@ -79,6 +83,23 @@ public extension Container {
             return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
         }
 
+        return nil
+    }
+    
+    private func checkRecord(record: [String: Any]) -> ErrorCodes? {
+        if record["table"] == nil {
+            return .TABLE_KEY_ERROR()
+        }
+        if !(record["table"] is String) {
+            return .INVALID_TABLE_NAME_TYPE()
+        }
+        if record["fields"] == nil {
+            return .FIELDS_KEY_ERROR()
+        }
+        if !(record["fields"] is [String: Any]) {
+            return .INVALID_FIELDS_TYPE()
+        }
+        
         return nil
     }
 }

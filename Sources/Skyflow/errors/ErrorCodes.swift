@@ -27,10 +27,13 @@ public enum ErrorCodes: CustomStringConvertible {
     case INVALID_QUERY_PARAMS(code: Int=100, message: String="Invalid query params")
     case INVALID_REQUEST_BODY(code: Int=100, message: String="Invalid query params")
     case INVALID_RESPONSE_BODY(code: Int=100, message: String="Invalid query params")
+    case INVALID_IDS_TYPE(code: Int=100, message: String="Invalid type in 'ids'")
+    
+    case APIError(code: Int, message: String)
     
     // Single message value
     case EMPTY_VAULT(code: Int=100, message: String="Vault ID <VAULT_ID> is invalid", value: String)
-    case INVALID_REDACTION_TYPE(code: Int=100, message: String="Vault ID <VAULT_ID> is invalid", value: String)
+    case INVALID_REDACTION_TYPE(code: Int=100, message: String="Redacton type <REDACTION> is invalid", value: String)
     case INVALID_DATA_TYPE_PASSED(code: Int=100, message: String="Invalid data type passed to <PARAM_NAME> parameter", value: String)
     case INVALID_VALUE(code: Int=100, message: String="Value present in the element with <COLUMN_NAME> is not valid", value: String)
     case DUPLICATE_ELEMENT_IN_RESPONSE_BODY(code: Int=100, message: String="Duplicate Skyflow element with label <LABEL> found in response body", value: String)
@@ -49,18 +52,27 @@ public enum ErrorCodes: CustomStringConvertible {
     
     var code: Int {
         switch (self) {
-        case .EMPTY_VAULT(let code, _, _):
+        // No Formatting required
+        case .EMPTY_TABLE_NAME(let code, _), .EMPTY_VAULT_ID(let code, _), .RECORDS_KEY_ERROR( let code, _), .TABLE_KEY_ERROR(let code, _), .FIELDS_KEY_ERROR(let code, _), .EMPTY_TOKEN_ID(let code, _), .ID_KEY_ERROR(let code, _), .REDACTION_KEY_ERROR(let code, _), .MISSING_KEY_IDS(let code, _), .INVALID_TABLE_NAME_TYPE(let code, _), .INVALID_FIELDS_TYPE(let code, _), .INVALID_RECORDS_TYPE(let code, _), .EMPTY_COLUMN_NAME(let code, _), .INVALID_BEARER_TOKEN_FORMAT(let code, _), .MISSING_RECORDS_ARRAY(let code, _), .INVALID_TOKEN_TYPE(let code, _), .INVALID_URL(let code, _) ,.VALIDATIONS_FAILED(let code, _), .INVALID_PATH_PARAMS(let code, _), .INVALID_QUERY_PARAMS(let code, _), .INVALID_REQUEST_BODY(let code, _), .INVALID_RESPONSE_BODY(let code, _),
+             .INVALID_IDS_TYPE(let code, _), .APIError(let code, _):
             return code
-        default:
-            return 0
+        // Single value formatting
+        case .EMPTY_VAULT(let code, _, _), .INVALID_REDACTION_TYPE(let code, _, _), .INVALID_DATA_TYPE_PASSED(let code, _, _), .INVALID_VALUE(let code, _, _), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY(let code, _, _), .MISSING_KEY_IN_RESPONSE(let code, _, _), .UNMOUNTED_COLLECT_ELEMENT(let code, _, _), .UNMOUNTED_REVEAL_ELEMENT(let code, _, _):
+            return code
+        // Multi value formatting
+        case .INVALID_TABLE_NAME(let code, _, _), .DUPLICATE_ELEMENT_FOUND(let code, _, _), .DUPLICATE_ADDITIONAL_FIELD_FOUND(let code, _, _):
+            return code
+
         }
+        
     }
     
     public var description: String {
         switch (self){
         
         // No Formatting required
-        case .EMPTY_TABLE_NAME( _, let message), .EMPTY_VAULT_ID( _, let message), .RECORDS_KEY_ERROR( _, let message), .TABLE_KEY_ERROR(_, let message), .FIELDS_KEY_ERROR(_, let message), .EMPTY_TOKEN_ID( _, let message), .ID_KEY_ERROR( _, let message), .REDACTION_KEY_ERROR( _, let message), .MISSING_KEY_IDS(_, let message), .INVALID_TABLE_NAME_TYPE( _, let message), .INVALID_FIELDS_TYPE( _, let message), .INVALID_RECORDS_TYPE( _, let message), .EMPTY_COLUMN_NAME( _, let message), .INVALID_BEARER_TOKEN_FORMAT( _, let message), .MISSING_RECORDS_ARRAY( _, let message), .INVALID_TOKEN_TYPE( _, let message), .INVALID_URL( _, let message) ,.VALIDATIONS_FAILED( _, let message), .INVALID_PATH_PARAMS( _, let message), .INVALID_QUERY_PARAMS( _, let message), .INVALID_REQUEST_BODY( _, let message), .INVALID_RESPONSE_BODY( _, let message):
+        case .EMPTY_TABLE_NAME( _, let message), .EMPTY_VAULT_ID( _, let message), .RECORDS_KEY_ERROR( _, let message), .TABLE_KEY_ERROR(_, let message), .FIELDS_KEY_ERROR(_, let message), .EMPTY_TOKEN_ID( _, let message), .ID_KEY_ERROR( _, let message), .REDACTION_KEY_ERROR( _, let message), .MISSING_KEY_IDS(_, let message), .INVALID_TABLE_NAME_TYPE( _, let message), .INVALID_FIELDS_TYPE( _, let message), .INVALID_RECORDS_TYPE( _, let message), .EMPTY_COLUMN_NAME( _, let message), .INVALID_BEARER_TOKEN_FORMAT( _, let message), .MISSING_RECORDS_ARRAY( _, let message), .INVALID_TOKEN_TYPE( _, let message), .INVALID_URL( _, let message) ,.VALIDATIONS_FAILED( _, let message), .INVALID_PATH_PARAMS( _, let message), .INVALID_QUERY_PARAMS( _, let message), .INVALID_REQUEST_BODY( _, let message), .INVALID_RESPONSE_BODY( _, let message),
+             .INVALID_IDS_TYPE( _, let message), .APIError( _, let message):
             return message
         // Single value formatting
         case .EMPTY_VAULT( _, let message, let value), .INVALID_REDACTION_TYPE( _, let message, let value), .INVALID_DATA_TYPE_PASSED( _, let message, let value), .INVALID_VALUE( _, let message, let value), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY( _, let message, let value), .MISSING_KEY_IN_RESPONSE( _, let message, let value), .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value):
@@ -77,7 +89,6 @@ public enum ErrorCodes: CustomStringConvertible {
     
     internal func formatMessage(_ message: String, _ values: [String]) -> String {
         let words = message.split(separator: " ")
-        print(words)
         var valuesIndex = 0
         var result = ""
         for word in words {

@@ -47,7 +47,7 @@ class GatewayAPIClient {
                         }
                         
                         isSuccess = false
-                        errorObject = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: desc])
+                        errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: desc).errorObject
                         return
                     }
                 }
@@ -61,11 +61,6 @@ class GatewayAPIClient {
                         }
                         else if responseData is String {
                             stringResponse = responseData as? String
-                        }
-                        else {
-                            isSuccess = false
-                            errorObject = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response"])
-                            return
                         }
                     } catch {
                         isSuccess = false
@@ -86,9 +81,6 @@ class GatewayAPIClient {
                         }
                         else if stringResponse != nil {
                             self.callback.onSuccess(stringResponse!)
-                        }
-                        else {
-                            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response or no response"]))
                         }
                     } catch {
                         self.callback.onFailure(error)

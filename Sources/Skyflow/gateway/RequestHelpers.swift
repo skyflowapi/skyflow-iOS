@@ -29,7 +29,7 @@ class RequestHelpers {
                 let finalURL = try addQueryParams(URLWithPathParams, queryParams)
                 return finalURL
             } else {
-                errorCode = .INVALID_PATH_PARAMS()
+                errorCode = .INVALID_URL()
                 throw errorCode!.errorObject
             }
         }
@@ -39,7 +39,7 @@ class RequestHelpers {
         var URL = rawURL
         if pathParams != nil {
             for (param, value) in pathParams! {
-                if let stringValue = value as? String {
+                if let stringValue = value as? String, URL.contains("{"+param+"}") {
                     URL = URL.replacingOccurrences(of: "{\(param)}", with: stringValue)
                 } else {
                     throw ErrorCodes.INVALID_PATH_PARAMS().errorObject
@@ -72,7 +72,7 @@ class RequestHelpers {
         if urlComponents?.url?.absoluteURL != nil {
             return (urlComponents?.url!.absoluteURL)!
         } else {
-            throw ErrorCodes.INVALID_QUERY_PARAMS().errorObject
+            throw ErrorCodes.INVALID_URL().errorObject
         }
     }
 
