@@ -22,11 +22,6 @@ public extension Container {
         var errors = ""
         var errorCode: ErrorCodes? = nil
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: self.skyflow.contextOptions)
-        if let element = ConversionHelpers.checkElementsAreMounted(elements: self.elements) as? TextField {
-            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) is not mounted"]))
-            return
-        }
 
         for element in self.elements {
             errorCode = checkElement(element: element)
