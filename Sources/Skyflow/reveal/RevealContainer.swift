@@ -14,23 +14,23 @@ public extension Container {
     func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
         let revealElement = Label(input: input, options: options!)
         revealElements.append(revealElement)
-        Log.log(logLevel: .INFO, message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: self.skyflow.contextOptions)
         return revealElement
     }
 
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var errorCode: ErrorCodes?
-        Log.log(logLevel: .INFO, message: .VALIDATE_REVEAL_RECORDS, contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: self.skyflow.contextOptions)
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
             let label = element.revealInput.label != "" ? " \(element.revealInput.label)" : ""
             errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
-            callback.onFailure(errorCode!.errorObject)
+            callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
             return
         }
         for element in self.revealElements {
             if element.getValue().isEmpty {
                 errorCode = .EMPTY_TOKEN_ID()
-                callback.onFailure(errorCode!.errorObject)
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
                 return
             }
         }
@@ -47,7 +47,7 @@ public extension Container {
             }
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: self.skyflow.contextOptions,
                 onSuccessHandler: {
-                    Log.log(logLevel: .INFO, message: .REVEAL_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
+                    Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
                 },
                 onFailureHandler: {
                 }

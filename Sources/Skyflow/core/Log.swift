@@ -8,9 +8,17 @@
 import Foundation
 
 internal class Log {
-    internal static func log(logLevel: LogLevel, message: Message, values: [String] = [], contextOptions: ContextOptions) {
-        if(contextOptions.logLevel == logLevel){
-            print("\(logLevel.rawValue): \(message.getDescription(values: values))")
+    internal static func debug(message: Message, values: [String] = [], contextOptions: ContextOptions){
+        if(contextOptions.logLevel.rawValue < 1){
+            print("DEBUG: \(message.getDescription(values: values))")
         }
+    }
+    internal static func info(message: Message, values: [String] = [], contextOptions: ContextOptions){
+        if(contextOptions.logLevel.rawValue < 2){
+            print("INFO: \(message.getDescription(values: values))")
+        }
+    }
+    internal static func error(message: String, values: [String] = [], contextOptions: ContextOptions){
+        print("ERROR: \(message)")
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 
-public enum ErrorCodes: CustomStringConvertible {
+internal enum ErrorCodes: CustomStringConvertible {
     
     // No message values
     case EMPTY_TABLE_NAME(code: Int=101, message:String="Table Name is empty")
@@ -56,7 +56,7 @@ public enum ErrorCodes: CustomStringConvertible {
         }
     }
     
-    public var description: String {
+    internal var description: String {
         switch (self){
         
         // No Formatting required
@@ -64,15 +64,22 @@ public enum ErrorCodes: CustomStringConvertible {
             return message
         // Single value formatting
         case .EMPTY_VAULT( _, let message, let value), .INVALID_REDACTION_TYPE( _, let message, let value), .INVALID_DATA_TYPE_PASSED( _, let message, let value), .INVALID_VALUE( _, let message, let value), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY( _, let message, let value), .MISSING_KEY_IN_RESPONSE( _, let message, let value), .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value):
+            print("SINGLE VALUE FORMATTING")
             return formatMessage(message, [value])
         // Multi value formatting
         case .INVALID_TABLE_NAME( _, let message, let values), .DUPLICATE_ELEMENT_FOUND( _, let message, let values), .DUPLICATE_ADDITIONAL_FIELD_FOUND( _, let message, let values):
+            print("MULTIPLE VALUE FORMATTING")
             return formatMessage(message, values)
 
         }
     }
-    public var errorObject: NSError {
+    internal var errorObject: NSError {
         NSError(domain: "", code: self.code, userInfo: [NSLocalizedDescriptionKey: self.description])
+    }
+    
+    internal func getErrorObject(contextOptions: ContextOptions) -> NSError {
+        Log.error(message: self.description, contextOptions: contextOptions)
+        return errorObject
     }
     
     internal func formatMessage(_ message: String, _ values: [String]) -> String {

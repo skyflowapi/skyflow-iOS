@@ -32,7 +32,7 @@ class RevealByIDAPICallback: Callback {
         var errorObject: Error!
 
         if URL(string: (connectionUrl + "/")) == nil {
-            self.callback.onFailure(ErrorCodes.INVALID_URL().errorObject)
+            self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
 

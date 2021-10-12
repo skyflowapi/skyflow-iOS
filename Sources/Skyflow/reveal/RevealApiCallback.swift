@@ -35,7 +35,7 @@ class RevealApiCallback: Callback {
 
         if URL(string: (connectionUrl + "/tokens")) == nil {
             errorCode = .INVALID_URL()
-            self.callback.onFailure(errorCode!.errorObject)
+            self.callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
             return
         }
 

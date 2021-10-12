@@ -17,22 +17,21 @@ public class Client {
         self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
         self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: self.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
         self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel)
-//        Log.log(logLevel: .INFO, message: .INITIALIZE_CLIENT, values: ["123", "ABC"], contextOptions: self.contextOptions)
-        Log.log(logLevel: .INFO, message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
+        Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
     public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback) {
-        Log.log(logLevel: .INFO, message: .INSERT_CALLED, contextOptions: self.contextOptions)
+        Log.info(message: .INSERT_TRIGGERED, contextOptions: self.contextOptions)
         let icOptions = ICOptions(tokens: options!.tokens)
         var errorCode: ErrorCodes? = nil
         
         if records["records"] == nil {
             errorCode = .RECORDS_KEY_ERROR()
-            callback.onFailure(errorCode!.errorObject)
+            callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
             return
         }
 
-        Log.log(logLevel: .INFO, message: .VALIDATE_RECORDS, contextOptions: self.contextOptions)
+        Log.info(message: .VALIDATE_RECORDS, contextOptions: self.contextOptions)
         if let recordEntries = records["records"] as? [[String: Any]] {
             for record in recordEntries {
                 if record["table"] != nil {
@@ -55,23 +54,23 @@ public class Client {
                 }
             }
             if errorCode != nil {
-                callback.onFailure(errorCode!.errorObject)
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
                 return
             }
             else {
-                self.apiClient.post(records: records, callback: callback, options: icOptions)
+                let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
+                    onSuccessHandler: {
+                        Log.info(message: .INSERT_DATA_SUCCESS, contextOptions: self.contextOptions)
+                    },
+                    onFailureHandler: {
+                    }
+                )
+                self.apiClient.post(records: records, callback: logCallback, options: icOptions, contextOptions: self.contextOptions)
             }
-            let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
-                onSuccessHandler: {
-                    Log.log(logLevel: .INFO, message: .INSERT_DATA_SUCCESS, contextOptions: self.contextOptions)
-                },
-                onFailureHandler: {
-                }
-            )
-            self.apiClient.post(records: records, callback: logCallback, options: icOptions, contextOptions: self.contextOptions)
+
         } else {
             errorCode = .INVALID_RECORDS_TYPE()
-            callback.onFailure(errorCode!.errorObject)
+            callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
         }
     }
 
@@ -81,12 +80,12 @@ public class Client {
         }
 
         if T.self == CollectContainer.self {
-            Log.log(logLevel: .INFO, message: .COLLECT_CONTAINER_CREATED, contextOptions: self.contextOptions)
+            Log.info(message: .COLLECT_CONTAINER_CREATED, contextOptions: self.contextOptions)
             return Container<T>(skyflow: self)
         }
         
         if T.self == RevealContainer.self {
-            Log.log(logLevel: .INFO, message: .REVEAL_CONTAINER_CREATED, contextOptions: self.contextOptions)
+            Log.info(message: .REVEAL_CONTAINER_CREATED, contextOptions: self.contextOptions)
             return Container<T>(skyflow: self)
         }
 
@@ -115,11 +114,11 @@ public class Client {
             return nil
         }
         
-        Log.log(logLevel: .INFO, message: .DETOKENIZE_CALLED, contextOptions: self.contextOptions)
-        Log.log(logLevel: .INFO, message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: self.contextOptions)
+        Log.info(message: .DETOKENIZE_TRIGGERED, contextOptions: self.contextOptions)
+        Log.info(message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: self.contextOptions)
         
         if records["records"] == nil {
-            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().getErrorObject(contextOptions: self.contextOptions))
         }
 
         if let tokens = records["records"] as? [[String: Any]] {
@@ -129,25 +128,25 @@ public class Client {
                 if errorCode == nil, let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 } else {
-                    return callback.onFailure(errorCode!.errorObject)
+                    return callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
                 }
             }
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
                 onSuccessHandler: {
-                    Log.log(logLevel: .INFO, message: .DETOKENIZE_SUCCESS, contextOptions: self.contextOptions)
+                    Log.info(message: .DETOKENIZE_SUCCESS, contextOptions: self.contextOptions)
                 },
                 onFailureHandler: {
                 }
             )
             self.apiClient.get(records: list, callback: logCallback, contextOptions: contextOptions)
         } else {
-            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
+            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: self.contextOptions))
         }
     }
 
     public func getById(records: [String: Any], callback: Callback) {
-        Log.log(logLevel: .INFO, message: .GET_BY_ID_CALLED, contextOptions: self.contextOptions)
-        Log.log(logLevel: .INFO, message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: self.contextOptions)
+        Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: self.contextOptions)
+        Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: self.contextOptions)
         if let entries = records["records"] as? [[String: Any]] {
             var list: [GetByIdRecord] = []
             for entry in entries {
@@ -159,7 +158,7 @@ public class Client {
             }
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
                 onSuccessHandler: {
-                    Log.log(logLevel: .INFO, message: .GET_BY_ID_SUCCESS, contextOptions: self.contextOptions)
+                    Log.info(message: .GET_BY_ID_SUCCESS, contextOptions: self.contextOptions)
                 },
                 onFailureHandler: {
                 }
@@ -171,10 +170,10 @@ public class Client {
     }
 
     public func invokeGateway(config: GatewayConfig, callback: Callback) {
-        Log.log(logLevel: .INFO, message: .INVOKE_GATEWAY_CALLED, contextOptions: self.contextOptions)
-        let gatewayAPIClient = GatewayAPIClient(callback: callback)
+        Log.info(message: .INVOKE_GATEWAY_TRIGGERED, contextOptions: self.contextOptions)
+        let gatewayAPIClient = GatewayAPIClient(callback: callback, contextOptions: self.contextOptions)
         do {
-            let gatewayTokenCallback = GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(), clientCallback: callback)
+            let gatewayTokenCallback = GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(contextOptions: self.contextOptions), clientCallback: callback)
             self.apiClient.getAccessToken(callback: gatewayTokenCallback, contextOptions: self.contextOptions)
         } catch {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
@@ -196,7 +195,7 @@ private class GatewayTokenCallback: Callback {
 
     func onSuccess(_ responseBody: Any) {
         do {
-            try client.invokeGateway(token: responseBody as! String, config: config.convert())
+            try client.invokeGateway(token: responseBody as! String, config: config) //Check
         } catch {
             self.onFailure(error)
         }

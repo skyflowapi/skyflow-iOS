@@ -59,7 +59,7 @@ internal class RevealValueCallback: Callback {
                     revealElement.showError(message: errorMessage)
                 }
                 else{
-                    Log.log(logLevel: .INFO, message: .ELEMENT_REVEALED, values: [revealElement.revealInput.label], contextOptions: self.contextOptions)
+                    Log.info(message: .ELEMENT_REVEALED, values: [revealElement.revealInput.label], contextOptions: self.contextOptions)
                 }
             }
 

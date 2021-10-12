@@ -3,9 +3,11 @@ import Foundation
 
 class GatewayAPIClient {
     var callback: Callback
+    var contextOptions: ContextOptions
     
-    internal init(callback: Callback) {
+    internal init(callback: Callback, contextOptions: ContextOptions) {
         self.callback = callback
+        self.contextOptions = contextOptions
     }
     
     internal func invokeGateway(token: String, config: GatewayConfig) throws {
@@ -17,8 +19,8 @@ class GatewayAPIClient {
         var stringResponse: String? = nil
         
         do {
-            let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams)
-            var request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader)
+            let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams, contextOptions: self.contextOptions)
+            var request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader, contextOptions: self.contextOptions)
             
             request.addValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
             
@@ -57,7 +59,7 @@ class GatewayAPIClient {
                     do {
                         let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments)
                         if(responseData is [String: Any]){
-                            convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData as! [String : Any], responseBody: config.responseBody ?? [:])
+                            convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData as! [String : Any], responseBody: config.responseBody ?? [:], contextOptions: self.contextOptions)
                         }
                         else if responseData is String {
                             stringResponse = responseData as? String
@@ -80,7 +82,7 @@ class GatewayAPIClient {
                 if isSuccess {
                     do {
                         if convertedResponse != nil {
-                            let sanitizedResponse = try ConversionHelpers.removeEmptyValuesFrom(response: convertedResponse!)
+                            let sanitizedResponse = try ConversionHelpers.removeEmptyValuesFrom(response: convertedResponse!, contextOptions: self.contextOptions)
                             
                             self.callback.onSuccess(sanitizedResponse)
                         }

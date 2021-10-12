@@ -29,35 +29,11 @@ internal enum Message {
     case INSERT_DATA_SUCCESS
     case DETOKENIZE_SUCCESS
     case GET_BY_ID_SUCCESS
-    case BEARER_TOKEN_LISTENER
-    case BEARER_TOKEN_EMITTER
-    case BEARER_TOKEN_RESOLVED
     case BEARER_TOKEN_RECEIVED
-    case PUREJS_CONTROLLER_INITIALIZED
-    case INSERT_CALLED
-    case DETOKENIZE_CALLED
-    case GET_BY_ID_CALLED
-    case INVOKE_GATEWAY_CALLED
-    case EMIT_PURE_JS_REQUEST
-    case LISTEN_PURE_JS_REQUEST
-    case FETCH_RECORDS_RESOLVED
-    case FETCH_RECORDS_REJECTED
-    case INSERT_RECORDS_RESOLVED
-    case INSERT_RECORDS_REJECTED
-    case GET_BY_SKYFLOWID_RESOLVED
-    case GET_BY_SKYFLOWID_REJECTED
-    case SEND_INVOKE_GATEWAY_RESOLVED
-    case SEND_INVOKE_GATEWAY_REJECTED
-    case FETCH_RECORDS_SUCCESS
-    case FETCH_RECORDS_FAILURE
-    case INSERT_RECORDS_SUCCESS
-    case INSERT_RECORDS_FAILURE
-    case GET_BY_SKYFLOWID_SUCCESS
-    case GET_BY_SKYFLOWID_FAILURE
-    case SEND_INVOKE_GATEWAY_SUCCESS
-    case SEND_INVOKE_GATEWAY_FAILURE
-    case EMIT_EVENT
-    case LISTEN_EVENT
+    case INSERT_TRIGGERED
+    case DETOKENIZE_TRIGGERED
+    case GET_BY_ID_TRIGGERED
+    case INVOKE_GATEWAY_TRIGGERED
     
     
     //ErrorLogs
@@ -68,8 +44,9 @@ internal enum Message {
     case INVALID_TABLE_NAME
     case INVALID_CREDENTIALS
     case INVALID_CONTAINER_TYPE
+    case INVALID_COLLECT_VALUE
     case RECORDS_KEY_NOT_FOUND
-    case EMPTY_RECORD
+    case EMPTY_RECORDS
     case EMPTY_TABLE_NAME
     case RECORDS_KEY_ERROR
     case TABLE_KEY_ERROR
@@ -147,35 +124,14 @@ internal enum Message {
         case .INSERT_DATA_SUCCESS: return "Data has been inserted successfully." //U
         case .DETOKENIZE_SUCCESS: return "Data has been revealed successfully." //U
         case .GET_BY_ID_SUCCESS: return "Data has been revealed successfully." //U
-        case .BEARER_TOKEN_LISTENER: return "Listening to GetBearerToken event" //A
-        case .BEARER_TOKEN_EMITTER: return "Emitted GetBearerToken event" //A
-        case .BEARER_TOKEN_RESOLVED: return "GetBearerToken promise resolved  successfully." //A
         case .BEARER_TOKEN_RECEIVED: return "GetBearerToken promise received  successfully." //U
-        case .PUREJS_CONTROLLER_INITIALIZED: return "Initialized Skyflow controller successfully" //A
-        case .INSERT_CALLED: return "Insert method triggered" //U
-        case .DETOKENIZE_CALLED: return "Detokenize method triggered" //U
-        case .GET_BY_ID_CALLED: return "GetById method triggered" //U
-        case .INVOKE_GATEWAY_CALLED: return "Invoke Gateway method triggered" //U
-        case .EMIT_PURE_JS_REQUEST: return "Emitted %s1 request" //A
-        case .LISTEN_PURE_JS_REQUEST: return "Listening to %s1  event" //A
-        case .FETCH_RECORDS_RESOLVED: return "Detokenize request is resolved" //A
-        case .FETCH_RECORDS_REJECTED: return "Detokenize request is rejected" //A
-        case .INSERT_RECORDS_RESOLVED: return "Insert request is resolved" //A
-        case .INSERT_RECORDS_REJECTED: return "Insert request is rejected" //A
-        case .GET_BY_SKYFLOWID_RESOLVED: return "GetById request is resolved" //A
-        case .GET_BY_SKYFLOWID_REJECTED: return "GetById request is rejected" //A
-        case .SEND_INVOKE_GATEWAY_RESOLVED: return "Invoke gateway request resolved" //A
-        case .SEND_INVOKE_GATEWAY_REJECTED: return "Invoke gateway request rejected" //A
-        case .FETCH_RECORDS_SUCCESS: return "Detokenize request has succeeded"  //?
-        case .FETCH_RECORDS_FAILURE: return "Detokenize request has failed" //?
-        case .INSERT_RECORDS_SUCCESS: return "Insert request has succeeded" //?
-        case .INSERT_RECORDS_FAILURE: return "Insert request has failed" //?
-        case .GET_BY_SKYFLOWID_SUCCESS: return "GetById request has succeeded"
-        case .GET_BY_SKYFLOWID_FAILURE: return "GetById request has failed" //?
-        case .SEND_INVOKE_GATEWAY_SUCCESS: return "Invoke gateway request has succeeded" //?
-        case .SEND_INVOKE_GATEWAY_FAILURE: return "Invoke gateway request has failed" //?
-        case .EMIT_EVENT: return "<> event emitted" //A
-        case .LISTEN_EVENT: return "Listening to <>" //A
+//        case .PUREJS_CONTROLLER_INITIALIZED: return "Initialized Skyflow controller successfully" //A
+
+        case .INSERT_TRIGGERED: return "Insert method triggered."
+        case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
+        case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
+        case .INVOKE_GATEWAY_TRIGGERED: return "Invoke gateway triggered."
+
         
         //ErrorLogs
         
@@ -186,8 +142,9 @@ internal enum Message {
         case .INVALID_TABLE_NAME: return "Table Name passed doesn’t exist in the vault with id " //A
         case .INVALID_CREDENTIALS: return "Invalid client credentials" //A
         case .INVALID_CONTAINER_TYPE: return "Invalid container type" //A
+        case .INVALID_COLLECT_VALUE: return "Invalid <>"
         case .RECORDS_KEY_NOT_FOUND: return "records object key value not found"
-        case .EMPTY_RECORD: return "records object is empty"
+        case .EMPTY_RECORDS: return "records object is empty"
         case .EMPTY_TABLE_NAME: return "Table Name is empty."
         case .RECORDS_KEY_ERROR: return "Key 'records' is missing or payload is incorrectly formatted"
         case .TABLE_KEY_ERROR: return "Key 'table' is missing or payload is incorrectly formatted."

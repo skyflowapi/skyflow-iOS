@@ -7,8 +7,9 @@
 
 import Foundation
 
-public enum LogLevel: String {
-    case DEBUG = "DEBUG"
-    case INFO = "INFO"
-    case PROD = "PROD"
+public enum LogLevel: Int {
+    case DEBUG = 0
+    case INFO = 1
+    case PROD = 2
+    case DEMO = 3
 }

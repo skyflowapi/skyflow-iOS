@@ -12,16 +12,16 @@ public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
-        let skyflowElement = TextField(input: input, options: options!)
+        let skyflowElement = TextField(input: input, options: options!, contextOptions: self.skyflow.contextOptions)
         elements.append(skyflowElement)
-        Log.log(logLevel: .INFO, message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: self.skyflow.contextOptions)
         return skyflowElement
     }
 
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var errors = ""
         var errorCode: ErrorCodes? = nil
-        Log.log(logLevel: .INFO, message: .VALIDATE_COLLECT_RECORDS, contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: self.skyflow.contextOptions)
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.elements) as? TextField {
             let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Collect element\(label) is not mounted"]))
@@ -31,7 +31,7 @@ public extension Container {
         for element in self.elements {
             errorCode = checkElement(element: element)
             if errorCode != nil {
-                callback.onFailure(errorCode!.errorObject)
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
                 return
             }
 
@@ -62,18 +62,18 @@ public extension Container {
                 }
             } else {
                 errorCode = .MISSING_RECORDS_ARRAY()
-                callback.onFailure(errorCode!.errorObject)
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
                 return
             }
         }
-        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback)
+        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: self.skyflow.contextOptions)
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
 
         if records != nil {
             
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
                 onSuccessHandler: {
-                    Log.log(logLevel: .INFO, message: .COLLECT_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
+                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
                 },
                 onFailureHandler: {
                 }

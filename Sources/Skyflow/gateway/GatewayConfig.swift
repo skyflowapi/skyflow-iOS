@@ -28,13 +28,13 @@ public struct GatewayConfig {
     }
 
 
-    public func convert() throws -> GatewayConfig {
-        try verifyRequestAndResponseElements()
+    internal func convert(contextOptions: ContextOptions) throws -> GatewayConfig {
+        try verifyRequestAndResponseElements(contextOptions: contextOptions)
 
-        let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false)
-        let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false)
-        let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody)
-        let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader)  as! [String: String]?
+        let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false, contextOptions: contextOptions)
+        let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false, contextOptions: contextOptions)
+        let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody, contextOptions: contextOptions)
+        let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader, contextOptions: contextOptions)  as! [String: String]?
 
         return GatewayConfig(gatewayURL: gatewayURL,
                              method: method,
@@ -45,10 +45,10 @@ public struct GatewayConfig {
                              responseBody: responseBody)
     }
 
-    public func verifyRequestAndResponseElements() throws {
+    internal func verifyRequestAndResponseElements(contextOptions: ContextOptions) throws {
         if let requestConfig = self.requestBody {
             do {
-                try ConversionHelpers.checkElements(requestConfig, true)
+                try ConversionHelpers.checkElements(requestConfig, true, contextOptions: contextOptions)
             } catch {
                 throw error
             }
@@ -56,7 +56,7 @@ public struct GatewayConfig {
 
         if let responseConfig = self.responseBody {
             do {
-                try ConversionHelpers.checkElements(responseConfig)
+                try ConversionHelpers.checkElements(responseConfig, contextOptions: contextOptions)
             } catch {
                 throw error
             }

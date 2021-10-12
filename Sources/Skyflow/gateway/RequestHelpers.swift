@@ -12,44 +12,44 @@ class RequestHelpers {
     static var paths: [String] = []
     static var recursiveFailed = false
 
-    static func createRequestURL(baseURL: String, pathParams: [String: Any]?, queryParams: [String: Any]?) throws -> URL {
+    static func createRequestURL(baseURL: String, pathParams: [String: Any]?, queryParams: [String: Any]?, contextOptions: ContextOptions) throws -> URL {
         var errorCode: ErrorCodes?
         guard ConversionHelpers.checkIfValuesArePrimitive(pathParams) else {
             errorCode = .INVALID_PATH_PARAMS()
-            throw errorCode!.errorObject
+            throw errorCode!.getErrorObject(contextOptions: contextOptions)
         }
         guard ConversionHelpers.checkIfValuesArePrimitive(queryParams, true) else {
             errorCode = .INVALID_QUERY_PARAMS()
-            throw errorCode!.errorObject
+            throw errorCode!.getErrorObject(contextOptions: contextOptions)
         }
 
         do {
-            let URLWithPathParams = try addPathParams(baseURL, pathParams)
+            let URLWithPathParams = try addPathParams(baseURL, pathParams, contextOptions: contextOptions)
             if URL(string: URLWithPathParams) != nil {
-                let finalURL = try addQueryParams(URLWithPathParams, queryParams)
+                let finalURL = try addQueryParams(URLWithPathParams, queryParams, contextOptions: contextOptions)
                 return finalURL
             } else {
                 errorCode = .INVALID_PATH_PARAMS()
-                throw errorCode!.errorObject
+                throw errorCode!.getErrorObject(contextOptions: contextOptions)
             }
         }
     }
 
-    static func addPathParams(_ rawURL: String, _ pathParams: [String: Any]?) throws -> String {
+    static func addPathParams(_ rawURL: String, _ pathParams: [String: Any]?, contextOptions: ContextOptions) throws -> String {
         var URL = rawURL
         if pathParams != nil {
             for (param, value) in pathParams! {
                 if let stringValue = value as? String {
                     URL = URL.replacingOccurrences(of: "{\(param)}", with: stringValue)
                 } else {
-                    throw ErrorCodes.INVALID_PATH_PARAMS().errorObject
+                    throw ErrorCodes.INVALID_PATH_PARAMS().getErrorObject(contextOptions: contextOptions)
                 }
             }
         }
         return URL
     }
 
-    static func addQueryParams(_ url: String, _ params: [String: Any]?) throws -> URL {
+    static func addQueryParams(_ url: String, _ params: [String: Any]?, contextOptions: ContextOptions) throws -> URL {
         var urlComponents = URLComponents(string: removeTrailingSlash(url))
 
 
@@ -65,18 +65,18 @@ class RequestHelpers {
                 } else if let stringValue = value as? String {
                     urlComponents?.queryItems?.append(URLQueryItem(name: param, value: stringValue))
                 } else {
-                    throw ErrorCodes.INVALID_QUERY_PARAMS().errorObject
+                    throw ErrorCodes.INVALID_QUERY_PARAMS().getErrorObject(contextOptions: contextOptions)
                 }
             }
         }
         if urlComponents?.url?.absoluteURL != nil {
             return (urlComponents?.url!.absoluteURL)!
         } else {
-            throw ErrorCodes.INVALID_QUERY_PARAMS().errorObject
+            throw ErrorCodes.INVALID_QUERY_PARAMS().getErrorObject(contextOptions: contextOptions)
         }
     }
 
-    static func createRequest(url: URL, method: RequestMethod, body: [String: Any]?, headers: [String: String]?) throws -> URLRequest {
+    static func createRequest(url: URL, method: RequestMethod, body: [String: Any]?, headers: [String: String]?, contextOptions: ContextOptions) throws -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headers
@@ -86,7 +86,7 @@ class RequestHelpers {
                 request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
             }
         } catch {
-            throw ErrorCodes.INVALID_REQUEST_BODY().errorObject
+            throw ErrorCodes.INVALID_REQUEST_BODY().getErrorObject(contextOptions: contextOptions)
         }
 
 
@@ -102,15 +102,15 @@ class RequestHelpers {
     }
 
 
-    static func parseActualResponseAndUpdateElements(response: [String: Any], responseBody: [String: Any]) throws -> [String: Any] {
+    static func parseActualResponseAndUpdateElements(response: [String: Any], responseBody: [String: Any], contextOptions: ContextOptions) throws -> [String: Any] {
         var result: [String: Any] = [:]
         for (key, _) in responseBody {
             if response[key] == nil {
-                throw ErrorCodes.INVALID_RESPONSE_BODY().errorObject
+                throw ErrorCodes.INVALID_RESPONSE_BODY().getErrorObject(contextOptions: contextOptions)
             }
 
             do {
-                let converted = try traverseAndConvert(response: response, responseBody: responseBody, key: key)
+                let converted = try traverseAndConvert(response: response, responseBody: responseBody, key: key, contextOptions: contextOptions)
                 if converted != nil {
                     result[key] = converted!
                 }
@@ -127,7 +127,7 @@ class RequestHelpers {
         return result
     }
 
-    static func traverseAndConvert(response: [String: Any], responseBody: [String: Any], key: String) throws -> Any? {
+    static func traverseAndConvert(response: [String: Any], responseBody: [String: Any], key: String, contextOptions: ContextOptions) throws -> Any? {
         if let value = response[key] {
             if let responseBodyValue = responseBody[key] {
                 if ConversionHelpers.checkIfPrimitive(responseBodyValue) {
@@ -143,9 +143,9 @@ class RequestHelpers {
                     }
                     return nil
                 } else if let valueDict = value as? [String: Any] {
-                    return try parseActualResponseAndUpdateElements(response: valueDict, responseBody: responseBodyValue as! [String: Any])
+                    return try parseActualResponseAndUpdateElements(response: valueDict, responseBody: responseBodyValue as! [String: Any], contextOptions: contextOptions)
                 } else {
-                    throw ErrorCodes.INVALID_RESPONSE_BODY().errorObject
+                    throw ErrorCodes.INVALID_RESPONSE_BODY().getErrorObject(contextOptions: contextOptions)
                 }
             } else {
                 return value
