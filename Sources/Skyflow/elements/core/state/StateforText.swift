@@ -16,7 +16,14 @@ internal class StateforText: State
 
     /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
-
+    
+//    internal(set) open var isComplete = false
+    
+    internal(set) open var isFocused = false
+    
+    internal(set) open var elementType: ElementType!
+    
+    internal(set) open var value: String? = nil
     /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
     internal(set) open var validationErrors = [SkyflowValidationError]()
 
@@ -27,28 +34,31 @@ internal class StateforText: State
         isEmpty = (tf.textField.getSecureRawText?.count == 0)
         isDirty = tf.isDirty
         inputLength = tf.textField.getSecureRawText?.count ?? 0
+        elementType = tf.collectInput.type
+//        isComplete = validationErrors.count == 0
+        isFocused = tf.hasFocus
+        if(tf.contextOptions.logLevel == .DEBUG || tf.contextOptions.logLevel == .DEMO){
+            value = tf.actualValue
+        }
     }
 
     /// Message that contains `State` attributes and their values
-    public override var show: String {
-        var result = ""
-
-        guard let columnName = columnName else {
-            return "Alias property is empty"
-        }
-
-        result = """
-        "\(columnName)": {
-            "isRequired": \(isRequired),
-            "isValid": \(isValid),
-            "isEmpty": \(isEmpty),
-            "isDirty": \(isDirty),
-            "validationErrors": \(validationErrors),
-            "inputLength": \(inputLength)
-        }
-        """
-        return result
-    }
+//    public override var show: String {
+//        var result = ""
+//
+//        guard let columnName = columnName else {
+//            return "Alias property is empty"
+//        }
+//
+//        result = """
+//        "\(columnName)": {
+//            "isValid": \(isValid),
+//            "isEmpty": \(isEmpty),
+//        }
+//        """
+//        return result
+//    }
+    
     public override func getState() -> [String: Any] {
         var result = [String: Any]()
             result["isRequired"] = isRequired
@@ -61,4 +71,15 @@ internal class StateforText: State
 
         return result
     }
+    
+    public func getStateForListener() -> [String: Any] {
+        var result = [String: Any]()
+            result["isEmpty"] = isEmpty
+            result["isValid"] = isValid
+            result["elementType"] = elementType
+            result["isFocused"] = isFocused
+            result["value"] = value
+        return result
+    }
 }
+

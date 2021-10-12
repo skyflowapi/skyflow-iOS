@@ -40,18 +40,18 @@ internal class APIClient {
         return expDate.compare(Date()) == .orderedDescending
     }
 
-    internal func getAccessToken(callback: Callback) {
+    internal func getAccessToken(callback: Callback, contextOptions: ContextOptions) {
         if !isTokenValid() {
-            let tokenApiCallback = TokenAPICallback(callback: callback, apiClient: self)
+            let tokenApiCallback = TokenAPICallback(callback: callback, apiClient: self, contextOptions: contextOptions)
             tokenProvider.getBearerToken(tokenApiCallback)
         } else {
             callback.onSuccess(token)
         }
     }
 
-    internal func post(records: [String: Any], callback: Callback, options: ICOptions) {
-        let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options)
-        self.getAccessToken(callback: collectApiCallback)
+    internal func post(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
+        let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
+        self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
     }
 
     internal func constructBatchRequestBody(records: [String: Any], options: ICOptions) -> [String: Any] {
@@ -77,13 +77,13 @@ internal class APIClient {
         return ["records": postPayload + insertTokenPayload]
     }
 
-    internal func get(records: [RevealRequestRecord], callback: Callback) {
-        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records)
-        self.getAccessToken(callback: revealApiCallback)
+    internal func get(records: [RevealRequestRecord], callback: Callback, contextOptions: ContextOptions) {
+        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
+        self.getAccessToken(callback: revealApiCallback, contextOptions: contextOptions)
     }
 
-    internal func getById(records: [GetByIdRecord], callback: Callback) {
-        let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records)
-        self.getAccessToken(callback: revealByIdApiCallback)
+    internal func getById(records: [GetByIdRecord], callback: Callback, contextOptions: ContextOptions) {
+        let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
+        self.getAccessToken(callback: revealByIdApiCallback, contextOptions: contextOptions)
     }
 }

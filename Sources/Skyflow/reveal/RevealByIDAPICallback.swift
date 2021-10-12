@@ -12,14 +12,16 @@ class RevealByIDAPICallback: Callback {
     var callback: Callback
     var connectionUrl: String
     var records: [GetByIdRecord]
+    var contextOptions: ContextOptions
 
 
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
-                  records: [GetByIdRecord]) {
+                  records: [GetByIdRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
         self.callback = callback
         self.connectionUrl = connectionUrl
         self.records = records
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ token: Any) {
@@ -30,7 +32,7 @@ class RevealByIDAPICallback: Callback {
         var errorObject: Error!
 
         if URL(string: (connectionUrl + "/")) == nil {
-            self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().errorObject)
+            self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
 

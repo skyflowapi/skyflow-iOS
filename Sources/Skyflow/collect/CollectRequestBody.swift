@@ -13,16 +13,16 @@ internal class CollectRequestBody {
     static var breakFlag = false
     static var mergedDict: [String: Any] = [:]
 
-    internal static func addFieldsToTableSet(tableName: String, prefix: String, fields: [String: Any]) {
+    internal static func addFieldsToTableSet(tableName: String, prefix: String, fields: [String: Any], contextOptions: ContextOptions) {
         if !self.breakFlag {
         for (key, val) in fields {
             if val is [String: Any] {
-                addFieldsToTableSet(tableName: tableName, prefix: prefix == "" ? key : prefix + "." + key, fields: val as! [String: Any])
+                addFieldsToTableSet(tableName: tableName, prefix: prefix == "" ? key : prefix + "." + key, fields: val as! [String: Any], contextOptions: contextOptions)
             } else {
                 let tableSetEntry = tableName + "-" + (prefix == "" ? key : prefix + "." + key)
                 if tableSet.contains(tableSetEntry) {
                     if !self.breakFlag {
-                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).errorObject)
+                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).getErrorObject(contextOptions: contextOptions))
                     self.breakFlag = true
                     return
                     }
@@ -34,17 +34,17 @@ internal class CollectRequestBody {
         }
     }
 
-    internal static func mergeFields(tableName: String, prefix: String, dict: [String: Any]) {
+    internal static func mergeFields(tableName: String, prefix: String, dict: [String: Any], contextOptions: ContextOptions) {
         for(key, val) in dict {
             let keypath = prefix == "" ? key : prefix + "." + key
             if val is [String: Any] {
-                mergeFields(tableName: tableName, prefix: keypath, dict: val as! [String: Any])
+                mergeFields(tableName: tableName, prefix: keypath, dict: val as! [String: Any], contextOptions: contextOptions)
             } else {
                 if mergedDict[keyPath: keypath] == nil {
                     mergedDict[keyPath: keypath] = val
                 } else {
                     if !self.breakFlag {
-                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).errorObject)
+                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).getErrorObject(contextOptions: contextOptions))
                     self.breakFlag = true
                     return
                     }
@@ -53,7 +53,7 @@ internal class CollectRequestBody {
         }
     }
 
-    internal static func createRequestBody(elements: [TextField], additionalFields: [String: Any]? = nil, callback: Callback) -> [String: Any]? {
+    internal static func createRequestBody(elements: [TextField], additionalFields: [String: Any]? = nil, callback: Callback, contextOptions: ContextOptions) -> [String: Any]? {
         var tableMap: [String: Int] = [:]
         var payload: [[String: Any]] = []
         self.callback = callback
@@ -71,7 +71,7 @@ internal class CollectRequestBody {
                 if tableMap[tableName] != nil {
                     let inputEntry = payload[tableMap[tableName]!]
                     mergedDict = inputEntry["fields"] as! [String: Any]
-                    self.mergeFields(tableName: tableName, prefix: "", dict: fields)
+                    self.mergeFields(tableName: tableName, prefix: "", dict: fields, contextOptions: contextOptions)
                     if self.breakFlag {
                         return nil
                     }
@@ -83,7 +83,7 @@ internal class CollectRequestBody {
                         "table": tableName,
                         "fields": fields
                     ]
-                    self.addFieldsToTableSet(tableName: tableName, prefix: "", fields: fields)
+                    self.addFieldsToTableSet(tableName: tableName, prefix: "", fields: fields, contextOptions: contextOptions)
                     if self.breakFlag {
                         return nil
                     }
@@ -99,7 +99,7 @@ internal class CollectRequestBody {
                 temp[keyPath: "fields." + (element.columnName)!] = element.getValue()
                 let tableSetEntry = element.tableName! + "-" + element.columnName
                 if tableSet.contains(tableSetEntry) {
-                    self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [element.tableName!, element.columnName]).errorObject)
+                    self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [element.tableName!, element.columnName]).getErrorObject(contextOptions: contextOptions))
                     return nil
                 }
                 self.tableSet.insert(tableSetEntry)

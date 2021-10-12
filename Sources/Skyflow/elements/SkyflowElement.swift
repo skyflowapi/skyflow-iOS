@@ -14,6 +14,7 @@ public class SkyflowElement: UIView {
     internal var verticalConstraint = [NSLayoutConstraint]()
     internal var collectInput: CollectElementInput!
     internal var options: CollectElementOptions!
+    internal var contextOptions: ContextOptions!
 
     /// Describes `SkyflowElement` input   State`
     internal var state: State {
@@ -29,10 +30,11 @@ public class SkyflowElement: UIView {
         initialization()
     }
 
-    internal init(input: CollectElementInput, options: CollectElementOptions) {
+    internal init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(frame: CGRect())
         collectInput = input
         self.options = options
+        self.contextOptions = contextOptions
         initialization()
     }
 

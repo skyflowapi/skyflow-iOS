@@ -152,6 +152,43 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(container?.elements.count, 1)
         XCTAssertTrue(container?.elements[0].fieldType == ElementType.CARD_NUMBER)
     }
+    
+    func testListeners(){
+        let window = UIWindow()
+        var onReadyCalled: Bool = false
+        var onFocusCalled: Bool = false
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+
+        let collectElement = container?.create(input: collectInput, options: options)
+
+        
+        collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
+            print("CHANGE")
+            print("state", state)
+        }
+        collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
+            print("BLUR")
+            print("state", state)
+        }
+        collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
+            print("FOCUS")
+            print("state", state)
+        }
+        collectElement?.on(eventName: Skyflow.EventName.READY) { state in
+            onReadyCalled = true
+        }
+        sleep(1)
+        window.addSubview(collectElement!)
+        collectElement?.textField.text = "123"
+        UIAccessibility.post(notification: .screenChanged, argument: collectElement)
+        XCTAssertTrue(onReadyCalled)
+        XCTAssertTrue(onFocusCalled)
+//        collectElement.secureText =
+    }
 
     func testContainerInsert() {
         let window = UIWindow()

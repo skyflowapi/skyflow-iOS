@@ -12,12 +12,14 @@ internal class CollectAPICallback: Callback {
     var records: [String: Any]
     var callback: Callback
     var options: ICOptions
+    var contextOptions: ContextOptions
 
-    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions) {
+    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions, contextOptions: ContextOptions) {
         self.records = records
         self.apiClient = apiClient
         self.callback = callback
         self.options = options
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ responseBody: Any) {
@@ -66,8 +68,8 @@ internal class CollectAPICallback: Callback {
 
                 if let safeData = data {
                     let originalString = String(decoding: safeData, as: UTF8.self)
-                    let replacedString = originalString.replacingOccurrences(of: "\"*\":", with: "\"skyflow_id\":")
-                    let changedData = Data(replacedString.utf8)
+//                    let replacedString = originalString.replacingOccurrences(of: "\"*\":", with: "\"skyflow_id\":")
+                    let changedData = Data(originalString.utf8)
                     do {
                         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
 
