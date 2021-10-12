@@ -50,13 +50,13 @@ public extension Container {
         if options?.additionalFields != nil {
             if options?.additionalFields!["records"] == nil {
                 errorCode = .INVALID_RECORDS_TYPE()
-                return callback.onFailure(errorCode!.errorObject)
+                return callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
             }
             if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
                 for record in additionalFieldEntries {
                     errorCode = checkRecord(record: record)
                     if errorCode != nil {
-                        return callback.onFailure(errorCode?.errorObject)
+                        return callback.onFailure(errorCode?.getErrorObject(contextOptions: self.skyflow.contextOptions))
                     }
                 }
             } else {

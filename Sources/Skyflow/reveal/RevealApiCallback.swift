@@ -95,7 +95,7 @@ class RevealApiCallback: Callback {
                                 errorObject = error
                             }
                         }
-                        let error: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
+                        let error: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                         let errorRecord = RevealErrorRecord(id: record.token, error: error )
                         list_error.append(errorRecord)
                         return

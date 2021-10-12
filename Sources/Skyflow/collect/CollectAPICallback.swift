@@ -49,14 +49,14 @@ internal class CollectAPICallback: Callback {
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
                         var description = "Insert call failed with the following status code" + String(httpResponse.statusCode)
-                        var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
+                        var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
 
                         if let safeData = data {
                             do {
                                 let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                                 let error = desc["error"] as! [String: Any]
                                 description = error["message"] as! String
-                                errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
+                                errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                             } catch let error {
                                 errorObject = error
                             }
@@ -72,7 +72,7 @@ internal class CollectAPICallback: Callback {
                     let changedData = Data(originalString.utf8)
                     do {
                         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
-
+                        print("jsonData apicallback", jsonData)
                         var responseEntries: [Any] = []
 
                         let receivedResponseArray = (jsonData[keyPath: "responses"] as! [Any])
@@ -104,7 +104,7 @@ internal class CollectAPICallback: Callback {
             }
             task.resume()
         } else {
-            self.callback.onFailure(ErrorCodes.INVALID_URL().errorObject)
+            self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
         }
     }
 

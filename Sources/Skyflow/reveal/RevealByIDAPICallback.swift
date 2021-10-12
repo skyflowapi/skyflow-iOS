@@ -89,7 +89,7 @@ class RevealByIDAPICallback: Callback {
                                     var errorEntryDict: [String: Any] = [
                                         "ids": record.ids
                                     ]
-                                    let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).errorObject
+                                    let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                                     errorEntryDict["error"] = errorDict
                                     errorArray.append(errorEntryDict)
                                 }

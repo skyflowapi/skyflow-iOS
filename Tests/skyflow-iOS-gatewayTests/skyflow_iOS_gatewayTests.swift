@@ -397,7 +397,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let error = errorCode.errorObject
         
         XCTAssertEqual(error.domain, "")
-        XCTAssertEqual(error.code, 100)
+        XCTAssertEqual(error.code, 400)
         XCTAssertEqual(error.localizedDescription, "Vault ID Vault#123 is invalid")
     }
     
@@ -423,7 +423,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             ],
         ]
         
-        let result = RequestHelpers.getInvalidResponseKeys(responseBody, response)
+        let result = RequestHelpers.getInvalidResponseKeys(responseBody, response, contextOptions: ContextOptions())
         let errors: [ErrorCodes] = [
             .MISSING_KEY_IN_RESPONSE(value: "key3"),
             .MISSING_KEY_IN_RESPONSE(value: "nested.key2"),

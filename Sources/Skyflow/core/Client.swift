@@ -187,7 +187,7 @@ public class Client {
             for entry in entries {
                 let errorCode = checkEntry(entry: entry)
                 if errorCode != nil {
-                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.errorObject)
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
                 }
                 else{
                     if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
@@ -204,7 +204,7 @@ public class Client {
             )
             self.apiClient.getById(records: list, callback: logCallback, contextOptions: contextOptions)
         } else {
-            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: self.contextOptions))
         }
     }
     

@@ -127,12 +127,12 @@ class RequestHelpers {
         return result
     }
     
-    static func getInvalidResponseKeys(_ dict: [String: Any], _ response: [String: Any]) -> [NSError] {
+    static func getInvalidResponseKeys(_ dict: [String: Any], _ response: [String: Any], contextOptions: ContextOptions) -> [NSError] {
         var result: [NSError] = []
         func goThroughDict(path: String, _ dict: [String: Any], _ response: [String: Any]) {
             for (key, value) in dict {
                 if response[key] == nil {
-                    result.append(ErrorCodes.MISSING_KEY_IN_RESPONSE(value: getPath(path, key)).errorObject)
+                    result.append(ErrorCodes.MISSING_KEY_IN_RESPONSE(value: getPath(path, key)).getErrorObject(contextOptions: contextOptions))
                 } else {
                     goThroughValues(path: getPath(path, key), value, response[key] as Any)
                 }

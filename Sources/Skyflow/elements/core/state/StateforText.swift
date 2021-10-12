@@ -78,7 +78,7 @@ internal class StateforText: State
             result["isValid"] = isValid
             result["elementType"] = elementType
             result["isFocused"] = isFocused
-            result["value"] = value
+            result["value"] = value == nil ? "" : value
         return result
     }
 }
