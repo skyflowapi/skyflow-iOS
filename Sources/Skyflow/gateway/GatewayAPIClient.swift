@@ -17,6 +17,7 @@ class GatewayAPIClient {
         var errorObject: Error!
         var convertedResponse: [String: Any]? = nil
         var stringResponse: String? = nil
+        var errors: [NSError] = []
         
         do {
             let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams, contextOptions: self.contextOptions)
@@ -49,7 +50,7 @@ class GatewayAPIClient {
                         }
                         
                         isSuccess = false
-                        errorObject = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: desc])
+                        errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: desc).errorObject
                         return
                     }
                 }
@@ -60,14 +61,14 @@ class GatewayAPIClient {
                         let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments)
                         if(responseData is [String: Any]){
                             convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData as! [String : Any], responseBody: config.responseBody ?? [:], contextOptions: self.contextOptions)
+                            errors = RequestHelpers.getInvalidResponseKeys(config.responseBody ?? [:], convertedResponse)
+                            if !errors.isEmpty {
+                                isSuccess = false
+                                errorObject = nil
+                            }
                         }
                         else if responseData is String {
                             stringResponse = responseData as? String
-                        }
-                        else {
-                            isSuccess = false
-                            errorObject = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response"])
-                            return
                         }
                     } catch {
                         isSuccess = false
@@ -89,14 +90,17 @@ class GatewayAPIClient {
                         else if stringResponse != nil {
                             self.callback.onSuccess(stringResponse!)
                         }
-                        else {
-                            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Error parsing response or no response"]))
-                        }
                     } catch {
                         self.callback.onFailure(error)
                     }
                 } else {
-                    self.callback.onFailure(errorObject)
+                    if !errors.isEmpty {
+                        let failureResponse: [String: Any] = ["success": convertedResponse ?? [:], "errors": [errors]]
+                        self.callback.onFailure(failureResponse)
+                    }
+                    else {
+                        self.callback.onFailure(["errors": [errorObject!]])
+                    }
                 }
             }
         } catch {

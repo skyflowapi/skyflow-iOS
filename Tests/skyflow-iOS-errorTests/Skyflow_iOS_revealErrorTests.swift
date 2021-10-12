@@ -28,7 +28,37 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         skyflow.detokenize(records: records, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        return callback.receivedResponse
+        if callback.receivedResponse.isEmpty {
+            if callback.data["errors"] != nil{
+                return (callback.data["errors"] as! [NSError])[0].localizedDescription
+            }
+            else {
+                return "ok"
+            }
+        }
+        else {
+            return callback.receivedResponse
+        }
+    }
+    
+    func getByIDFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> String {
+        let expectRecords = XCTestExpectation(description: description)
+        let callback = DemoAPICallback(expectation: expectRecords)
+        skyflow.getById(records: records, callback: callback)
+
+        wait(for: [expectRecords], timeout: 10.0)
+        if callback.receivedResponse.isEmpty {
+            if callback.data["errors"] != nil{
+                return (callback.data["errors"] as! [NSError])[0].localizedDescription
+            }
+            else {
+                return "ok"
+            }
+        }
+        else {
+            return callback.receivedResponse
+        }
+
     }
     
     
@@ -107,24 +137,53 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
     }
     
-    func testContainerRevealWithEmptyRedaction() {
-        let window = UIWindow()
-        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+    func testGetByIdNoRecords() {
+        let records = ["ok": [["redaction": RedactionType.DEFAULT]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.RECORDS_KEY_ERROR().description)
+    }
+    
+    func testGetByIdInvalidRecords() {
+        let records = ["records": 123]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.INVALID_RECORDS_TYPE().description)
+    }
+    
+    func testGetByIdNoIds() {
+        let records = ["records": [["redaction": RedactionType.DEFAULT]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.MISSING_KEY_IDS().description)
         
-        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        let styles = Styles(base: bstyle)
-
-        let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement")
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
-        
-        window.addSubview(revealElement!)
-
-        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
-        revealContainer?.reveal(callback: callback)
-
-        let result = callback.receivedResponse
-        
+    }
+    
+    func testGetByIdInvalidIds() {
+        let records = ["records": [["ids": RedactionType.DEFAULT]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.INVALID_IDS_TYPE().description)
+    }
+    
+    func testGetByIdNoTable() {
+        let records = ["records": [["ids": ["abc"]]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.TABLE_KEY_ERROR().description)
+    }
+    
+    func testGetByIdInvalidTable() {
+        let records = ["records": [["ids": ["abc"], "table": ["abc"]]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.INVALID_TABLE_NAME_TYPE().description)
 
     }
-
+    
+    func testGetByIdNoRedaction() {
+        let records = ["records": [["ids": ["abc"], "table": "table"]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.REDACTION_KEY_ERROR().description)
+    }
+    
+    func testGetByIdInvalidRedaction() {
+        let records = ["records": [["ids": ["abc"], "table": "table", "redaction": "DEFAULT"]]]
+        let result = getByIDFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, ErrorCodes.INVALID_REDACTION_TYPE(value: "DEFAULT").description)
+    }
 }

@@ -67,10 +67,58 @@ internal class RevealValueCallback: Callback {
 
             self.clientCallback.onSuccess(dataString!)
         }
-}
+    }
 
-    func onFailure(_ error: Error) {
-        clientCallback.onFailure(error)
+    func onFailure(_ error: Any) {
+        
+        func getTokens(_ records: [String: Any], _ errors: [String: Any]) {
+            
+        }
+        
+        if error is [String: Any] {
+            var tokens: [String: String] = [:]
+            
+            let responseJson = error as! [String: Any]
+            var response: [String: Any] = [:]
+            var successResponses: [Any] = []
+
+            if let records = responseJson["records"] as? [Any] {
+                for record in records {
+                    let dict = record as! [String: Any]
+                    let fields = dict["fields"] as! [String: Any]
+                    let token = dict["token"] as! String
+                    for (_, value) in fields {
+                        tokens[token] = value as? String ?? token
+                    }
+                    var successEntry: [String: String] = [:]
+                    successEntry["token"] = token
+                    successResponses.append(successEntry)
+                }
+            }
+
+            if successResponses.count != 0 {
+                response["success"] = successResponses
+            }
+            let errors = responseJson["errors"] as? [[String: Any]]
+            let tokensToErrors = getTokensToErrors(errors)
+            if errors?.count != 0 {
+                response["errors"] = errors
+            }
+
+            DispatchQueue.main.async {
+                for revealElement in self.revealElements {
+                    revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
+                    let inputToken = revealElement.revealInput.token
+                    revealElement.hideError()
+                    revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
+                    if let errorMessage = tokensToErrors[inputToken] {
+                        revealElement.showError(message: errorMessage)
+                    }
+                }
+
+            }
+        }
+        self.clientCallback.onFailure(error)
     }
 
     func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String] {

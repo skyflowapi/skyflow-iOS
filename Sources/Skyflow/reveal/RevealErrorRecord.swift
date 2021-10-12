@@ -9,9 +9,9 @@ import Foundation
 
 class RevealErrorRecord {
     var id: String
-    var error: [String: String]
+    var error: NSError
 
-    init(id: String, error: [String: String]) {
+    init(id: String, error: NSError) {
         self.id = id
         self.error = error
     }

@@ -118,7 +118,7 @@ public class Client {
         Log.info(message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: self.contextOptions)
         
         if records["records"] == nil {
-            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().getErrorObject(contextOptions: self.contextOptions))
+            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().getErrorObject(contextOptions: self.contextOptions))
         }
 
         if let tokens = records["records"] as? [[String: Any]] {
@@ -128,7 +128,7 @@ public class Client {
                 if errorCode == nil, let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 } else {
-                    return callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
                 }
             }
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
@@ -140,20 +140,53 @@ public class Client {
             )
             self.apiClient.get(records: list, callback: logCallback, contextOptions: contextOptions)
         } else {
-            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: self.contextOptions))
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: self.contextOptions))
         }
     }
 
     public func getById(records: [String: Any], callback: Callback) {
         Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: self.contextOptions)
         Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: self.contextOptions)
+        
+        func checkEntry(entry: [String: Any]) -> ErrorCodes? {
+            if entry["ids"] == nil {
+                return .MISSING_KEY_IDS()
+            }
+            if !(entry["ids"] is [String]) {
+                return .INVALID_IDS_TYPE()
+            }
+            if entry["table"] == nil {
+                return .TABLE_KEY_ERROR()
+            }
+            if !(entry["table"] is String) {
+                return .INVALID_TABLE_NAME_TYPE()
+            }
+            if entry["redaction"] == nil {
+                return .REDACTION_KEY_ERROR()
+            }
+            if (entry["redaction"] as? RedactionType) != nil{
+                return nil
+            }
+            else {
+                return .INVALID_REDACTION_TYPE(value: entry["redaction"] as! String)
+            }
+        }
+        
+        if records["records"] == nil {
+            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+        }
+        
         if let entries = records["records"] as? [[String: Any]] {
             var list: [GetByIdRecord] = []
             for entry in entries {
-                if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
-                    list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
-                } else {
-                    return callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid/Missing IDs, Table Name or RedactionType format"]))
+                let errorCode = checkEntry(entry: entry)
+                if errorCode != nil {
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.errorObject)
+                }
+                else{
+                    if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
+                        list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
+                    }
                 }
             }
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
@@ -165,18 +198,24 @@ public class Client {
             )
             self.apiClient.getById(records: list, callback: logCallback, contextOptions: contextOptions)
         } else {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "No records array"]))
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
         }
+    }
+    
+    private func callRevealOnFailure(callback: Callback, errorObject: Error) {
+        let result = ["errors": [errorObject]]
+        callback.onFailure(result)
     }
 
     public func invokeGateway(config: GatewayConfig, callback: Callback) {
         Log.info(message: .INVOKE_GATEWAY_TRIGGERED, contextOptions: self.contextOptions)
         let gatewayAPIClient = GatewayAPIClient(callback: callback, contextOptions: self.contextOptions)
+
         do {
             let gatewayTokenCallback = GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(contextOptions: self.contextOptions), clientCallback: callback)
             self.apiClient.getAccessToken(callback: gatewayTokenCallback, contextOptions: self.contextOptions)
         } catch {
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
+            callRevealOnFailure(callback: callback, errorObject: error)
         }
     }
     
@@ -197,11 +236,11 @@ private class GatewayTokenCallback: Callback {
         do {
             try client.invokeGateway(token: responseBody as! String, config: config) //Check
         } catch {
-            self.onFailure(error)
+            clientCallback.onFailure(error)
         }
     }
 
-    func onFailure(_ error: Error) {
+    func onFailure(_ error: Any) {
         clientCallback.onFailure(error)
     }
 }

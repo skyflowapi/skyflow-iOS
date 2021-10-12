@@ -30,6 +30,7 @@ public class DemoTokenProvider: TokenProvider {
 public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
+    var data: [String: Any] = [:]
 
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
@@ -41,9 +42,14 @@ public class DemoAPICallback: Callback {
         expectation.fulfill()
     }
 
-    public func onFailure(_ error: Error) {
+    public func onFailure(_ error: Any) {
         print(error)
-        self.receivedResponse = String(error.localizedDescription)
+        if error is NSError {
+            self.receivedResponse = String((error as! Error).localizedDescription)
+        }
+        else if error is [String: Any] {
+            self.data = (error as! [String: Any])
+        }
         expectation.fulfill()
     }
 }

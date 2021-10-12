@@ -2,9 +2,9 @@ import Foundation
 import XCTest
 import Skyflow
 
-public class DemoTokenProvider: TokenProvider {
+public class GatewayTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: "https://go-server.skyflow.dev/sa-token/ffe21f44f68a4ae3b4fe55ee7f0a85d") {
+        if let url = URL(string: "http://localhost:8000/js/analystToken") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, _, error in
                 if error != nil {
@@ -27,7 +27,7 @@ public class DemoTokenProvider: TokenProvider {
     }
 }
 
-public class DemoAPICallback: Callback {
+public class GatewayAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
@@ -37,24 +37,18 @@ public class DemoAPICallback: Callback {
     }
 
     public func onSuccess(_ responseBody: Any) {
-        do {
-            let dataString = String(data: try JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
-            if let unwrapped = dataString {
-                self.receivedResponse = unwrapped
-            }
-        }
-        catch {
-            print("error decoding data ==>", responseBody)
-        }
+        let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
+        self.receivedResponse = dataString!
         expectation.fulfill()
     }
 
     public func onFailure(_ error: Any) {
-        if let data = error as? [String: Any] {
-            self.data = data
+        print(error)
+        if error is NSError {
+            self.receivedResponse = String((error as! Error).localizedDescription)
         }
-        else {
-            self.receivedResponse = (error as! Error).localizedDescription
+        else if error is [String: Any] {
+            self.data = (error as! [String: Any])
         }
         expectation.fulfill()
     }
