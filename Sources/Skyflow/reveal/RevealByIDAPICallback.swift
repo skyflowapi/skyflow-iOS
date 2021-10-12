@@ -30,7 +30,7 @@ class RevealByIDAPICallback: Callback {
         var errorObject: Error!
 
         if URL(string: (connectionUrl + "/")) == nil {
-            self.callback.onFailure(ErrorCodes.INVALID_URL().errorObject)
+            self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().errorObject)
             return
         }
 
@@ -137,12 +137,17 @@ class RevealByIDAPICallback: Callback {
                     self.callback.onFailure(records)
                 }
             } else {
-                self.callback.onFailure(errorObject!)
+                self.callRevealOnFailure(callback: self.callback, errorObject: errorObject!)
             }
         }
     }
     internal func onFailure(_ error: Any) {
-        self.callback.onFailure(error)
+        if error is Error{
+            callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
+        }
+        else {
+            self.callback.onFailure(error)
+        }
     }
 
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
@@ -155,5 +160,10 @@ class RevealByIDAPICallback: Callback {
             }
         }
         return temp
+    }
+    
+    private func callRevealOnFailure(callback: Callback, errorObject: Error) {
+        let result = ["errors": errorObject]
+        callback.onFailure(result)
     }
 }

@@ -50,7 +50,6 @@ public class DemoAPICallback: Callback {
     }
 
     public func onFailure(_ error: Any) {
-        print(error)
         if let data = error as? [String: Any] {
             self.data = data
         }

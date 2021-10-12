@@ -15,6 +15,7 @@ class GatewayAPIClient {
         var errorObject: Error!
         var convertedResponse: [String: Any]? = nil
         var stringResponse: String? = nil
+        var errors: [NSError] = []
         
         do {
             let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams)
@@ -57,7 +58,12 @@ class GatewayAPIClient {
                     do {
                         let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments)
                         if(responseData is [String: Any]){
-                            convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData as! [String : Any], responseBody: config.responseBody ?? [:])
+                            let convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: responseData as! [String : Any], responseBody: config.responseBody ?? [:])
+                            errors = RequestHelpers.getInvalidResponseKeys(config.responseBody ?? [:], convertedResponse)
+                            if !errors.isEmpty {
+                                isSuccess = false
+                                errorObject = nil
+                            }
                         }
                         else if responseData is String {
                             stringResponse = responseData as? String
@@ -86,7 +92,13 @@ class GatewayAPIClient {
                         self.callback.onFailure(error)
                     }
                 } else {
-                    self.callback.onFailure(errorObject)
+                    if !errors.isEmpty {
+                        let failureResponse: [String: Any] = ["success": convertedResponse ?? [:], "errors": errors]
+                        self.callback.onFailure(failureResponse)
+                    }
+                    else {
+                        self.callback.onFailure(["errors": [errorObject!]])
+                    }
                 }
             }
         } catch {

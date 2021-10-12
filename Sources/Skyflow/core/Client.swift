@@ -97,7 +97,7 @@ public class Client {
         
         
         if records["records"] == nil {
-            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().errorObject)
         }
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
@@ -106,12 +106,12 @@ public class Client {
                 if errorCode == nil, let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 } else {
-                    return callback.onFailure(errorCode!.errorObject)
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.errorObject)
                 }
             }
             self.apiClient.get(records: list, callback: callback)
         } else {
-            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
         }
     }
 
@@ -139,12 +139,10 @@ public class Client {
             else {
                 return .INVALID_REDACTION_TYPE(value: entry["redaction"] as! String)
             }
-            
-            return nil
         }
         
         if records["records"] == nil {
-            return callback.onFailure(ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().errorObject)
         }
         
         if let entries = records["records"] as? [[String: Any]] {
@@ -152,7 +150,7 @@ public class Client {
             for entry in entries {
                 let errorCode = checkEntry(entry: entry)
                 if errorCode != nil {
-                    return callback.onFailure(errorCode!.errorObject)
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.errorObject)
                 }
                 else{
                     if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
@@ -162,8 +160,13 @@ public class Client {
             }
             self.apiClient.getById(records: list, callback: callback)
         } else {
-            callback.onFailure(ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().errorObject)
         }
+    }
+    
+    private func callRevealOnFailure(callback: Callback, errorObject: NSError) {
+        let result = ["errors": errorObject]
+        callback.onFailure(result)
     }
 
     public func invokeGateway(config: GatewayConfig, callback: Callback) {

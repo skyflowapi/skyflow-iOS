@@ -153,8 +153,10 @@ class skyflow_iOS_revealTests: XCTestCase {
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "A server with the specified hostname could not be found.")
+        
+        print("====> ", callback.data["errors"], callback.receivedResponse)
+        let responseData = (callback.data["errors"] as! NSError)
+        XCTAssertEqual(responseData.localizedDescription, "A server with the specified hostname could not be found.")
     }
 
     func testWithInvalidVaultID() {

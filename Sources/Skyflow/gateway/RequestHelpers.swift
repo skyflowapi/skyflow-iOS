@@ -106,7 +106,7 @@ class RequestHelpers {
         var result: [String: Any] = [:]
         for (key, _) in responseBody {
             if response[key] == nil {
-                throw ErrorCodes.INVALID_RESPONSE_BODY().errorObject
+                continue
             }
 
             do {
@@ -124,6 +124,37 @@ class RequestHelpers {
         }
 
 
+        return result
+    }
+    
+    static func getInvalidResponseKeys(_ dict: [String: Any], _ response: [String: Any]) -> [NSError] {
+        var result: [NSError] = []
+        func goThroughDict(path: String, _ dict: [String: Any], _ response: [String: Any]) {
+            for (key, value) in dict {
+                if response[key] == nil {
+                    result.append(ErrorCodes.MISSING_KEY_IN_RESPONSE(value: getPath(path, key)).errorObject)
+                } else {
+                    goThroughValues(path: getPath(path, key), value, response[key] as Any)
+                }
+            }
+        }
+        
+        func goThroughValues(path: String, _ value: Any, _ response: Any) {
+            if value is [String: Any], response is [String: Any] {
+                goThroughDict(path: path, value as! [String : Any], response as! [String: Any])
+            }
+        }
+        
+        func getPath(_ path: String, _ key: String) -> String {
+            if path.isEmpty {
+                return key
+            }
+            else {
+                return path + "." + key
+            }
+        }
+        
+        goThroughDict(path: "", dict, response)
         return result
     }
 

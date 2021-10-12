@@ -33,7 +33,7 @@ class RevealApiCallback: Callback {
 
         if URL(string: (connectionUrl + "/tokens")) == nil {
             errorCode = .INVALID_URL()
-            self.callback.onFailure(errorCode!.errorObject)
+            self.callRevealOnFailure(callback: self.callback, errorObject: errorCode!.errorObject)
             return
         }
 
@@ -150,12 +150,22 @@ class RevealApiCallback: Callback {
                     self.callback.onFailure(modifiedResponse)
                 }
             } else {
-                self.callback.onFailure(errorObject)
+                self.callRevealOnFailure(callback: self.callback, errorObject: errorObject)
             }
         }
     }
     internal func onFailure(_ error: Any) {
-        self.callback.onFailure(error)
+        if error is Error{
+            callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
+        }
+        else {
+            self.callback.onFailure(error)
+        }
+    }
+    
+    private func callRevealOnFailure(callback: Callback, errorObject: Error) {
+        let result = ["errors": [errorObject]]
+        callback.onFailure(result)
     }
 }
 
