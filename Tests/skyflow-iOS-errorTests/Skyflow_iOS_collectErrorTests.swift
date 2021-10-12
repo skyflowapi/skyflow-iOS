@@ -259,7 +259,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(cvv!)
         let expectation = XCTestExpectation(description: "Container insert call - Duplicate Elements")
         let callback = DemoAPICallback(expectation: expectation)
-        CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], callback: callback)
+        CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], callback: callback, contextOptions: ContextOptions())
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
@@ -290,7 +290,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
                     "name": "John Doe"
                 ]]
             ]]
-        CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback)
+        CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions())
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
@@ -326,7 +326,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
                     "duplicate": "123",
                 ]]
             ]]
-        CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback)
+        CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions())
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse

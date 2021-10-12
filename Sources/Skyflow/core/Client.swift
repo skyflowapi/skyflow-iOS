@@ -262,7 +262,7 @@ internal class LogCallback: Callback {
         self.onSuccessHandler()
         clientCallback.onSuccess(responseBody)
     }
-    func onFailure(_ error: Error) {
+    func onFailure(_ error: Any) {
         self.onFailureHandler()
         clientCallback.onFailure(error)
     }

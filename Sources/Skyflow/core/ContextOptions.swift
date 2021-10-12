@@ -8,9 +8,9 @@
 import Foundation
 
 internal struct ContextOptions {
-    var logLevel: LogLevel = .PROD
+    var logLevel: LogLevel
     
-    internal init(logLevel: LogLevel){
+    internal init(logLevel: LogLevel = .PROD){
         self.logLevel = logLevel
     }
 }
