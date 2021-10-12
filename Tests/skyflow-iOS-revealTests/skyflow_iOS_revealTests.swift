@@ -154,8 +154,7 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         wait(for: [expectRecords], timeout: 10.0)
         
-        print("====> ", callback.data["errors"], callback.receivedResponse)
-        let responseData = (callback.data["errors"] as! NSError)
+        let responseData = (callback.data["errors"] as! [NSError])[0]
         XCTAssertEqual(responseData.localizedDescription, "A server with the specified hostname could not be found.")
     }
 

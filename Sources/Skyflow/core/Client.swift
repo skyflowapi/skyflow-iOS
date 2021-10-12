@@ -164,19 +164,18 @@ public class Client {
         }
     }
     
-    private func callRevealOnFailure(callback: Callback, errorObject: NSError) {
-        let result = ["errors": errorObject]
+    private func callRevealOnFailure(callback: Callback, errorObject: Error) {
+        let result = ["errors": [errorObject]]
         callback.onFailure(result)
     }
 
     public func invokeGateway(config: GatewayConfig, callback: Callback) {
         let gatewayAPIClient = GatewayAPIClient(callback: callback)
         
-
         do {
             self.apiClient.getAccessToken(callback: GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(), clientCallback: callback))
         } catch {
-            callback.onFailure(error)
+            callRevealOnFailure(callback: callback, errorObject: error)
         }
     }
 }

@@ -41,6 +41,10 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
         return (cardNumber: cardNumber, revealElement: revealElement!)
     }
     
+    func getError(_ data: [String: Any]) -> String{
+        return (data["errors"] as! [NSError])[0].localizedDescription
+    }
+    
     func testInvokeGatewayUnmountedRequestElements() {
         let window = UIWindow()
         
@@ -66,7 +70,7 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "cardNumber").description)
+        XCTAssertEqual(getError(callback.data), ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "cardNumber").description)
     }
     
     func testInvokeGatewayDuplicateElements() {
@@ -94,6 +98,6 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: "").description)
+        XCTAssertEqual(getError(callback.data), ErrorCodes.DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: "").description)
     }
 }

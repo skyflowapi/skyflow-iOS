@@ -93,7 +93,7 @@ class GatewayAPIClient {
                     }
                 } else {
                     if !errors.isEmpty {
-                        let failureResponse: [String: Any] = ["success": convertedResponse ?? [:], "errors": errors]
+                        let failureResponse: [String: Any] = ["success": convertedResponse ?? [:], "errors": [errors]]
                         self.callback.onFailure(failureResponse)
                     }
                     else {

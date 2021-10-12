@@ -30,6 +30,7 @@ public class GatewayTokenProvider: TokenProvider {
 public class GatewayAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
+    var data: [String: Any] = [:]
 
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
@@ -43,7 +44,12 @@ public class GatewayAPICallback: Callback {
 
     public func onFailure(_ error: Any) {
         print(error)
-        self.receivedResponse = String((error as! Error).localizedDescription)
+        if error is NSError {
+            self.receivedResponse = String((error as! Error).localizedDescription)
+        }
+        else if error is [String: Any] {
+            self.data = (error as! [String: Any])
+        }
         expectation.fulfill()
     }
 }

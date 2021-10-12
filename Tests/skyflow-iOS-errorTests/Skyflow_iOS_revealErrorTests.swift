@@ -28,7 +28,17 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         skyflow.detokenize(records: records, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        return callback.receivedResponse
+        if callback.receivedResponse.isEmpty {
+            if callback.data["errors"] != nil{
+                return (callback.data["errors"] as! [NSError])[0].localizedDescription
+            }
+            else {
+                return "ok"
+            }
+        }
+        else {
+            return callback.receivedResponse
+        }
     }
     
     func getByIDFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> String {
@@ -37,7 +47,18 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         skyflow.getById(records: records, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        return callback.receivedResponse
+        if callback.receivedResponse.isEmpty {
+            if callback.data["errors"] != nil{
+                return (callback.data["errors"] as! [NSError])[0].localizedDescription
+            }
+            else {
+                return "ok"
+            }
+        }
+        else {
+            return callback.receivedResponse
+        }
+
     }
     
     
