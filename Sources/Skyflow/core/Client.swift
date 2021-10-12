@@ -39,13 +39,19 @@ public class Client {
                         errorCode = .INVALID_TABLE_NAME_TYPE()
                     }
                     else{
-                         if record["fields"] != nil {
-                            if !(record["fields"] is [String: Any]) {
-                                errorCode = .INVALID_FIELDS_TYPE()
-                            }
-                         }
-                         else {
-                            errorCode = .FIELDS_KEY_ERROR()
+                        if (record["table"] as! String).isEmpty {
+                            errorCode = .EMPTY_TABLE_NAME()
+                        }
+                        else{
+                            if record["fields"] != nil {
+                                if !(record["fields"] is [String: Any]) {
+                                    errorCode = .INVALID_FIELDS_TYPE()
+                                }
+                             }
+                             else {
+                                errorCode = .FIELDS_KEY_ERROR()
+                             }
+                                
                          }
                     }
                 }

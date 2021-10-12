@@ -34,9 +34,9 @@ class GatewayAPIClient {
                     gatewayRequestGroup.leave()
                 }
                 
-                if error != nil || response == nil {
+                if error != nil {
                     isSuccess = false
-                    errorObject = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "invokeGateway - Error"])
+                    errorObject = error!
                     return
                 }
                 
