@@ -414,7 +414,7 @@ let state = [
 ]
 ```
 `Note:`
-values of SkyflowElements will be returned in elementstate object only when LogLevel is  `DEBUG`,  else it is `undefined`
+values of SkyflowElements will be returned in elementstate object only when LogLevel is  `DEBUG`,  else it is an empty string.
 
 ##### Sample code snippet for using listeners
 ```swift
