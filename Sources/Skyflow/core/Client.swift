@@ -240,7 +240,7 @@ private class GatewayTokenCallback: Callback {
 
     func onSuccess(_ responseBody: Any) {
         do {
-            try client.invokeGateway(token: responseBody as! String, config: config) //Check
+            try client.invokeGateway(token: responseBody as! String, config: config)
         } catch {
             clientCallback.onFailure(error)
         }

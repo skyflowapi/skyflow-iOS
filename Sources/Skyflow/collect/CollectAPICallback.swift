@@ -89,6 +89,7 @@ internal class CollectAPICallback: Callback {
                                     let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict!)
                                     let fieldsObj = try JSONSerialization.jsonObject(with: fieldsData, options: .allowFragments)
                                     tempEntry["fields"] = self.buildFieldsDict(dict: fieldsObj as? [String: Any] ?? [:])
+                                    tempEntry[keyPath: "fields.skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
                                 }
                             } else {
                                 tempEntry["skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
