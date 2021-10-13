@@ -350,7 +350,7 @@ public class InsertCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -433,7 +433,7 @@ let cardNumberInput = Skyflow.CollectElementInput(
     type: Skyflow.ElementType.CARD_NUMBER,
 )
 
-let cardNumber = container.create(input: input)
+let cardNumber = container.create(input: cardNumberInput)
 
 //subscribing to CHANGE event, which gets triggered when element changes
 cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
@@ -453,13 +453,13 @@ cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
 ```
 ##### Sample Element state object when `logLevel` is `PROD` or `INFO`
 ```swift
-{
+[
    "elementType": Skyflow.ElementType.CARD_NUMBER,
    "isEmpty": false,
    "isFocused": true,
    "isValid": false,
    "value": ""
-}
+]
 ```
 
 ---
@@ -692,7 +692,7 @@ public class RevealCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -795,7 +795,7 @@ public class InvokeGatewayCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -867,7 +867,7 @@ public class InvokeGatewayCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
