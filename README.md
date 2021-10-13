@@ -36,7 +36,8 @@ let demoTokenProvider = DemoTokenProvider()
 let config = Skyflow.Configuration(
     vaultID: <VAULT_ID>,
     vaultURL: <VAULT_URL>,
-    tokenProvider: demoTokenProvider
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(logLevel: Skyflow.LogLevel) // optional, if not specified default is PROD 
 )
 
 let skyflowClient = Skyflow.initialize(config)
@@ -83,12 +84,33 @@ public class DemoTokenProvider : Skyflow.TokenProvider {
 }
 ```
 
+For `logLevel` parameter, there are 3 accepted values in Skyflow.LogLevel
+
+- `INFO`
+
+  When `Skyflow.LogLevel.INFO` is passed, will get info logs for every event that has occurred during the SDK flow execution along with error logs on the console.
+
+- `DEBUG`
+
+  Logs will be same as in `INFO`. 
+
+  In Event Listeners actual vaule of element can be accessed inside the handler. 
+
+- `PROD`
+
+  When `Skyflow.LogLevel.PROD` is passed, will get only error logs on the console.
+
+`Note`:
+  - since `logLevel` is optional, by default the logLevel will be  `PROD`.
+  - Use `logLevel` option with caution, make sure the logLevel is set to `PROD` when using `skyflow-iOS` in production. 
+
 NOTE: You should pass access token as `String` value in the success callback of getBearerToken.
 
 ---
 # Securely collecting data client-side
 -  [**Inserting data into the vault**](#inserting-data-into-the-vault)
 -  [**Using Skyflow Elements to collect data**](#using-skyflow-elements-to-collect-data)
+-  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
 
 ## Inserting data into the vault
 
@@ -286,9 +308,6 @@ let skyflowClient = Skyflow.initialize(config)
 //Create a CollectContainer
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
  
-//Initialize and set required options
-let options = Skyflow.CollectElementOptions(required: true)
- 
 //Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
@@ -362,6 +381,86 @@ container.collect(options: collectOptions, callback: insertCallback)
 }
 
 ```
+
+### Event Listener on Collect Elements
+
+
+Helps to communicate with skyflow elements / iframes by listening to an event
+
+```swift
+element.on(eventName: Skyflow.EventName) { state in
+  //handle function
+}
+```
+
+There are 4 events in `Skyflow.EventName`
+- `CHANGE`  
+  Change event is triggered when the Element's value changes.
+- `READY`   
+   Ready event is triggered when the Element is fully rendered
+- `FOCUS`   
+ Focus event is triggered when the Element gains focus
+- `BLUR`    
+  Blur event is triggered when the Element loses focus.
+The handler ```(state: [String: Any]) -> Void``` is a callback function you provide, that will be called when the event is fired with the state object as shown below. 
+
+```swift
+let state = [
+  "elementType": Skyflow.ElementType,
+  "isEmpty": Bool ,
+  "isFocused": Bool,
+  "isValid": Bool,
+  "value": String 
+]
+```
+`Note:`
+values of SkyflowElements will be returned in elementstate object only when LogLevel is  `DEBUG`,  else it is `undefined`
+
+##### Sample code snippet for using listeners
+```swift
+//create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG))
+
+let skyflowClient = Skyflow.initialize(config)
+
+let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+ 
+// Create a CollectElementInput
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+)
+
+let cardNumber = container.create(input: input)
+
+//subscribing to CHANGE event, which gets triggered when element changes
+cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
+  // Your implementation when Change event occurs
+  print(state)
+}
+```
+##### Sample Element state object when `logLevel` is `DEBUG`
+```swift
+[
+   "elementType": Skyflow.ElementType.CARD_NUMBER,
+   "isEmpty": false,
+   "isFocused": true,
+   "isValid": false,
+   "value": "411"
+]
+```
+##### Sample Element state object when `logLevel` is `PROD` or `INFO`
+```swift
+{
+   "elementType": Skyflow.ElementType.CARD_NUMBER,
+   "isEmpty": false,
+   "isFocused": true,
+   "isValid": false,
+   "value": ""
+}
+```
+
 ---
 # Securely revealing data client-side
 -  [**Retrieving data from the vault**](#retrieving-data-from-the-vault)
