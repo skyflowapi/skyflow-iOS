@@ -10,6 +10,6 @@ import Foundation
 public enum LogLevel: Int {
     case DEBUG = 0
     case INFO = 1
-    case PROD = 2
-    case DEMO = 3
+    case WARN = 2
+    case ERROR = 3
 }
