@@ -84,6 +84,8 @@ public class DemoTokenProvider : Skyflow.TokenProvider {
 }
 ```
 
+NOTE: You should pass access token as `String` value in the success callback of getBearerToken.
+
 For `logLevel` parameter, there are 3 accepted values in Skyflow.LogLevel
 
 - `INFO`
@@ -104,7 +106,6 @@ For `logLevel` parameter, there are 3 accepted values in Skyflow.LogLevel
   - since `logLevel` is optional, by default the logLevel will be  `PROD`.
   - Use `logLevel` option with caution, make sure the logLevel is set to `PROD` when using `skyflow-iOS` in production. 
 
-NOTE: You should pass access token as `String` value in the success callback of getBearerToken.
 
 ---
 # Securely collecting data client-side
