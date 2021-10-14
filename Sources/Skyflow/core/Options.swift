@@ -1,6 +1,9 @@
 public struct Options {
     var logLevel: LogLevel
-    public init(logLevel: LogLevel? = .DEBUG) {
-        self.logLevel = logLevel!
+    var env: Env
+    
+    public init(logLevel: LogLevel = .ERROR, env: Env = .PROD) {
+        self.logLevel = logLevel
+        self.env = env
     }
 }

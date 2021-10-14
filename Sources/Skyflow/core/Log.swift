@@ -18,6 +18,11 @@ internal class Log {
             print("INFO: \(message.getDescription(values: values))")
         }
     }
+    internal static func warn(message: Message, values: [String] = [], contextOptions: ContextOptions){
+        if(contextOptions.logLevel.rawValue < 3){
+            print("WARN: \(message.getDescription(values: values))")
+        }
+    }
     internal static func error(message: String, values: [String] = [], contextOptions: ContextOptions){
         print("ERROR: \(message)")
     }

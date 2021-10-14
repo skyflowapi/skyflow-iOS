@@ -37,7 +37,7 @@ internal class StateforText: State
         elementType = tf.collectInput.type
 //        isComplete = validationErrors.count == 0
         isFocused = tf.hasFocus
-        if(tf.contextOptions.logLevel == .DEBUG || tf.contextOptions.logLevel == .DEMO){
+        if(tf.contextOptions.env == .DEV){
             value = tf.actualValue
         }
     }
