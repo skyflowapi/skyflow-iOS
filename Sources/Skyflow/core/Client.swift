@@ -101,10 +101,6 @@ public class Client {
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         
         func checkRecord(_ token: [String: Any]) -> ErrorCodes? {
-            if token["redaction"] == nil {
-                return .REDACTION_KEY_ERROR()
-            }
-            if let _ = token["redaction"] as? RedactionType {
                 if token["token"] == nil {
                     return .ID_KEY_ERROR()
                 }
@@ -113,10 +109,6 @@ public class Client {
                         return .INVALID_TOKEN_TYPE()
                     }
                 }
-            }
-            else {
-                return .INVALID_REDACTION_TYPE(value: token["redaction"] as! String )
-            }
             return nil
         }
         
@@ -131,8 +123,8 @@ public class Client {
             var list: [RevealRequestRecord] = []
             for token in tokens {
                 let errorCode = checkRecord(token)
-                if errorCode == nil, let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
-                    list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
+                if errorCode == nil, let id = token["token"] as? String {
+                    list.append(RevealRequestRecord(token: id))
                 } else {
                     return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
                 }

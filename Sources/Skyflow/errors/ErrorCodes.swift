@@ -76,11 +76,9 @@ internal enum ErrorCodes: CustomStringConvertible {
             return message
         // Single value formatting
         case .EMPTY_VAULT( _, let message, let value), .INVALID_REDACTION_TYPE( _, let message, let value), .INVALID_DATA_TYPE_PASSED( _, let message, let value), .INVALID_VALUE( _, let message, let value), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY( _, let message, let value), .MISSING_KEY_IN_RESPONSE( _, let message, let value), .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value):
-            print("SINGLE VALUE FORMATTING")
             return formatMessage(message, [value])
         // Multi value formatting
         case .INVALID_TABLE_NAME( _, let message, let values), .DUPLICATE_ELEMENT_FOUND( _, let message, let values), .DUPLICATE_ADDITIONAL_FIELD_FOUND( _, let message, let values):
-            print("MULTIPLE VALUE FORMATTING")
             return formatMessage(message, values)
 
         }

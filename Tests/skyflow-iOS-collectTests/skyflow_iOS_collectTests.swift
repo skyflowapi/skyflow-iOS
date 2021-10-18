@@ -40,7 +40,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         let responseData = Data(callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
-        print("JSONDATA", jsonData)
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
         let firstEntry = responseEntries[0] as? [String: Any]
@@ -168,15 +167,12 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         
         collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
-            print("CHANGE")
             print("state", state)
         }
         collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
-            print("BLUR")
             print("state", state)
         }
         collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
-            print("FOCUS")
             print("state", state)
         }
         collectElement?.on(eventName: Skyflow.EventName.READY) { state in
@@ -187,8 +183,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         collectElement?.textField.text = "123"
         UIAccessibility.post(notification: .screenChanged, argument: collectElement)
         XCTAssertTrue(onReadyCalled)
-//        XCTAssertTrue(onFocusCalled)
-//        collectElement.secureText =
     }
 
     func testContainerInsert() {

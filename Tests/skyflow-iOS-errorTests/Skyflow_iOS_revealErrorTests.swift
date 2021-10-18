@@ -86,17 +86,17 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_TYPE().description)
     }
     
-    func testDetokenizeNoRedaction() {
-        let records = ["records": [["token": []]]]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.REDACTION_KEY_ERROR().description)
-    }
-    
-    func testDetokenizeInvalidRedaction() {
-        let records = ["records": [["token": [], "redaction": "abc"]]]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_REDACTION_TYPE(value: "abc").description)
-    }
+//    func testDetokenizeNoRedaction() {
+//        let records = ["records": [["token": []]]]
+//        let result = getDataFromClientWithExpectation(records: records)
+//        XCTAssertEqual(result, ErrorCodes.REDACTION_KEY_ERROR().description)
+//    }
+//    
+//    func testDetokenizeInvalidRedaction() {
+//        let records = ["records": [["token": [], "redaction": "abc"]]]
+//        let result = getDataFromClientWithExpectation(records: records)
+//        XCTAssertEqual(result, ErrorCodes.INVALID_REDACTION_TYPE(value: "abc").description)
+//    }
     
     func testContainerRevealWithUnmountedElements() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)

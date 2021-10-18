@@ -29,11 +29,9 @@ internal class RevealValueCallback: Callback {
         if let records = responseJson?["records"] as? [Any] {
             for record in records {
                 let dict = record as! [String: Any]
-                let fields = dict["fields"] as! [String: Any]
                 let token = dict["token"] as! String
-                for (_, value) in fields {
-                    tokens[token] = value as? String ?? token
-                }
+                let value = dict["value"] as? String
+                tokens[token] = value ?? token
                 var successEntry: [String: String] = [:]
                 successEntry["token"] = token
                 successResponses.append(successEntry)
@@ -85,11 +83,9 @@ internal class RevealValueCallback: Callback {
             if let records = responseJson["records"] as? [Any] {
                 for record in records {
                     let dict = record as! [String: Any]
-                    let fields = dict["fields"] as! [String: Any]
                     let token = dict["token"] as! String
-                    for (_, value) in fields {
-                        tokens[token] = value as? String ?? token
-                    }
+                    let value = dict["value"] as? String
+                    tokens[token] = value ?? token
                     var successEntry: [String: String] = [:]
                     successEntry["token"] = token
                     successResponses.append(successEntry)
