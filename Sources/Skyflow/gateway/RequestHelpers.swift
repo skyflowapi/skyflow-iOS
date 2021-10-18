@@ -39,7 +39,7 @@ class RequestHelpers {
         var URL = rawURL
         if pathParams != nil {
             for (param, value) in pathParams! {
-                if let stringValue = value as? String, URL.contains("{"+param+"}") {
+                if let stringValue = value as? String, URL.contains("{" + param + "}") {
                     URL = URL.replacingOccurrences(of: "{\(param)}", with: stringValue)
                 } else {
                     throw ErrorCodes.INVALID_PATH_PARAMS().getErrorObject(contextOptions: contextOptions)
@@ -126,7 +126,7 @@ class RequestHelpers {
 
         return result
     }
-    
+
     static func getInvalidResponseKeys(_ dict: [String: Any], _ response: [String: Any], contextOptions: ContextOptions) -> [NSError] {
         var result: [NSError] = []
         func goThroughDict(path: String, _ dict: [String: Any], _ response: [String: Any]) {
@@ -138,22 +138,21 @@ class RequestHelpers {
                 }
             }
         }
-        
+
         func goThroughValues(path: String, _ value: Any, _ response: Any) {
             if value is [String: Any], response is [String: Any] {
-                goThroughDict(path: path, value as! [String : Any], response as! [String: Any])
+                goThroughDict(path: path, value as! [String: Any], response as! [String: Any])
             }
         }
-        
+
         func getPath(_ path: String, _ key: String) -> String {
             if path.isEmpty {
                 return key
-            }
-            else {
+            } else {
                 return path + "." + key
             }
         }
-        
+
         goThroughDict(path: "", dict, response)
         return result
     }

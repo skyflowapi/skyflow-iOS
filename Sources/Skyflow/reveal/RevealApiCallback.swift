@@ -33,14 +33,14 @@ class RevealApiCallback: Callback {
         var errorObject: Error!
         var errorCode: ErrorCodes?
 
-        
-        //Check before pushing
+
+        // Check before pushing
         if URL(string: (connectionUrl + "/detokenize")) == nil {
             errorCode = .INVALID_URL()
             self.callRevealOnFailure(callback: self.callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
             return
         }
-        
+
         for record in records {
             let url = URL(string: (connectionUrl + "/detokenize"))
             revealRequestGroup.enter()
@@ -49,7 +49,7 @@ class RevealApiCallback: Callback {
             request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
-            
+
             do {
                 let bodyObject: [String: Any] =
                 [
@@ -66,7 +66,7 @@ class RevealApiCallback: Callback {
                 return
             }
 
-            
+
             let session = URLSession(configuration: .default)
 
             let task = session.dataTask(with: request) { data, response, error in
@@ -151,17 +151,15 @@ class RevealApiCallback: Callback {
         }
     }
     internal func onFailure(_ error: Any) {
-        if error is Error{
+        if error is Error {
             callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
-        }
-        else {
+        } else {
             self.callback.onFailure(error)
         }
     }
-    
+
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
         let result = ["errors": [errorObject]]
         callback.onFailure(result)
     }
 }
-

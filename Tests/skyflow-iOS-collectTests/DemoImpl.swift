@@ -49,8 +49,7 @@ public class DemoAPICallback: Callback {
             if let unwrapped = dataString {
                 self.receivedResponse = unwrapped
             }
-        }
-        catch {
+        } catch {
             print("error decoding data ==>", responseBody)
         }
         expectation.fulfill()
@@ -60,8 +59,7 @@ public class DemoAPICallback: Callback {
         print(error)
         if let data = error as? [String: Any] {
             self.data = data
-        }
-        else {
+        } else {
             self.receivedResponse = (error as! Error).localizedDescription
         }
         expectation.fulfill()

@@ -152,11 +152,11 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(container?.elements.count, 1)
         XCTAssertTrue(container?.elements[0].fieldType == ElementType.CARD_NUMBER)
     }
-    
-    func testListeners(){
+
+    func testListeners() {
         let window = UIWindow()
-        var onReadyCalled: Bool = false
-        var onFocusCalled: Bool = false
+        var onReadyCalled = false
+        var onFocusCalled = false
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -165,7 +165,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         let collectElement = container?.create(input: collectInput, options: options)
 
-        
+
         collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
             print("state", state)
         }
@@ -175,7 +175,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.READY) { state in
+        collectElement?.on(eventName: Skyflow.EventName.READY) { _ in
             onReadyCalled = true
         }
         sleep(1)

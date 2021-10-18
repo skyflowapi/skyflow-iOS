@@ -16,14 +16,14 @@ internal class StateforText: State
 
     /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
-    
+
 //    internal(set) open var isComplete = false
-    
+
     internal(set) open var isFocused = false
-    
+
     internal(set) open var elementType: ElementType!
-    
-    internal(set) open var value: String? = nil
+
+    internal(set) open var value: String?
     /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
     internal(set) open var validationErrors = [SkyflowValidationError]()
 
@@ -37,7 +37,7 @@ internal class StateforText: State
         elementType = tf.collectInput.type
 //        isComplete = validationErrors.count == 0
         isFocused = tf.hasFocus
-        if(tf.contextOptions.env == .DEV){
+        if tf.contextOptions.env == .DEV {
             value = tf.actualValue
         }
     }
@@ -58,7 +58,7 @@ internal class StateforText: State
 //        """
 //        return result
 //    }
-    
+
     public override func getState() -> [String: Any] {
         var result = [String: Any]()
             result["isRequired"] = isRequired
@@ -71,7 +71,7 @@ internal class StateforText: State
 
         return result
     }
-    
+
     public func getStateForListener() -> [String: Any] {
         var result = [String: Any]()
             result["isEmpty"] = isEmpty
@@ -82,4 +82,3 @@ internal class StateforText: State
         return result
     }
 }
-

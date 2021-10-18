@@ -82,13 +82,13 @@ class skyflow_iOS_revealTests: XCTestCase {
 //        XCTAssertEqual((onlyEntry?["fields"] as! [String: String])["cardNumber"], "1232132132311231")
 //        XCTAssertEqual(onlyEntry?["token"] as? String, revealTestId)
 //    }
-    
+
     func testNewDetokenize() {
         let defaultRecords = ["records": [["token": revealTestId!]]]
-        
+
         let responseData = getDataFromClientWithExpectation(description: "New detokenize call", records: defaultRecords)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
-        
+
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
         let onlyEntry = responseEntries[0] as? [String: Any]
@@ -171,7 +171,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        
+
         let responseData = (callback.data["errors"] as! [NSError])[0]
         XCTAssertEqual(responseData.localizedDescription, "A server with the specified hostname could not be found.")
     }
@@ -195,5 +195,4 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(errorCount, 1)
         XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
     }
-    
 }

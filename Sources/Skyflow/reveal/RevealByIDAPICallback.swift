@@ -144,10 +144,9 @@ class RevealByIDAPICallback: Callback {
         }
     }
     internal func onFailure(_ error: Any) {
-        if error is Error{
+        if error is Error {
             callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
-        }
-        else {
+        } else {
             self.callback.onFailure(error)
         }
     }
@@ -163,7 +162,7 @@ class RevealByIDAPICallback: Callback {
         }
         return temp
     }
-    
+
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
         let result = ["errors": errorObject]
         callback.onFailure(result)

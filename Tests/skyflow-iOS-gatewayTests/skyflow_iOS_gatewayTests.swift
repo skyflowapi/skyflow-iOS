@@ -190,7 +190,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTFail()
         }
     }
-    
+
 
     func testAddQueryParams() {
         do {
@@ -381,28 +381,28 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTFail()
         }
     }
-    
+
     func testFormatErrorMessage() {
         let noValueReplace = ErrorCodes.EMPTY_TABLE_NAME()
         let singleValueReplace = ErrorCodes.EMPTY_VAULT(value: "vault#123")
         let multiValueReplace = ErrorCodes.INVALID_TABLE_NAME(values: ["Table#42", "Vault#666"])
-        
+
         XCTAssertEqual(noValueReplace.description, "Table Name is empty")
         XCTAssertEqual(singleValueReplace.description, "Vault ID vault#123 is invalid")
         XCTAssertEqual(multiValueReplace.description, "Table#42 passed doesn’t exist in the vault with id Vault#666")
     }
-    
+
     func testError() {
         let errorCode = ErrorCodes.EMPTY_VAULT(value: "Vault#123")
         let error = errorCode.errorObject
-        
+
         XCTAssertEqual(error.domain, "")
         XCTAssertEqual(error.code, 400)
         XCTAssertEqual(error.localizedDescription, "Vault ID Vault#123 is invalid")
     }
-    
+
     func testGetInvalidResponseKeys() {
-        let responseBody : [String: Any] = [
+        let responseBody: [String: Any] = [
             "key1": "value",
             "key2": "value",
             "key3": "value",
@@ -414,15 +414,15 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
                 "key": "value"
             ]
         ]
-        
+
         let response: [String: Any] = [
             "key1": "value",
             "key2": "value",
             "nested": [
-                "key1": "value",
-            ],
+                "key1": "value"
+            ]
         ]
-        
+
         let result = RequestHelpers.getInvalidResponseKeys(responseBody, response, contextOptions: ContextOptions())
         let errors: [ErrorCodes] = [
             .MISSING_KEY_IN_RESPONSE(value: "key3"),

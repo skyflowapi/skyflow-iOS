@@ -55,8 +55,7 @@ internal class RevealValueCallback: Callback {
                 revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
                 if let errorMessage = tokensToErrors[inputToken] {
                     revealElement.showError(message: errorMessage)
-                }
-                else{
+                } else {
                     Log.info(message: .ELEMENT_REVEALED, values: [revealElement.revealInput.label], contextOptions: self.contextOptions)
                 }
             }
@@ -68,14 +67,12 @@ internal class RevealValueCallback: Callback {
     }
 
     func onFailure(_ error: Any) {
-        
         func getTokens(_ records: [String: Any], _ errors: [String: Any]) {
-            
         }
-        
+
         if error is [String: Any] {
             var tokens: [String: String] = [:]
-            
+
             let responseJson = error as! [String: Any]
             var response: [String: Any] = [:]
             var successResponses: [Any] = []
@@ -111,7 +108,6 @@ internal class RevealValueCallback: Callback {
                         revealElement.showError(message: errorMessage)
                     }
                 }
-
             }
         }
         self.clientCallback.onFailure(error)
