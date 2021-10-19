@@ -40,7 +40,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         let responseData = Data(callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
-        print("JSONDATA", jsonData)
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
         let firstEntry = responseEntries[0] as? [String: Any]
@@ -153,11 +152,11 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(container?.elements.count, 1)
         XCTAssertTrue(container?.elements[0].fieldType == ElementType.CARD_NUMBER)
     }
-    
-    func testListeners(){
+
+    func testListeners() {
         let window = UIWindow()
-        var onReadyCalled: Bool = false
-        var onFocusCalled: Bool = false
+        var onReadyCalled = false
+        var onFocusCalled = false
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 
         let options = CollectElementOptions(required: false)
@@ -166,20 +165,17 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         let collectElement = container?.create(input: collectInput, options: options)
 
-        
+
         collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
-            print("CHANGE")
             print("state", state)
         }
         collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
-            print("BLUR")
             print("state", state)
         }
         collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
-            print("FOCUS")
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.READY) { state in
+        collectElement?.on(eventName: Skyflow.EventName.READY) { _ in
             onReadyCalled = true
         }
         sleep(1)
@@ -187,8 +183,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         collectElement?.textField.text = "123"
         UIAccessibility.post(notification: .screenChanged, argument: collectElement)
         XCTAssertTrue(onReadyCalled)
-//        XCTAssertTrue(onFocusCalled)
-//        collectElement.secureText =
     }
 
     func testContainerInsert() {

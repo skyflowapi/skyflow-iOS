@@ -46,8 +46,7 @@ public class GatewayAPICallback: Callback {
         print(error)
         if error is NSError {
             self.receivedResponse = String((error as! Error).localizedDescription)
-        }
-        else if error is [String: Any] {
+        } else if error is [String: Any] {
             self.data = (error as! [String: Any])
         }
         expectation.fulfill()

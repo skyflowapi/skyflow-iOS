@@ -9,7 +9,6 @@ import XCTest
 @testable import Skyflow
 
 class Skyflow_iOS_gatewayErrorTests: XCTestCase {
-
     var skyflow: Client!
 
     override func setUp() {
@@ -19,8 +18,8 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
     override func tearDown() {
         skyflow = nil
     }
-    
-    func getElements() -> (cardNumber: TextField, revealElement: Label){
+
+    func getElements() -> (cardNumber: TextField, revealElement: Label) {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
 
@@ -37,19 +36,19 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
 
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
-        
+
         return (cardNumber: cardNumber, revealElement: revealElement!)
     }
-    
-    func getError(_ data: [String: Any]) -> String{
+
+    func getError(_ data: [String: Any]) -> String {
         return (data["errors"] as! [NSError])[0].localizedDescription
     }
-    
+
     func testInvokeGatewayUnmountedRequestElements() {
         let window = UIWindow()
-        
+
         let (cardNumber, revealElement) = getElements()
-        
+
         window.addSubview(revealElement)
 
         let requestBody: [String: Any] = [
@@ -67,17 +66,17 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "should return response")
         let callback = GatewayAPICallback(expectation: expectation)
         self.skyflow.invokeGateway(config: gatewayConfig, callback: callback)
-        
+
         wait(for: [expectation], timeout: 10.0)
-        
+
         XCTAssertEqual(getError(callback.data), ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "cardNumber").description)
     }
-    
+
     func testInvokeGatewayDuplicateElements() {
         let window = UIWindow()
-        
+
         let (cardNumber, revealElement) = getElements()
-        
+
         window.addSubview(revealElement)
         window.addSubview(cardNumber)
 
@@ -86,7 +85,7 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
             "holder_name": "john doe",
             "reveal": revealElement as Any,
             "nestedFields": [
-                "card_number": cardNumber,
+                "card_number": cardNumber
             ]
         ]
 
@@ -95,9 +94,9 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "should return response")
         let callback = GatewayAPICallback(expectation: expectation)
         self.skyflow.invokeGateway(config: gatewayConfig, callback: callback)
-        
+
         wait(for: [expectation], timeout: 10.0)
-        
+
         XCTAssertEqual(getError(callback.data), ErrorCodes.DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: "").description)
     }
 }

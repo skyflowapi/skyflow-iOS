@@ -9,9 +9,9 @@ import Foundation
 
 struct RevealSuccessRecord {
     var token_id: String
-    var fields: [String: String]
-    init(token_id: String, fields: [String: String]) {
+    var value: String
+    init(token_id: String, value: String) {
         self.token_id = token_id
-        self.fields = fields
+        self.value = value
     }
 }

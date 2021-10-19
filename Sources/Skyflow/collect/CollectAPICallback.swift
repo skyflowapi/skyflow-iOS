@@ -68,11 +68,9 @@ internal class CollectAPICallback: Callback {
 
                 if let safeData = data {
                     let originalString = String(decoding: safeData, as: UTF8.self)
-//                    let replacedString = originalString.replacingOccurrences(of: "\"*\":", with: "\"skyflow_id\":")
                     let changedData = Data(originalString.utf8)
                     do {
                         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
-                        print("jsonData apicallback", jsonData)
                         var responseEntries: [Any] = []
 
                         let receivedResponseArray = (jsonData[keyPath: "responses"] as! [Any])

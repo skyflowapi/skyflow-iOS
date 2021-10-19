@@ -15,19 +15,19 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
     var records: [[String: Any]]!
     var firstFields: [String: Any]!
     var secondFields: [String: Any]!
-
+    
     override func setUp() {
         self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
         self.firstFields = ["cvv": "123",
-                       "cardExpiration": "1221",
-                       "cardNumber": "1232132132311231",
-                       "name": ["first_name": "Bob"]
-                      ]
+                            "cardExpiration": "1221",
+                            "cardNumber": "1232132132311231",
+                            "name": ["first_name": "Bob"]
+        ]
         self.secondFields = [
             "cvv": "123",
-             "cardExpiration": "1221",
-             "cardNumber": "1232132132311231",
-             "name": ["first_name": "Bobb"]
+            "cardExpiration": "1221",
+            "cardNumber": "1232132132311231",
+            "name": ["first_name": "Bobb"]
         ]
         self.records = [
             ["table": "persons",
@@ -38,7 +38,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             ]
         ]
     }
-
+    
     override func tearDown() {
         skyflow = nil
     }
@@ -49,10 +49,10 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         ]
         
         let expectation = XCTestExpectation(description: "Pure insert call")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
         skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
@@ -63,10 +63,10 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let payload: [String: Any] = ["records": 12]
         
         let expectation = XCTestExpectation(description: "Pure insert call")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
         skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
@@ -82,10 +82,10 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             ]
         ]
         let expectation = XCTestExpectation(description: "Pure insert call")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
         skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
@@ -102,10 +102,10 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             ]
         ]
         let expectation = XCTestExpectation(description: "Pure insert call")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
         skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
@@ -121,10 +121,10 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             ]
         ]
         let expectation = XCTestExpectation(description: "Pure insert call")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
         skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
@@ -141,10 +141,10 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             ]
         ]
         let expectation = XCTestExpectation(description: "Pure insert call")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
         skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
@@ -154,92 +154,92 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
     func testContainerNoTableName() {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
-
+        
         let options = CollectElementOptions(required: false)
-
+        
         let collectInput1 = CollectElementInput(placeholder: "card number", type: .CARD_NUMBER)
-
+        
         let cardNumber = container?.create(input: collectInput1, options: options)
-
+        
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
-
+        
         window.addSubview(cardNumber!)
-
+        
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
-
+        
         let cvv = container?.create(input: collectInput2, options: options)
-
+        
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
-
+        
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
-
+        
         container?.collect(callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
-
+        
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData, ErrorCodes.EMPTY_TABLE_NAME().description)
-
+        
     }
     
     func testEmptyColumnName() {
         let window = UIWindow()
-
+        
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
-
+        
         let options = CollectElementOptions(required: false)
-
+        
         let collectInput1 = CollectElementInput(table: "persons", placeholder: "card number", type: .CARD_NUMBER)
-
+        
         let cardNumber = container?.create(input: collectInput1, options: options)
-
+        
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
-
+        
         window.addSubview(cardNumber!)
-
+        
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
-
+        
         let cvv = container?.create(input: collectInput2, options: options)
-
+        
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
-
+        
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
-
+        
         container?.collect(callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
-
+        
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData, ErrorCodes.EMPTY_COLUMN_NAME().description)
-
+        
     }
     
     func testUnmountedElements() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
-
+        
         let options = CollectElementOptions(required: false)
-
+        
         let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
-
+        
         let cardNumber = container?.create(input: collectInput1, options: options)
-
+        
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
-
-
+        
+        
         let expectation = XCTestExpectation(description: "Container insert call - Unmounted")
-
+        
         let callback = DemoAPICallback(expectation: expectation)
-
+        
         container?.collect(callback: callback)
-
+        
         wait(for: [expectation], timeout: 10.0)
-
+        
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData, ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "card_number").description)
     }
@@ -252,7 +252,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
-
+        
         let collectInput2 = CollectElementInput(table: "persons", column: "card_number", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
@@ -274,7 +274,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
-
+        
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
@@ -284,11 +284,11 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let fields: [String: Any] = [
             "records": [[
-                "table": "persons",
-                "fields": [
-                    "cvv": "123",
-                    "name": "John Doe"
-                ]]
+                            "table": "persons",
+                            "fields": [
+                                "cvv": "123",
+                                "name": "John Doe"
+                            ]]
             ]]
         CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions())
         wait(for: [expectation], timeout: 10.0)
@@ -305,7 +305,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
-
+        
         let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
@@ -315,16 +315,16 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let fields: [String: Any] = [
             "records": [[
-                "table": "persons",
-                "fields": [
-                    "duplicate": "123",
-                    "name": "John Doe"
-                ]],
-                [
-                "table": "persons",
-                "fields": [
-                    "duplicate": "123",
-                ]]
+                            "table": "persons",
+                            "fields": [
+                                "duplicate": "123",
+                                "name": "John Doe"
+                            ]],
+                        [
+                            "table": "persons",
+                            "fields": [
+                                "duplicate": "123",
+                            ]]
             ]]
         CollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions())
         wait(for: [expectation], timeout: 10.0)
@@ -332,5 +332,5 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData, ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: ["persons", "duplicate"]).description)
     }
-
+    
 }

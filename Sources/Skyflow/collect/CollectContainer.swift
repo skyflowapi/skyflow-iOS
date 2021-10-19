@@ -20,7 +20,7 @@ public extension Container {
 
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var errors = ""
-        var errorCode: ErrorCodes? = nil
+        var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: self.skyflow.contextOptions)
 
         for element in self.elements {
@@ -69,7 +69,6 @@ public extension Container {
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
 
         if records != nil {
-            
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
                 onSuccessHandler: {
                     Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
@@ -80,8 +79,8 @@ public extension Container {
             self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: self.skyflow.contextOptions)
         }
     }
-    
-    private func checkElement(element: TextField) -> ErrorCodes?{
+
+    private func checkElement(element: TextField) -> ErrorCodes? {
         if element.collectInput.table.isEmpty {
             let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
             return .EMPTY_TABLE_NAME()
@@ -96,7 +95,7 @@ public extension Container {
 
         return nil
     }
-    
+
     private func checkRecord(record: [String: Any]) -> ErrorCodes? {
         if record["table"] == nil {
             return .TABLE_KEY_ERROR()
@@ -110,7 +109,7 @@ public extension Container {
         if !(record["fields"] is [String: Any]) {
             return .INVALID_FIELDS_TYPE()
         }
-        
+
         return nil
     }
 }

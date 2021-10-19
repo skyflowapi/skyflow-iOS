@@ -2,15 +2,13 @@ import Foundation
 
 
 class ConversionHelpers {
-        
     static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions) throws -> [String: Any] {
         var convertedRequest = [String: Any]()
         var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
         for (key, value) in requestBody {
             do {
                 convertedRequest[key] = try convertValue(value, nested, arraySupport, contextOptions: contextOptions)
-            }
-            catch {
+            } catch {
                 if error.localizedDescription == errorCode.description {
                     errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
                     throw errorCode.getErrorObject(contextOptions: contextOptions)
@@ -191,8 +189,7 @@ class ConversionHelpers {
                     if let gottenValue = try getValue(value) {
                         result[key] = gottenValue
                     }
-                }
-                catch {
+                } catch {
                     if error.localizedDescription == errorCode.description {
                         errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
                         throw errorCode.getErrorObject(contextOptions: contextOptions)
@@ -226,10 +223,8 @@ class ConversionHelpers {
 
         return try recurseDict(response)
     }
-    
-    public static func stringifyDict(_ dict: [String: Any]?) -> [String: String]?{
-        
-        
+
+    public static func stringifyDict(_ dict: [String: Any]?) -> [String: String]? {
         if let values = dict {
             var result: [String: String] = [:]
             for (key, value) in values {
@@ -243,10 +238,9 @@ class ConversionHelpers {
                     result[key] = String(value as! Bool)
                 }
             }
-            
+
             return result
-        }
-        else {
+        } else {
             return nil
         }
     }

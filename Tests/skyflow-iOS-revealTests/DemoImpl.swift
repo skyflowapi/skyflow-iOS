@@ -4,7 +4,7 @@ import Skyflow
 
 public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: "https://go-server.skyflow.dev/sa-token/ffe21f44f68a4ae3b4fe55ee7f0a85d") {
+        if let url = URL(string: "http://localhost:8000/js/userToken") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, _, error in
                 if error != nil {
@@ -42,8 +42,7 @@ public class DemoAPICallback: Callback {
             if let unwrapped = dataString {
                 self.receivedResponse = unwrapped
             }
-        }
-        catch {
+        } catch {
             print("error decoding data ==>", responseBody)
         }
         expectation.fulfill()
@@ -52,8 +51,7 @@ public class DemoAPICallback: Callback {
     public func onFailure(_ error: Any) {
         if let data = error as? [String: Any] {
             self.data = data
-        }
-        else {
+        } else {
             self.receivedResponse = (error as! Error).localizedDescription
         }
         expectation.fulfill()

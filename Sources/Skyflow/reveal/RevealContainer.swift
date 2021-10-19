@@ -36,13 +36,12 @@ public extension Container {
         }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: self.skyflow.contextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
-        // Create GetOptions object from RevealOptions object
-//        self.skyflow.detokenize(records: records, options: options, callback: revealValueCallback)
+
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
             for token in tokens {
-                if let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
-                    list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
+                if let id = token["token"] as? String {
+                    list.append(RevealRequestRecord(token: id))
                 }
             }
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: self.skyflow.contextOptions,
