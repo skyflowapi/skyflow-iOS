@@ -36,7 +36,11 @@ let demoTokenProvider = DemoTokenProvider()
 let config = Skyflow.Configuration(
     vaultID: <VAULT_ID>,
     vaultURL: <VAULT_URL>,
-    tokenProvider: demoTokenProvider
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(
+      logLevel: Skyflow.LogLevel,    // optional, if not specified default is ERROR 
+      env: Skyflow.Env              // optional, if not specified default is PROD
+    ) 
 )
 
 let skyflowClient = Skyflow.initialize(config)
@@ -85,10 +89,46 @@ public class DemoTokenProvider : Skyflow.TokenProvider {
 
 NOTE: You should pass access token as `String` value in the success callback of getBearerToken.
 
+For `logLevel` parameter, there are 4 accepted values in Skyflow.LogLevel
+
+- `DEBUG`
+    
+  When `Skyflow.LogLevel.DEBUG` is passed, all level of logs will be printed(DEBUG, INFO, WARN, ERROR).
+
+- `INFO`
+
+  When `Skyflow.LogLevel.INFO` is passed, INFO logs for every event that has occurred during the SDK flow execution will be printed along with WARN and ERROR logs.
+
+- `WARN`
+
+  When `Skyflow.LogLevel.WARN` is passed, WARN and ERROR logs will be printed.
+
+- `ERROR`
+
+  When `Skyflow.LogLevel.ERROR` is passed, only ERROR logs will be printed.
+
+`Note`:
+  - The ranking of logging levels is as follows :  DEBUG < INFO < WARN < ERROR
+  - since `logLevel` is optional, by default the logLevel will be  `ERROR`.
+
+
+For `env` parameter, there are 2 accepted values in Skyflow.Env
+
+- `PROD`
+- `DEV`
+
+  In [Event Listeners](#event-listener-on-collect-elements), actual value of element can only be accessed inside the handler when the `env` is set to `DEV`.
+
+`Note`:
+  - since `env` is optional, by default the env will be  `PROD`.
+  - Use `env` option with caution, make sure the env is set to `PROD` when using `skyflow-iOS` in production. 
+
+
 ---
 # Securely collecting data client-side
 -  [**Inserting data into the vault**](#inserting-data-into-the-vault)
 -  [**Using Skyflow Elements to collect data**](#using-skyflow-elements-to-collect-data)
+-  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
 
 ## Inserting data into the vault
 
@@ -286,9 +326,6 @@ let skyflowClient = Skyflow.initialize(config)
 //Create a CollectContainer
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
  
-//Initialize and set required options
-let options = Skyflow.CollectElementOptions(required: true)
- 
 //Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
@@ -330,7 +367,7 @@ public class InsertCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -362,6 +399,86 @@ container.collect(options: collectOptions, callback: insertCallback)
 }
 
 ```
+
+### Event Listener on Collect Elements
+
+
+Helps to communicate with skyflow elements / iframes by listening to an event
+
+```swift
+element.on(eventName: Skyflow.EventName) { state in
+  //handle function
+}
+```
+
+There are 4 events in `Skyflow.EventName`
+- `CHANGE`  
+  Change event is triggered when the Element's value changes.
+- `READY`   
+   Ready event is triggered when the Element is fully rendered
+- `FOCUS`   
+ Focus event is triggered when the Element gains focus
+- `BLUR`    
+  Blur event is triggered when the Element loses focus.
+The handler ```(state: [String: Any]) -> Void``` is a callback function you provide, that will be called when the event is fired with the state object as shown below. 
+
+```swift
+let state = [
+  "elementType": Skyflow.ElementType,
+  "isEmpty": Bool ,
+  "isFocused": Bool,
+  "isValid": Bool,
+  "value": String 
+]
+```
+`Note:`
+values of SkyflowElements will be returned in elementstate object only when `env` is  `DEV`,  else it is an empty string.
+
+##### Sample code snippet for using listeners
+```swift
+//create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG))
+
+let skyflowClient = Skyflow.initialize(config)
+
+let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+ 
+// Create a CollectElementInput
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+)
+
+let cardNumber = container.create(input: cardNumberInput)
+
+//subscribing to CHANGE event, which gets triggered when element changes
+cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
+  // Your implementation when Change event occurs
+  print(state)
+}
+```
+##### Sample Element state object when `env` is `DEV`
+```swift
+[
+   "elementType": Skyflow.ElementType.CARD_NUMBER,
+   "isEmpty": false,
+   "isFocused": true,
+   "isValid": false,
+   "value": "411"
+]
+```
+##### Sample Element state object when `env` is `PROD`
+```swift
+[
+   "elementType": Skyflow.ElementType.CARD_NUMBER,
+   "isEmpty": false,
+   "isFocused": true,
+   "isValid": false,
+   "value": ""
+]
+```
+
 ---
 # Securely revealing data client-side
 -  [**Retrieving data from the vault**](#retrieving-data-from-the-vault)
@@ -372,22 +489,21 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
 
 - ### Using Skyflow tokens
     For retrieving using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
-    ```json5
-    {
+    ```swift
+    [
       "records":[
-        {
-          token: "string",                    // token for the record to be fetched
-          redaction: Skyflow.RedactionType    //redaction to be applied to retrieved data
-        }
+        [
+          "token": "string"     // token for the record to be fetched
+        ]
       ]
-    }
+    ]
    ```
    
   An example of a detokenize call:
   ```swift
   let getCallback = GetCallback()   //Custom callback - implementation of Skyflow.Callback
 
-  let records = ["records": ["token": "45012507-f72b-4f5c-9bf9-86b133bae719", "redaction": RedactionType.PLAIN_TEXT]] as [String: Any]
+  let records = ["records": ["token": "45012507-f72b-4f5c-9bf9-86b133bae719"]] as [String: Any]
 
   skyflowClient.detokenize(records: records, callback: getCallback)
   ```
@@ -397,7 +513,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     "records": [
       {
         "token": "131e70dc-6f76-4319-bdd3-96281e051051",
-        "date_of_birth": "1990-01-01",
+        "value": "1990-01-01"
       }
     ]
   }
@@ -405,32 +521,38 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
 
 - ### Using Skyflow ID's
     For retrieving using SkyflowID's, use the `getById(records)` method.The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
-    ```json5
-    {
-      "records":[
-        {
-          ids: ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
-          table: "string"                     // name of table holding the above skyflow_id's
-          redaction: Skyflow.RedactionType    //redaction to be applied to retrieved data
-        }
-      ]
-    }
-    ```
-
-    An example of getById call:
     ```swift
-    let getCallback = GetCallback() //Custom callback - implementation of Skyflow.Callback
-
-    let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
-    let record = ["ids": skyflowIDs, "table": "cards", "redaction": "PLAIN_TEXT"] as [String : Any]
-
-    let invalidID = ["invalid skyflow ID"]
-    let badRecord = ["ids": invalidID, "table": "cards", "redaction": "ab"] as [String : Any]
-
-    let records = ["records": [record, badRecord]]
-
-    skyflowClient.getById(records: records, callback: getCallBack)
+    [
+      "records":[
+        [
+          "ids": ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
+          "table": "string",                    // name of table holding the above skyflow_id's
+          "redaction": Skyflow.RedactionType    //redaction to be applied to retrieved data
+        ]
+      ]
+    ]
     ```
+
+  There are 4 accepted values in Skyflow.RedactionTypes:  
+  - `PLAIN_TEXT`
+  - `MASKED`
+  - `REDACTED`
+  - `DEFAULT`  
+  
+  An example of getById call:
+  ```swift
+  let getCallback = GetCallback() //Custom callback - implementation of Skyflow.Callback
+
+  let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
+  let record = ["ids": skyflowIDs, "table": "cards", "redaction": "PLAIN_TEXT"] as [String : Any]
+
+  let invalidID = ["invalid skyflow ID"]
+  let badRecord = ["ids": invalidID, "table": "cards", "redaction": "ab"] as [String : Any]
+
+  let records = ["records": [record, badRecord]]
+
+  skyflowClient.getById(records: records, callback: getCallBack)
+  ```
 
   The sample response:
   ```json
@@ -468,11 +590,6 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     ]
   }
   ```
-There are four enum values in Skyflow.RedactionType: 
-- `PLAIN_TEXT`
-- `MASKED`
-- `REDACTED`
-- `DEFAULT`
 
 
 ## Using Skyflow Elements to reveal data
@@ -489,7 +606,6 @@ To create a reveal Element, we must first construct a Skyflow.RevealElementInput
 ```swift
 let revealElementInput = Skyflow.RevealElementInput(
     token: String,                     //optional, token of the data being revealed 
-    redaction: Skyflow.RedactionType.DEFAULT,
     inputStyles: Skyflow.Styles(),       //optional, styles to be applied to the element
     labelStyles: Skyflow.Styles(),       //optional, styles to be applied to the label of the reveal element
     errorTextStyles: Skyflow.Styles(),   //optional styles that will be applied to the errorText of the reveal element
@@ -502,8 +618,6 @@ let revealElementInput = Skyflow.RevealElementInput(
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
 
 The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyflow.Styles` object as described in the [previous section](#step-2-create-a-collect-element), the only state available for a reveal element is the base state.
-
-For a list of acceptable redaction types, see the [section above](#Retrieving-data-from-the-vault).
 
 The `inputStyles`, `labelStyles` and  `errorTextStyles` parameters accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but only a single variant is available i.e. base. 
 
@@ -564,7 +678,6 @@ val errorTextStyles = Skyflow.Styles(base: baseTextStyle)
 //Create Reveal Elements
 let cardNumberInput = Skyflow.RevealElementInput(
     token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
-    redaction: Skyflow.RedactionType.PLAIN_TEXT,
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -576,7 +689,6 @@ let cardNumberElement = container.create(input: cardNumberInput)
 
 let cvvInput = Skyflow.RevealElementInput(
     token: "89024714-6a26-4256-b9d4-55ad69aa4047",
-    redaction: Skyflow.RedactionType.PLAIN_TEXT
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -592,7 +704,7 @@ public class RevealCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -695,7 +807,7 @@ public class InvokeGatewayCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -732,7 +844,7 @@ let collectContainer = skyflowClient.container(type: Skyflow.ContainerType.COLLE
 
 // step 3
 let cvvInput = RevealElementInput(
-  type: skyflow.RedactionType.PLAIN_TEXT
+  altText: "CVV"
 )
 
 let cvvElement = revealContainer.create(input: cvvElementInput)
@@ -767,7 +879,7 @@ public class InvokeGatewayCallback: Skyflow.Callback {
   public func onSuccess(_ responseBody: Any) {
       print(responseBody)
   }
-   public func onFailure(_ error: Error) {
+   public func onFailure(_ error: Any) {
       print(error)
   }
 }
@@ -785,5 +897,5 @@ Sample Response:
 }
 ```
 `Note`:
-- `token` and `redaction` are optional for creating reveal element, if it is used for invokeGateway
+- `token` is optional for creating reveal element, if it is used for invokeGateway
 - responseBody contains collect or reveal elements to render the response from the gateway on UI 
