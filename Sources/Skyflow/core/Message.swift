@@ -123,9 +123,7 @@ internal enum Message {
         case .INSERT_DATA_SUCCESS: return "Data has been inserted successfully." // U
         case .DETOKENIZE_SUCCESS: return "Data has been revealed successfully." // U
         case .GET_BY_ID_SUCCESS: return "Data has been revealed successfully." // U
-        case .BEARER_TOKEN_RECEIVED: return "GetBearerToken promise received  successfully." // U
-//        case .PUREJS_CONTROLLER_INITIALIZED: return "Initialized Skyflow controller successfully" //A
-
+        case .BEARER_TOKEN_RECEIVED: return "GetBearerToken received successfully." // U
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
         case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
