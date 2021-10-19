@@ -36,7 +36,6 @@ internal enum Message {
 
 
     // ErrorLogs
-    case BEARER_TOKEN_REJECTED
     case INVALID_VAULT_ID
     case EMPTY_VAULT_ID
     case INVALID_BEARER_TOKEN
@@ -78,20 +77,15 @@ internal enum Message {
     case INVALID_GATEWAY_URL
     case MISSING_METHODNAME_KEY
     case INVALID_METHODNAME_VALUE
-    case INVALID_IFRAME
     case INVALID_FIELD
     case INVALID_ELEMENT_TYPE
     case CANNOT_CHANGE_ELEMENT
     case ELEMENT_NOT_MOUNTED
     case ELEMENTS_NOT_MOUNTED
-    case FRAME_NOT_FOUND
     case CLIENT_CONNECTION
     case COMPLETE_AND_VALID_INPUTS
     case REQUIRED_PARAMS_NOT_PROVIDED
-    case INVALID_EVENT_TYPE
-    case INVALID_EVENT_LISTENER
     case UNKNOWN_ERROR
-    case INVALID_ELEMENT_SELECTOR
     case TRANSACTION_ERROR
     case CONNECTION_ERROR
     case ERROR_OCCURED
@@ -123,7 +117,7 @@ internal enum Message {
         case .INSERT_DATA_SUCCESS: return "Data has been inserted successfully." // U
         case .DETOKENIZE_SUCCESS: return "Data has been revealed successfully." // U
         case .GET_BY_ID_SUCCESS: return "Data has been revealed successfully." // U
-        case .BEARER_TOKEN_RECEIVED: return "GetBearerToken received successfully." // U
+        case .BEARER_TOKEN_RECEIVED: return "GetBearerToken promise received successfully." // U
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
         case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
@@ -132,7 +126,6 @@ internal enum Message {
 
         // ErrorLogs
 
-        case .BEARER_TOKEN_REJECTED: return "GetBearerToken promise got rejected."
         case .INVALID_VAULT_ID: return "Vault Id is invalid or cannot be found." // A
         case .EMPTY_VAULT_ID: return "VaultID is empty."
         case .INVALID_BEARER_TOKEN: return "Bearer token is invalid or expired." // A
@@ -175,21 +168,15 @@ internal enum Message {
         case .INVALID_GATEWAY_URL: return "Invalid gateway URL"
         case .MISSING_METHODNAME_KEY: return "methodName Key is Missing"
         case .INVALID_METHODNAME_VALUE: return "Invalid methodName value" // A
-        case .INVALID_IFRAME: return "Expecting a valid Iframe" // A
         case .INVALID_FIELD: return "Invalid collect element value"
         case .INVALID_ELEMENT_TYPE: return "Provide valid element type" // A
         case .CANNOT_CHANGE_ELEMENT: return "Element can't be changed" // A
         case .ELEMENT_NOT_MOUNTED: return "<> element Not Mounted"
         case .ELEMENTS_NOT_MOUNTED: return "Elements Not Mounted" // ?
-        case .FRAME_NOT_FOUND: return "<> frame not found" // A
         case .CLIENT_CONNECTION: return "client connection not established" // A
         case .COMPLETE_AND_VALID_INPUTS: return "Provide complete and valid inputs"
         case .REQUIRED_PARAMS_NOT_PROVIDED: return "Required params are not provided" // A
-        case .INVALID_EVENT_TYPE: return "Provide a valid event type" // A
-        case .INVALID_EVENT_LISTENER: return "Provide valid event listener" // A
         case .UNKNOWN_ERROR: return "Unknown Error"
-        case .INVALID_ELEMENT_SELECTOR: return
-              "Provided element selector is not valid or not found" // A
         case .TRANSACTION_ERROR: return "An error occurred during transaction" // A
         case .CONNECTION_ERROR: return "Error while initializing the connection" // A
         case .ERROR_OCCURED: return "Error occurred" // A
