@@ -15,8 +15,10 @@ class skyflow_iOS_revealTests: XCTestCase {
     var revealTestId: String!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
-        self.revealTestId = "6255-9119-4502-5915"
+//        self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
+//        self.revealTestId = "6255-9119-4502-5915"
+        self.skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        self.revealTestId = "1815-6223-1073-1425"
     }
 
     override func tearDown() {
@@ -65,9 +67,26 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(labelField.text, revealElementInput.label)
     }
 
-    func testPureGet() {
-        let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
-        let responseData = getDataFromClientWithExpectation(records: defaultRecords)
+//    func testPureGet() {
+//        let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
+//        let responseData = getDataFromClientWithExpectation(description: "Pure Get call",records: defaultRecords)
+//        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
+//
+//        let responseEntries = jsonData["records"] as! [Any]
+//        let count = responseEntries.count
+//        let onlyEntry = responseEntries[0] as? [String: Any]
+//
+//        XCTAssertNotNil(jsonData)
+//        XCTAssertEqual(count, 1)
+//        XCTAssertNotNil((onlyEntry?["fields"] as! [String: String])["cardNumber"])
+//        XCTAssertEqual((onlyEntry?["fields"] as! [String: String])["cardNumber"], "1232132132311231")
+//        XCTAssertEqual(onlyEntry?["token"] as? String, revealTestId)
+//    }
+
+    func testNewDetokenize() {
+        let defaultRecords = ["records": [["token": revealTestId!]]]
+
+        let responseData = getDataFromClientWithExpectation(description: "New detokenize call", records: defaultRecords)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
 
         let responseEntries = jsonData["records"] as! [Any]
@@ -76,22 +95,26 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(count, 1)
-        XCTAssertNotNil((onlyEntry?["fields"] as! [String: String])["cardNumber"])
-        XCTAssertEqual((onlyEntry?["fields"] as! [String: String])["cardNumber"], "1232132132311231")
         XCTAssertEqual(onlyEntry?["token"] as? String, revealTestId)
+        XCTAssertEqual(onlyEntry?["value"] as? String, "4111111111111111")
     }
 
     func testGetWithInvalidToken() {
-        let defaultRecords = ["records": [["token": "abc", "redaction": RedactionType.DEFAULT]]]
-        let responseData = getDataFromClientWithExpectation(description: "Should get an error", records: defaultRecords)
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
+        let defaultRecords = ["records": [["token": "abc"]]]
+
+        let expectRecords = XCTestExpectation(description: description)
+        let callback = DemoAPICallback(expectation: expectRecords)
+        skyflow.detokenize(records: defaultRecords, callback: callback)
+
+        wait(for: [expectRecords], timeout: 10.0)
+        let jsonData = callback.data
 
         XCTAssertNotNil(jsonData)
         XCTAssertNotNil(jsonData["errors"])
 
         let error = (jsonData["errors"] as! [[String: Any]])[0]["error"]
         XCTAssertNotNil(error)
-        XCTAssertEqual((error as! [String: String])["code"], "404")
+        XCTAssertEqual((error as! NSError).code, 404)
     }
 
     func testCheckRevealElementsArray() {
@@ -111,7 +134,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
-        let revealedOutput = "6255-9119-4502-5915"
+        let revealedOutput = "1815-6223-1073-1425"
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
 
         revealContainer?.reveal(callback: callback)
@@ -120,8 +143,8 @@ class skyflow_iOS_revealTests: XCTestCase {
     }
 
     func testGetWithoutURLTrailingSlash() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com", tokenProvider: DemoTokenProvider()))
-        let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev/", tokenProvider: DemoTokenProvider()))
+        let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
         let callback = DemoAPICallback(expectation: expectRecords)
@@ -141,35 +164,35 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func testWithWrongVaultURL() {
         let noTrailingSlashSkyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na2.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
-        let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
+        let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
         let callback = DemoAPICallback(expectation: expectRecords)
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "A server with the specified hostname could not be found.")
+
+        let responseData = (callback.data["errors"] as! [NSError])[0]
+        XCTAssertEqual(responseData.localizedDescription, "A server with the specified hostname could not be found.")
     }
 
     func testWithInvalidVaultID() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "invalid-vault-id", vaultURL: "https://na1.area51.vault.skyflowapis.com/v1/vaults/", tokenProvider: DemoTokenProvider()))
-        let defaultRecords = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "invalid-vault-id", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
         let callback = DemoAPICallback(expectation: expectRecords)
         noTrailingSlashSkyflow.detokenize(records: defaultRecords, callback: callback)
 
         wait(for: [expectRecords], timeout: 10.0)
-        let responseData = Data(callback.receivedResponse.utf8)
 
-        let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
+        let jsonData = callback.data
 
         let errors = jsonData["errors"] as! [Any]
         let errorCount = errors.count
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(errorCount, 1)
-        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! [String: Any])["code"] as! String, "501")
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
     }
 }

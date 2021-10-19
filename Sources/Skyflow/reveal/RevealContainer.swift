@@ -14,28 +14,44 @@ public extension Container {
     func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
         let revealElement = Label(input: input, options: options!)
         revealElements.append(revealElement)
+        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: self.skyflow.contextOptions)
         return revealElement
     }
 
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
+        var errorCode: ErrorCodes?
+        Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: self.skyflow.contextOptions)
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
             let label = element.revealInput.label != "" ? " \(element.revealInput.label)" : ""
-            callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element\(label) is not mounted"]))
+            errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
+            callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
             return
         }
         for element in self.revealElements {
             if element.getValue().isEmpty {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element \(element.revealInput.label) has no token provided"]))
-                return
-            }
-            if element.revealInput.redaction == nil {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Reveal element \(element.revealInput.label) has no redaction type provided"]))
+                errorCode = .EMPTY_TOKEN_ID()
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
                 return
             }
         }
-        let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements)
+        let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: self.skyflow.contextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
-        // Create GetOptions object from RevealOptions object
-        self.skyflow.detokenize(records: records, options: options, callback: revealValueCallback)
+
+        if let tokens = records["records"] as? [[String: Any]] {
+            var list: [RevealRequestRecord] = []
+            for token in tokens {
+                if let id = token["token"] as? String {
+                    list.append(RevealRequestRecord(token: id))
+                }
+            }
+            let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: self.skyflow.contextOptions,
+                onSuccessHandler: {
+                    Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
+                },
+                onFailureHandler: {
+                }
+            )
+            self.skyflow.apiClient.get(records: list, callback: logCallback, contextOptions: self.skyflow.contextOptions)
+        }
     }
 }

@@ -12,12 +12,14 @@ internal class CollectAPICallback: Callback {
     var records: [String: Any]
     var callback: Callback
     var options: ICOptions
+    var contextOptions: ContextOptions
 
-    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions) {
+    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions, contextOptions: ContextOptions) {
         self.records = records
         self.apiClient = apiClient
         self.callback = callback
         self.options = options
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ responseBody: Any) {
@@ -46,24 +48,29 @@ internal class CollectAPICallback: Callback {
                 if let httpResponse = response as? HTTPURLResponse {
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
-                        var desc = "Insert call failed with the following status code" + String(httpResponse.statusCode)
+                        var description = "Insert call failed with the following status code" + String(httpResponse.statusCode)
+                        var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
 
                         if let safeData = data {
-                            desc = String(decoding: safeData, as: UTF8.self)
+                            do {
+                                let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
+                                let error = desc["error"] as! [String: Any]
+                                description = error["message"] as! String
+                                errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
+                            } catch let error {
+                                errorObject = error
+                            }
                         }
-
-                        self.callback.onFailure(NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: desc]))
+                        self.callback.onFailure(errorObject as Any)
                         return
                     }
                 }
 
                 if let safeData = data {
                     let originalString = String(decoding: safeData, as: UTF8.self)
-                    let replacedString = originalString.replacingOccurrences(of: "\"*\":", with: "\"skyflow_id\":")
-                    let changedData = Data(replacedString.utf8)
+                    let changedData = Data(originalString.utf8)
                     do {
                         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
-
                         var responseEntries: [Any] = []
 
                         let receivedResponseArray = (jsonData[keyPath: "responses"] as! [Any])
@@ -80,6 +87,7 @@ internal class CollectAPICallback: Callback {
                                     let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict!)
                                     let fieldsObj = try JSONSerialization.jsonObject(with: fieldsData, options: .allowFragments)
                                     tempEntry["fields"] = self.buildFieldsDict(dict: fieldsObj as? [String: Any] ?? [:])
+                                    tempEntry[keyPath: "fields.skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
                                 }
                             } else {
                                 tempEntry["skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
@@ -95,11 +103,11 @@ internal class CollectAPICallback: Callback {
             }
             task.resume()
         } else {
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
         }
     }
 
-    internal func onFailure(_ error: Error) {
+    internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }
 

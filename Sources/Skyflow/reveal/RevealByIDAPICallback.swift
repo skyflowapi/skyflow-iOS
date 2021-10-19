@@ -12,14 +12,16 @@ class RevealByIDAPICallback: Callback {
     var callback: Callback
     var connectionUrl: String
     var records: [GetByIdRecord]
+    var contextOptions: ContextOptions
 
 
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
-                  records: [GetByIdRecord]) {
+                  records: [GetByIdRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
         self.callback = callback
         self.connectionUrl = connectionUrl
         self.records = records
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ token: Any) {
@@ -30,7 +32,7 @@ class RevealByIDAPICallback: Callback {
         var errorObject: Error!
 
         if URL(string: (connectionUrl + "/")) == nil {
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+            self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
 
@@ -87,10 +89,7 @@ class RevealByIDAPICallback: Callback {
                                     var errorEntryDict: [String: Any] = [
                                         "ids": record.ids
                                     ]
-                                    let errorDict: [String: Any] = [
-                                        "code": httpResponse.statusCode,
-                                        "description": description
-                                    ]
+                                    let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                                     errorEntryDict["error"] = errorDict
                                     errorArray.append(errorEntryDict)
                                 }
@@ -134,14 +133,22 @@ class RevealByIDAPICallback: Callback {
                 records["errors"] = errorArray
             }
             if isSuccess {
-            self.callback.onSuccess(records)
+                if errorArray.isEmpty {
+                    self.callback.onSuccess(records)
+                } else {
+                    self.callback.onFailure(records)
+                }
             } else {
-                self.callback.onFailure(errorObject)
+                self.callRevealOnFailure(callback: self.callback, errorObject: errorObject!)
             }
         }
     }
-    internal func onFailure(_ error: Error) {
-        self.callback.onFailure(error)
+    internal func onFailure(_ error: Any) {
+        if error is Error {
+            callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
+        } else {
+            self.callback.onFailure(error)
+        }
     }
 
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
@@ -154,5 +161,10 @@ class RevealByIDAPICallback: Callback {
             }
         }
         return temp
+    }
+
+    private func callRevealOnFailure(callback: Callback, errorObject: Error) {
+        let result = ["errors": errorObject]
+        callback.onFailure(result)
     }
 }

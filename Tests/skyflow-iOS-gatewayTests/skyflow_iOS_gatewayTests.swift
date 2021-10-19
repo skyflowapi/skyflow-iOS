@@ -68,7 +68,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            let result = try ConversionHelpers.convertJSONValues(requestBody)
+            let result = try ConversionHelpers.convertJSONValues(requestBody, contextOptions: ContextOptions())
             XCTAssertEqual(result["card_number"] as! String, "4111-1111-1111-1111")
             XCTAssertEqual(result["holder_name"] as! String, "john doe")
             XCTAssertEqual(result["reveal"] as! String, "abc")
@@ -115,7 +115,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            try ConversionHelpers.convertJSONValues(responseBody, false)
+            try ConversionHelpers.convertJSONValues(responseBody, false, contextOptions: ContextOptions())
             XCTFail()
         } catch {
         }
@@ -129,7 +129,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            try ConversionHelpers.convertJSONValues(responseBody, false, false)
+            try ConversionHelpers.convertJSONValues(responseBody, false, false, contextOptions: ContextOptions())
             XCTFail()
         } catch {}
     }
@@ -141,7 +141,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            try ConversionHelpers.convertJSONValues(responseBody)
+            try ConversionHelpers.convertJSONValues(responseBody, contextOptions: ContextOptions())
 
             XCTFail()
         } catch {
@@ -184,16 +184,17 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
     func testAddParams() {
         do {
-            let modifiedUrl = try RequestHelpers.addPathParams("https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"])
+            let modifiedUrl = try RequestHelpers.addPathParams("https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"], contextOptions: ContextOptions())
             XCTAssertEqual(modifiedUrl, "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/12345/cvv2generation")
         } catch {
             XCTFail()
         }
     }
 
+
     func testAddQueryParams() {
         do {
-            let modifiedUrl = try RequestHelpers.addQueryParams("https://www.skyflow.com/", ["param": "vault"])
+            let modifiedUrl = try RequestHelpers.addQueryParams("https://www.skyflow.com/", ["param": "vault"], contextOptions: ContextOptions())
             XCTAssertEqual(modifiedUrl.absoluteString, "https://www.skyflow.com?param=vault")
         } catch {
             XCTFail()
@@ -245,7 +246,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
 
         do {
-            let convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: response, responseBody: responseBody)
+            let convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: response, responseBody: responseBody, contextOptions: ContextOptions())
 
             XCTAssertEqual(convertedResponse["expirationDate"] as! String, "12/22")
             XCTAssertNil((convertedResponse["resource"] as! [String: Any])["card_number"])
@@ -298,8 +299,8 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            XCTAssertEqual(try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "expirationDate") as! String, "12/22")
-            let cardConvert = try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "card_number")
+            XCTAssertEqual(try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "expirationDate", contextOptions: ContextOptions()) as! String, "12/22")
+            let cardConvert = try RequestHelpers.traverseAndConvert(response: response, responseBody: responseBody, key: "card_number", contextOptions: ContextOptions())
             XCTAssertNil(cardConvert)
         } catch {
             XCTFail()
@@ -308,7 +309,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
     func testURLWithArrayParams() {
         do {
-            let url = try RequestHelpers.createRequestURL(baseURL: "https://www.skyflow.com", pathParams: nil, queryParams: ["array": ["abcd", 123, 12.23, true]])
+            let url = try RequestHelpers.createRequestURL(baseURL: "https://www.skyflow.com", pathParams: nil, queryParams: ["array": ["abcd", 123, 12.23, true]], contextOptions: ContextOptions())
             XCTAssertEqual(url.absoluteString, "https://www.skyflow.com?array=abcd&array=123&array=12.23&array=true")
         } catch {
             XCTFail()
@@ -366,7 +367,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            let result = try ConversionHelpers.removeEmptyValuesFrom(response: response)
+            let result = try ConversionHelpers.removeEmptyValuesFrom(response: response, contextOptions: ContextOptions())
             XCTAssertEqual(result["key1"] as! String, "value")
             XCTAssertEqual((result["arr"] as! [Any])[0] as! Int, 1)
             XCTAssertEqual((result["arr"] as! [Any])[1] as! String, "23")
@@ -378,6 +379,58 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             XCTAssertNil((result["nested"] as! [String: Any])["emptyDict"])
         } catch {
             XCTFail()
+        }
+    }
+
+    func testFormatErrorMessage() {
+        let noValueReplace = ErrorCodes.EMPTY_TABLE_NAME()
+        let singleValueReplace = ErrorCodes.EMPTY_VAULT(value: "vault#123")
+        let multiValueReplace = ErrorCodes.INVALID_TABLE_NAME(values: ["Table#42", "Vault#666"])
+
+        XCTAssertEqual(noValueReplace.description, "Table Name is empty")
+        XCTAssertEqual(singleValueReplace.description, "Vault ID vault#123 is invalid")
+        XCTAssertEqual(multiValueReplace.description, "Table#42 passed doesn’t exist in the vault with id Vault#666")
+    }
+
+    func testError() {
+        let errorCode = ErrorCodes.EMPTY_VAULT(value: "Vault#123")
+        let error = errorCode.errorObject
+
+        XCTAssertEqual(error.domain, "")
+        XCTAssertEqual(error.code, 400)
+        XCTAssertEqual(error.localizedDescription, "Vault ID Vault#123 is invalid")
+    }
+
+    func testGetInvalidResponseKeys() {
+        let responseBody: [String: Any] = [
+            "key1": "value",
+            "key2": "value",
+            "key3": "value",
+            "nested": [
+                "key1": "value",
+                "key2": "value"
+            ],
+            "nosuchkey": [
+                "key": "value"
+            ]
+        ]
+
+        let response: [String: Any] = [
+            "key1": "value",
+            "key2": "value",
+            "nested": [
+                "key1": "value"
+            ]
+        ]
+
+        let result = RequestHelpers.getInvalidResponseKeys(responseBody, response, contextOptions: ContextOptions())
+        let errors: [ErrorCodes] = [
+            .MISSING_KEY_IN_RESPONSE(value: "key3"),
+            .MISSING_KEY_IN_RESPONSE(value: "nested.key2"),
+            .MISSING_KEY_IN_RESPONSE(value: "nosuchkey")
+        ]
+        for error in errors {
+            XCTAssert(result.contains(error.errorObject))
         }
     }
 }

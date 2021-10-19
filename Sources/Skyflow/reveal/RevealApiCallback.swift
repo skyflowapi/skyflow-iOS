@@ -12,14 +12,16 @@ class RevealApiCallback: Callback {
     var callback: Callback
     var connectionUrl: String
     var records: [RevealRequestRecord]
+    var contextOptions: ContextOptions
 
 
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
-                  records: [RevealRequestRecord]) {
+                  records: [RevealRequestRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
         self.callback = callback
         self.connectionUrl = connectionUrl
         self.records = records
+        self.contextOptions = contextOptions
     }
 
     internal func onSuccess(_ token: Any) {
@@ -29,42 +31,42 @@ class RevealApiCallback: Callback {
 
         var isSuccess = true
         var errorObject: Error!
+        var errorCode: ErrorCodes?
 
-        if URL(string: (connectionUrl + "/tokens")) == nil {
-            self.callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Bad or missing URL"]))
+
+        // Check before pushing
+        if URL(string: (connectionUrl + "/detokenize")) == nil {
+            errorCode = .INVALID_URL()
+            self.callRevealOnFailure(callback: self.callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
             return
         }
 
         for record in records {
-            var urlComponents = URLComponents(string: (connectionUrl + "/tokens"))
-
-            urlComponents?.queryItems = []
-
-            urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
-
-            urlComponents?.queryItems?.append(URLQueryItem(name: "token_ids", value: record.token))
-
-
-            if urlComponents?.url?.absoluteURL == nil {
-                var errorEntryDict: [String: Any] = [
-                    "token": record.token
-                ]
-                let errorDict: [String: Any] = [
-                    "code": 400,
-                    "description": "Token is invalid"
-                ]
-                errorEntryDict["error"] = errorDict
-//                errorArray.append(errorEntryDict)
-                continue
-            }
-
-//            let url = URL(string: (connectionUrl+"/tokens?token_ids="+record.token+"&redaction="+record.redaction))
+            let url = URL(string: (connectionUrl + "/detokenize"))
             revealRequestGroup.enter()
-            var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
-            request.httpMethod = "GET"
+            var request = URLRequest(url: url!)
+            request.httpMethod = "POST"
             request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+
+            do {
+                let bodyObject: [String: Any] =
+                [
+                    "detokenizationParameters": [
+                        [
+                            "token": record.token
+                        ]
+                    ]
+                ]
+                let data = try JSONSerialization.data(withJSONObject: bodyObject)
+                request.httpBody = data
+            } catch let error {
+                self.callback.onFailure(error)
+                return
+            }
+
+
             let session = URLSession(configuration: .default)
 
             let task = session.dataTask(with: request) { data, response, error in
@@ -91,9 +93,7 @@ class RevealApiCallback: Callback {
                                 errorObject = error
                             }
                         }
-                        var error: [String: String] = [:]
-                        error["code"] = String(httpResponse.statusCode)
-                        error["description"] = description
+                        let error: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                         let errorRecord = RevealErrorRecord(id: record.token, error: error )
                         list_error.append(errorRecord)
                         return
@@ -105,7 +105,7 @@ class RevealApiCallback: Callback {
                         let jsonData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                         let receivedResponseArray: [Any] = (jsonData[keyPath: "records"] as! [Any])
                         let records: [String: Any] = receivedResponseArray[0] as! [String: Any]
-                        list_success.append(RevealSuccessRecord(token_id: records["token_id"] as! String, fields: records["fields"] as! [String: String]))
+                        list_success.append(RevealSuccessRecord(token_id: records["token"] as! String, value: records["value"] as! String))
                     } catch let error {
                         isSuccess = false
                         errorObject = error
@@ -121,22 +121,14 @@ class RevealApiCallback: Callback {
             for record in list_success {
                 var entry: [String: Any] = [:]
                 entry["token"] = record.token_id
-                var fields: [String: Any] = [:]
-                for field in record.fields {
-                    fields[field.key] = field.value
-                }
-                entry["fields"] = fields
+                entry["value"] = record.value
                 records.append(entry)
             }
             var errors: [Any] = []
             for record in list_error {
                 var entry: [String: Any] = [:]
                 entry["token"] = record.id
-                var temp: [String: Any] = [:]
-                for field in record.error {
-                    temp[field.key] = field.value
-                }
-                entry["error"] = temp
+                entry["error"] = record.error
                 errors.append(entry)
             }
             var modifiedResponse: [String: Any] = [:]
@@ -148,13 +140,26 @@ class RevealApiCallback: Callback {
             }
 
             if isSuccess {
-                self.callback.onSuccess(modifiedResponse)
+                if errors.isEmpty {
+                    self.callback.onSuccess(modifiedResponse)
+                } else {
+                    self.callback.onFailure(modifiedResponse)
+                }
             } else {
-                self.callback.onFailure(errorObject)
+                self.callRevealOnFailure(callback: self.callback, errorObject: errorObject)
             }
         }
     }
-    internal func onFailure(_ error: Error) {
-        self.callback.onFailure(error)
+    internal func onFailure(_ error: Any) {
+        if error is Error {
+            callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
+        } else {
+            self.callback.onFailure(error)
+        }
+    }
+
+    private func callRevealOnFailure(callback: Callback, errorObject: Error) {
+        let result = ["errors": [errorObject]]
+        callback.onFailure(result)
     }
 }

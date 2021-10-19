@@ -53,8 +53,9 @@ public class TextField: SkyflowElement, Element {
         return StateforText(tf: self)
     }
 
-    override init(input: CollectElementInput, options: CollectElementOptions) {
-        super.init(input: input, options: options)
+    override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
+        super.init(input: input, options: options, contextOptions: contextOptions)
+        //        self.contextOptions = contextOptions
         setupField()
     }
 
@@ -67,8 +68,7 @@ public class TextField: SkyflowElement, Element {
         var flag = false
         if Thread.isMainThread {
             flag = self.window != nil
-        }
-        else {
+        } else {
             DispatchQueue.main.sync {
                 flag = self.window != nil
             }
@@ -76,12 +76,19 @@ public class TextField: SkyflowElement, Element {
         return flag
     }
 
+    internal var hasFocus = false
+
+    internal var onChangeHandler: (([String: Any]) -> Void)?
+    internal var onBlurHandler: (([String: Any]) -> Void)?
+    internal var onReadyHandler: (([String: Any]) -> Void)?
+    internal var onFocusHandler: (([String: Any]) -> Void)?
+
     override func getOutput() -> String? {
         return textField.getTextwithFormatPattern
     }
-    
+
     internal var actualValue: String = ""
-    
+
     internal func getValue() -> String {
         return actualValue
     }
@@ -134,6 +141,25 @@ public class TextField: SkyflowElement, Element {
         }
         return true
     }
+
+    public func on(eventName: EventName, handler: @escaping ([String: Any]) -> Void) {
+        switch eventName {
+        case .CHANGE:
+            onChangeHandler = handler
+        case .BLUR:
+            onBlurHandler = handler
+        case .READY:
+            onReadyHandler = handler
+        case .FOCUS:
+            onFocusHandler = handler
+        }
+    }
+
+    public override func didMoveToWindow() {
+        if self.window != nil {
+            onReadyHandler?((self.state as! StateforText).getStateForListener())
+        }
+    }
 }
 /// UIResponder methods
 extension TextField {
@@ -177,12 +203,14 @@ extension TextField: UITextFieldDelegate {
 
     /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
     public func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.hasFocus = true
         textFieldValueChanged()
         // element styles on focus
         updateInputStyle(collectInput.inputStyles.focus)
 
         // label styles on focus
         updateLabelStyle(collectInput!.labelStyles.focus)
+        onFocusHandler?((self.state as! StateforText).getStateForListener())
     }
 
     /// Wrap native `UITextField` delegate method for `didChange`.
@@ -190,14 +218,16 @@ extension TextField: UITextFieldDelegate {
         isDirty = true
         updateActualValue()
         textFieldValueChanged()
+        onChangeHandler?((self.state as! StateforText).getStateForListener())
     }
-    
+
     func updateActualValue() {
         self.actualValue = textField.secureText ?? ""
     }
 
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
+        self.hasFocus = false
         textFieldValueChanged()
         let state = self.state.getState()
 
@@ -215,6 +245,7 @@ extension TextField: UITextFieldDelegate {
             updateInputStyle(collectInput!.inputStyles.complete)
             errorMessage.alpha = 0.0 // Hide error message
         }
+        onBlurHandler?((self.state as! StateforText).getStateForListener())
     }
 
     @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
@@ -247,7 +278,7 @@ internal extension TextField {
         stackView.addArrangedSubview(errorMessage)
 
         stackView.axis = .vertical
-//        stackView.distribution = .equalSpacing
+        //        stackView.distribution = .equalSpacing
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false

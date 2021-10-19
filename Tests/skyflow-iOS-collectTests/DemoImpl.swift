@@ -11,7 +11,7 @@ import Skyflow
 
 public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: "https://go-server.skyflow.dev/sa-token/ffe21f44f68a4ae3b4fe55ee7f0a85d") {
+        if let url = URL(string: "https://go-server.skyflow.dev/sa-token/ffe21f44f68a4ae3b4fe55ee7f0a85d" ) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, _, error in
                 if error != nil {
@@ -37,20 +37,31 @@ public class DemoTokenProvider: TokenProvider {
 public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
+    var data: [String: Any] = [:]
 
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
 
     public func onSuccess(_ responseBody: Any) {
-        let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
-        self.receivedResponse = dataString!
+        do {
+            let dataString = String(data: try JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
+            if let unwrapped = dataString {
+                self.receivedResponse = unwrapped
+            }
+        } catch {
+            print("error decoding data ==>", responseBody)
+        }
         expectation.fulfill()
     }
 
-    public func onFailure(_ error: Error) {
+    public func onFailure(_ error: Any) {
         print(error)
-        self.receivedResponse = String(error.localizedDescription)
+        if let data = error as? [String: Any] {
+            self.data = data
+        } else {
+            self.receivedResponse = (error as! Error).localizedDescription
+        }
         expectation.fulfill()
     }
 }

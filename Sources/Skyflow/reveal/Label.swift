@@ -41,13 +41,12 @@ public class Label: UIView, Element {
     internal func updateVal(value: String) {
         self.skyflowLabelView.updateVal(value: value)
     }
-    
+
     internal func isMounted() -> Bool {
         var flag = false
         if Thread.isMainThread {
             flag = self.window != nil
-        }
-        else {
+        } else {
             DispatchQueue.main.sync {
                 flag = self.window != nil
             }
