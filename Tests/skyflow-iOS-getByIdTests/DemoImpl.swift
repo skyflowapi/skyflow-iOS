@@ -1,17 +1,10 @@
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 10/08/21.
-//
-
 import Foundation
 import XCTest
 import Skyflow
 
 public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: "http://localhost:8000/js/userToken" ) {
+        if let url = URL(string: "http://localhost:8000/js/userToken") {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, _, error in
                 if error != nil {
@@ -56,7 +49,6 @@ public class DemoAPICallback: Callback {
     }
 
     public func onFailure(_ error: Any) {
-        print(error)
         if let data = error as? [String: Any] {
             self.data = data
         } else {
