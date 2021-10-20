@@ -28,7 +28,7 @@ class RevealByIDAPICallback: Callback {
         let getByIdRequestGroup = DispatchGroup()
         var outputArray: [[String: Any]] = []
         var errorArray: [[String: Any]] = []
-        var isSuccess = true
+        var isSuccess: Bool?
         var errorObject: Error!
 
         if URL(string: (connectionUrl + "/")) == nil {
@@ -132,7 +132,7 @@ class RevealByIDAPICallback: Callback {
             if errorArray.count != 0 {
                 records["errors"] = errorArray
             }
-            if isSuccess {
+            if isSuccess ?? true {
                 if errorArray.isEmpty {
                     self.callback.onSuccess(records)
                 } else {
@@ -164,7 +164,7 @@ class RevealByIDAPICallback: Callback {
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
-        let result = ["errors": errorObject]
+        let result = ["errors": [["error" : errorObject]]]
         callback.onFailure(result)
     }
 }
