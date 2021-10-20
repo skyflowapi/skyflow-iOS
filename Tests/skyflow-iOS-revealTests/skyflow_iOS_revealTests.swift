@@ -195,4 +195,17 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(errorCount, 1)
         XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
     }
+    
+    func testCreateRevealRequestBody() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let revealElementInput = getRevealElementInput()
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        
+        let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: String]]]
+        
+        let result: [String: [[String: String]]] = ["records": [["token": revealTestId]]]
+        
+        XCTAssertEqual(result, requestBody)
+    }
+    
 }

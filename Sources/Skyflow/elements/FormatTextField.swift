@@ -82,35 +82,35 @@ internal class FormatTextField: UITextField {
 
     func updateTextFormat() {
         self.undoManager?.removeAllActions()
-        self.formatText()
+        //self.formatText()
     }
+//
+//    private func getOnlyDigitsString(_ string: String) -> String {
+//        let charactersArray = string.components(separatedBy: CharacterSet.SkyflowAsciiDecimalDigits.inverted)
+//        return charactersArray.joined(separator: "")
+//    }
+//
+//    private func getOnlyLettersString(_ string: String) -> String {
+//        let charactersArray = string.components(separatedBy: CharacterSet.letters.inverted)
+//        return charactersArray.joined(separator: "")
+//    }
 
-    fileprivate func getOnlyDigitsString(_ string: String) -> String {
-        let charactersArray = string.components(separatedBy: CharacterSet.SkyflowAsciiDecimalDigits.inverted)
-        return charactersArray.joined(separator: "")
-    }
+//    private func getUppercaseLettersString(_ string: String) -> String {
+//        let charactersArray = string.components(separatedBy: CharacterSet.uppercaseLetters.inverted)
+//        return charactersArray.joined(separator: "")
+//    }
+//
+//    private func getLowercaseLettersString(_ string: String) -> String {
+//        let charactersArray = string.components(separatedBy: CharacterSet.lowercaseLetters.inverted)
+//        return charactersArray.joined(separator: "")
+//    }
 
-    fileprivate func getOnlyLettersString(_ string: String) -> String {
-        let charactersArray = string.components(separatedBy: CharacterSet.letters.inverted)
-        return charactersArray.joined(separator: "")
-    }
-
-    fileprivate func getUppercaseLettersString(_ string: String) -> String {
-        let charactersArray = string.components(separatedBy: CharacterSet.uppercaseLetters.inverted)
-        return charactersArray.joined(separator: "")
-    }
-
-    fileprivate func getLowercaseLettersString(_ string: String) -> String {
-        let charactersArray = string.components(separatedBy: CharacterSet.lowercaseLetters.inverted)
-        return charactersArray.joined(separator: "")
-    }
-
-    fileprivate func getFilteredString(_ string: String) -> String {
+    private func getFilteredString(_ string: String) -> String {
         let charactersArray = string.components(separatedBy: CharacterSet.alphanumerics.inverted)
         return charactersArray.joined(separator: "")
     }
 
-    fileprivate func getRawText() -> String? {
+    private func getRawText() -> String? {
         guard let text = secureText else {
             return nil
         }
@@ -118,91 +118,91 @@ internal class FormatTextField: UITextField {
     }
 
 
-    fileprivate func getText(_ string: String) -> String {
+    private func getText(_ string: String) -> String {
             return string
     }
 
     /**
      Func that formats the text based on formatPattern
      */
-    func formatText() {
-        var textForFormatting = ""
-
-        if let text = super.text {
-            if text.count > 0 {
-                textForFormatting = self.getText(text)
-            }
-        }
-
-        if self.maxLength > 0 {
-            var formatterIndex = self.formatPattern.startIndex, textForFormattingIndex = textForFormatting.startIndex
-            textwithFormatPattern = ""
-
-            textForFormatting = self.getFilteredString(textForFormatting)
-
-            if textForFormatting.count > 0 {
-                while true {
-                    let patternRange = formatterIndex ..< formatPattern.index(after: formatterIndex)
-                    let currentFormatCharacter = String(self.formatPattern[patternRange])
-                    if let currentFormatCharacterType = FormatPatternChar(rawValue: currentFormatCharacter) {
-                        let textForFormattingPatterRange = textForFormattingIndex ..< textForFormatting.index(after: textForFormattingIndex)
-                        let textForFormattingCharacter = String(textForFormatting[textForFormattingPatterRange])
-
-                        switch currentFormatCharacterType {
-                        case .lettersAndDigit:
-                            textwithFormatPattern += textForFormattingCharacter
-                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
-                            formatterIndex = formatPattern.index(after: formatterIndex)
-                        case .anyLetter:
-                            let filteredChar = self.getOnlyLettersString(textForFormattingCharacter)
-                            if !filteredChar.isEmpty {
-                                textwithFormatPattern += filteredChar
-                                formatterIndex = formatPattern.index(after: formatterIndex)
-                            }
-                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
-                        case .lowerCaseLetter:
-                            let filteredChar = self.getLowercaseLettersString(textForFormattingCharacter)
-                            if !filteredChar.isEmpty {
-                                textwithFormatPattern += filteredChar
-                                formatterIndex = formatPattern.index(after: formatterIndex)
-                            }
-                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
-                        case .upperCaseLetter:
-                            let filteredChar = self.getUppercaseLettersString(textForFormattingCharacter)
-                            if !filteredChar.isEmpty {
-                                textwithFormatPattern += filteredChar
-                                formatterIndex = formatPattern.index(after: formatterIndex)
-                            }
-                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
-                        case .digits:
-                            let filteredChar = self.getOnlyDigitsString(textForFormattingCharacter)
-                            if !filteredChar.isEmpty {
-                                textwithFormatPattern += filteredChar
-                                formatterIndex = formatPattern.index(after: formatterIndex)
-                            }
-                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
-                        }
-                    } else {
-                        textwithFormatPattern += currentFormatCharacter
-                        formatterIndex = formatPattern.index(after: formatterIndex)
-                    }
-
-                    if formatterIndex >= self.formatPattern.endIndex ||
-                        textForFormattingIndex >= textForFormatting.endIndex {
-                        break
-                    }
-                }
-            }
-
-
-            super.text = textwithFormatPattern
-            if let text = self.secureText {
-                if text.count > self.maxLength {
-                    super.text = String(text[text.index(text.startIndex, offsetBy: self.maxLength - 1)])
-                }
-            }
-        }
-    }
+//    func formatText() {
+//        var textForFormatting = ""
+//
+//        if let text = super.text {
+//            if text.count > 0 {
+//                textForFormatting = self.getText(text)
+//            }
+//        }
+//
+//        if self.maxLength > 0 {
+//            var formatterIndex = self.formatPattern.startIndex, textForFormattingIndex = textForFormatting.startIndex
+//            textwithFormatPattern = ""
+//
+//            textForFormatting = self.getFilteredString(textForFormatting)
+//
+//            if textForFormatting.count > 0 {
+//                while true {
+//                    let patternRange = formatterIndex ..< formatPattern.index(after: formatterIndex)
+//                    let currentFormatCharacter = String(self.formatPattern[patternRange])
+//                    if let currentFormatCharacterType = FormatPatternChar(rawValue: currentFormatCharacter) {
+//                        let textForFormattingPatterRange = textForFormattingIndex ..< textForFormatting.index(after: textForFormattingIndex)
+//                        let textForFormattingCharacter = String(textForFormatting[textForFormattingPatterRange])
+//
+//                        switch currentFormatCharacterType {
+//                        case .lettersAndDigit:
+//                            textwithFormatPattern += textForFormattingCharacter
+//                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
+//                            formatterIndex = formatPattern.index(after: formatterIndex)
+//                        case .anyLetter:
+//                            let filteredChar = self.getOnlyLettersString(textForFormattingCharacter)
+//                            if !filteredChar.isEmpty {
+//                                textwithFormatPattern += filteredChar
+//                                formatterIndex = formatPattern.index(after: formatterIndex)
+//                            }
+//                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
+//                        case .lowerCaseLetter:
+//                            let filteredChar = self.getLowercaseLettersString(textForFormattingCharacter)
+//                            if !filteredChar.isEmpty {
+//                                textwithFormatPattern += filteredChar
+//                                formatterIndex = formatPattern.index(after: formatterIndex)
+//                            }
+//                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
+//                        case .upperCaseLetter:
+//                            let filteredChar = self.getUppercaseLettersString(textForFormattingCharacter)
+//                            if !filteredChar.isEmpty {
+//                                textwithFormatPattern += filteredChar
+//                                formatterIndex = formatPattern.index(after: formatterIndex)
+//                            }
+//                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
+//                        case .digits:
+//                            let filteredChar = self.getOnlyDigitsString(textForFormattingCharacter)
+//                            if !filteredChar.isEmpty {
+//                                textwithFormatPattern += filteredChar
+//                                formatterIndex = formatPattern.index(after: formatterIndex)
+//                            }
+//                            textForFormattingIndex = textForFormatting.index(after: textForFormattingIndex)
+//                        }
+//                    } else {
+//                        textwithFormatPattern += currentFormatCharacter
+//                        formatterIndex = formatPattern.index(after: formatterIndex)
+//                    }
+//
+//                    if formatterIndex >= self.formatPattern.endIndex ||
+//                        textForFormattingIndex >= textForFormatting.endIndex {
+//                        break
+//                    }
+//                }
+//            }
+//
+//
+//            super.text = textwithFormatPattern
+//            if let text = self.secureText {
+//                if text.count > self.maxLength {
+//                    super.text = String(text[text.index(text.startIndex, offsetBy: self.maxLength - 1)])
+//                }
+//            }
+//        }
+//    }
 }
 
 extension FormatTextField {
