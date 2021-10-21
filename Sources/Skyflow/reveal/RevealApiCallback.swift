@@ -159,7 +159,7 @@ class RevealApiCallback: Callback {
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
-        let result = ["errors": [errorObject]]
+        let result = ["errors": [["error": errorObject]]]
         callback.onFailure(result)
     }
 }

@@ -129,16 +129,23 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func testRevealContainersReveal() {
         // Invalid test
-
+        let window = UIWindow()
+        
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
-        let revealedOutput = "1815-6223-1073-1425"
-        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
+        let revealedOutput = "4111111111111111"
+        
+        window.addSubview(revealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should return reveal output")
+        let callback = DemoAPICallback(expectation: expectation)
 
         revealContainer?.reveal(callback: callback)
 
+        wait(for: [expectation], timeout: 30.0)
+        
         XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
     }
 
@@ -172,8 +179,8 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         wait(for: [expectRecords], timeout: 10.0)
 
-        let responseData = (callback.data["errors"] as! [NSError])[0]
-        XCTAssertEqual(responseData.localizedDescription, "A server with the specified hostname could not be found.")
+        let responseData = (callback.data["errors"] as! [Any])[0] as? [String: Any]
+        XCTAssertEqual((responseData?["error"] as? Error)?.localizedDescription, "A server with the specified hostname could not be found.")
     }
 
     func testWithInvalidVaultID() {
@@ -206,6 +213,34 @@ class skyflow_iOS_revealTests: XCTestCase {
         let result: [String: [[String: String]]] = ["records": [["token": revealTestId]]]
         
         XCTAssertEqual(result, requestBody)
+    }
+    
+    func testDetokenizeInvalidToken() {
+        
+        class InvalidTokenProvider: TokenProvider {
+            func getBearerToken(_ apiCallback: Callback) {
+                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
+            }
+        }
+        
+        let skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: InvalidTokenProvider()))
+        let revealTestId = "1815-6223-1073-1425"
+        
+        let defaultRecords = ["records": [["token": revealTestId]]]
+        
+        let expectRecords = XCTestExpectation(description: description)
+        let callback = DemoAPICallback(expectation: expectRecords)
+        skyflow.detokenize(records: defaultRecords, callback: callback)
+
+        wait(for: [expectRecords], timeout: 10.0)
+        
+        let errorEntry = (callback.data["errors"] as? [Any])?[0]
+        
+        let errorMessage = ((errorEntry as? [String: Any])?["error"] as? Error)?.localizedDescription
+        
+        XCTAssertNotNil("notnil")
+        XCTAssertEqual(errorMessage, "TokenProvider error")
+
     }
     
 }
