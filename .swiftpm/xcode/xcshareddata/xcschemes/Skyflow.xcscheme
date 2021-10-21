@@ -89,6 +89,26 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "skyflow-iOS-getByIdTests"
+               BuildableName = "skyflow-iOS-getByIdTests"
+               BlueprintName = "skyflow-iOS-getByIdTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "skyflow-iOS-elementTests"
+               BuildableName = "skyflow-iOS-elementTests"
+               BlueprintName = "skyflow-iOS-elementTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

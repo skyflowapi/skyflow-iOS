@@ -1,0 +1,100 @@
+
+import XCTest
+@testable import Skyflow
+
+
+class skyflow_iOS_elementTests: XCTestCase {
+
+    var collectOptions: CollectElementOptions!
+    var collectInput: CollectElementInput!
+    var label: SkyflowElement!
+    var textField: TextField!
+    
+    override func setUp() {
+        
+        self.collectOptions = CollectElementOptions(required: false)
+        
+        self.collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        
+        label = SkyflowElement(input: collectInput!, options: collectOptions!, contextOptions: ContextOptions())
+        
+        textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+    }
+    
+    override func tearDown() {
+        self.collectInput = nil
+        self.collectOptions = nil
+        label = nil
+    }
+    
+    func testSkyflowElementState() {
+        XCTAssertEqual(label.getState()["columnName"] as! String, "cardNumber")
+        XCTAssertEqual(label.getState()["isRequired"] as! Bool, false)
+    }
+    
+    func testSkyflowElementDefaults() {
+        XCTAssertNotNil(label.borderColor)
+        XCTAssertEqual(label.borderWidth, 0.0)
+        XCTAssertEqual(label.cornerRadius, 0.0)
+    }
+    
+    func testSkyflowElementValidate() {
+        label.borderColor = .blue
+        label.borderWidth = 1.0
+        label.cornerRadius = 1.2
+        label.padding = UIEdgeInsets(top: 1.0, left: 1.0, bottom: 1.0, right: 3.0)
+        
+        
+        XCTAssertEqual(label.borderWidth, 1.0)
+        XCTAssertEqual(label.cornerRadius, 1.2)
+        XCTAssertEqual(label.padding, UIEdgeInsets(top: 1.0, left: 1.0, bottom: 1.0, right: 3.0))
+        XCTAssertEqual(label.borderColor, .blue)
+        
+        XCTAssertEqual(label.validate().count, 0)
+    }
+    
+    func testTextFieldDefaults() {
+        XCTAssertNil(textField.textFieldBorderColor)
+        XCTAssertNotNil(textField.borderColor)
+        XCTAssertEqual(textField.isMounted(), false)
+        XCTAssertEqual(textField.textFieldBorderWidth, 0)
+        XCTAssertEqual(textField.textFieldCornerRadius, 0)
+        XCTAssertEqual(textField.hasFocus, false)
+        XCTAssertEqual(textField.getValue(), "")
+        XCTAssertEqual(textField.errorMessage.alpha, 0)
+        XCTAssertEqual(textField.getOutput(), "")
+        XCTAssertEqual(textField.isDirty, false)
+        XCTAssertEqual(textField.isFirstResponder, false)
+    }
+    
+    func testTextFieldFirstResponder() {
+        DispatchQueue.main.async {
+            self.textField.becomeFirstResponder()
+            XCTAssertEqual(self.textField.isFirstResponder, true)
+            self.textField.resignFirstResponder()
+            XCTAssertEqual(self.textField.isFirstResponder, false)
+        }
+    }
+    
+    func testTextFieldState() {
+        let window = UIWindow()
+        window.addSubview(textField)
+        
+        XCTAssertEqual(textField.state.isRequired, false)
+        XCTAssertEqual(textField.state.getState()["isValid"] as! Bool, true)
+        XCTAssertEqual(textField.isValid(), true)
+        XCTAssertEqual(textField.isMounted(), true)
+    }
+    
+    func testTextFieldErrorOnEdit() {
+        textField.textField.secureText = "invalidcard"
+        textField.updateActualValue()
+        DispatchQueue.main.async {
+            self.textField.textFieldDidEndEditing(self.textField.textField)
+            XCTAssertEqual(self.textField.errorMessage.alpha, 1.0)
+        }
+        
+    }
+
+}

@@ -216,10 +216,9 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput, options: options) as! TextField
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
-        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
         let revealElement: Label? = revealContainer?.create(input: revealInput)
 
-        let customArray: [Any] = ["abc", "def", 12, "4111-1111-1111-1111"]
 
         let responseBody: [String: Any] = [
             "resource": [
@@ -432,6 +431,62 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         for error in errors {
             XCTAssert(result.contains(error.errorObject))
         }
+    }
+    
+    func testStringifyDict() {
+        let dict: [String: Any] = ["int": 2, "str": "abc", "double": 2.3, "bool": false, "true": true]
+        let stringifiedDict = ConversionHelpers.stringifyDict(dict)
+        
+        XCTAssertNotNil(stringifiedDict)
+        
+        if let stringified = stringifiedDict {
+            XCTAssertEqual(stringified["int"], "2")
+            XCTAssertEqual(stringified["str"], "abc")
+            XCTAssertEqual(stringified["double"], "2.3")
+            XCTAssertEqual(stringified["bool"], "false")
+            XCTAssertEqual(stringified["true"], "true")
+        }
+    }
+    
+    func testConvertOrFail() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+
+        let styles = Styles(base: bstyle)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
+        let revealElement: Label? = revealContainer?.create(input: revealInput)
+
+
+        let requestBody: [String: Any] = [
+            "resource": [
+                "card_number": cardNumber,
+                "reveal": revealElement!,
+                "nestedFields": [
+                    "reveal": revealElement
+                ]
+            ],
+            "expirationDate": "12/22"
+        ]
+
+        do {
+            let converted = try ConversionHelpers.convertOrFail(requestBody, contextOptions: ContextOptions())
+            
+            print("====>", converted)
+        }
+        catch {
+            XCTFail()
+        }
+
     }
     
 }

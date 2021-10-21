@@ -27,6 +27,12 @@ public class DemoTokenProvider: TokenProvider {
     }
 }
 
+public class InvalidTokenProvider: TokenProvider {
+    public func getBearerToken(_ apiCallback: Callback) {
+        apiCallback.onSuccess("invalid-token")
+    }
+}
+
 public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
@@ -37,8 +43,13 @@ public class DemoAPICallback: Callback {
     }
 
     public func onSuccess(_ responseBody: Any) {
-        let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
-        self.receivedResponse = dataString!
+        if responseBody is String {
+            self.receivedResponse = responseBody as! String
+        }
+        else {
+            let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
+            self.receivedResponse = dataString!
+        }
         expectation.fulfill()
     }
 
