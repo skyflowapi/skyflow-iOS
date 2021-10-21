@@ -35,6 +35,7 @@ public class SkyflowElement: UIView {
         collectInput = input
         self.options = options
         self.contextOptions = contextOptions
+        setupField()
         initialization()
     }
 
