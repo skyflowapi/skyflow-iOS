@@ -37,6 +37,9 @@ public class DemoAPICallback: Callback {
     }
 
     public func onSuccess(_ responseBody: Any) {
+        defer{
+            expectation.fulfill()
+        }
         do {
             let dataString = String(data: try JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
             if let unwrapped = dataString {
@@ -45,6 +48,7 @@ public class DemoAPICallback: Callback {
         } catch {
             print("error decoding data ==>", responseBody)
         }
+        
         expectation.fulfill()
     }
 

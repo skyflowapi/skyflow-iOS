@@ -171,7 +171,11 @@ class skyflow_iOS_getByIdTests: XCTestCase {
         
         wait(for: [expectation], timeout: 30.0)
         
-        //TODO
+        let errorEntry = (callback.data["errors"] as? [Any])?[0]
+        
+        let errorMessage = ((errorEntry as? [String: Any])?["error"] as? Error)?.localizedDescription
+        
+        XCTAssertNotNil(errorMessage?.contains("document does not exist"))
     }
     
     func testGetByIdInvalidInput(){

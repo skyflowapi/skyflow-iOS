@@ -24,7 +24,7 @@ internal class RevealValueCallback: Callback {
 
         let responseJson = responseBody as? [String: Any]
         var response: [String: Any] = [:]
-        var successResponses: [Any] = []
+        var successResponses: [[String: String]] = []
 
         if let records = responseJson?["records"] as? [Any] {
             for record in records {
@@ -60,9 +60,9 @@ internal class RevealValueCallback: Callback {
                 }
             }
 
-            let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
+//            let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
 
-            self.clientCallback.onSuccess(dataString!)
+            self.clientCallback.onSuccess(response)
         }
     }
 

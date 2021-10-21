@@ -428,6 +428,45 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(charset, skyflowCharset)
     }
     
+    func testInsertWithInvalidToken() {
+        
+        class InvalidTokenProvider: TokenProvider {
+            func getBearerToken(_ apiCallback: Callback) {
+                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
+            }
+        }
+        
+        let skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: InvalidTokenProvider()))
+        
+        let records: [[String: Any]] = [
+            ["table": "persons",
+             "fields":
+                ["cvv": "123",
+                 "card_expiration": "1221",
+                 "card_number": "1232132132311231",
+                 "name": ["first_name": "Bob"]
+                ]
+            ],
+            ["table": "persons",
+             "fields":
+                ["cvv": "123",
+                 "card_expiration": "1221",
+                 "card_number": "1232132132311231",
+                 "name": ["first_name": "Bobb"]
+                ]
+            ]
+        ]
+        let expectation = XCTestExpectation(description: "Pure insert call")
+        
+        let callback = DemoAPICallback(expectation: expectation)
+        skyflow.insert(records: ["records": records], options: InsertOptions(tokens: true), callback: callback)
+        
+        wait(for: [expectation], timeout: 10.0)
+        
+        XCTAssertEqual(callback.receivedResponse, "TokenProvider error")
+
+    }
+    
     static var allTests = [
         ("testPureInsert", testPureInsert),
         ("testInvalidVault", testInvalidVault),
