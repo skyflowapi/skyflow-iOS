@@ -21,12 +21,15 @@ internal struct SkyflowValidateLength: SkyflowValidationProtocol {
 
     /// validate length of text
    public  func validate(text: String?) -> Bool {
-        if text!.isEmpty {
-        return true
-        }
-        guard let text = text else {
+        
+        print("====>", text)
+        guard text != nil else {
+            print("-------->here")
             return false
         }
-        return text.count >= minLength && text.count <= maxLength
+        if text!.isEmpty {
+            return true
+        }
+        return text!.count >= minLength && text!.count <= maxLength
     }
 }

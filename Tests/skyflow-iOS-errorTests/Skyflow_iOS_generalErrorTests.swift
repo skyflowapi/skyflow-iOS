@@ -23,10 +23,46 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         XCTAssertEqual(lengthRule.error, SkyflowValidationErrorType.lengthMatches.rawValue)
         XCTAssertEqual(lengthRule.maxLength, 20)
         XCTAssertEqual(lengthRule.minLength, 10)
-        
+
         XCTAssertEqual(false, lengthRule.validate(text: "abcde"))
         XCTAssertEqual(true, lengthRule.validate(text: "abcdefghijklmno"))
+        XCTAssertEqual(true, lengthRule.validate(text: ""))
+        XCTAssertEqual(false, lengthRule.validate(text: nil))
     }
+    
+    func testSkyflowValidateLengthMatch() {
+        let lengthMatchRule = SkyflowValidateLengthMatch(lengths: [1, 4, 7, 10], error: SkyflowValidationErrorType.cardNumber.rawValue)
+        
+        XCTAssertEqual(lengthMatchRule.validate(text: "4123"), true)
+        XCTAssertEqual(lengthMatchRule.validate(text: ""), true)
+        XCTAssertEqual(lengthMatchRule.validate(text: "123"), false)
+        XCTAssertEqual(lengthMatchRule.validate(text: nil), false)
+    }
+    
+    func testSkyflowValidateCardExpirationDate() {
+        let expiryDaterRule = SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue)
+        
+        XCTAssertEqual(expiryDaterRule.validate(text: "12/22"), true)
+        
+        XCTAssertEqual(expiryDaterRule.validate(text: "12"), false)
+        XCTAssertEqual(expiryDaterRule.validate(text: "abc"), false)
+        XCTAssertEqual(expiryDaterRule.validate(text: "1222"), false)
+        XCTAssertEqual(expiryDaterRule.validate(text: "123/22"), false)
+        XCTAssertEqual(expiryDaterRule.validate(text: "12/2"), false)
+    }
+    
+    func testSkyflowExpiryDateFormat() {
+        let shortDateFormat = SkyflowCardExpirationDateFormat.shortYear
+        let longDateFormat = SkyflowCardExpirationDateFormat.longYear
+        
+        XCTAssertEqual(shortDateFormat.dateYearFormat, "yy")
+        XCTAssertEqual(shortDateFormat.monthCharacters, 2)
+        XCTAssertEqual(shortDateFormat.yearCharacters, 2)
+        XCTAssertEqual(longDateFormat.dateYearFormat, "yyyy")
+        XCTAssertEqual(longDateFormat.yearCharacters, 4)
+        
+    }
+    
     
     func testGetByIDRecord() {
         let record = GetByIdRecord(ids: ["id1", "id2"], table: "table", redaction: "DEFAULT")

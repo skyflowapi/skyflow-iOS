@@ -69,12 +69,10 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testTextFieldFirstResponder() {
-        DispatchQueue.main.async {
-            self.textField.becomeFirstResponder()
-            XCTAssertEqual(self.textField.isFirstResponder, true)
-            self.textField.resignFirstResponder()
-            XCTAssertEqual(self.textField.isFirstResponder, false)
-        }
+        self.textField.becomeFirstResponder()
+        XCTAssertEqual(self.textField.hasBecomeResponder, true)
+        self.textField.resignFirstResponder()
+        XCTAssertEqual(self.textField.hasBecomeResponder, false)
     }
     
     func testTextFieldState() {
@@ -90,10 +88,16 @@ class skyflow_iOS_elementTests: XCTestCase {
     func testTextFieldErrorOnEdit() {
         textField.textField.secureText = "invalidcard"
         textField.updateActualValue()
-        DispatchQueue.main.async {
-            self.textField.textFieldDidEndEditing(self.textField.textField)
-            XCTAssertEqual(self.textField.errorMessage.alpha, 1.0)
-        }
+        self.textField.textFieldDidEndEditing(self.textField.textField)
+        XCTAssertEqual(self.textField.isErrorMessageShowing, true)
+        
+    }
+    
+    func testTextFieldSuccessOnEdit() {
+        textField.textField.secureText = "4111-1111-1111-1111"
+        textField.updateActualValue()
+        self.textField.textFieldDidEndEditing(self.textField.textField)
+        XCTAssertEqual(self.textField.isErrorMessageShowing, false)
         
     }
 
