@@ -42,11 +42,13 @@ internal struct SkyflowValidateCardExpirationDate: SkyflowValidationProtocol {
 
     /// Validation function for expire date.
     public func validate(text: String?) -> Bool {
-        if text!.isEmpty {
-            return true
-        }
+        
         guard let text = text else {
             return false
+        }
+        
+        if text.isEmpty {
+            return true
         }
 
         var dateFormat: SkyflowCardExpirationDateFormat

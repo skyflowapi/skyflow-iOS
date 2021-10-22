@@ -17,12 +17,12 @@ internal struct SkyflowValidateLengthMatch: SkyflowValidationProtocol {
 
     /// validate the text
      public func validate(text: String?) -> Bool {
-        if text!.isEmpty {
-        return true
+        guard let text = text else {
+            return false
         }
-      guard let text = text else {
-          return false
-      }
-      return lengths.contains(text.count)
+        if text.isEmpty {
+            return true
+        }
+        return lengths.contains(text.count)
     }
 }

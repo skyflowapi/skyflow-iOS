@@ -243,4 +243,32 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     }
     
+    func testContainerRevealInvalidTokens() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        var revealElementValidInput = getRevealElementInput()
+        revealElementInput.token = "invalidtoken"
+        revealElementValidInput.token = revealTestId
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let validRevealElement = revealContainer?.create(input: revealElementValidInput, options: RevealElementOptions())
+        
+        let window = UIWindow()
+        window.addSubview(revealElement!)
+        window.addSubview(validRevealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should be on failure")
+        let callback = DemoAPICallback(expectation: expectation)
+        revealContainer?.reveal(callback: callback)
+        
+        wait(for: [expectation], timeout: 10.0)
+        
+        XCTAssertNotNil(callback.data["errors"])
+        XCTAssertNotNil(callback.data["records"])
+        let errors = callback.data["errors"] as! [[String: Any]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual((errors[0]["error"] as! NSError).code, 404)
+        XCTAssertEqual(errors[0]["token"] as! String, "invalidtoken")
+
+    }
+    
 }

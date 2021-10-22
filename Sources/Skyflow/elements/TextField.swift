@@ -12,6 +12,11 @@ public class TextField: SkyflowElement, Element {
     internal var validationRules = SkyflowValidationSet()
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
+    internal var hasBecomeResponder: Bool = false
+    
+    internal var isErrorMessageShowing: Bool {
+        return self.errorMessage.alpha == 1.0
+    }
 
     internal var textFieldCornerRadius: CGFloat {
         get {
@@ -165,11 +170,13 @@ public class TextField: SkyflowElement, Element {
 extension TextField {
     /// Make `SkyflowTextField` focused.
     @discardableResult override public func becomeFirstResponder() -> Bool {
+        self.hasBecomeResponder = true
         return textField.becomeFirstResponder()
     }
 
     /// Remove  focus from `SkyflowTextField`.
     @discardableResult override public func resignFirstResponder() -> Bool {
+        self.hasBecomeResponder = false
         return textField.resignFirstResponder()
     }
 
@@ -177,6 +184,7 @@ extension TextField {
     override public var isFirstResponder: Bool {
         return textField.isFirstResponder
     }
+    
 }
 
 /// Textfield delegate
