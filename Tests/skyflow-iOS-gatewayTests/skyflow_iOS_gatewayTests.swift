@@ -5,12 +5,201 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
     }
 
     override func tearDown() {
         skyflow = nil
     }
+    
+    func testCardIssuanceGatewayIntegration(){
+
+        let window = UIWindow()
+
+        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+
+        let revealCardNumberInput = RevealElementInput(token: "1815-6223-1073-1425", inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
+
+        let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
+
+        window.addSubview(revealCardNumber!)
+
+        let revealCVVInput = RevealElementInput(inputStyles: Styles(), label: "cvv", redaction: Skyflow.RedactionType.PLAIN_TEXT, altText: "Cvv not yet generated")
+
+        let revealCVV = revealContainer?.create(input: revealCVVInput)
+
+        window.addSubview(revealCVV!)
+
+        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/md08392737d94fd295a1bc6587bb7c31/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+        let pathParams = ["card_id": "1815-6223-1073-1425"]
+        let requestHeaders = ["Content-Type": "application/json ","Authorization": "Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA=="]
+        let requestBody = [
+            "expirationDate": [
+                "mm": "12",
+                "yy": "22"
+            ]]
+
+        let responseBody = [
+            "resource": [
+                "cvv2": revealCVV
+            ]]
+
+        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+
+        let expectation = XCTestExpectation(description: "Card issuance invoke gateway")
+
+        let callback = DemoAPICallback(expectation: expectation)
+
+        skyflow?.invokeGateway(config: gatewayConfig, callback: callback)
+
+        wait(for: [expectation], timeout: 30.0)
+        XCTAssertNotNil("notnil")
+
+        print("d", callback.data)
+        print("r", callback.receivedResponse)
+        print("rcvv", revealCVV?.skyflowLabelView.label.secureText)
+    }
+    
+    func testGatewayIntegrationInvalidId(){
+        
+        let window = UIWindow()
+        
+        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+                    
+        let revealCardNumberInput = RevealElementInput(token: "1815-6223-1073-1425", inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
+                    
+        let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
+        
+        window.addSubview(revealCardNumber!)
+        
+        let revealCVVInput = RevealElementInput(inputStyles: Styles(), label: "cvv", redaction: Skyflow.RedactionType.PLAIN_TEXT, altText: "Cvv not yet generated")
+                    
+        let revealCVV = revealContainer?.create(input: revealCVVInput)
+        
+        window.addSubview(revealCVV!)
+        
+        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/md08392737d94fd295a1bc6587bb7c31/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+        let pathParams = ["card_id": "1815-6223-1073-1425"]
+        let requestHeaders = ["Content-Type": "application/json ","Authorization": "Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA=="]
+        let requestBody = [
+            "expirationDate": [
+                "mm": "12",
+                "yy": "22"
+            ]]
+        
+        let responseBody = [
+            "resource": [
+                "cvv2": revealCVV
+            ]]
+        
+        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+        
+        let expectation = XCTestExpectation(description: "Card issuance invoke gateway")
+        
+        let callback = DemoAPICallback(expectation: expectation)
+        
+        skyflow?.invokeGateway(config: gatewayConfig, callback: callback)
+        
+        wait(for: [expectation], timeout: 30.0)
+        
+        let errorMessage = ((callback.data["errors"] as? [Error])?[0])?.localizedDescription
+        
+        XCTAssertNotNil(errorMessage?.contains("failed to fetch intergration"))
+    }
+//    
+//    func testPullFundsGatewayIntegration(){
+//        
+//        let window = UIWindow()
+//        
+//        let collectContainer = self.skyflow?.container(type: Skyflow.ContainerType.COLLECT, options: nil)
+//        
+//        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+//        
+//        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+//        
+//        let cardNumberElement = collectContainer?.create(input: cardNumberInput)
+//        
+//        cardNumberElement?.actualValue = "4895142232120006"
+//        
+//        window.addSubview(cardNumberElement!)
+//        
+//        let expirationDateInput = RevealElementInput(token: "a1142154-ab16-4484-be65-25cd878aadf7", inputStyles: Styles(), label: "expiration date")
+//                    
+//        let expirationDateElement = revealContainer?.create(input: expirationDateInput)
+//        
+//        window.addSubview(expirationDateElement!)
+//        
+//        let transactionIdentifierInput = RevealElementInput(inputStyles: Styles(), label: "transaction identifier", altText: "Transaction not yet completed")
+//                    
+//        let transactionIdentifierElement = revealContainer?.create(input: transactionIdentifierInput)
+//        
+//        window.addSubview(transactionIdentifierElement!)
+//        
+//        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/fae9a73dd4b84254a0c0f178cf3d6730/visadirect/fundstransfer/v1/pullfundstransactions"
+//        let requestHeaders = ["Content-Type": "application/json ","Authorization": "Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA=="]
+//        
+//        let requestBody:[String: Any] = [
+//            "surcharge": "11.99",
+//            "amount": "124.02",
+//            "localTransactionDateTime": "2021-10-22T23:33:06",
+//            "cpsAuthorizationCharacteristicsIndicator": "Y",
+//            "riskAssessmentData": [
+//              "traExemptionIndicator": true,
+//              "trustedMerchantExemptionIndicator": true,
+//              "scpExemptionIndicator": true,
+//              "delegatedAuthenticationIndicator": true,
+//              "lowValueExemptionIndicator": true
+//            ],
+//            "cardAcceptor": [
+//              "address": [
+//                "country": "USA",
+//                "zipCode": "94404",
+//                "county": "081",
+//                "state": "CA"
+//              ],
+//              "idCode": "ABCD1234ABCD123",
+//              "name": "Visa Inc. USA-Foster City",
+//              "terminalId": "ABCD1234"
+//            ],
+//            "acquirerCountryCode": "840",
+//            "acquiringBin": "408999",
+//            "senderCurrencyCode": "USD",
+//            "retrievalReferenceNumber": "330000550000",
+//            "addressVerificationData": [
+//              "street": "XYZ St",
+//              "postalCode": "12345"
+//            ],
+//            "cavv": "0700100038238906000013405823891061668252",
+//            "systemsTraceAuditNumber": "451001",
+//            "businessApplicationId": "AA",
+//            "senderPrimaryAccountNumber": cardNumberElement,
+//            "settlementServiceIndicator": "9",
+//            "visaMerchantIdentifier": "73625198",
+//            "foreignExchangeFeeTransaction": "11.99",
+//            "senderCardExpiryDate": expirationDateElement,
+//            "nationalReimbursementFee": "11.22"
+//          ]
+//        
+//        let responseBody = [
+//            "resource": [
+//                "transactionIdentifier": transactionIdentifierElement
+//            ]]
+//        
+//        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .POST, requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+//        
+//        let expectation = XCTestExpectation(description: "Pull funds invoke gateway")
+//        
+//        let callback = DemoAPICallback(expectation: expectation)
+//        
+//        skyflow?.invokeGateway(config: gatewayConfig, callback: callback)
+//        
+//        wait(for: [expectation], timeout: 30.0)
+//        XCTAssertNotNil("notnil")
+//        
+//        print("d", callback.data)
+//        print("r", callback.receivedResponse)
+//        print("rcvv", transactionIdentifierElement?.skyflowLabelView.label.secureText)
+//    }
 
     func testCreateGatewayConfig() {
         let url = "https://sb.area51.gateway.skyflowapis.dev/v1/outboundIntegrations/abc-1212"

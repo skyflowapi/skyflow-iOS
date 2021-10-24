@@ -147,6 +147,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         wait(for: [expectation], timeout: 30.0)
         
         XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
+        XCTAssertEqual(revealElement?.getValue(), revealedOutput)
     }
 
     func testGetWithoutURLTrailingSlash() {
