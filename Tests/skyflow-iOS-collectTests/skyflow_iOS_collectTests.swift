@@ -218,6 +218,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = Data(callback.receivedResponse.utf8)
+        print("=====>", callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
