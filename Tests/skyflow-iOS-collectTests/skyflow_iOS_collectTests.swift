@@ -5,7 +5,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = Skyflow.initialize(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Skyflow.initialize(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
     }
     
     override func tearDown() {
@@ -50,9 +50,9 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertNotNil(firstEntry?["fields"])
         XCTAssertNotNil(secondEntry?["table"])
         XCTAssertNotNil(secondEntry?["fields"])
-        //        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["cardNumber"])
+                XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["card_number"])
         XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
-        //        XCTAssertNotNil(((firstEntry?["fields"] as? [String: Any])?["name"] as? [String: Any])?["first_name"])
+                XCTAssertNotNil(((firstEntry?["fields"] as? [String: Any])?["name"] as? [String: Any])?["first_name"])
     }
     
     func testInvalidVault() {
@@ -436,7 +436,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
             }
         }
         
-        let skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: InvalidTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: InvalidTokenProvider()))
         
         let records: [[String: Any]] = [
             ["table": "persons",

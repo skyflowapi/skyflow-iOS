@@ -17,7 +17,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     override func setUp() {
 //        self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
 //        self.revealTestId = "6255-9119-4502-5915"
-        self.skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
         self.revealTestId = "1815-6223-1073-1425"
     }
 
@@ -147,10 +147,11 @@ class skyflow_iOS_revealTests: XCTestCase {
         wait(for: [expectation], timeout: 30.0)
         
         XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
+        XCTAssertEqual(revealElement?.getValue(), revealedOutput)
     }
 
     func testGetWithoutURLTrailingSlash() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev/", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://sb.area51.vault.skyflowapis.dev/", tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
@@ -170,7 +171,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     }
 
     func testWithWrongVaultURL() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na2.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://na2.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
@@ -184,7 +185,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     }
 
     func testWithInvalidVaultID() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "invalid-vault-id", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "invalid-vault-id", vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
@@ -223,7 +224,7 @@ class skyflow_iOS_revealTests: XCTestCase {
             }
         }
         
-        let skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: InvalidTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: InvalidTokenProvider()))
         let revealTestId = "1815-6223-1073-1425"
         
         let defaultRecords = ["records": [["token": revealTestId]]]

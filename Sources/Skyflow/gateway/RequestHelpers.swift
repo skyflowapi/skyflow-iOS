@@ -165,6 +165,7 @@ class RequestHelpers {
                 } else if responseBodyValue is TextField {
                     DispatchQueue.main.async {
                         (responseBodyValue as! TextField).textField.secureText = (value as! String)
+                        (responseBodyValue as! TextField).updateActualValue()
                     }
                     return nil
                 } else if responseBodyValue is Label {

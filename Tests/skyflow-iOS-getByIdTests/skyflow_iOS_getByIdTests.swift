@@ -14,7 +14,7 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
     }
 
     override func tearDown() {
@@ -68,7 +68,7 @@ class skyflow_iOS_getByIdTests: XCTestCase {
         }
         
         let invalidTokenProvider = InvalidTokenProvider()
-        let skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sbarea51.vault.skyflowapis.dev", tokenProvider: invalidTokenProvider))
+        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://sbarea51.vault.skyflowapis.dev", tokenProvider: invalidTokenProvider))
         let records = [
             "records": [
                 [
@@ -105,7 +105,7 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     }
     
     func testGetByIdInvalidUrl(){
-        let skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sbarea51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://sbarea51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
         let records = [
             "records": [
                 [
@@ -142,7 +142,7 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     }
     
     func testGetByIdInvalidVaultId(){
-        let skyflow = Client(Configuration(vaultID: "bd", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: "bd", vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
         let records = [
             "records": [
                 [
