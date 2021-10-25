@@ -38,5 +38,5 @@ jobs:
              xcrun simctl list runtimes
       
       - name: Build and Test
-        run: set -o pipefail && VAULT_URL=${{ secrets.VAULT_URL }} TOKEN_ENDPOINT=${{ secrets.TOKEN_ENDPOINT }} PULL_FUNDS_INTEGRATION_ID=${{ secrets.PULL_FUNDS_INTEGRATION_ID }} VISA_BASIC_AUTH=${{ secrets.VISA_BASIC_AUTH }} CVV_INTEGRATION_ID=${{ secrets.CVV_INTEGRATION_ID }} VAULT_ID=${{ secrets.VAULT_ID }} xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" test
+        run: VAULT_URL=${{ secrets.VAULT_URL }} TOKEN_ENDPOINT=${{ secrets.TOKEN_ENDPOINT }} PULL_FUNDS_INTEGRATION_ID=${{ secrets.PULL_FUNDS_INTEGRATION_ID }} VISA_BASIC_AUTH=${{ secrets.VISA_BASIC_AUTH }} CVV_INTEGRATION_ID=${{ secrets.CVV_INTEGRATION_ID }} VAULT_ID=${{ secrets.VAULT_ID }} xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" test
 
