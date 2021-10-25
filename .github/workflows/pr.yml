@@ -17,13 +17,6 @@ jobs:
     name: Xcode Build
     runs-on: macOS-10.15
     timeout-minutes: 30
-    env:
-        VAULT_URL: ${{ secrets.VAULT_URL }}
-        TOKEN_ENDPOINT: ${{ secrets.TOKEN_ENDPOINT }}
-        PULL_FUNDS_INTEGRATION_ID: ${{ secrets.PULL_FUNDS_INTEGRATION_ID }}
-        VISA_BASIC_AUTH: ${{ secrets.VISA_BASIC_AUTH }}
-        CVV_INTEGRATION_ID: ${{ secrets.CVV_INTEGRATION_ID }}
-        VAULT_ID: ${{ secrets.VAULT_ID }}
 
     steps:
       - name: Checkout Repo
@@ -38,4 +31,8 @@ jobs:
              xcrun simctl list runtimes
       
       - name: Build and Test
-        run: VAULT_URL="${{ secrets.VAULT_URL }}" TOKEN_ENDPOINT="${{ secrets.TOKEN_ENDPOINT }}" PULL_FUNDS_INTEGRATION_ID="${{ secrets.PULL_FUNDS_INTEGRATION_ID }}" VISA_BASIC_AUTH="${{ secrets.VISA_BASIC_AUTH }}" CVV_INTEGRATION_ID="${{ secrets.CVV_INTEGRATION_ID }}" VAULT_ID="${{ secrets.VAULT_ID }}" xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" test
+        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" VAULT_URL="${{ secrets.VAULT_URL }}" TOKEN_ENDPOINT="${{ secrets.TOKEN_ENDPOINT }}" PULL_FUNDS_INTEGRATION_ID="${{ secrets.PULL_FUNDS_INTEGRATION_ID }}" VISA_BASIC_AUTH="${{ secrets.VISA_BASIC_AUTH }}" CVV_INTEGRATION_ID="${{ secrets.CVV_INTEGRATION_ID }}" VAULT_ID="${{ secrets.VAULT_ID }}" test
+  
+
+
+xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.5,name=iPhone 11" VAULT_URL="https://sb.area51.vault.skyflowapis.dev" TOKEN_ENDPOINT='http://localhost:8000/js/analystToken' PULL_FUNDS_INTEGRATION_ID="fae9a73dd4b84254a0c0f178cf3d6730" VISA_BASIC_AUTH="Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA==" CVV_INTEGRATION_ID="md08392737d94fd295a1bc6587bb7c31" VAULT_ID="bdc271aee8584eed88253877019657b3" test
