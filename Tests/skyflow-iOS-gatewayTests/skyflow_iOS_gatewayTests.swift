@@ -617,17 +617,22 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
     }
     
     func testStringifyDict() {
-        let dict: [String: Any] = ["int": 2, "str": "abc", "double": 2.3, "bool": false, "true": true]
+        let dict: [String: Any] = ["int": 2, "str": "abc", "double": 2.3, "bool": false, "true": true, "array": [1, "abc", true, 23.0]]
         let stringifiedDict = ConversionHelpers.stringifyDict(dict)
         
         XCTAssertNotNil(stringifiedDict)
         
         if let stringified = stringifiedDict {
-            XCTAssertEqual(stringified["int"], "2")
-            XCTAssertEqual(stringified["str"], "abc")
-            XCTAssertEqual(stringified["double"], "2.3")
-            XCTAssertEqual(stringified["bool"], "false")
-            XCTAssertEqual(stringified["true"], "true")
+            XCTAssertEqual(stringified["int"] as! String, "2")
+            XCTAssertEqual(stringified["str"] as! String, "abc")
+            XCTAssertEqual(stringified["double"] as! String, "2.3")
+            XCTAssertEqual(stringified["bool"] as! String, "false")
+            XCTAssertEqual(stringified["true"] as! String, "true")
+            let resultarray = stringified["array"] as! [Any]
+            XCTAssertEqual(resultarray[0] as! Int, 1)
+            XCTAssertEqual(resultarray[1] as! String, "abc")
+            XCTAssertEqual(resultarray[2] as! Bool, true)
+            XCTAssertEqual(resultarray[3] as! Double, 23.0)
         }
     }
     
