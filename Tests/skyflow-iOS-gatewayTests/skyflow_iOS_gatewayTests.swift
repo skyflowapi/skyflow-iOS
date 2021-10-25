@@ -5,60 +5,55 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
     }
-
+    
     override func tearDown() {
         skyflow = nil
     }
     
-    func testCardIssuanceGatewayIntegration(){
-
-        let window = UIWindow()
-
-        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
-
-        let revealCardNumberInput = RevealElementInput(token: "1815-6223-1073-1425", inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
-
-        let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
-
-        window.addSubview(revealCardNumber!)
-
-        let revealCVVInput = RevealElementInput(inputStyles: Styles(), label: "cvv", redaction: Skyflow.RedactionType.PLAIN_TEXT, altText: "Cvv not yet generated")
-
-        let revealCVV = revealContainer?.create(input: revealCVVInput)
-
-        window.addSubview(revealCVV!)
-
-        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/md08392737d94fd295a1bc6587bb7c31/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
-        let pathParams = ["card_id": "1815-6223-1073-1425"]
-        let requestHeaders = ["Content-Type": "application/json ","Authorization": "Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA=="]
-        let requestBody = [
-            "expirationDate": [
-                "mm": "12",
-                "yy": "22"
-            ]]
-
-        let responseBody = [
-            "resource": [
-                "cvv2": revealCVV
-            ]]
-
-        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
-
-        let expectation = XCTestExpectation(description: "Card issuance invoke gateway")
-
-        let callback = DemoAPICallback(expectation: expectation)
-
-        skyflow?.invokeGateway(config: gatewayConfig, callback: callback)
-
-        wait(for: [expectation], timeout: 30.0)
-        XCTAssertNotNil("notnil")
-
-        print("d", callback.data)
-        print("r", callback.receivedResponse)
-        print("rcvv", revealCVV?.skyflowLabelView.label.secureText)
-    }
+//    func testCardIssuanceGatewayIntegration(){
+//
+//        let window = UIWindow()
+//
+//        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+//
+//        let revealCardNumberInput = RevealElementInput(token: "1815-6223-1073-1425", inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
+//
+//        let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
+//
+//        window.addSubview(revealCardNumber!)
+//
+//        let revealCVVInput = RevealElementInput(inputStyles: Styles(), label: "cvv", redaction: Skyflow.RedactionType.PLAIN_TEXT, altText: "Cvv not yet generated")
+//
+//        let revealCVV = revealContainer?.create(input: revealCVVInput)
+//
+//        window.addSubview(revealCVV!)
+//
+//        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+//        let pathParams = ["card_id": "1815-6223-1073-1425"]
+//        let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
+//        let requestBody = [
+//            "expirationDate": [
+//                "mm": "12",
+//                "yy": "22"
+//            ]]
+//
+//        let responseBody = [
+//            "resource": [
+//                "cvv2": revealCVV
+//            ]]
+//
+//        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+//
+//        let expectation = XCTestExpectation(description: "Card issuance invoke gateway")
+//
+//        let callback = DemoAPICallback(expectation: expectation)
+//
+//        skyflow?.invokeGateway(config: gatewayConfig, callback: callback)
+//
+//        wait(for: [expectation], timeout: 30.0)
+//    }
     
     func testGatewayIntegrationInvalidId(){
         
@@ -78,9 +73,9 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         
         window.addSubview(revealCVV!)
         
-        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/md08392737d94fd295a1bc6587bb7c31/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
         let pathParams = ["card_id": "1815-6223-1073-1425"]
-        let requestHeaders = ["Content-Type": "application/json ","Authorization": "Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA=="]
+        let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
         let requestBody = [
             "expirationDate": [
                 "mm": "12",
@@ -135,8 +130,8 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //        
 //        window.addSubview(transactionIdentifierElement!)
 //        
-//        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/fae9a73dd4b84254a0c0f178cf3d6730/visadirect/fundstransfer/v1/pullfundstransactions"
-//        let requestHeaders = ["Content-Type": "application/json ","Authorization": "Basic QjBORFNKUEcyMzhTMjJOSlU5QjIyMVJfQTBMT3ZLZE1xS3JRQTJOQXpBXzFQQVIyRTozZ0Z3NlNmMUU5VDMxeWo2a3FQMzJmY1VBOU4weUQ5WjlDbA=="]
+//        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["PULL_FUNDS_INTEGRATION_ID"]!)/visadirect/fundstransfer/v1/pullfundstransactions"
+//        let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
 //        
 //        let requestBody:[String: Any] = [
 //            "surcharge": "11.99",
@@ -373,8 +368,8 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
     func testAddParams() {
         do {
-            let modifiedUrl = try RequestHelpers.addPathParams("https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"], contextOptions: ContextOptions())
-            XCTAssertEqual(modifiedUrl, "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/bf9b3f06-e1ba-4ef2-8758-9409c735859e/dcas/cardservices/v1/cards/12345/cvv2generation")
+            let modifiedUrl = try RequestHelpers.addPathParams("https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"], contextOptions: ContextOptions())
+            XCTAssertEqual(modifiedUrl, "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/12345/cvv2generation")
         } catch {
             XCTFail()
         }
@@ -669,8 +664,6 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         do {
             let converted = try ConversionHelpers.convertOrFail(requestBody, contextOptions: ContextOptions())
-            
-            print("====>", converted)
         }
         catch {
             XCTFail()
