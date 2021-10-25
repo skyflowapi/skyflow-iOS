@@ -224,7 +224,10 @@ class skyflow_iOS_revealTests: XCTestCase {
             }
         }
         
-        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: InvalidTokenProvider()))
+        let skyflow = Client(
+            Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                          vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                          tokenProvider: InvalidTokenProvider()))
         let revealTestId = "1815-6223-1073-1425"
         
         let defaultRecords = ["records": [["token": revealTestId]]]

@@ -17,7 +17,11 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
     var secondFields: [String: Any]!
     
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(
+            Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                          vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                          tokenProvider: DemoTokenProvider())
+        )
         self.firstFields = ["cvv": "123",
                             "cardExpiration": "1221",
                             "cardNumber": "1232132132311231",
@@ -69,7 +73,6 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
-        
         XCTAssertEqual(String(responseData), ErrorCodes.INVALID_RECORDS_TYPE().description)
     }
     

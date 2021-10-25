@@ -363,8 +363,12 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
     func testAddParams() {
         do {
-            let modifiedUrl = try RequestHelpers.addPathParams("https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"], contextOptions: ContextOptions())
-            XCTAssertEqual(modifiedUrl, "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/12345/cvv2generation")
+            let modifiedUrl = try RequestHelpers.addPathParams(
+                "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"],
+                contextOptions: ContextOptions())
+            XCTAssertEqual(
+                modifiedUrl,
+                "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/12345/cvv2generation")
         } catch {
             XCTFail()
         }
