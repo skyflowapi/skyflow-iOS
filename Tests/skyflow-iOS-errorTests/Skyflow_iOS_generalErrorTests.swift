@@ -73,7 +73,13 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     func testValidationSet() {
-        let validationSet = SkyflowValidationSet(rules: [SkyflowValidateCardNumber(error: SkyflowValidationErrorType.cardNumber.rawValue, regex: "abcd"), SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue)])
+        let validationSet = SkyflowValidationSet(
+            rules: [SkyflowValidateCardNumber(
+                        error: SkyflowValidationErrorType.cardNumber.rawValue,
+                        regex: "abcd"),
+                    SkyflowValidateCardExpirationDate(
+                        error: SkyflowValidationErrorType.expirationDate.rawValue)
+            ])
         
         XCTAssertEqual(validationSet.rules.count, 2)
         XCTAssertEqual(validationSet.rules[0].error, SkyflowValidationErrorType.cardNumber.rawValue)
