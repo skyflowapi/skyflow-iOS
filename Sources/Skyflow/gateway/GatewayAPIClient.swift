@@ -60,7 +60,6 @@ class GatewayAPIClient {
                     do {
                         let responseData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments)
                         if responseData is [String: Any] {
-                            print("GACresponse", responseData)
                             convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(
                                 response: responseData as! [String: Any],
                                 responseBody: config.responseBody ?? [:],

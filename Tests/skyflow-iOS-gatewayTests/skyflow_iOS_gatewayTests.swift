@@ -189,11 +189,6 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //        skyflow?.invokeGateway(config: gatewayConfig, callback: callback)
 //        
 //        wait(for: [expectation], timeout: 30.0)
-//        XCTAssertNotNil("notnil")
-//        
-//        print("d", callback.data)
-//        print("r", callback.receivedResponse)
-//        print("rcvv", transactionIdentifierElement?.skyflowLabelView.label.secureText)
 //    }
 
     func testCreateGatewayConfig() {

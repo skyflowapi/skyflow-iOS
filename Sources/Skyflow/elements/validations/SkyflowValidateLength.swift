@@ -22,9 +22,7 @@ internal struct SkyflowValidateLength: SkyflowValidationProtocol {
     /// validate length of text
    public  func validate(text: String?) -> Bool {
         
-        print("====>", text)
         guard text != nil else {
-            print("-------->here")
             return false
         }
         if text!.isEmpty {

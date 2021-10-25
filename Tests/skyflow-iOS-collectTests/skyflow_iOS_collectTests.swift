@@ -104,8 +104,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         cardNumber?.actualValue = "4111 1111 1111 1111"
         
-        print(ProcessInfo.processInfo.environment["Test"])
-        
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
         XCTAssertEqual(cardNumber?.getValue(), "4111 1111 1111 1111")
     }
