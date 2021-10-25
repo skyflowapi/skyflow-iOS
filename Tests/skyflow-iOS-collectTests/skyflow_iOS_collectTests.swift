@@ -5,6 +5,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
+        print("==========================================>id:", ProcessInfo.processInfo.environment["VAULT_ID"] ?? "Nothing here")
+        print("==========================================>URL:", ProcessInfo.processInfo.environment["VAULT_URL"] ?? "Nothing here")
         self.skyflow = Skyflow.initialize(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
     }
     
