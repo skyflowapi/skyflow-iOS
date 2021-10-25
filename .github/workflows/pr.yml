@@ -17,6 +17,7 @@ jobs:
     name: Xcode Build
     runs-on: macOS-10.15
     timeout-minutes: 30
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -30,5 +31,5 @@ jobs:
              xcrun simctl list runtimes
       
       - name: Build and Test
-        run: set -o pipefail && xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" test
-
+        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" VAULT_URL="${{ secrets.VAULT_URL }}" TOKEN_ENDPOINT="${{ secrets.TOKEN_ENDPOINT }}" PULL_FUNDS_INTEGRATION_ID="${{ secrets.PULL_FUNDS_INTEGRATION_ID }}" VISA_BASIC_AUTH="${{ secrets.VISA_BASIC_AUTH }}" CVV_INTEGRATION_ID="${{ secrets.CVV_INTEGRATION_ID }}" VAULT_ID="${{ secrets.VAULT_ID }}" test
+  

@@ -17,7 +17,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     override func setUp() {
 //        self.skyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na1.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
 //        self.revealTestId = "6255-9119-4502-5915"
-        self.skyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
         self.revealTestId = "1815-6223-1073-1425"
     }
 
@@ -129,21 +129,29 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func testRevealContainersReveal() {
         // Invalid test
-
+        let window = UIWindow()
+        
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
-        let revealedOutput = "1815-6223-1073-1425"
-        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
+        let revealedOutput = "4111111111111111"
+        
+        window.addSubview(revealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should return reveal output")
+        let callback = DemoAPICallback(expectation: expectation)
 
         revealContainer?.reveal(callback: callback)
 
+        wait(for: [expectation], timeout: 30.0)
+        
         XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
+        XCTAssertEqual(revealElement?.getValue(), revealedOutput)
     }
 
     func testGetWithoutURLTrailingSlash() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "bdc271aee8584eed88253877019657b3", vaultURL: "https://sb.area51.vault.skyflowapis.dev/", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://sb.area51.vault.skyflowapis.dev/", tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
@@ -163,7 +171,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     }
 
     func testWithWrongVaultURL() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "ffe21f44f68a4ae3b4fe55ee7f0a85d6", vaultURL: "https://na2.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://na2.area51.vault.skyflowapis.com/", tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
@@ -172,12 +180,12 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         wait(for: [expectRecords], timeout: 10.0)
 
-        let responseData = (callback.data["errors"] as! [NSError])[0]
-        XCTAssertEqual(responseData.localizedDescription, "A server with the specified hostname could not be found.")
+        let responseData = (callback.data["errors"] as! [Any])[0] as? [String: Any]
+        XCTAssertEqual((responseData?["error"] as? Error)?.localizedDescription, "A server with the specified hostname could not be found.")
     }
 
     func testWithInvalidVaultID() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "invalid-vault-id", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: "invalid-vault-id", vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")
@@ -195,4 +203,76 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(errorCount, 1)
         XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
     }
+    
+    func testCreateRevealRequestBody() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let revealElementInput = getRevealElementInput()
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        
+        let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: String]]]
+        
+        let result: [String: [[String: String]]] = ["records": [["token": revealTestId]]]
+        
+        XCTAssertEqual(result, requestBody)
+    }
+    
+    func testDetokenizeInvalidToken() {
+        
+        class InvalidTokenProvider: TokenProvider {
+            func getBearerToken(_ apiCallback: Callback) {
+                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
+            }
+        }
+        
+        let skyflow = Client(
+            Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                          vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                          tokenProvider: InvalidTokenProvider()))
+        let revealTestId = "1815-6223-1073-1425"
+        
+        let defaultRecords = ["records": [["token": revealTestId]]]
+        
+        let expectRecords = XCTestExpectation(description: description)
+        let callback = DemoAPICallback(expectation: expectRecords)
+        skyflow.detokenize(records: defaultRecords, callback: callback)
+
+        wait(for: [expectRecords], timeout: 10.0)
+        
+        let errorEntry = (callback.data["errors"] as? [Any])?[0]
+        
+        let errorMessage = ((errorEntry as? [String: Any])?["error"] as? Error)?.localizedDescription
+        
+        XCTAssertNotNil("notnil")
+        XCTAssertEqual(errorMessage, "TokenProvider error")
+
+    }
+    
+    func testContainerRevealInvalidTokens() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        var revealElementValidInput = getRevealElementInput()
+        revealElementInput.token = "invalidtoken"
+        revealElementValidInput.token = revealTestId
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let validRevealElement = revealContainer?.create(input: revealElementValidInput, options: RevealElementOptions())
+        
+        let window = UIWindow()
+        window.addSubview(revealElement!)
+        window.addSubview(validRevealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should be on failure")
+        let callback = DemoAPICallback(expectation: expectation)
+        revealContainer?.reveal(callback: callback)
+        
+        wait(for: [expectation], timeout: 10.0)
+        
+        XCTAssertNotNil(callback.data["errors"])
+        XCTAssertNotNil(callback.data["records"])
+        let errors = callback.data["errors"] as! [[String: Any]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual((errors[0]["error"] as! NSError).code, 404)
+        XCTAssertEqual(errors[0]["token"] as! String, "invalidtoken")
+
+    }
+    
 }

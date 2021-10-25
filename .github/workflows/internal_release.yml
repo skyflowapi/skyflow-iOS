@@ -49,5 +49,5 @@ jobs:
     - name: Push updated spec file
       run: |
            pod repo add private_spec git@github.com:skyflowapi/skyflow-iOS-private-spec.git
-           pod repo push private_spec ./Skyflow.podspec
+           pod repo push private_spec ./Skyflow.podspec --allow-warnings
            echo "Published as Private pod"

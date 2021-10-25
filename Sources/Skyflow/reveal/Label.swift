@@ -38,8 +38,11 @@ public class Label: UIView, Element {
         super.init(coder: aDecoder)
     }
 
+    internal var actualValue: String = ""
+    
     internal func updateVal(value: String) {
         self.skyflowLabelView.updateVal(value: value)
+        self.actualValue = value
     }
 
     internal func isMounted() -> Bool {
@@ -58,6 +61,7 @@ public class Label: UIView, Element {
         self.translatesAutoresizingMaskIntoConstraints = false
 
         // Set label base styles
+        self.actualValue = self.revealInput.token
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
         self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
@@ -115,6 +119,7 @@ public class Label: UIView, Element {
     }
 
     internal func getValue() -> String {
-        return self.skyflowLabelView.getValue()
+//        return self.skyflowLabelView.getValue()
+        return self.actualValue
     }
 }
