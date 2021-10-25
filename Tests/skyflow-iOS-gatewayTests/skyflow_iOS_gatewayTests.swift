@@ -73,7 +73,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         
         window.addSubview(revealCVV!)
         
-        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/invalidID/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
         let pathParams = ["card_id": "1815-6223-1073-1425"]
         let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
         let requestBody = [

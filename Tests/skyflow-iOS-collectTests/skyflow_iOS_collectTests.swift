@@ -5,6 +5,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
+        print("==========================================>id:", ProcessInfo.processInfo.environment["VAULT_ID"] ?? "Nothing here")
+        print("==========================================>URL:", ProcessInfo.processInfo.environment["VAULT_URL"] ?? "Nothing here")
         self.skyflow = Skyflow.initialize(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
     }
     
@@ -218,6 +220,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = Data(callback.receivedResponse.utf8)
+        print("=====>", callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
