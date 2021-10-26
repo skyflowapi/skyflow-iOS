@@ -150,7 +150,12 @@ public class TextField: SkyflowElement, Element {
         #if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
         #else
-        let image = UIImage(named: name, in: Bundle(for: type(of: self)), compatibleWith: nil)
+        let frameworkBundle = Bundle(forClass: TextField.self)
+        let bundleURL = frameworkBundle.resourceURL?.URLByAppendingPathComponent("Skyflow.bundle")
+        let resourceBundle = Bundle(URL: bundleURL!)
+        let image = UIImage(named: name, inBundle: resourceBundle, compatibleWithTraitCollection: nil)
+//        print(image)
+//        let image = UIImage(named: name, in: Bundle(for: type(of: self)), compatibleWith: nil)
         #endif
         imageView.image = image
         imageView.contentMode = .center

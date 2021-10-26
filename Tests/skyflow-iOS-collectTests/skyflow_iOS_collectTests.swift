@@ -231,7 +231,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertNotNil(firstEntry?["table"])
         XCTAssertNotNil(firstEntry?["fields"])
         XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["card_number"])
-        //        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
+        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
     }
 
     func testContainerInsertWithAdditionalFields() {
