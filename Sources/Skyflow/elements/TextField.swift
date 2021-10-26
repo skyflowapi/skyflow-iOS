@@ -124,13 +124,33 @@ public class TextField: SkyflowElement, Element {
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
         self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
+        if self.fieldType == .CARD_NUMBER {
+            textField.leftViewMode = UITextField.ViewMode.always
+            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+            let image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
+            imageView.image = image
+            imageView.contentMode = .center
+            let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 20))
+            containerView.addSubview(imageView)
+            textField.leftView = containerView
+        }
 
         if let altText = self.collectInput.altText {
             self.textField.secureText = altText
         }
     }
 
+    internal func updateImage(name: String){
 
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
+        let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
+        imageView.image = image
+        imageView.contentMode = .center
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
+        containerView.addSubview(imageView)
+        textField.leftView = containerView
+    }
+    
     override func validate() -> [SkyflowValidationError] {
         let str = textField.getSecureRawText ?? ""
         return SkyflowValidator.validate(input: str, rules: validationRules)
@@ -194,7 +214,11 @@ extension TextField: UITextFieldDelegate {
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
-        self.textField.padding = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        if self.fieldType == .CARD_NUMBER {
+            p.left = p.left + 50
+        }
+        self.textField.padding = p
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
         self.textFieldBorderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
         self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
@@ -227,6 +251,12 @@ extension TextField: UITextFieldDelegate {
         updateActualValue()
         textFieldValueChanged()
         onChangeHandler?((self.state as! StateforText).getStateForListener())
+        
+        if self.fieldType == .CARD_NUMBER {
+            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let card = CardType.forCardNumber(cardNumber: t)
+            updateImage(name: card.imageName)
+        }
     }
 
     func updateActualValue() {
@@ -262,6 +292,18 @@ extension TextField: UITextFieldDelegate {
 }
 
 internal extension TextField {
+//
+//    func leftImage(_ image: UIImage?, imageWidth: CGFloat, padding: CGFloat) {
+//        let imageView = UIImageView(image: image)
+//        imageView.frame = CGRect(x: padding, y: 0, width: imageWidth, height: frame.height)
+//        imageView.contentMode = .center
+//
+//        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: imageWidth + 2 * padding, height: frame.height))
+//        containerView.addSubview(imageView)
+//        leftView = containerView
+//        leftViewMode = .always
+//    }
+    
     @objc
     override func initialization() {
         super.initialization()
@@ -282,6 +324,19 @@ internal extension TextField {
         textFieldLabel.text = collectInput.label
 
         stackView.addArrangedSubview(textFieldLabel)
+        
+//        if(cardImage != nil){
+//            horizontalStackView.addArrangedSubview(cardImage!)
+//        }
+//        horizontalStackView.addArrangedSubview(textField)
+//
+//        horizontalStackView.axis = .horizontal
+//        //        stackView.distribution = .equalSpacing
+//        horizontalStackView.spacing = 0
+//        horizontalStackView.alignment = .firstBaseline
+//        horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
+//
+//        stackView.addArrangedSubview(horizontalStackView)
         stackView.addArrangedSubview(textField)
         stackView.addArrangedSubview(errorMessage)
 

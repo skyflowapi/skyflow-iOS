@@ -33,6 +33,13 @@ internal class FormatTextField: UITextField {
         set { }
     }
 
+    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+      var textRect = super.leftViewRect(forBounds: bounds)
+        textRect.origin.x += padding.left - 40
+      return textRect
+    }
+    
+    
     /**
      Overriding the var text from UITextField so if any text
      is applied programmatically by calling formatText
