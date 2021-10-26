@@ -216,7 +216,7 @@ extension TextField: UITextFieldDelegate {
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if self.fieldType == .CARD_NUMBER {
-            p.left = p.left + 50
+            p.left = p.left + 42
         }
         self.textField.padding = p
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
@@ -324,24 +324,10 @@ internal extension TextField {
         textFieldLabel.text = collectInput.label
 
         stackView.addArrangedSubview(textFieldLabel)
-        
-//        if(cardImage != nil){
-//            horizontalStackView.addArrangedSubview(cardImage!)
-//        }
-//        horizontalStackView.addArrangedSubview(textField)
-//
-//        horizontalStackView.axis = .horizontal
-//        //        stackView.distribution = .equalSpacing
-//        horizontalStackView.spacing = 0
-//        horizontalStackView.alignment = .firstBaseline
-//        horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        stackView.addArrangedSubview(horizontalStackView)
         stackView.addArrangedSubview(textField)
         stackView.addArrangedSubview(errorMessage)
 
         stackView.axis = .vertical
-        //        stackView.distribution = .equalSpacing
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
