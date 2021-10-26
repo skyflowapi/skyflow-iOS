@@ -130,7 +130,11 @@ public class TextField: SkyflowElement, Element {
             #if SWIFT_PACKAGE
             let image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
             #else
-            let image = UIImage(named: "Unknown-Card", in: Bundle(for: type(of: self)), compatibleWith: nil)
+            let frameworkBundle = Bundle(for: TextField.self)
+            var bundleURL = frameworkBundle.resourceURL
+            bundleURL!.appendPathComponent("Skyflow.bundle")
+            let resourceBundle = Bundle(url: bundleURL!)
+            let image = UIImage(named: "Unknown-Card", in: resourceBundle, compatibleWith: nil)
             #endif
             imageView.image = image
             imageView.contentMode = .center
@@ -155,8 +159,6 @@ public class TextField: SkyflowElement, Element {
         bundleURL!.appendPathComponent("Skyflow.bundle")
         let resourceBundle = Bundle(url: bundleURL!)
         let image = UIImage(named: name, in: resourceBundle, compatibleWith: nil)
-//        print(image)
-//        let image = UIImage(named: name, in: Bundle(for: type(of: self)), compatibleWith: nil)
         #endif
         imageView.image = image
         imageView.contentMode = .center
