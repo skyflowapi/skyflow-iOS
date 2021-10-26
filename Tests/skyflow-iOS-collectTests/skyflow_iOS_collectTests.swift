@@ -294,7 +294,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         //        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
     }
 
-    // Revisit
     func testContainerInsertInvalidInput() {
         let window = UIWindow()
 
@@ -310,14 +309,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         window.addSubview(cardNumber!)
 
-        //        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
-        //
-        //        let cvv = container?.create(input: collectInput2, options: options)
-        //
-        //        cvv?.actualValue = "2"
-
-        //        window.addSubview(cvv!)
-
         let expectation = XCTestExpectation(description: "Container insert call - All Invalid")
 
         let callback = DemoAPICallback(expectation: expectation)
@@ -327,6 +318,34 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
 
         XCTAssertEqual(callback.receivedResponse, "Invalid Value 411 as per Regex in Field card_number")
+    }
+    
+    func testContainerInsertInvalidInputUIEdit() {
+        let window = UIWindow()
+
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput1, options: options)
+
+        cardNumber?.textField.secureText = "411"
+        
+        cardNumber?.textFieldDidEndEditing(cardNumber!.textField)
+
+        window.addSubview(cardNumber!)
+
+        let expectation = XCTestExpectation(description: "Container insert call - All Invalid")
+
+        let callback = DemoAPICallback(expectation: expectation)
+
+        container?.collect(callback: callback)
+
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(cardNumber!.errorMessage.alpha, 1.0)
+        XCTAssertEqual(cardNumber!.errorMessage.text, "Invalid Card Number")
     }
 
     func testContainerInsertMixedInvalidInput() {

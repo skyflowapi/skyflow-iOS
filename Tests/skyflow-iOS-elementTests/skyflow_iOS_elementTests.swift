@@ -90,7 +90,6 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.updateActualValue()
         self.textField.textFieldDidEndEditing(self.textField.textField)
         XCTAssertEqual(self.textField.isErrorMessageShowing, true)
-        
     }
     
     func testTextFieldSuccessOnEdit() {
