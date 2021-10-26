@@ -151,9 +151,10 @@ public class TextField: SkyflowElement, Element {
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
         #else
         let frameworkBundle = Bundle(for: TextField.self)
-        let bundleURL = frameworkBundle.resourceURL?.appendPathComponent("Skyflow.bundle")
-        let resourceBundle = Bundle(URL: bundleURL!)
-        let image = UIImage(named: name, inBundle: resourceBundle, compatibleWithTraitCollection: nil)
+        var bundleURL = frameworkBundle.resourceURL
+        bundleURL!.appendPathComponent("Skyflow.bundle")
+        let resourceBundle = Bundle(url: bundleURL!)
+        let image = UIImage(named: name, in: resourceBundle, compatibleWith: nil)
 //        print(image)
 //        let image = UIImage(named: name, in: Bundle(for: type(of: self)), compatibleWith: nil)
         #endif
