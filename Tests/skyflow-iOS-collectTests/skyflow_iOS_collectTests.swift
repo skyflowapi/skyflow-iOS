@@ -336,6 +336,15 @@ final class skyflow_iOS_collectTests: XCTestCase {
         cardNumber?.textFieldDidEndEditing(cardNumber!.textField)
 
         window.addSubview(cardNumber!)
+        
+        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+
+        let cvv = container?.create(input: collectInput2, options: options)
+
+        cvv?.textField.secureText = "123455"
+        window.addSubview(cvv!)
+        
+        cvv?.textFieldDidEndEditing(cvv!.textField)
 
         let expectation = XCTestExpectation(description: "Container insert call - All Invalid")
 
@@ -344,8 +353,11 @@ final class skyflow_iOS_collectTests: XCTestCase {
         container?.collect(callback: callback)
 
         wait(for: [expectation], timeout: 10.0)
+        
         XCTAssertEqual(cardNumber!.errorMessage.alpha, 1.0)
         XCTAssertEqual(cardNumber!.errorMessage.text, "Invalid Card Number")
+        XCTAssertEqual(cvv!.errorMessage.alpha, 1.0)
+        XCTAssertEqual(cvv!.errorMessage.text, "Invalid element")
     }
 
     func testContainerInsertMixedInvalidInput() {

@@ -277,7 +277,7 @@ internal extension TextField {
         errorMessage.translatesAutoresizingMaskIntoConstraints = false
 
         errorMessage.alpha = 0.0
-        errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "elements")
+        errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
 
         textFieldLabel.text = collectInput.label
 
