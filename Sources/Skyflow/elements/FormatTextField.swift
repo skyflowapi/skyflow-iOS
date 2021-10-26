@@ -35,7 +35,7 @@ internal class FormatTextField: UITextField {
 
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
       var textRect = super.leftViewRect(forBounds: bounds)
-        textRect.origin.x += padding.left - 32
+        textRect.origin.x += padding.left - 35
       return textRect
     }
     
