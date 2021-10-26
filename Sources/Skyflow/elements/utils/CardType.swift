@@ -108,7 +108,7 @@ public enum  CardType: CaseIterable {
 
         private static func forCardPattern(cardNumber: String) -> Card {
             for card in CardType.allCases {
-                if NSPredicate(format: "SELF MATCHES %@", card.instance.regex).evaluate(with: cardNumber) && cardNumber.count <= card.instance.maxCardLength {
+                if NSPredicate(format: "SELF MATCHES %@", card.instance.regex).evaluate(with: cardNumber){
                     return card.instance
                 }
             }

@@ -222,7 +222,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
 
         let responseData = Data(callback.receivedResponse.utf8)
-        print("=====>", callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
@@ -472,6 +471,36 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         XCTAssertEqual(callback.receivedResponse, "TokenProvider error")
     }
+    
+    func testForCardNumber() {
+        let card = CardType.forCardNumber(cardNumber: "4111")
+        XCTAssertEqual(card.defaultName, "Visa")
+    }
+    
+    func testCardNumberIcon() {
+        let window = UIWindow()
+
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput1, options: options)
+
+        cardNumber?.textField.secureText = "4111"
+
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        window.addSubview(cardNumber!)
+    
+        let image = UIImage(named: "Visa-Card", in: Bundle.module, compatibleWith: nil)
+        let image2 = UIImage(named: "Mastercard-Card", in: Bundle.module, compatibleWith: nil)
+        let myViews = cardNumber?.textField.leftView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, image)
+        XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
+    }
+    
 
     static var allTests = [
         ("testPureInsert", testPureInsert),

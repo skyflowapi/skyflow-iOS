@@ -156,11 +156,5 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         XCTAssertEqual(true, invalidClient.isTokenValid())
         
     }
-    
-    func testCardType() {
-        let x = CardType.forCardNumber(cardNumber: "4111111111111111")
-        print("dn", x.defaultName)
-    }
-
 }
 
