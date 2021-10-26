@@ -3,13 +3,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2021-10-26
+
+### Added
+
+- Detecting card type and displaying icon in the card number element
+
 ## [1.3.0] - 2021-10-19
 
 ### Added
 
 - `logLevel` option to allow different levels of logging
 - event listeners for collect element
-- `env` option for accessibilty of value in event listners
+- `env` option for accessibility of value in event listeners
 
 ### Changed
 - Standardized error information for easier debugging.
