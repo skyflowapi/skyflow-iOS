@@ -127,7 +127,11 @@ public class TextField: SkyflowElement, Element {
         if self.fieldType == .CARD_NUMBER {
             textField.leftViewMode = UITextField.ViewMode.always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+            #if SWIFT_PACKAGE
             let image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
+            #else
+            let image = UIImage(named: name, in: Bundle(for: type(of: self)), compatibleWith: nil)
+            #endif
             imageView.image = image
             imageView.contentMode = .center
             let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 20))
@@ -143,7 +147,11 @@ public class TextField: SkyflowElement, Element {
     internal func updateImage(name: String){
 
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
+        #if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
+        #else
+        let image = UIImage(named: name, in: Bundle(for: type(of: self)), compatibleWith: nil)
+        #endif
         imageView.image = image
         imageView.contentMode = .center
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
