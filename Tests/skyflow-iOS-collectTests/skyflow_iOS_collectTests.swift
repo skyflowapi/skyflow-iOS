@@ -222,7 +222,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
 
         let responseData = Data(callback.receivedResponse.utf8)
-        print("=====>", callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
         let responseEntries = jsonData["records"] as! [Any]
         let count = responseEntries.count
@@ -294,7 +293,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         //        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
     }
 
-    // Revisit
     func testContainerInsertInvalidInput() {
         let window = UIWindow()
 
@@ -310,14 +308,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         window.addSubview(cardNumber!)
 
-        //        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
-        //
-        //        let cvv = container?.create(input: collectInput2, options: options)
-        //
-        //        cvv?.actualValue = "2"
-
-        //        window.addSubview(cvv!)
-
         let expectation = XCTestExpectation(description: "Container insert call - All Invalid")
 
         let callback = DemoAPICallback(expectation: expectation)
@@ -327,6 +317,46 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
 
         XCTAssertEqual(callback.receivedResponse, "Invalid Value 411 as per Regex in Field card_number")
+    }
+    
+    func testContainerInsertInvalidInputUIEdit() {
+        let window = UIWindow()
+
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput1, options: options)
+
+        cardNumber?.textField.secureText = "411"
+        
+        cardNumber?.textFieldDidEndEditing(cardNumber!.textField)
+
+        window.addSubview(cardNumber!)
+        
+        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+
+        let cvv = container?.create(input: collectInput2, options: options)
+
+        cvv?.textField.secureText = "123455"
+        window.addSubview(cvv!)
+        
+        cvv?.textFieldDidEndEditing(cvv!.textField)
+
+        let expectation = XCTestExpectation(description: "Container insert call - All Invalid")
+
+        let callback = DemoAPICallback(expectation: expectation)
+
+        container?.collect(callback: callback)
+
+        wait(for: [expectation], timeout: 10.0)
+        
+        XCTAssertEqual(cardNumber!.errorMessage.alpha, 1.0)
+        XCTAssertEqual(cardNumber!.errorMessage.text, "Invalid Card Number")
+        XCTAssertEqual(cvv!.errorMessage.alpha, 1.0)
+        XCTAssertEqual(cvv!.errorMessage.text, "Invalid element")
     }
 
     func testContainerInsertMixedInvalidInput() {
@@ -472,6 +502,36 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         XCTAssertEqual(callback.receivedResponse, "TokenProvider error")
     }
+    
+    func testForCardNumber() {
+        let card = CardType.forCardNumber(cardNumber: "4111")
+        XCTAssertEqual(card.defaultName, "Visa")
+    }
+    
+    func testCardNumberIcon() {
+        let window = UIWindow()
+
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumber = container?.create(input: collectInput1, options: options)
+
+        cardNumber?.textField.secureText = "4111"
+
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        window.addSubview(cardNumber!)
+    
+        let image = UIImage(named: "Visa-Card", in: Bundle.module, compatibleWith: nil)
+        let image2 = UIImage(named: "Mastercard-Card", in: Bundle.module, compatibleWith: nil)
+        let myViews = cardNumber?.textField.leftView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, image)
+        XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
+    }
+    
 
     static var allTests = [
         ("testPureInsert", testPureInsert),

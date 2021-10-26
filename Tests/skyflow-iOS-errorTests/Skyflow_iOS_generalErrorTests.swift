@@ -156,6 +156,5 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         XCTAssertEqual(true, invalidClient.isTokenValid())
         
     }
-
 }
 
