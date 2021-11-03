@@ -1,8 +1,8 @@
 //
 //  SceneDelegate.swift
-//  App
+//  CollectAndRevealSample
 //
-//  Created by Tejesh Reddy Allampati on 16/09/21.
+//  Created by Akhil Anil Mangala on 24/10/21.
 //
 
 import UIKit

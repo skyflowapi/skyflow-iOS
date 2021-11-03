@@ -38,7 +38,7 @@ public class ExampleAPICallback: Skyflow.Callback {
         }
     }
     
-    public func onFailure(_ error: Error) {
+    public func onFailure(_ error: Any) {
         if updateFailure != nil {
             print("faiure:", error)
             return

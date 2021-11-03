@@ -1,10 +1,3 @@
-//
-//  ResponseStructs.swift
-//  Example
-//
-//  Created by Tejesh Reddy Allampati on 15/09/21.
-//
-
 import Foundation
 
 
