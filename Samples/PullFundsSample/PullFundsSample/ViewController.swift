@@ -148,7 +148,7 @@ class ViewController: UIViewController {
                 "street": "XYZ St",
                 "postalCode": "12345"
             ],
-            "cavv": "0700100038238906000013405823891061668252",
+            "cavv": "<YOUR_CAVV_TOKEN>",
             "systemsTraceAuditNumber": "451001",
             "businessApplicationId": "AA",
             "senderPrimaryAccountNumber": self.cardNumber as Any,
