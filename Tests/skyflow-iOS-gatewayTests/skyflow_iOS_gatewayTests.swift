@@ -30,7 +30,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //
 //        window.addSubview(revealCVV!)
 //
-//        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+//        let url = ProcessInfo.processInfo.environment["CVV_INTEGRATION_GATEWAY_URL"]!
 //        let pathParams = ["card_id": revealCardNumber]
 //        let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
 //        let requestBody = [
@@ -61,19 +61,19 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         
         let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
                     
-        let revealCardNumberInput = RevealElementInput(token: ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!, inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
+        let revealCardNumberInput = RevealElementInput(token: ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!, inputStyles: Styles(), label: "Card Number")
                     
         let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
         
         window.addSubview(revealCardNumber!)
         
-        let revealCVVInput = RevealElementInput(inputStyles: Styles(), label: "cvv", redaction: Skyflow.RedactionType.PLAIN_TEXT, altText: "Cvv not yet generated")
+        let revealCVVInput = RevealElementInput(inputStyles: Styles(), label: "cvv", altText: "Cvv not yet generated")
                     
         let revealCVV = revealContainer?.create(input: revealCVVInput)
         
         window.addSubview(revealCVV!)
         
-        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/invalidID/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
+        let url = "\(ProcessInfo.processInfo.environment["GATEWAY_URL"]!)/invalidID\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_PATH"]!)"
         let pathParams = ["card_id": revealCardNumber]
         let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
         let requestBody = [
@@ -130,7 +130,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //        
 //        window.addSubview(transactionIdentifierElement!)
 //        
-//        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["PULL_FUNDS_INTEGRATION_ID"]!)/visadirect/fundstransfer/v1/pullfundstransactions"
+//        let url = ProcessInfo.processInfo.environment["PULL_FUNDS_INTEGRATION_GATEWAY_URL"]!
 //        let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
 //        
 //        let requestBody:[String: Any] = [
@@ -164,7 +164,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //              "street": "XYZ St",
 //              "postalCode": "12345"
 //            ],
-//            "cavv": "0700100038238906000013405823891061668252",
+//            "cavv": ProcessInfo.processInfo.environment["CAVV_TEST_TOKEN"]!,
 //            "systemsTraceAuditNumber": "451001",
 //            "businessApplicationId": "AA",
 //            "senderPrimaryAccountNumber": cardNumberElement,
@@ -192,7 +192,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //    }
 
     func testCreateGatewayConfig() {
-        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/outboundIntegrations/abc-1212"
+        let url = "\(ProcessInfo.processInfo.environment["GATEWAY_URL"]!)/abc-1212"
         let gatewayConfig = GatewayConfig(gatewayURL: url, method: .GET)
         XCTAssertEqual(gatewayConfig.gatewayURL, url)
         XCTAssertEqual(gatewayConfig.method, .GET)
@@ -338,11 +338,11 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
-        let revealElement = revealContainer?.create(input: revealInput)
+        let revealElement = revealContainer!.create(input: revealInput)
 
         let requestBody: [String: Any] = [
             "card_number": cardNumber,
@@ -362,11 +362,11 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
     func testAddParams() {
         do {
             let modifiedUrl = try RequestHelpers.addPathParams(
-                "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation", ["card_id": "12345"],
+                "\(ProcessInfo.processInfo.environment["GATEWAY_URL"]!)/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dummy/{card_id}/dummy", ["card_id": "12345"],
                 contextOptions: ContextOptions())
             XCTAssertEqual(
                 modifiedUrl,
-                "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/12345/cvv2generation")
+                "\(ProcessInfo.processInfo.environment["GATEWAY_URL"]!)/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dummy/12345/dummy")
         } catch {
             XCTFail()
         }
