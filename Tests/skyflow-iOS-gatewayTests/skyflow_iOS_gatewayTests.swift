@@ -18,7 +18,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //
 //        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
 //
-//        let revealCardNumberInput = RevealElementInput(token: "1815-6223-1073-1425", inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
+//        let revealCardNumberInput = RevealElementInput(token: ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!, inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
 //
 //        let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
 //
@@ -31,7 +31,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //        window.addSubview(revealCVV!)
 //
 //        let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/\(ProcessInfo.processInfo.environment["CVV_INTEGRATION_ID"]!)/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
-//        let pathParams = ["card_id": "1815-6223-1073-1425"]
+//        let pathParams = ["card_id": revealCardNumber]
 //        let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
 //        let requestBody = [
 //            "expirationDate": [
@@ -61,7 +61,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         
         let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
                     
-        let revealCardNumberInput = RevealElementInput(token: "1815-6223-1073-1425", inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
+        let revealCardNumberInput = RevealElementInput(token: ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!, inputStyles: Styles(), label: "Card Number", redaction: .DEFAULT)
                     
         let revealCardNumber = revealContainer?.create(input: revealCardNumberInput, options: RevealElementOptions())
         
@@ -74,7 +74,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         window.addSubview(revealCVV!)
         
         let url = "https://sb.area51.gateway.skyflowapis.dev/v1/gateway/outboundRoutes/invalidID/dcas/cardservices/v1/cards/{card_id}/cvv2generation"
-        let pathParams = ["card_id": "1815-6223-1073-1425"]
+        let pathParams = ["card_id": revealCardNumber]
         let requestHeaders = ["Content-Type": "application/json ","Authorization": ProcessInfo.processInfo.environment["VISA_BASIC_AUTH"]!]
         let requestBody = [
             "expirationDate": [
@@ -114,11 +114,11 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 //        
 //        let cardNumberElement = collectContainer?.create(input: cardNumberInput)
 //        
-//        cardNumberElement?.actualValue = "4895142232120006"
+//        cardNumberElement?.actualValue = ProcessInfo.processInfo.environment["TEST_CARD_NUMBER"]!
 //        
 //        window.addSubview(cardNumberElement!)
 //        
-//        let expirationDateInput = RevealElementInput(token: "a1142154-ab16-4484-be65-25cd878aadf7", inputStyles: Styles(), label: "expiration date")
+//        let expirationDateInput = RevealElementInput(token: ProcessInfo.processInfo.environment["TEST_EXPIRATION_DATE_TOKEN"]!, inputStyles: Styles(), label: "expiration date")
 //                    
 //        let expirationDateElement = revealContainer?.create(input: expirationDateInput)
 //        
@@ -224,13 +224,11 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.actualValue = "4111-1111-1111-1111"
 
-        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
-        let revealElement = revealContainer?.create(input: revealInput)
-
-        let customArray: [Any] = ["abc", "def", 12, "4111-1111-1111-1111"]
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
+        let revealElement = revealContainer!.create(input: revealInput)
 
         let requestBody: [String: Any] = [
             "card_number": cardNumber,
@@ -239,7 +237,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
             "bool": true,
             "float": 12.234,
             "Int": 1234,
-            "reveal": revealElement as! Label
+            "reveal": revealElement
 //            "nestedFields": [
 //                "card_number": cardNumber,
 //                "reveal": revealElement
@@ -277,10 +275,10 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
-        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
 
         let responseBody: [String: Any] = [
@@ -343,7 +341,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput, options: options) as! TextField
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
-        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
         let revealElement = revealContainer?.create(input: revealInput)
 
         let requestBody: [String: Any] = [
@@ -396,7 +394,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
@@ -453,16 +451,16 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
-        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
-        let revealElement = revealContainer?.create(input: revealInput)
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
+        let revealElement = revealContainer!.create(input: revealInput)
 
 
         let responseBody: [String: Any] = [
                 "card_number": cardNumber,
-                "reveal": revealElement as! Label,
+                "reveal": revealElement,
                 "nestedFields": [
                     "card_number": cardNumber,
                     "reveal": revealElement
@@ -520,11 +518,11 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
-        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
-        let revealElement = revealContainer?.create(input: revealInput)
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
+        let revealElement = revealContainer!.create(input: revealInput)
 
         let array = [cardNumber]
         XCTAssertEqual(ConversionHelpers.presentIn(array, value: cardNumber), true)
@@ -648,7 +646,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
@@ -667,7 +665,7 @@ final class skyflow_iOS_gatewayTests: XCTestCase {
         ]
 
         do {
-            let converted = try ConversionHelpers.convertOrFail(requestBody, contextOptions: ContextOptions())
+            try ConversionHelpers.convertOrFail(requestBody, contextOptions: ContextOptions())
         }
         catch {
             XCTFail()

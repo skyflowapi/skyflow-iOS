@@ -60,7 +60,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testInvalidVault() {
-        let skyflow = Client(Configuration(vaultID: "ff", vaultURL: "https://sb.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: "invalid-id", vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
 
         let records: [[String: Any]] = [
             ["table": "persons",
@@ -141,7 +141,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         cardNumber?.textField.secureText = "411"
 
         let state = cardNumber?.getState()
-        print("state", state)
 
         XCTAssertFalse(state!["isValid"] as! Bool)
     }
@@ -290,7 +289,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertNotNil(firstEntry?["table"])
         XCTAssertNotNil(firstEntry?["fields"])
         XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["card_number"])
-        //        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
+        XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
     }
 
     func testContainerInsertInvalidInput() {
@@ -453,7 +452,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
             XCTAssertNotNil(firstEntry?["table"])
             XCTAssertNotNil(firstEntry?["fields"])
             XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["card_number"])
-            //            XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
+            XCTAssertNotNil((firstEntry?["fields"] as? [String: Any])?["skyflow_id"])
         }
     }
 
