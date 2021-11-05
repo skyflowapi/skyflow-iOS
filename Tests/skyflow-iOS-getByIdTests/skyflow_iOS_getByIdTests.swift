@@ -26,16 +26,16 @@ class skyflow_iOS_getByIdTests: XCTestCase {
             "records": [
                 [
                     "ids": [
-                        "003ec101-c657-4564-9b86-47c3491faf50",
-                        "054c9b27-fa9b-412e-884d-fd5736668882",
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID1"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
@@ -68,21 +68,21 @@ class skyflow_iOS_getByIdTests: XCTestCase {
         }
         
         let invalidTokenProvider = InvalidTokenProvider()
-        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://sbarea51.vault.skyflowapis.dev", tokenProvider: invalidTokenProvider))
+        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: invalidTokenProvider))
         let records = [
             "records": [
                 [
                     "ids": [
-                        "003ec101-c657-4564-9b86-47c3491faf50",
-                        "054c9b27-fa9b-412e-884d-fd5736668882",
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID1"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
@@ -105,21 +105,21 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     }
     
     func testGetByIdInvalidUrl(){
-        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://sbarea51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: "https://dummy.area51.vault.skyflowapis.dev", tokenProvider: DemoTokenProvider()))
         let records = [
             "records": [
                 [
                     "ids": [
-                        "003ec101-c657-4564-9b86-47c3491faf50",
-                        "054c9b27-fa9b-412e-884d-fd5736668882",
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID1"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
@@ -142,21 +142,21 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     }
     
     func testGetByIdInvalidVaultId(){
-        let skyflow = Client(Configuration(vaultID: "bd", vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
+        let skyflow = Client(Configuration(vaultID: "invalid-id", vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
         let records = [
             "records": [
                 [
                     "ids": [
-                        "003ec101-c657-4564-9b86-47c3491faf50",
-                        "054c9b27-fa9b-412e-884d-fd5736668882",
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID1"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"]!,
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
@@ -183,22 +183,22 @@ class skyflow_iOS_getByIdTests: XCTestCase {
             "records": [
                 [
                     "ids": [
-                        "054c9b27-fa9b-412e-884d-fd5736668882",
-                        "0z9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"]!,
+                        "invalid-id"
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        "0e9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!,
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        "0z9df22c-a39d-463f-8dcb-b9f82dccac83"
+                        "invalid-id"
                     ],
                     "table": "persons",
                     "redaction": Skyflow.RedactionType.PLAIN_TEXT

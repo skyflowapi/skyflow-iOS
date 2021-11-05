@@ -31,7 +31,7 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
 
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
 
-        let cardNumber = container?.create(input: collectInput, options: options) as! TextField
+        let cardNumber = container!.create(input: collectInput, options: options)
         cardNumber.textField.secureText = "4111-1111-1111-1111"
 
         let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", redaction: .DEFAULT, altText: "reveal")
