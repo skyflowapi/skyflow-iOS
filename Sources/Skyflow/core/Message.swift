@@ -17,7 +17,7 @@ internal enum Message {
     case VALIDATE_RECORDS
     case VALIDATE_DETOKENIZE_INPUT
     case VALIDATE_GET_BY_ID_INPUT
-    case VALIDATE_GATEWAY_CONFIG
+    case VALIDATE_CONNECTION_CONFIG
     case VALIDATE_COLLECT_RECORDS
     case VALIDATE_REVEAL_RECORDS
     case CREATED_ELEMENT
@@ -32,7 +32,7 @@ internal enum Message {
     case INSERT_TRIGGERED
     case DETOKENIZE_TRIGGERED
     case GET_BY_ID_TRIGGERED
-    case INVOKE_GATEWAY_TRIGGERED
+    case INVOKE_CONNECTION_TRIGGERED
 
 
     // ErrorLogs
@@ -72,9 +72,9 @@ internal enum Message {
     case INVALID_RECORD_TABLE_VALUE
     case INVALID_RECORD_LABEL
     case INVALID_RECORD_ALT_TEXT
-    case MISSING_GATEWAY_URL
-    case INVALID_GATEWAY_URL_TYPE
-    case INVALID_GATEWAY_URL
+    case MISSING_CONNECTION_URL
+    case INVALID_CONNECTION_URL_TYPE
+    case INVALID_CONNECTION_URL
     case MISSING_METHODNAME_KEY
     case INVALID_METHODNAME_VALUE
     case INVALID_FIELD
@@ -106,7 +106,7 @@ internal enum Message {
         case .VALIDATE_RECORDS: return "Validating insert records" // U
         case .VALIDATE_DETOKENIZE_INPUT: return "Validating detokenize input" // U
         case .VALIDATE_GET_BY_ID_INPUT: return "Validating getByID input" // U
-        case .VALIDATE_GATEWAY_CONFIG: return "Validating gateway config" // A
+        case .VALIDATE_CONNECTION_CONFIG: return "Validating connection config" // A
         case .VALIDATE_COLLECT_RECORDS: return "Validating collect element input" // U
         case .VALIDATE_REVEAL_RECORDS: return "Validating reveal element input" // U
         case .CREATED_ELEMENT: return "Created <> element" // U
@@ -121,7 +121,7 @@ internal enum Message {
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
         case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
-        case .INVOKE_GATEWAY_TRIGGERED: return "Invoke gateway triggered."
+        case .INVOKE_CONNECTION_TRIGGERED: return "Invoke connection triggered."
 
 
         // ErrorLogs
@@ -163,9 +163,9 @@ internal enum Message {
         case .INVALID_RECORD_TABLE_VALUE: return "Invalid Record Table value"
         case .INVALID_RECORD_LABEL: return "Invalid Record Label Type" // A
         case .INVALID_RECORD_ALT_TEXT: return "Invalid Record altText Type" // A
-        case .MISSING_GATEWAY_URL: return "gateway URL Key is Missing"
-        case .INVALID_GATEWAY_URL_TYPE: return "Invalid gateway URL type" // A
-        case .INVALID_GATEWAY_URL: return "Invalid gateway URL"
+        case .MISSING_CONNECTION_URL: return "connection URL Key is Missing"
+        case .INVALID_CONNECTION_URL_TYPE: return "Invalid connection URL type" // A
+        case .INVALID_CONNECTION_URL: return "Invalid connection URL"
         case .MISSING_METHODNAME_KEY: return "methodName Key is Missing"
         case .INVALID_METHODNAME_VALUE: return "Invalid methodName value" // A
         case .INVALID_FIELD: return "Invalid collect element value"

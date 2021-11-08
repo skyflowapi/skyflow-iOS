@@ -194,25 +194,25 @@ public class Client {
         callback.onFailure(result)
     }
 
-    public func invokeGateway(config: GatewayConfig, callback: Callback) {
-        Log.info(message: .INVOKE_GATEWAY_TRIGGERED, contextOptions: self.contextOptions)
-        let gatewayAPIClient = GatewayAPIClient(callback: callback, contextOptions: self.contextOptions)
+    public func invokeConnection(config: ConnectionConfig, callback: Callback) {
+        Log.info(message: .INVOKE_CONNECTION_TRIGGERED, contextOptions: self.contextOptions)
+        let connectionAPIClient = ConnectionAPIClient(callback: callback, contextOptions: self.contextOptions)
 
         do {
-            let gatewayTokenCallback = GatewayTokenCallback(client: gatewayAPIClient, config: try config.convert(contextOptions: self.contextOptions), clientCallback: callback)
-            self.apiClient.getAccessToken(callback: gatewayTokenCallback, contextOptions: self.contextOptions)
+            let connectionTokenCallback = ConnectionTokenCallback(client: connectionAPIClient, config: try config.convert(contextOptions: self.contextOptions), clientCallback: callback)
+            self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: self.contextOptions)
         } catch {
             callRevealOnFailure(callback: callback, errorObject: error)
         }
     }
 }
 
-private class GatewayTokenCallback: Callback {
-    var client: GatewayAPIClient
-    var config: GatewayConfig
+private class ConnectionTokenCallback: Callback {
+    var client: ConnectionAPIClient
+    var config: ConnectionConfig
     var clientCallback: Callback
 
-    init(client: GatewayAPIClient, config: GatewayConfig, clientCallback: Callback) {
+    init(client: ConnectionAPIClient, config: ConnectionConfig, clientCallback: Callback) {
         self.client = client
         self.config = config
         self.clientCallback = clientCallback
@@ -220,7 +220,7 @@ private class GatewayTokenCallback: Callback {
 
     func onSuccess(_ responseBody: Any) {
         do {
-            try client.invokeGateway(token: responseBody as! String, config: config)
+            try client.invokeConnection(token: responseBody as! String, config: config)
         } catch {
             clientCallback.onFailure(error)
         }

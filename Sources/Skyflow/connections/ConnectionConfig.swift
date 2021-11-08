@@ -8,8 +8,8 @@
 import Foundation
 
 
-public struct GatewayConfig {
-    var gatewayURL: String
+public struct ConnectionConfig {
+    var connectionURL: String
     var method: RequestMethod
     var pathParams: [String: Any]?
     var queryParams: [String: Any]?
@@ -17,8 +17,8 @@ public struct GatewayConfig {
     var requestHeader: [String: String]?
     var responseBody: [String: Any]?
 
-    public init(gatewayURL: String, method: RequestMethod, pathParams: [String: Any]? = nil, queryParams: [String: Any]? = nil, requestBody: [String: Any]? = nil, requestHeader: [String: String]? = nil, responseBody: [String: Any]? = nil) {
-        self.gatewayURL = gatewayURL
+    public init(connectionURL: String, method: RequestMethod, pathParams: [String: Any]? = nil, queryParams: [String: Any]? = nil, requestBody: [String: Any]? = nil, requestHeader: [String: String]? = nil, responseBody: [String: Any]? = nil) {
+        self.connectionURL = connectionURL
         self.method = method
         self.pathParams = pathParams
         self.queryParams = queryParams
@@ -28,7 +28,7 @@ public struct GatewayConfig {
     }
 
 
-    internal func convert(contextOptions: ContextOptions) throws -> GatewayConfig {
+    internal func convert(contextOptions: ContextOptions) throws -> ConnectionConfig {
         try verifyRequestAndResponseElements(contextOptions: contextOptions)
 
         let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false, contextOptions: contextOptions)
@@ -40,7 +40,7 @@ public struct GatewayConfig {
         let stringedPathParams = ConversionHelpers.stringifyDict(convertedPathParams)
         let stringedQueryParams = ConversionHelpers.stringifyDict(convertedQueryParams)
 
-        return GatewayConfig(gatewayURL: gatewayURL,
+        return ConnectionConfig(connectionURL: connectionURL,
                              method: method,
                              pathParams: stringedPathParams,
                              queryParams: stringedQueryParams,
