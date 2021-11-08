@@ -1,7 +1,7 @@
 import Foundation
 
 
-class GatewayAPIClient {
+class ConnectionAPIClient {
     var callback: Callback
     var contextOptions: ContextOptions
 
@@ -10,8 +10,8 @@ class GatewayAPIClient {
         self.contextOptions = contextOptions
     }
 
-    internal func invokeGateway(token: String, config: GatewayConfig) throws {
-        let gatewayRequestGroup = DispatchGroup()
+    internal func invokeConnection(token: String, config: ConnectionConfig) throws {
+        let connectionRequestGroup = DispatchGroup()
 
         var isSuccess = true
         var errorObject: Error!
@@ -20,18 +20,18 @@ class GatewayAPIClient {
         var errors: [NSError] = []
 
         do {
-            let url = try RequestHelpers.createRequestURL(baseURL: config.gatewayURL, pathParams: config.pathParams, queryParams: config.queryParams, contextOptions: self.contextOptions)
+            let url = try RequestHelpers.createRequestURL(baseURL: config.connectionURL, pathParams: config.pathParams, queryParams: config.queryParams, contextOptions: self.contextOptions)
             var request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader, contextOptions: self.contextOptions)
 
             request.addValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
 
             let session = URLSession(configuration: .default)
 
-            gatewayRequestGroup.enter()
+            connectionRequestGroup.enter()
 
             let task = session.dataTask(with: request) { data, response, error in
                 defer {
-                    gatewayRequestGroup.leave()
+                    connectionRequestGroup.leave()
                 }
 
                 if error != nil {
@@ -43,7 +43,7 @@ class GatewayAPIClient {
                 if let httpResponse = response as? HTTPURLResponse {
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
-                        var desc = "Invoke Gateway call failed with the following status code" + String(httpResponse.statusCode)
+                        var desc = "Invoke Connection call failed with the following status code" + String(httpResponse.statusCode)
 
                         if let safeData = data {
                             desc = String(decoding: safeData, as: UTF8.self)
@@ -81,7 +81,7 @@ class GatewayAPIClient {
             }
             task.resume()
 
-            gatewayRequestGroup.notify(queue: .main) {
+            connectionRequestGroup.notify(queue: .main) {
                 if isSuccess {
                     do {
                         if convertedResponse != nil {

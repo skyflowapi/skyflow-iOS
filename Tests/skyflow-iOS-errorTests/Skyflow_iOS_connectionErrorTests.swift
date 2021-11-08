@@ -1,5 +1,5 @@
 //
-//  Skyflow_iOS_gatewayErrorTests.swift
+//  Skyflow_iOS_connectionErrorTests.swift
 //  skyflow-iOS-errorTests
 //
 //  Created by Tejesh Reddy Allampati on 11/10/21.
@@ -8,7 +8,7 @@
 import XCTest
 @testable import Skyflow
 
-class Skyflow_iOS_gatewayErrorTests: XCTestCase {
+class Skyflow_iOS_connectionErrorTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
@@ -44,7 +44,7 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
         return (data["errors"] as! [NSError])[0].localizedDescription
     }
 
-    func testInvokeGatewayUnmountedRequestElements() {
+    func testInvokeConnectionUnmountedRequestElements() {
         let window = UIWindow()
 
         let (cardNumber, revealElement) = getElements()
@@ -61,18 +61,18 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
             ]
         ]
 
-        let gatewayConfig = GatewayConfig(gatewayURL: "https://skyflow.com/", method: .POST, requestBody: requestBody)
+        let connectionConfig = ConnectionConfig(connectionURL: "https://skyflow.com/", method: .POST, requestBody: requestBody)
 
         let expectation = XCTestExpectation(description: "should return response")
-        let callback = GatewayAPICallback(expectation: expectation)
-        self.skyflow.invokeGateway(config: gatewayConfig, callback: callback)
+        let callback = ConnectionAPICallback(expectation: expectation)
+        self.skyflow.invokeConnection(config: connectionConfig, callback: callback)
 
         wait(for: [expectation], timeout: 10.0)
 
         XCTAssertEqual(getError(callback.data), ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "cardNumber").description)
     }
 
-    func testInvokeGatewayDuplicateElements() {
+    func testInvokeConnectionDuplicateElements() {
         let window = UIWindow()
 
         let (cardNumber, revealElement) = getElements()
@@ -89,11 +89,11 @@ class Skyflow_iOS_gatewayErrorTests: XCTestCase {
             ]
         ]
 
-        let gatewayConfig = GatewayConfig(gatewayURL: "https://skyflow.com/", method: .POST, requestBody: requestBody, responseBody: requestBody)
+        let connectionConfig = ConnectionConfig(connectionURL: "https://skyflow.com/", method: .POST, requestBody: requestBody, responseBody: requestBody)
 
         let expectation = XCTestExpectation(description: "should return response")
-        let callback = GatewayAPICallback(expectation: expectation)
-        self.skyflow.invokeGateway(config: gatewayConfig, callback: callback)
+        let callback = ConnectionAPICallback(expectation: expectation)
+        self.skyflow.invokeConnection(config: connectionConfig, callback: callback)
 
         wait(for: [expectation], timeout: 10.0)
 

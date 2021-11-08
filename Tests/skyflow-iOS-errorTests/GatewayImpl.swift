@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 import Skyflow
 
-public class GatewayTokenProvider: TokenProvider {
+public class ConnectionTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
         if let url = URL(string: ProcessInfo.processInfo.environment["TOKEN_ENDPOINT"]!) {
             let session = URLSession(configuration: .default)
@@ -27,7 +27,7 @@ public class GatewayTokenProvider: TokenProvider {
     }
 }
 
-public class GatewayAPICallback: Callback {
+public class ConnectionAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
