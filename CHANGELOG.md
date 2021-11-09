@@ -7,9 +7,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Renamed invokeGateway to invokeConnection
-- Renamed gatewayURL to connectionURL
-- Renamed GatewayConfiguration to ConnectionConfiguration
+- Renamed `invokeGateway` to `invokeConnection`
+- Renamed `gatewayURL` to `connectionURL`
+- Renamed `GatewayConfiguration` to `ConnectionConfiguration`
 
 ## [1.4.0] - 2021-10-26
 
