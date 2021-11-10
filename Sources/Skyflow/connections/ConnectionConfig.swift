@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Tejesh Reddy Allampati on 28/09/21.
-//
-
 import Foundation
 
 
