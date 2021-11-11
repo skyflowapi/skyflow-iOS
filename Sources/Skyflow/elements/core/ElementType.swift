@@ -32,8 +32,10 @@ public enum ElementType: Int, CaseIterable {
 
     /// Field type that requires Card CVV input formatting and validation.
     case CVV
+    
+    case INPUT_FIELD
 
-    var instance: Type {
+    var instance: Type? {
         var rules = SkyflowValidationSet()
         switch self {
         case .CARDHOLDER_NAME :
@@ -61,6 +63,9 @@ public enum ElementType: Int, CaseIterable {
             rules.add(rule: SkyflowValidateLengthMatch(lengths: [3, 4], error: SkyflowValidationErrorType.lengthMatches.rawValue))
             return Type(formatPattern: "####", regex: "\\d*$",
                         validation: rules, keyboardType: .numberPad)
+        
+        case .INPUT_FIELD:
+            return nil
         }
     }
 }

@@ -108,8 +108,10 @@ public class TextField: SkyflowElement, Element {
         textField.placeholder = collectInput.placeholder
         updateInputStyle()
         // textField.formatPattern = fieldType.instance.formatPattern
-        validationRules = fieldType.instance.validation
-        textField.keyboardType = fieldType.instance.keyboardType
+        if let instance = fieldType.instance {
+            validationRules = instance.validation
+            textField.keyboardType = instance.keyboardType
+        }
 
 
         // Base label styles
@@ -235,7 +237,7 @@ extension TextField: UITextFieldDelegate {
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        if self.fieldType == .CARD_NUMBER {
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             p.left = p.left + 45
         }
         self.textField.padding = p
