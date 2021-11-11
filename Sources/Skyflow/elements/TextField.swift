@@ -124,7 +124,7 @@ public class TextField: SkyflowElement, Element {
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
         self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
-        if self.fieldType == .CARD_NUMBER {
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             textField.leftViewMode = UITextField.ViewMode.always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
             #if SWIFT_PACKAGE
@@ -149,6 +149,10 @@ public class TextField: SkyflowElement, Element {
     }
 
     internal func updateImage(name: String){
+        
+        if self.options.enableCardIcon == false {
+            return
+        }
 
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
         #if SWIFT_PACKAGE
