@@ -80,6 +80,7 @@ public class TextField: SkyflowElement, Element {
         }
         return flag
     }
+    
 
     internal var hasFocus = false
 
@@ -206,6 +207,11 @@ public class TextField: SkyflowElement, Element {
         if self.window != nil {
             onReadyHandler?((self.state as! StateforText).getStateForListener())
         }
+    }
+    
+    public func unmount() {
+        self.actualValue = ""
+        self.textField.secureText = ""
     }
 }
 /// UIResponder methods
