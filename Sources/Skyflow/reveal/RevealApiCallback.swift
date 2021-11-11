@@ -60,6 +60,7 @@ class RevealApiCallback: Callback {
                     ]
                 ]
                 let data = try JSONSerialization.data(withJSONObject: bodyObject)
+                print("---------", String(data: data, encoding: .utf8))
                 request.httpBody = data
             } catch let error {
                 self.callback.onFailure(error)

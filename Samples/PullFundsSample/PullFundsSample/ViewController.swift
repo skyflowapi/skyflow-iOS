@@ -163,18 +163,18 @@ class ViewController: UIViewController {
             "approvalCode": self.revealApprovalCode as Any
         ]
         
-        let gatewayConfig = GatewayConfig(gatewayURL: url, method: .POST, requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+        let connConfig = ConnectionConfig(connectionURL: url, method: .POST, requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
         
-        self.skyflowClient?.invokeGateway(config: gatewayConfig, callback: GatewayCallback())
+        self.skyflowClient?.invokeConnection(config: connConfig, callback: ConnectionCallback())
     }
     
-    class GatewayCallback: Callback {
+    class ConnectionCallback: Callback {
         func onSuccess(_ responseBody: Any) {
-            print("Invoke gateway success ", responseBody)
+            print("Invoke connection success ", responseBody)
         }
         
         func onFailure(_ error: Any) {
-            print("Invoke gateway failure ", error)
+            print("Invoke connection failure ", error)
         }
     }
 }
