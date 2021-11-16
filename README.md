@@ -306,8 +306,8 @@ The Skyflow Element is an implementation of the UIView so it can be used/mounted
 
 ``` swift
 func clearFieldsOnSubmit(_ elements: [TextField]) {
+    // resets all elements in the array
     for element in elements {
-      // resets all elements in the array
         element.unmount()
     }
 }
