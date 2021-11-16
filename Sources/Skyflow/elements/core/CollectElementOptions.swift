@@ -5,7 +5,9 @@ import UIKit
 
 public struct CollectElementOptions {
     var required: Bool
-    public init(required: Bool? = false) {
+    var enableCardIcon: Bool
+    public init(required: Bool? = false, enableCardIcon: Bool = true) {
         self.required = required!
+        self.enableCardIcon = enableCardIcon
     }
 }

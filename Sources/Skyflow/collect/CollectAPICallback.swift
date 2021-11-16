@@ -58,7 +58,7 @@ internal class CollectAPICallback: Callback {
                                 description = error["message"] as! String
                                 errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                             } catch let error {
-                                errorObject = error
+                                errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8)!).getErrorObject(contextOptions: self.contextOptions)
                             }
                         }
                         self.callback.onFailure(errorObject as Any)
