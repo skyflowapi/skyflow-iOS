@@ -155,7 +155,7 @@ An example of an insert call is given below:
 ```swift
 let insertCallback = InsertCallback()     //Custom callback - implementation of Skyflow.Callback
 skyflowClient.insert(records: [
-  "records: [[
+  "records": [[
     "table": "cards",
     "fields": [
         "cardNumber": "41111111111",
@@ -259,11 +259,14 @@ The parameters in `Skyflow.Style` object that are respected for `label` and `err
 
 Other parameters in the `Skyflow.Style` object are ignored for `label` and `errorText` text views.
 
-Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the appropriate regex and validations to the form element. There are currently 4 types:
+Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the appropriate regex and validations to the form element. There are currently 5 types:
+- `INPUT_FIELD`
 - `CARDHOLDER_NAME`
 - `CARD_NUMBER`
 - `EXPIRATION_DATE`
 - `CVV`
+
+The `INPUT_FIELD` type is a custom UI element without any built-in validations.
 
 Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
 
@@ -281,7 +284,8 @@ let collectElementInput =  Skyflow.CollectElementInput(
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
-  required: false  //indicates whether the field is marked as required. Defaults to 'false'
+  required: false  //indicates whether the field is marked as required. Defaults to 'false',
+  enableCardIcon: true // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
 )
 
 const element = container.create(input: collectElementInput, options: collectElementOptions)
@@ -298,7 +302,16 @@ let stackView = UIStackView()
 stackView.addArrangedSubview(element)
 ```
 
-The Skyflow Element is an implementation of the UIView so it can be used/mounted similarly.
+The Skyflow Element is an implementation of the UIView so it can be used/mounted similarly. Alternatively, you can use the `unmount` method to reset any collect element to it's initial state
+
+``` swift
+func clearFieldsOnSubmit(_ elements: [TextField]) {
+    for element in elements {
+      // resets all elements in the array
+        element.unmount()
+    }
+}
+```
 
 #### Step 4 :  Collect data from Elements
 When the form is ready to be submitted, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
