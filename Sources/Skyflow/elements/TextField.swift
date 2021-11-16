@@ -149,6 +149,13 @@ public class TextField: SkyflowElement, Element {
         if let altText = self.collectInput.altText {
             self.textField.secureText = altText
         }
+        
+        if self.fieldType == .CARD_NUMBER {
+            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let card = CardType.forCardNumber(cardNumber: t)
+            updateImage(name: card.imageName)
+        }
+        
     }
 
     internal func updateImage(name: String){
@@ -212,6 +219,7 @@ public class TextField: SkyflowElement, Element {
     public func unmount() {
         self.actualValue = ""
         self.textField.secureText = ""
+        self.setupField()
     }
 }
 /// UIResponder methods
