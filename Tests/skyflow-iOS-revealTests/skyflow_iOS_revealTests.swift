@@ -133,7 +133,9 @@ class skyflow_iOS_revealTests: XCTestCase {
     }
 
     func testGetWithURLTrailingSlash() {
-        let noTrailingSlashSkyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]! + "/", tokenProvider: DemoTokenProvider()))
+        let noTrailingSlashSkyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                                                          vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]! + "/",
+                                                          tokenProvider: DemoTokenProvider()))
         let defaultRecords = ["records": [["token": revealTestId]]]
 
         let expectRecords = XCTestExpectation(description: "Should get errors")

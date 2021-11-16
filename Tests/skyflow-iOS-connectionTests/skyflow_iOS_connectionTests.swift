@@ -87,7 +87,12 @@ final class skyflow_iOS_connectionTests: XCTestCase {
                 "cvv2": revealCVV
             ]]
         
-        let connectionConfig = ConnectionConfig(connectionURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+        let connectionConfig = ConnectionConfig(connectionURL: url,
+                                                method: .POST,
+                                                pathParams: pathParams as [String : Any],
+                                                requestBody: requestBody,
+                                                requestHeader: requestHeaders,
+                                                responseBody: responseBody)
         
         let expectation = XCTestExpectation(description: "Card issuance invoke connection")
         

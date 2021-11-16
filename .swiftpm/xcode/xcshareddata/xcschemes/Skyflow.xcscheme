@@ -179,6 +179,16 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "skyflow-iOS-connectionTests"
+               BuildableName = "skyflow-iOS-connectionTests"
+               BlueprintName = "skyflow-iOS-connectionTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -207,6 +217,16 @@
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
+            key = "PULL_FUNDS_INTEGRATION_CONNECTION_URL"
+            value = "${PULL_FUNDS_INTEGRATION_CONNECTION_URL}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CAVV_TEST_TOKEN"
+            value = "${CAVV_TEST_TOKEN}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
             key = "VAULT_URL"
             value = "$(VAULT_URL)"
             isEnabled = "YES">
@@ -214,6 +234,61 @@
          <EnvironmentVariable
             key = "TOKEN_ENDPOINT"
             value = "$(TOKEN_ENDPOINT)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CVV_INTEGRATION_PATH"
+            value = "${CVV_INTEGRATION_PATH}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CVV_INTEGRATION_CONNECTION_URL"
+            value = "${CVV_INTEGRATION_CONNECTION_URL}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CONNECTION_URL"
+            value = "${CONNECTION_URL}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_EXPIRATION_DATE_TOKEN"
+            value = "${TEST_EXPIRATION_DATE_TOKEN}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_CARD_NUMBER"
+            value = "${TEST_CARD_NUMBER}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_SKYFLOW_ID1"
+            value = "${TEST_SKYFLOW_ID1}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_SKYFLOW_ID2"
+            value = "${TEST_SKYFLOW_ID2}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_SKYFLOW_ID3"
+            value = "${TEST_SKYFLOW_ID3}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_SKYFLOW_ID4"
+            value = "${TEST_SKYFLOW_ID4}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "DETOKENIZE_TEST_TOKEN"
+            value = "${DETOKENIZE_TEST_TOKEN}"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "DETOKENIZE_TEST_VALUE"
+            value = "${DETOKENIZE_TEST_VALUE}"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable

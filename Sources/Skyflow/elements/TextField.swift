@@ -244,7 +244,7 @@ extension TextField: UITextFieldDelegate {
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
-            p.left = p.left + 45
+            p.left += 45
         }
         self.textField.padding = p
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
