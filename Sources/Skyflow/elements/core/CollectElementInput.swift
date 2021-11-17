@@ -10,10 +10,11 @@ public struct CollectElementInput {
     var placeholder: String
     var type: ElementType
     var altText: String?
+    var validations: ValidationSet
 
     public init(table: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
-                placeholder: String? = "", type: ElementType, altText: String? = "") {
+                placeholder: String? = "", type: ElementType, altText: String? = "", validations: ValidationSet=ValidationSet()) {
         self.table = table
         self.column = column
         self.inputStyles = inputStyles!
@@ -23,5 +24,6 @@ public struct CollectElementInput {
         self.placeholder = placeholder!
         self.type = type
         self.altText = altText
+        self.validations = validations
     }
 }

@@ -73,7 +73,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     func testValidationSet() {
-        let validationSet = SkyflowValidationSet(
+        let validationSet = ValidationSet(
             rules: [SkyflowValidateCardNumber(
                         error: SkyflowValidationErrorType.cardNumber.rawValue,
                         regex: "abcd"),

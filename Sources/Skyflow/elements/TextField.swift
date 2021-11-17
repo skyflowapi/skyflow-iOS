@@ -9,7 +9,7 @@ public class TextField: SkyflowElement, Element {
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty = false
-    internal var validationRules = SkyflowValidationSet()
+    internal var validationRules = ValidationSet()
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
@@ -61,6 +61,7 @@ public class TextField: SkyflowElement, Element {
     override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(input: input, options: options, contextOptions: contextOptions)
         //        self.contextOptions = contextOptions
+        self.validationRules.append(input.validations)
         setupField()
     }
 

@@ -7,11 +7,11 @@ internal class Type
 {
     var formatPattern: String
     var regex: String
-    var validation: SkyflowValidationSet
+    var validation: ValidationSet
     var keyboardType: UIKeyboardType
 
     internal required init( formatPattern: String, regex: String,
-                          validation: SkyflowValidationSet, keyboardType: UIKeyboardType) {
+                          validation: ValidationSet, keyboardType: UIKeyboardType) {
         self.formatPattern = formatPattern
         self.regex = regex
         self.validation = validation
@@ -36,7 +36,7 @@ public enum ElementType: Int, CaseIterable {
     case INPUT_FIELD
 
     var instance: Type? {
-        var rules = SkyflowValidationSet()
+        var rules = ValidationSet()
         switch self {
         case .CARDHOLDER_NAME :
             rules.add(rule: SkyflowValidatePattern(regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
