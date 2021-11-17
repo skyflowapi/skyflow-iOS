@@ -185,7 +185,7 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(errorCount, 1)
-        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 404)
     }
     
     func testCreateRevealRequestBody() {
