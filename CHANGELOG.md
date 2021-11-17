@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.6.0] - 2021-11-17
 
+
 ### Added
 - `enableCardIcon` option to configure Card Icon visibility
 - `INPUT_FIELD` Element type for custom UI elements

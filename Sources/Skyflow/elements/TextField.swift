@@ -80,6 +80,7 @@ public class TextField: SkyflowElement, Element {
         }
         return flag
     }
+    
 
     internal var hasFocus = false
 
@@ -108,8 +109,10 @@ public class TextField: SkyflowElement, Element {
         textField.placeholder = collectInput.placeholder
         updateInputStyle()
         // textField.formatPattern = fieldType.instance.formatPattern
-        validationRules = fieldType.instance.validation
-        textField.keyboardType = fieldType.instance.keyboardType
+        if let instance = fieldType.instance {
+            validationRules = instance.validation
+            textField.keyboardType = instance.keyboardType
+        }
 
 
         // Base label styles
@@ -124,7 +127,7 @@ public class TextField: SkyflowElement, Element {
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
         self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
-        if self.fieldType == .CARD_NUMBER {
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             textField.leftViewMode = UITextField.ViewMode.always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
             #if SWIFT_PACKAGE
@@ -146,9 +149,20 @@ public class TextField: SkyflowElement, Element {
         if let altText = self.collectInput.altText {
             self.textField.secureText = altText
         }
+        
+        if self.fieldType == .CARD_NUMBER {
+            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let card = CardType.forCardNumber(cardNumber: t)
+            updateImage(name: card.imageName)
+        }
+        
     }
 
     internal func updateImage(name: String){
+        
+        if self.options.enableCardIcon == false {
+            return
+        }
 
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
         #if SWIFT_PACKAGE
@@ -201,6 +215,12 @@ public class TextField: SkyflowElement, Element {
             onReadyHandler?((self.state as! StateforText).getStateForListener())
         }
     }
+    
+    public func unmount() {
+        self.actualValue = ""
+        self.textField.secureText = ""
+        self.setupField()
+    }
 }
 /// UIResponder methods
 extension TextField {
@@ -231,8 +251,8 @@ extension TextField: UITextFieldDelegate {
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        if self.fieldType == .CARD_NUMBER {
-            p.left = p.left + 45
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
+            p.left += 45
         }
         self.textField.padding = p
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
