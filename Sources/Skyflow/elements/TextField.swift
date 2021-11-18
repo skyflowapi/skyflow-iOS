@@ -187,6 +187,11 @@ public class TextField: SkyflowElement, Element {
         let str = textField.getSecureRawText ?? ""
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
+    
+     func validateCustomRules() -> SkyflowValidationError {
+        let str = textField.getSecureRawText ?? ""
+        return SkyflowValidator.validate(input: str, rules: userValidationRules)
+    }
 
     internal func isValid() -> Bool {
         let state = self.state.getState()
@@ -321,11 +326,22 @@ extension TextField: UITextFieldDelegate {
             updateInputStyle(collectInput!.inputStyles.complete)
             errorMessage.alpha = 0.0 // Hide error message
         }
+        updateErrorMessage()
         onBlurHandler?((self.state as! StateforText).getStateForListener())
     }
 
     @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
         textFieldValueChanged()
+    }
+    
+    func updateErrorMessage() {
+        let currentState = state.getState()
+        if  currentState["isDefaultRuleFailed"] as! Bool{
+            errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
+        }
+        else if currentState["isCustomRuleFailed"] as! Bool{
+            errorMessage.text = "Validation failed"
+        }
     }
 }
 

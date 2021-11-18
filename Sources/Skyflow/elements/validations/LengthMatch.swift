@@ -3,7 +3,7 @@ import Foundation
 /**
 Validate input in scope of length.
 */
-internal struct LengthMatch: ValidationRule {
+public struct LengthMatch: ValidationRule {
     /// input string minimum length
     public let minLength: Int
 

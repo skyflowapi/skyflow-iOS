@@ -10,4 +10,4 @@ internal struct SkyflowValidator {
 
       return errors.isEmpty ? SkyflowValidationError() : errors[0]
   }
-}
+ }

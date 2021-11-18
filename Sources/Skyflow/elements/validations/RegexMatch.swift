@@ -3,7 +3,7 @@ import Foundation
 /**
 Validate input in scope of matching the regex.
 */
-internal struct RegexMatch: ValidationRule {
+public struct RegexMatch: ValidationRule {
     ///  regex to validate input
     public let regex: String
 
