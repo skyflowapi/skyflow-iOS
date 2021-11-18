@@ -3,7 +3,7 @@ import Foundation
 /**
 Validate input in scope of matching the regex.
 */
-internal struct SkyflowValidatePattern: SkyflowValidationProtocol {
+internal struct RegexMatch: ValidationRule {
     ///  regex to validate input
     public let regex: String
 
@@ -15,8 +15,10 @@ internal struct SkyflowValidatePattern: SkyflowValidationProtocol {
         self.error = error
     }
 
+}
+extension RegexMatch: SkyflowInternalValidationProtocol {
     /// validate the text with specified regex
-     public func validate(text: String?) -> Bool {
+    public func validate(_ text: String?) -> Bool {
         if text!.isEmpty {
         return true
         }

@@ -102,7 +102,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     
     func testValidationSetApend() {
         let ruleSet = ValidationSet(rules: [SkyflowValidateLengthMatch(lengths: [2, 3], error: "bad length")])
-        var appendToThis = ValidationSet(rules: [SkyflowValidateLength(minLength: 2, maxLength: 3, error: "not in bounds")])
+        var appendToThis = ValidationSet(rules: [LengthMatch(minLength: 2, maxLength: 3, error: "not in bounds")])
         
         appendToThis.append(ruleSet)
         XCTAssertEqual(appendToThis.rules.count, 2)
@@ -110,7 +110,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testCustomRegexValidationFailure() {
-        let myRegexRule = SkyflowValidatePattern(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         
@@ -123,7 +123,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testCustomRegexValidationSuccess() {
-        let myRegexRule = SkyflowValidatePattern(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         

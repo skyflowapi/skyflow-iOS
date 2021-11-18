@@ -2,16 +2,16 @@ import Foundation
 
 
 public struct ValidationSet {
-    internal var rules = [SkyflowValidationProtocol]()
+    internal var rules = [ValidationRule]()
 
     public init() { }
 
-    public init(rules: [SkyflowValidationProtocol]) {
+    public init(rules: [ValidationRule]) {
         self.rules = rules
     }
 
     /// Add validation rule
-    public mutating func add(rule: SkyflowValidationProtocol) {
+    public mutating func add(rule: ValidationRule) {
              rules.append(rule)
     }
     

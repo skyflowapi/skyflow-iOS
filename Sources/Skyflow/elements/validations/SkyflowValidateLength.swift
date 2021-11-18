@@ -3,7 +3,7 @@ import Foundation
 /**
 Validate input in scope of length.
 */
-internal struct SkyflowValidateLength: SkyflowValidationProtocol {
+internal struct LengthMatch: ValidationRule {
     /// input string minimum length
     public let minLength: Int
 
@@ -18,9 +18,11 @@ internal struct SkyflowValidateLength: SkyflowValidationProtocol {
         self.maxLength = maxLength
         self.error = error
     }
+}
 
+extension LengthMatch: SkyflowInternalValidationProtocol {
     /// validate length of text
-   public  func validate(text: String?) -> Bool {
+    public  func validate(_ text: String?) -> Bool {
         
         guard text != nil else {
             return false

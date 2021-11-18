@@ -1,7 +1,7 @@
 import Foundation
 
-internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
-    public let error: SkyflowValidationError
+internal struct SkyflowValidateCardNumber: ValidationRule {
+    var error: String
     internal let regex: String
 
     public init(error: SkyflowValidationError, regex: String) {
@@ -9,8 +9,11 @@ internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
         self.regex = regex
     }
 
+}
+
+extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
     /// Validate the text (returns true if it is valid card number)
-    public  func validate(text: String?) -> Bool {
+    func validate(_ text: String?) -> Bool {
         if text!.isEmpty {
             return true
         }
