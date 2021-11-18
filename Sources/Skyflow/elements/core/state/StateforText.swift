@@ -25,12 +25,12 @@ internal class StateforText: State
 
     internal(set) open var value: String?
     /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
-    internal(set) open var validationErrors = [SkyflowValidationError]()
+    internal(set) open var validationError = SkyflowValidationError()
 
     init(tf: TextField) {
         super.init(columnName: tf.columnName, isRequired: tf.isRequired)
-        validationErrors = tf.validate()
-        isValid = validationErrors.count == 0
+        validationError = tf.validate()
+        isValid = validationError.count == 0
         isEmpty = (tf.textField.getSecureRawText?.count == 0)
         isDirty = tf.isDirty
         inputLength = tf.textField.getSecureRawText?.count ?? 0
@@ -67,7 +67,7 @@ internal class StateforText: State
             result["isDirty"] = isDirty
             result["isValid"] = isValid
             result["inputLength"] = inputLength
-            result["validationErrors"] = validationErrors.joined(separator: ",")
+            result["validationError"] = validationError
 
         return result
     }

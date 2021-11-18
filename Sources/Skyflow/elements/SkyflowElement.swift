@@ -62,8 +62,8 @@ public class SkyflowElement: UIView {
     }
 
 
-   internal func validate() -> [SkyflowValidationError] {
-        return [SkyflowValidationError]()
+   internal func validate() -> SkyflowValidationError {
+        return SkyflowValidationError()
       }
    internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) {
         didSet { setMainPaddings() }
