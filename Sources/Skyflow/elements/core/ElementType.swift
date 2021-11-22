@@ -70,7 +70,7 @@ public enum ElementType: Int, CaseIterable {
             return nil
         
         case .PIN:
-        rules.add(rule: SkyflowValidatePattern(regex: "\\d*$",
+        rules.add(rule: RegexMatch(regex: "\\d*$",
                                                error: SkyflowValidationErrorType.pattern.rawValue))
         rules.add(rule: SkyflowValidateLengthMatch(lengths: [4, 12], error: SkyflowValidationErrorType.lengthMatches.rawValue))
         return Type(formatPattern: "####", regex: "\\d*$",
