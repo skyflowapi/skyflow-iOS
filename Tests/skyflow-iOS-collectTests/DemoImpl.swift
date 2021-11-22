@@ -35,7 +35,7 @@ public class DemoTokenProvider: TokenProvider {
 }
 
 public class DemoAPICallback: Callback {
-    var receivedResponse: String = ""
+    var receivedResponse: String = "default"
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
 

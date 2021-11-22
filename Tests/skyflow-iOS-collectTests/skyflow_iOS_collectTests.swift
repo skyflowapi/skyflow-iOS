@@ -531,6 +531,55 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
     }
     
+    func testDefaultErrorPrecedenceOnCollectFailure() {
+        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRules = ValidationSet(rules: [myRegexRule])
+        
+        let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let textField = mycontainer?.create(input: collectInput)
+        
+        let window = UIWindow()
+        window.addSubview(textField!)
+        
+
+        textField?.textField.secureText = "invalid"
+        textField?.textFieldDidEndEditing(textField!.textField)
+        let expectFailure = XCTestExpectation(description: "Should fail")
+        let myCallback = DemoAPICallback(expectation: expectFailure)
+        mycontainer?.collect(callback: myCallback)
+        wait(for: [expectFailure], timeout: 10.0)
+        print("======", myCallback.data, myCallback.receivedResponse)
+        
+        XCTAssertEqual(myCallback.receivedResponse, "for cardNumber INVALID_CARD_NUMBER\n")
+    }
+    
+    func testCustomValidationErrorOnCollectFailure() {
+        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRules = ValidationSet(rules: [myRegexRule])
+        
+        let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let textField = mycontainer?.create(input: collectInput)
+        
+        let window = UIWindow()
+        window.addSubview(textField!)
+        
+
+        textField?.textField.secureText = "4111-1111-1111-1111"
+        textField?.textFieldDidEndEditing(textField!.textField)
+        let expectFailure = XCTestExpectation(description: "Should fail")
+        let myCallback = DemoAPICallback(expectation: expectFailure)
+        mycontainer?.collect(callback: myCallback)
+        wait(for: [expectFailure], timeout: 10.0)
+        print("======", myCallback.data, myCallback.receivedResponse)
+        
+        XCTAssertEqual(myCallback.receivedResponse, "for cardNumber Regex match failed\n")
+    }
+    
+
     func testPinElement() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         

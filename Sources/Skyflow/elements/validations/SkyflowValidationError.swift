@@ -1,7 +1,7 @@
 import Foundation
 
 /// Skyflow Validation Error object type
-internal typealias SkyflowValidationError = String
+public typealias SkyflowValidationError = String
 
 /// Default validation error types
 internal enum SkyflowValidationErrorType: String {

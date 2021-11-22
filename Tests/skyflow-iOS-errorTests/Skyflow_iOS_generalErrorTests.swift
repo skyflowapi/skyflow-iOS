@@ -18,37 +18,37 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     func testSkyflowValidateLength() {
-        let lengthRule = SkyflowValidateLength(minLength: 10, maxLength: 20, error: SkyflowValidationErrorType.lengthMatches.rawValue)
+        let lengthRule = LengthMatch(minLength: 10, maxLength: 20, error: SkyflowValidationErrorType.lengthMatches.rawValue)
         
         XCTAssertEqual(lengthRule.error, SkyflowValidationErrorType.lengthMatches.rawValue)
         XCTAssertEqual(lengthRule.maxLength, 20)
         XCTAssertEqual(lengthRule.minLength, 10)
 
-        XCTAssertEqual(false, lengthRule.validate(text: "abcde"))
-        XCTAssertEqual(true, lengthRule.validate(text: "abcdefghijklmno"))
-        XCTAssertEqual(true, lengthRule.validate(text: ""))
-        XCTAssertEqual(false, lengthRule.validate(text: nil))
+        XCTAssertEqual(false, lengthRule.validate("abcde"))
+        XCTAssertEqual(true, lengthRule.validate("abcdefghijklmno"))
+        XCTAssertEqual(true, lengthRule.validate(""))
+        XCTAssertEqual(false, lengthRule.validate(nil))
     }
     
     func testSkyflowValidateLengthMatch() {
         let lengthMatchRule = SkyflowValidateLengthMatch(lengths: [1, 4, 7, 10], error: SkyflowValidationErrorType.cardNumber.rawValue)
         
-        XCTAssertEqual(lengthMatchRule.validate(text: "4123"), true)
-        XCTAssertEqual(lengthMatchRule.validate(text: ""), true)
-        XCTAssertEqual(lengthMatchRule.validate(text: "123"), false)
-        XCTAssertEqual(lengthMatchRule.validate(text: nil), false)
+        XCTAssertEqual(lengthMatchRule.validate("4123"), true)
+        XCTAssertEqual(lengthMatchRule.validate(""), true)
+        XCTAssertEqual(lengthMatchRule.validate("123"), false)
+        XCTAssertEqual(lengthMatchRule.validate(nil), false)
     }
     
     func testSkyflowValidateCardExpirationDate() {
         let expiryDaterRule = SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue)
         
-        XCTAssertEqual(expiryDaterRule.validate(text: "12/22"), true)
+        XCTAssertEqual(expiryDaterRule.validate("12/22"), true)
         
-        XCTAssertEqual(expiryDaterRule.validate(text: "12"), false)
-        XCTAssertEqual(expiryDaterRule.validate(text: "abc"), false)
-        XCTAssertEqual(expiryDaterRule.validate(text: "1222"), false)
-        XCTAssertEqual(expiryDaterRule.validate(text: "123/22"), false)
-        XCTAssertEqual(expiryDaterRule.validate(text: "12/2"), false)
+        XCTAssertEqual(expiryDaterRule.validate("12"), false)
+        XCTAssertEqual(expiryDaterRule.validate("abc"), false)
+        XCTAssertEqual(expiryDaterRule.validate("1222"), false)
+        XCTAssertEqual(expiryDaterRule.validate("123/22"), false)
+        XCTAssertEqual(expiryDaterRule.validate("12/2"), false)
     }
     
     func testSkyflowExpiryDateFormat() {
@@ -73,7 +73,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     func testValidationSet() {
-        let validationSet = SkyflowValidationSet(
+        let validationSet = ValidationSet(
             rules: [SkyflowValidateCardNumber(
                         error: SkyflowValidationErrorType.cardNumber.rawValue,
                         regex: "abcd"),

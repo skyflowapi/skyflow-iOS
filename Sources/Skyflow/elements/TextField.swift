@@ -9,7 +9,8 @@ public class TextField: SkyflowElement, Element {
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty = false
-    internal var validationRules = SkyflowValidationSet()
+    internal var validationRules = ValidationSet()
+    internal var userValidationRules = ValidationSet()
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
@@ -61,6 +62,7 @@ public class TextField: SkyflowElement, Element {
     override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(input: input, options: options, contextOptions: contextOptions)
         //        self.contextOptions = contextOptions
+        self.userValidationRules.append(input.validations)
         setupField()
     }
 
@@ -181,9 +183,14 @@ public class TextField: SkyflowElement, Element {
         textField.leftView = containerView
     }
     
-    override func validate() -> [SkyflowValidationError] {
+    override func validate() -> SkyflowValidationError {
         let str = textField.getSecureRawText ?? ""
         return SkyflowValidator.validate(input: str, rules: validationRules)
+    }
+    
+     func validateCustomRules() -> SkyflowValidationError {
+        let str = textField.getSecureRawText ?? ""
+        return SkyflowValidator.validate(input: str, rules: userValidationRules)
     }
 
     internal func isValid() -> Bool {
@@ -319,11 +326,22 @@ extension TextField: UITextFieldDelegate {
             updateInputStyle(collectInput!.inputStyles.complete)
             errorMessage.alpha = 0.0 // Hide error message
         }
+        updateErrorMessage()
         onBlurHandler?((self.state as! StateforText).getStateForListener())
     }
 
     @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
         textFieldValueChanged()
+    }
+    
+    func updateErrorMessage() {
+        let currentState = state.getState()
+        if  currentState["isDefaultRuleFailed"] as! Bool{
+            errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
+        }
+        else if currentState["isCustomRuleFailed"] as! Bool{
+            errorMessage.text = "Validation failed"
+        }
     }
 }
 
