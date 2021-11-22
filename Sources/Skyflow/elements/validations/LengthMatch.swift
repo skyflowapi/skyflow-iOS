@@ -13,7 +13,7 @@ public struct LengthMatch: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
-    public init(minLength: Int = 0, maxLength: Int = Int.max, error: SkyflowValidationError) {
+    public init(minLength: Int = 0, maxLength: Int = Int.max, error: SkyflowValidationError="Length match failed") {
         self.minLength = minLength
         self.maxLength = maxLength
         self.error = error
