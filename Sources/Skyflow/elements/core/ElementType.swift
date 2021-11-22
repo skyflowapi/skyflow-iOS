@@ -34,6 +34,8 @@ public enum ElementType: Int, CaseIterable {
     case CVV
     
     case INPUT_FIELD
+    
+    case PIN
 
     var instance: Type? {
         var rules = SkyflowValidationSet()
@@ -66,6 +68,13 @@ public enum ElementType: Int, CaseIterable {
         
         case .INPUT_FIELD:
             return nil
+        
+        case .PIN:
+        rules.add(rule: SkyflowValidatePattern(regex: "\\d*$",
+                                               error: SkyflowValidationErrorType.pattern.rawValue))
+        rules.add(rule: SkyflowValidateLengthMatch(lengths: [4, 12], error: SkyflowValidationErrorType.lengthMatches.rawValue))
+        return Type(formatPattern: "####", regex: "\\d*$",
+                    validation: rules, keyboardType: .numberPad)
         }
     }
 }
