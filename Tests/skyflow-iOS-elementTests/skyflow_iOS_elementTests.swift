@@ -146,8 +146,39 @@ class skyflow_iOS_elementTests: XCTestCase {
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
-        textField.textField.secureText = "424242"
+        textField.textField.secureText = "4111111111111111"
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 0.0)
     }
+    
+    func testTriggerError() {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+
+        textField.textField.secureText = "invalid"
+        textField.triggerError("triggered error")
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        // Takes precendence over all errors
+        XCTAssertEqual(textField.errorMessage.text, "triggered error")
+    }
+    
+    func testResetError() {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+
+        textField.textField.secureText = "invalid"
+        textField.triggerError("triggered error")
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.resetError()
+        
+        XCTAssertEqual(textField.errorMessage.alpha, 0.0)
+        XCTAssertEqual(textField.errorMessage.text, "triggered error")
+        
+        // change nothing, onBlur. Changes error message
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        XCTAssertEqual(textField.errorMessage.text, "Invalid element")
+    }
+
 }
