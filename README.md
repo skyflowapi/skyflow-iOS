@@ -424,7 +424,7 @@ Skyflow-iOS provides two types of validations on Collect Elements
 #### 1. Default Validations:
 Every Collect Element except of type `INPUT_FIELD` has a set of default validations listed below:
 - `CARD_NUMBER`: Card number validation with checkSum algorithm(Luhn algorithm), available card lengths for defined card types
-- `CARD_HOLDER_NAME`: Name should be 2 or more symbols, valid characters shold match pattern - **^([a-zA-Z\\ \\,\\.\\-\\']{2,})$**
+- `CARD_HOLDER_NAME`: Name should be 2 or more symbols, valid characters shold match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
 - `CVV`: Card CVV can have 3-4 digits
 - `EXPIRATION_DATE`: Any date starting from current month. By default valid expiration date should be in short year format - `MM/YY`
 - `PIN`: Can have 4-12 digits
@@ -439,7 +439,8 @@ The Sample code below illustrates the usage of custom validations:
 
 ```swift
 /*
-  Reset PIN - A simple example that illustrates custom validations. The below code shows two input fields with custom validations, one to enter a PIN and the second to confirm the same PIN.
+  Reset PIN - A simple example that illustrates custom validations.
+  The below code shows two input fields with custom validations, one to enter a PIN and the second to confirm the same PIN.
 */
 
 var myRuleset = ValidationSet()
