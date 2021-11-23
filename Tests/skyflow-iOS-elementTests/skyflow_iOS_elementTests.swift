@@ -154,7 +154,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
-        textField.textField.secureText = "424242"
+        textField.textField.secureText = "4111111111111111"
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 0.0)
     }
