@@ -309,6 +309,7 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         self.hasFocus = false
+        updateActualValue()
         textFieldValueChanged()
         let state = self.state.getState()
 
@@ -430,7 +431,6 @@ internal extension TextField {
 
     @objc
     func textFieldValueChanged() {
-        self.updateActualValue()
         /// update format pattern after field input changed
         //        if self.fieldType == .cardNumber {
         //            let card = CardType.forCardNumber(cardNumber: getOutput()!).instance
