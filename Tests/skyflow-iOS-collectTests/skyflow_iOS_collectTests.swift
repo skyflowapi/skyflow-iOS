@@ -428,8 +428,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
-        cardNumber?.actualValue = "4111 1111 1111 1111"
-        cardNumber?.textField.secureText = "4111 1111 1111 1111"
+        cardNumber?.textField.secureText = "4111111111111111"
+        cardNumber?.textFieldDidEndEditing(cardNumber!.textField)
         
         window.addSubview(cardNumber!)
         
@@ -503,7 +503,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testForCardNumber() {
-        let card = CardType.forCardNumber(cardNumber: "4111")
+        let card = CardType.forCardNumber(cardNumber: "4111111111111111").instance
         XCTAssertEqual(card.defaultName, "Visa")
     }
     
