@@ -18,7 +18,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     func testSkyflowValidateLength() {
-        let lengthRule = LengthMatch(minLength: 10, maxLength: 20, error: SkyflowValidationErrorType.lengthMatches.rawValue)
+        let lengthRule = LengthMatchRule(minLength: 10, maxLength: 20, error: SkyflowValidationErrorType.lengthMatches.rawValue)
         
         XCTAssertEqual(lengthRule.error, SkyflowValidationErrorType.lengthMatches.rawValue)
         XCTAssertEqual(lengthRule.maxLength, 20)

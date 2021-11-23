@@ -1,5 +1,5 @@
 //
-//  ElementValueMatch.swift
+//  ElementValueMatchRule.swift
 //  
 //
 //  Created by Akhil Anil Mangala on 22/11/21.
@@ -10,7 +10,7 @@ import Foundation
 /**
  Validate input if it matches with that of another element
  */
-public struct ElementValueMatch: ValidationRule {
+public struct ElementValueMatchRule: ValidationRule {
     /// element to be matched against
     private let element: TextField
     
@@ -23,8 +23,8 @@ public struct ElementValueMatch: ValidationRule {
     }
 }
 
-extension ElementValueMatch: SkyflowInternalValidationProtocol {
-    /// validate length of text
+extension ElementValueMatchRule: SkyflowInternalValidationProtocol {
+    /// validate element value
     public func validate(_ text: String?) -> Bool {
         guard text != nil else {
             return false

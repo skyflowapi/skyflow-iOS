@@ -3,7 +3,7 @@ import Foundation
 /**
 Validate input in scope of matching the regex.
 */
-public struct RegexMatch: ValidationRule {
+public struct RegexMatchRule: ValidationRule {
     ///  regex to validate input
     public let regex: String
 
@@ -20,7 +20,7 @@ public struct RegexMatch: ValidationRule {
     }
 
 }
-extension RegexMatch: SkyflowInternalValidationProtocol {
+extension RegexMatchRule: SkyflowInternalValidationProtocol {
     /// validate the text with specified regex
     public func validate(_ text: String?) -> Bool {
         if text!.isEmpty {
