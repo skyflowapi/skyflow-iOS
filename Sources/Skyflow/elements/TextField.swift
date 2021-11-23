@@ -309,6 +309,7 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         self.hasFocus = false
+        updateActualValue()
         textFieldValueChanged()
         let state = self.state.getState()
 

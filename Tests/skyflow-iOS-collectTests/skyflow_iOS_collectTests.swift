@@ -532,7 +532,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testDefaultErrorPrecedenceOnCollectFailure() {
-        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -556,7 +556,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testCustomValidationErrorOnCollectFailure() {
-        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -603,6 +603,36 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         pinElement?.textField.secureText = "123456789012"
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
+    }
+    
+    func testElementValueMatchRule() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectOptions = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        
+        let pinElement = container?.create(input: collectInput, options: collectOptions)
+        
+        var vs = ValidationSet()
+        vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
+        
+        let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
+        
+        let confirmPin = container?.create(input: collectInput2, options: collectOptions)
+        
+        pinElement!.textField.secureText = "1234"
+        pinElement!.textFieldDidEndEditing(pinElement!.textField)
+        
+        confirmPin!.textField.secureText = "1235"
+        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        
+        XCTAssertFalse((confirmPin?.state.getState()["isValid"]) as! Bool)
+        
+        confirmPin!.textField.secureText = "1234"
+        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        
+        XCTAssertTrue((confirmPin?.state.getState()["isValid"]) as! Bool)
     }
     
     
