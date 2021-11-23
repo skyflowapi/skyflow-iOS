@@ -128,6 +128,7 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 # Securely collecting data client-side
 -  [**Inserting data into the vault**](#inserting-data-into-the-vault)
 -  [**Using Skyflow Elements to collect data**](#using-skyflow-elements-to-collect-data)
+-  [**Using validations on Collect Elements**](#validations)
 -  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
 
 ## Inserting data into the vault
@@ -206,6 +207,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
    label: String,                   //optional label for the form element
    placeholder: String,             //optional placeholder for the form element
    altText: String,                 //optional string that acts as an initial value for the collect element
+   validations: ValidationSet       // optional set of validations for the input element
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. **Note**: 
@@ -265,8 +267,9 @@ Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the
 - `CARD_NUMBER`
 - `EXPIRATION_DATE`
 - `CVV`
+- `PIN`
 
-The `INPUT_FIELD` type is a custom UI element without any built-in validations.
+The `INPUT_FIELD` type is a custom UI element without any built-in validations. See the section on [`validations`](#validations) for more information on validations.
 
 Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
 
@@ -281,6 +284,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
     label: String,                   //optional label for the form element
     placeholder: String,             //optional placeholder for the form element
     altText: String,                 //optional string that acts as an initial value for the collect element
+    validations: ValidationSet       // optional set of validations for the input element
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
@@ -411,6 +415,53 @@ container.collect(options: collectOptions, callback: insertCallback)
   ]
 }
 
+```
+
+### Validations
+
+Skyflow-iOS provides two types of validations on Collect Elements
+
+#### 1. Default Validations:
+Every Collect Element except of type `INPUT_FIELD` has a set of default validations listed below:
+- `CARD_NUMBER`: Card number validation with checkSum algorithm(Luhn algorithm), available card lengths for defined card types
+- `CARD_HOLDER_NAME`: Name, should be 2 or more symbols, valid characters shold match pattern `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
+- `CVV`: Card CVV can have 3-4 digits
+- `EXPIRATION_DATE`: Any date starting from current month. By default valid expiration date should be in short year format - `MM/YY`
+- `PIN`: Can have 4-12 digits
+
+#### 2. Custom Validations:
+Custom validations can be added to any element which will be checked after the default validations have passed. The following Custom validation rules are currently supported:
+- `RegexMatchRule`: You can use this rule to specify any Regular Expression to be matched with the text field value
+- `LengthMatchRule`: You can use this rule to set the minimum and maximum permissible length of the textfield value
+- `ElementValueMatchRule`: You can use this rule to match the value of one element with another
+
+The Sample code below illustrates the usage of custom validations:
+
+```swift
+/*
+  Reset PIN - A simple example that illustrates custom validations. The below code shows two input fields with custom validations, one to enter a PIN and the second to confirm the same PIN.
+*/
+
+var myRuleset = ValidationSet()
+let digitsOnlyRule = RegexMatchRule(regex: "^\\d+$", error: "Only digits allowed") // this rule allows only 1 or more digits
+let lengthRule = LengthMatchRule(minLength: 4, maxLength: 6, error: "Must be between 4 and 6 digits") // this rule allows input length between 4 and 6 characters
+
+// for the PIN element
+myRuleset.add(rule: digitsOnlyRule)
+myRuleset.add(rule: lengthRule)
+
+let PINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "PIN", placeholder: "****", type: .INPUT_FIELD, validations: myRuleset)
+let PIN = container.create(input: PINinput)
+
+// For confirm PIN element - shows error when the PINs don't match
+let elementMatchRule = ElementMatchRule(element: PIN, error: "PINs don't match")
+
+let confirmPINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "Confirm PIN", placeholder: "****", type: .INPUT_FIELD, validations: ValidationSet(rules: [digitsOnlyRule, lengthRule, elementMatchRule]))
+let confirmPIN = container.create(input: confirmPINinput)
+
+// mount elements on screen - errors will be shown if any of the validaitons fail
+stackView.addArrangedSubview(PIN)
+stackView.addArrangedSubview(confirmPIN)
 ```
 
 ### Event Listener on Collect Elements
