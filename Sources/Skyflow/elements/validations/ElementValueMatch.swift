@@ -29,9 +29,6 @@ extension ElementValueMatchRule: SkyflowInternalValidationProtocol {
         guard text != nil else {
             return false
         }
-        if text!.isEmpty {
-            return true
-        }
         return text! == (element as! TextField).actualValue
     }
 }
