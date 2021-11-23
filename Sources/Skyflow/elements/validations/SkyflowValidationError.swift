@@ -9,13 +9,13 @@ internal enum SkyflowValidationErrorType: String {
     case cardNumber = "INVALID_CARD_NUMBER"
 
     /// Default Validation error for `SkyflowValidateLength`
-    case length = "INVALID_LENGTH"
+    case length = "LENGTH_MATCH_FAILED"
 
     /// Default Validation error for `SkyflowValidatePattern`
-    case pattern = "INVALID_PATTERN"
+    case regex = "REGEX_MATCH_FAILED"
 
     /// Default Validation error for `SkyflowValidateLengthMatch`
-    case lengthMatches = "INVALID_LENGTH_MATCH"
+    case lengthMatches = "INVALID_LENGTH"
 
     /// Default Validation error for `SkyflowValidateCardExpirationDate`
     case expirationDate = "INVALID_EXPIRATION_DATE"
