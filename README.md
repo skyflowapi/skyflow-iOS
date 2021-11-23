@@ -424,7 +424,7 @@ Skyflow-iOS provides two types of validations on Collect Elements
 #### 1. Default Validations:
 Every Collect Element except of type `INPUT_FIELD` has a set of default validations listed below:
 - `CARD_NUMBER`: Card number validation with checkSum algorithm(Luhn algorithm), available card lengths for defined card types
-- `CARD_HOLDER_NAME`: Name should be 2 or more symbols, valid characters shold match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
+- `CARD_HOLDER_NAME`: Name should be 2 or more symbols, valid characters should match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
 - `CVV`: Card CVV can have 3-4 digits
 - `EXPIRATION_DATE`: Any date starting from current month. By default valid expiration date should be in short year format - `MM/YY`
 - `PIN`: Can have 4-12 digits
@@ -440,7 +440,8 @@ The Sample code below illustrates the usage of custom validations:
 ```swift
 /*
   Reset PIN - A simple example that illustrates custom validations.
-  The below code shows two input fields with custom validations, one to enter a PIN and the second to confirm the same PIN.
+  The below code shows two input fields with custom validations, 
+  one to enter a PIN and the second to confirm the same PIN.
 */
 
 var myRuleset = ValidationSet()
@@ -451,13 +452,16 @@ let lengthRule = LengthMatchRule(minLength: 4, maxLength: 6, error: "Must be bet
 myRuleset.add(rule: digitsOnlyRule)
 myRuleset.add(rule: lengthRule)
 
-let PINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "PIN", placeholder: "****", type: .INPUT_FIELD, validations: myRuleset)
+let PINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "PIN", placeholder: "****",
+    type: .INPUT_FIELD, validations: myRuleset)
 let PIN = container.create(input: PINinput)
 
 // For confirm PIN element - shows error when the PINs don't match
 let elementMatchRule = ElementMatchRule(element: PIN, error: "PINs don't match")
 
-let confirmPINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "Confirm PIN", placeholder: "****", type: .INPUT_FIELD, validations: ValidationSet(rules: [digitsOnlyRule, lengthRule, elementMatchRule]))
+let confirmPINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles,
+    label: "Confirm PIN", placeholder: "****", type: .INPUT_FIELD,
+    validations: ValidationSet(rules: [digitsOnlyRule, lengthRule, elementMatchRule]))
 let confirmPIN = container.create(input: confirmPINinput)
 
 // mount elements on screen - errors will be shown if any of the validaitons fail
