@@ -340,7 +340,12 @@ extension TextField: UITextFieldDelegate {
             errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
         }
         else if currentState["isCustomRuleFailed"] as! Bool{
-            errorMessage.text = "Validation failed"
+            if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
+                errorMessage.text = "Validation failed"
+            }
+            else {
+                errorMessage.text = currentState["validationError"] as? String
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ public enum ElementType: Int, CaseIterable {
         switch self {
         case .CARDHOLDER_NAME :
             rules.add(rule: RegexMatch(regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
-                                                   error: SkyflowValidationErrorType.pattern.rawValue))
+                                                   error: SkyflowValidationErrorType.regex.rawValue))
             return Type(formatPattern: "", regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
                         validation: rules, keyboardType: .alphabet)
 
@@ -54,14 +54,14 @@ public enum ElementType: Int, CaseIterable {
 
         case .EXPIRATION_DATE :
             rules.add(rule: RegexMatch(regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
-                                                   error: SkyflowValidationErrorType.pattern.rawValue))
+                                                   error: SkyflowValidationErrorType.regex.rawValue))
             rules.add(rule: SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue))
             return Type(formatPattern: "##/##", regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
                         validation: rules, keyboardType: .numberPad)
 
         case .CVV :
             rules.add(rule: RegexMatch(regex: "\\d*$",
-                                                   error: SkyflowValidationErrorType.pattern.rawValue))
+                                                   error: SkyflowValidationErrorType.regex.rawValue))
             rules.add(rule: SkyflowValidateLengthMatch(lengths: [3, 4], error: SkyflowValidationErrorType.lengthMatches.rawValue))
             return Type(formatPattern: "####", regex: "\\d*$",
                         validation: rules, keyboardType: .numberPad)
@@ -71,7 +71,7 @@ public enum ElementType: Int, CaseIterable {
         
         case .PIN:
         rules.add(rule: RegexMatch(regex: "\\d*$",
-                                               error: SkyflowValidationErrorType.pattern.rawValue))
+                                               error: SkyflowValidationErrorType.regex.rawValue))
         rules.add(rule: SkyflowValidateLengthMatch(lengths: [4, 12], error: SkyflowValidationErrorType.lengthMatches.rawValue))
         return Type(formatPattern: "####", regex: "\\d*$",
                     validation: rules, keyboardType: .numberPad)

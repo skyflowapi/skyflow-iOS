@@ -10,9 +10,13 @@ public struct RegexMatch: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
-    public init(regex: String, error: SkyflowValidationError="Regex match failed") {
+    public init(regex: String, error: SkyflowValidationError?=nil) {
         self.regex = regex
-        self.error = error
+        if error != nil {
+            self.error = error!
+        } else {
+            self.error = SkyflowValidationErrorType.regex.rawValue
+        }
     }
 
 }
