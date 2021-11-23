@@ -453,15 +453,15 @@ myRuleset.add(rule: digitsOnlyRule)
 myRuleset.add(rule: lengthRule)
 
 let PINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "PIN", placeholder: "****",
-    type: .INPUT_FIELD, validations: myRuleset)
+                type: .INPUT_FIELD, validations: myRuleset)
 let PIN = container.create(input: PINinput)
 
 // For confirm PIN element - shows error when the PINs don't match
 let elementMatchRule = ElementMatchRule(element: PIN, error: "PINs don't match")
 
 let confirmPINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles,
-    label: "Confirm PIN", placeholder: "****", type: .INPUT_FIELD,
-    validations: ValidationSet(rules: [digitsOnlyRule, lengthRule, elementMatchRule]))
+                label: "Confirm PIN", placeholder: "****", type: .INPUT_FIELD,
+                validations: ValidationSet(rules: [digitsOnlyRule, lengthRule, elementMatchRule]))
 let confirmPIN = container.create(input: confirmPINinput)
 
 // mount elements on screen - errors will be shown if any of the validaitons fail
