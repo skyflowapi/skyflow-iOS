@@ -439,34 +439,36 @@ The Sample code below illustrates the usage of custom validations:
 
 ```swift
 /*
-  Reset PIN - A simple example that illustrates custom validations.
+  Reset Password - A simple example that illustrates custom validations.
   The below code shows two input fields with custom validations, 
-  one to enter a PIN and the second to confirm the same PIN.
+  one to enter a password and the second to confirm the same password.
 */
 
 var myRuleset = ValidationSet()
-let digitsOnlyRule = RegexMatchRule(regex: "^\\d+$", error: "Only digits allowed") // this rule allows only 1 or more digits
-let lengthRule = LengthMatchRule(minLength: 4, maxLength: 6, error: "Must be between 4 and 6 digits") // this rule allows input length between 4 and 6 characters
+let strongPasswordRule = RegexMatchRule(regex: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]*$", error: "At least one letter and one number") // This rule enforces a strong password
+let lengthRule = LengthMatchRule(minLength: 8, maxLength: 16, error: "Must be between 8 and 16 digits") // this rule allows input length between 8 and 16 characters
 
-// for the PIN element
-myRuleset.add(rule: digitsOnlyRule)
+// for the Password element
+myRuleset.add(rule: strongPasswordRule)
 myRuleset.add(rule: lengthRule)
 
-let PINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles, label: "PIN", placeholder: "****",
-                type: .INPUT_FIELD, validations: myRuleset)
-let PIN = container.create(input: PINinput)
+let collectElementOptions = CollectElementOptions(required: true)
 
-// For confirm PIN element - shows error when the PINs don't match
-let elementMatchRule = ElementMatchRule(element: PIN, error: "PINs don't match")
+let passwordInput = CollectElementInput(inputStyles: styles, label: "password", placeholder: "********",
+                                        type: .INPUT_FIELD, validations: myRuleset)
+let password = container?.create(input: passwordInput, options: collectElementOptions)
 
-let confirmPINinput = CollectElementInput(table: "table", column: "pin", inputStyles: styles,
-                label: "Confirm PIN", placeholder: "****", type: .INPUT_FIELD,
-                validations: ValidationSet(rules: [digitsOnlyRule, lengthRule, elementMatchRule]))
-let confirmPIN = container.create(input: confirmPINinput)
+
+// For confirm password element - shows error when the passwords don't match
+let elementValueMatchRule = ElementValueMatchRule(element: password!, error: "passwords don't match")
+let confirmPasswordInput = CollectElementInput(inputStyles: styles,
+                                                label: "Confirm password", placeholder: "********", type: .INPUT_FIELD,
+                                                validations: ValidationSet(rules: [strongPasswordRule, lengthRule, elementValueMatchRule]))
+let confirmPassword = container?.create(input: confirmPasswordInput, options: collectElementOptions)
 
 // mount elements on screen - errors will be shown if any of the validaitons fail
-stackView.addArrangedSubview(PIN)
-stackView.addArrangedSubview(confirmPIN)
+stackView.addArrangedSubview(password!)
+stackView.addArrangedSubview(confirmPassword!)
 ```
 
 ### Event Listener on Collect Elements
