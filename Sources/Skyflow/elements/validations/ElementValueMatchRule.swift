@@ -17,9 +17,13 @@ public struct ElementValueMatchRule: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
     
-    public init(element: TextField, error: SkyflowValidationError="Length match failed") {
+    public init(element: TextField, error: SkyflowValidationError? = nil) {
         self.element = element
-        self.error = error
+        if error != nil {
+            self.error = error!
+        } else {
+            self.error = SkyflowValidationErrorType.elementValueMatch.rawValue
+        }
     }
 }
 
