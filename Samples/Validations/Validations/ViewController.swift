@@ -54,9 +54,11 @@ class ViewController: UIViewController {
             myRuleset.add(rule: strongPasswordRule)
             myRuleset.add(rule: lengthRule)
             
+            let collectElementOptions = CollectElementOptions(required: true)
+            
             let passwordInput = CollectElementInput(inputStyles: styles, label: "password", placeholder: "********",
                                                     type: .INPUT_FIELD, validations: myRuleset)
-            let password = container?.create(input: passwordInput)
+            let password = container?.create(input: passwordInput, options: collectElementOptions)
             
             
             // For confirm password element - shows error when the passwords don't match
@@ -64,7 +66,7 @@ class ViewController: UIViewController {
             let confirmPasswordInput = CollectElementInput(inputStyles: styles,
                                                            label: "Confirm password", placeholder: "********", type: .INPUT_FIELD,
                                                            validations: ValidationSet(rules: [strongPasswordRule, lengthRule, elementValueMatchRule]))
-            let confirmPassword = container?.create(input: confirmPasswordInput)
+            let confirmPassword = container?.create(input: confirmPasswordInput, options: collectElementOptions)
             self.confirmPasswordElement = confirmPassword
             // mount elements on screen - errors will be shown if any of the validaitons fail
             stackView.addArrangedSubview(password!)
@@ -72,7 +74,7 @@ class ViewController: UIViewController {
             
             let resetButton:UIButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 40))
             resetButton.backgroundColor = .blue
-            resetButton.setTitle("Submit", for: .normal)
+            resetButton.setTitle("Reset Password", for: .normal)
             resetButton.addTarget(self, action:#selector(resetPassword) , for: .touchUpInside)
             
             stackView.addArrangedSubview(resetButton)
@@ -94,21 +96,19 @@ class ViewController: UIViewController {
     
     
     @objc func resetPassword() {
-        print("reset password")
         let url = ""
         let requestHeaders = ["Content-Type": "application/json ", "Authorization": ""]
         let requestBody: [String: Any] = [
             //Other fields...
             "password": self.confirmPasswordElement!
         ]
-        
+
         let responseBody: [String: Any] = [:]
-        
+
         let connectionConfig = ConnectionConfig(connectionURL: url, method: .POST, requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
-        
+
         self.skyflowClient?.invokeConnection(config: connectionConfig, callback: ExampleAPICallback())
     }
-    
 }
 
 
