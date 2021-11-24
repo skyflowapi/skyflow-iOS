@@ -99,5 +99,63 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(self.textField.isErrorMessageShowing, false)
         
     }
+    
+    func testValidationSetApend() {
+        let ruleSet = ValidationSet(rules: [SkyflowValidateLengthMatch(lengths: [2, 3], error: "bad length")])
+        var appendToThis = ValidationSet(rules: [LengthMatchRule(minLength: 2, maxLength: 3, error: "not in bounds")])
+        
+        appendToThis.append(ruleSet)
+        XCTAssertEqual(appendToThis.rules.count, 2)
+        XCTAssertEqual(appendToThis.rules[1].error, ruleSet.rules[0].error)
+    }
+    
+    func testCustomRegexValidationFailure() {
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
+        let myRules = ValidationSet(rules: [myRegexRule])
+        
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
+        textField.textField.secureText = "invalid"
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        XCTAssertEqual(textField.errorMessage.text, "Invalid element")
+    }
+    
+    func testCustomRegexValidationFailureOnUI() {
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
+        let myRandomRule = LengthMatchRule(minLength: 5, maxLength: 10)
+        let myRules = ValidationSet(rules: [myRandomRule, myRegexRule])
+        
+        
+        let collectInput = CollectElementInput(table: "tablename", column: "column", placeholder: "John Doe", type: .INPUT_FIELD, validations: myRules)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+
+        // Default UI error
+        textField.textField.secureText = "John"
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        XCTAssertEqual(textField.errorMessage.text, "Validation failed")
+        
+        // Render user defined error in UI
+        textField.textField.secureText = "John Doe"
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        XCTAssertEqual(textField.errorMessage.text, "Regex match failed")
+    }
+    
+    
+    func testCustomRegexValidationSuccess() {
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
+        let myRules = ValidationSet(rules: [myRegexRule])
+        
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+
+        textField.textField.secureText = "4111111111111111"
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 0.0)
+    }
 }

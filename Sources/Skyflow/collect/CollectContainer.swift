@@ -32,7 +32,7 @@ public extension Container {
 
 
             let state = element.getState()
-            let error = state["validationErrors"]
+            let error = state["validationError"]
             if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
                 errors += element.columnName + " is empty" + "\n"
             }

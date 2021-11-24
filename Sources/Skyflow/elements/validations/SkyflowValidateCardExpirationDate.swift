@@ -31,7 +31,7 @@ internal enum SkyflowCardExpirationDateFormat {
     }
 }
 
-internal struct SkyflowValidateCardExpirationDate: SkyflowValidationProtocol {
+internal struct SkyflowValidateCardExpirationDate: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
@@ -39,9 +39,11 @@ internal struct SkyflowValidateCardExpirationDate: SkyflowValidationProtocol {
     public init(error: SkyflowValidationError) {
         self.error = error
     }
+}
 
+extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
     /// Validation function for expire date.
-    public func validate(text: String?) -> Bool {
+    public func validate(_ text: String?) -> Bool {
         
         guard let text = text else {
             return false

@@ -9,7 +9,8 @@ public class TextField: SkyflowElement, Element {
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty = false
-    internal var validationRules = SkyflowValidationSet()
+    internal var validationRules = ValidationSet()
+    internal var userValidationRules = ValidationSet()
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
@@ -61,6 +62,7 @@ public class TextField: SkyflowElement, Element {
     override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(input: input, options: options, contextOptions: contextOptions)
         //        self.contextOptions = contextOptions
+        self.userValidationRules.append(input.validations)
         setupField()
     }
 
@@ -152,7 +154,7 @@ public class TextField: SkyflowElement, Element {
         
         if self.fieldType == .CARD_NUMBER {
             let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
-            let card = CardType.forCardNumber(cardNumber: t)
+            let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
         
@@ -181,9 +183,14 @@ public class TextField: SkyflowElement, Element {
         textField.leftView = containerView
     }
     
-    override func validate() -> [SkyflowValidationError] {
+    override func validate() -> SkyflowValidationError {
         let str = textField.getSecureRawText ?? ""
         return SkyflowValidator.validate(input: str, rules: validationRules)
+    }
+    
+     func validateCustomRules() -> SkyflowValidationError {
+        let str = textField.getSecureRawText ?? ""
+        return SkyflowValidator.validate(input: str, rules: userValidationRules)
     }
 
     internal func isValid() -> Bool {
@@ -290,7 +297,7 @@ extension TextField: UITextFieldDelegate {
         
         if self.fieldType == .CARD_NUMBER {
             let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
-            let card = CardType.forCardNumber(cardNumber: t)
+            let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
     }
@@ -302,6 +309,7 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         self.hasFocus = false
+        updateActualValue()
         textFieldValueChanged()
         let state = self.state.getState()
 
@@ -319,11 +327,27 @@ extension TextField: UITextFieldDelegate {
             updateInputStyle(collectInput!.inputStyles.complete)
             errorMessage.alpha = 0.0 // Hide error message
         }
+        updateErrorMessage()
         onBlurHandler?((self.state as! StateforText).getStateForListener())
     }
 
     @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
         textFieldValueChanged()
+    }
+    
+    func updateErrorMessage() {
+        let currentState = state.getState()
+        if  currentState["isDefaultRuleFailed"] as! Bool{
+            errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
+        }
+        else if currentState["isCustomRuleFailed"] as! Bool{
+            if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
+                errorMessage.text = "Validation failed"
+            }
+            else {
+                errorMessage.text = currentState["validationError"] as? String
+            }
+        }
     }
 }
 
@@ -409,7 +433,7 @@ internal extension TextField {
     func textFieldValueChanged() {
         /// update format pattern after field input changed
         //        if self.fieldType == .cardNumber {
-        //            let card = CardType.forCardNumber(cardNumber: getOutput()!)
+        //            let card = CardType.forCardNumber(cardNumber: getOutput()!).instance
         //            if card.defaultName != "Empty"  {
         //                self.textField.formatPattern = card.formatPattern
         //              } else {

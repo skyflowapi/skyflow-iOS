@@ -1,7 +1,7 @@
 import Foundation
 
-internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
-    public let error: SkyflowValidationError
+internal struct SkyflowValidateCardNumber: ValidationRule {
+    var error: String
     internal let regex: String
 
     public init(error: SkyflowValidationError, regex: String) {
@@ -9,25 +9,37 @@ internal struct SkyflowValidateCardNumber: SkyflowValidationProtocol {
         self.regex = regex
     }
 
+}
+
+extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
     /// Validate the text (returns true if it is valid card number)
-    public  func validate(text: String?) -> Bool {
+    func validate(_ text: String?) -> Bool {
         if text!.isEmpty {
             return true
         }
 
         let charactersArray = text?.components(separatedBy: [" ", "-"])
         let trimmedText = charactersArray?.joined(separator: "")
+        if let cardNumber = trimmedText {
 
-        let number = Int(trimmedText!)
-        if number == nil {
-            return false
+            let number = Int(cardNumber)
+            if number == nil {
+                return false
+            }
+
+            if !NSPredicate(format: "SELF MATCHES %@", self.regex).evaluate(with: text!) {
+                return false
+            }
+            
+            let cardType = CardType.forCardNumber(cardNumber: cardNumber)
+            if cardType == .EMPTY || !cardType.instance.cardLengths.contains(cardNumber.count) {
+                return false
+            }
+            
+
+            return isLuhnValid(cardNumber: trimmedText!)
         }
-
-        if !NSPredicate(format: "SELF MATCHES %@", self.regex).evaluate(with: text!) {
-            return false
-        }
-
-        return isLuhnValid(cardNumber: trimmedText!)
+        return false
     }
 
     /// Luhn Algorithm to validate card number

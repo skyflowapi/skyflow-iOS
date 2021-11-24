@@ -7,11 +7,11 @@ internal class Type
 {
     var formatPattern: String
     var regex: String
-    var validation: SkyflowValidationSet
+    var validation: ValidationSet
     var keyboardType: UIKeyboardType
 
     internal required init( formatPattern: String, regex: String,
-                          validation: SkyflowValidationSet, keyboardType: UIKeyboardType) {
+                          validation: ValidationSet, keyboardType: UIKeyboardType) {
         self.formatPattern = formatPattern
         self.regex = regex
         self.validation = validation
@@ -34,38 +34,47 @@ public enum ElementType: Int, CaseIterable {
     case CVV
     
     case INPUT_FIELD
+    
+    case PIN
 
     var instance: Type? {
-        var rules = SkyflowValidationSet()
+        var rules = ValidationSet()
         switch self {
         case .CARDHOLDER_NAME :
-            rules.add(rule: SkyflowValidatePattern(regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
-                                                   error: SkyflowValidationErrorType.pattern.rawValue))
+            rules.add(rule: RegexMatchRule(regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
+                                                   error: SkyflowValidationErrorType.regex.rawValue))
             return Type(formatPattern: "", regex: "^([a-zA-Z\\ \\,\\.\\-\\']{2,})$",
                         validation: rules, keyboardType: .alphabet)
 
         case .CARD_NUMBER :
-            rules.add(rule: SkyflowValidateCardNumber(error: SkyflowValidationErrorType.cardNumber.rawValue, regex: "^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$"))
+            rules.add(rule: SkyflowValidateCardNumber(error: SkyflowValidationErrorType.cardNumber.rawValue, regex: "^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$"))            
             return Type(formatPattern: "#### #### #### ####",
                         regex: "^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$",
                         validation: rules, keyboardType: .numberPad)
 
         case .EXPIRATION_DATE :
-            rules.add(rule: SkyflowValidatePattern(regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
-                                                   error: SkyflowValidationErrorType.pattern.rawValue))
+            rules.add(rule: RegexMatchRule(regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
+                                                   error: SkyflowValidationErrorType.regex.rawValue))
             rules.add(rule: SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue))
             return Type(formatPattern: "##/##", regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
                         validation: rules, keyboardType: .numberPad)
 
         case .CVV :
-            rules.add(rule: SkyflowValidatePattern(regex: "\\d*$",
-                                                   error: SkyflowValidationErrorType.pattern.rawValue))
+            rules.add(rule: RegexMatchRule(regex: "\\d*$",
+                                                   error: SkyflowValidationErrorType.regex.rawValue))
             rules.add(rule: SkyflowValidateLengthMatch(lengths: [3, 4], error: SkyflowValidationErrorType.lengthMatches.rawValue))
             return Type(formatPattern: "####", regex: "\\d*$",
                         validation: rules, keyboardType: .numberPad)
         
         case .INPUT_FIELD:
             return nil
+        
+        case .PIN:
+        rules.add(rule: RegexMatchRule(regex: "\\d*$",
+                                               error: SkyflowValidationErrorType.regex.rawValue))
+            rules.add(rule: SkyflowValidateLengthMatch(lengths: (4..<13).map({$0}), error: SkyflowValidationErrorType.lengthMatches.rawValue))
+        return Type(formatPattern: "####", regex: "\\d*$",
+                    validation: rules, keyboardType: .numberPad)
         }
     }
 }
