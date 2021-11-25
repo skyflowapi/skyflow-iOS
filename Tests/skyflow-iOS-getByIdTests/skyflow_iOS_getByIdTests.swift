@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 @testable import Skyflow
 
-
+// swiftlint:disable:next type_body_length
 class skyflow_iOS_getByIdTests: XCTestCase {
     var skyflow: Client!
 

@@ -1,15 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by Tejesh Reddy Allampati on 04/10/21.
-//
-
 import Foundation
 import XCTest
 @testable import Skyflow
 
-
+// swiftlint:disable:next type_body_length
 class skyflow_iOS_revealTests: XCTestCase {
     var skyflow: Client!
     var revealTestId: String!

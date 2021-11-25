@@ -1,6 +1,7 @@
 import XCTest
 @testable import Skyflow
 
+// swiftlint:disable:next type_body_length
 final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
@@ -606,7 +607,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testSetErrorOnCollect() {
-        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -625,7 +626,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myCallback = DemoAPICallback(expectation: expectFailure)
         mycontainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
-        print("======", myCallback.data, myCallback.receivedResponse)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardNumber triggered error\n")
     }

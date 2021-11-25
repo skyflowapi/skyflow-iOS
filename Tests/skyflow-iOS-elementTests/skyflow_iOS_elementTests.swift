@@ -2,7 +2,7 @@
 import XCTest
 @testable import Skyflow
 
-
+// swiftlint:disable:next type_body_length
 class skyflow_iOS_elementTests: XCTestCase {
 
     var collectOptions: CollectElementOptions!

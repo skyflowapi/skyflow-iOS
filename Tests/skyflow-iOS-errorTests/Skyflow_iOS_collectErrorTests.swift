@@ -10,6 +10,7 @@ import XCTest
 import XCTest
 @testable import Skyflow
 
+// swiftlint:disable:next type_body_length
 final class Skyflow_iOS_collectErrorTests: XCTestCase {
     var skyflow: Client!
     var records: [[String: Any]]!
