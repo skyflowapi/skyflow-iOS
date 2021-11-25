@@ -461,7 +461,7 @@ internal extension TextField {
 }
 
 extension TextField {
-    public func triggerError(_ error: String) {
+    public func setError(_ error: String) {
         self.errorTriggered = true
         self.errorMessage.text = error
         updateErrorMessage()

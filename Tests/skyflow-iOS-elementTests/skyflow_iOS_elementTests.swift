@@ -158,7 +158,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
         textField.textField.secureText = "invalid"
-        textField.triggerError("triggered error")
+        textField.setError("triggered error")
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
         // Takes precendence over all errors
@@ -173,7 +173,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
         textField.textField.secureText = "invalid"
-        textField.triggerError("triggered error")
+        textField.setError("triggered error")
         textField.textFieldDidEndEditing(textField.textField)
         textField.resetError()
         

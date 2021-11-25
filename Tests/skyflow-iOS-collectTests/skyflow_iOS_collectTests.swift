@@ -618,7 +618,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
 
         textField?.textField.secureText = "invalid"
-        textField?.triggerError("triggered error")
+        textField?.setError("triggered error")
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
