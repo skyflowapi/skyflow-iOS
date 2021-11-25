@@ -428,8 +428,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
-        cardNumber?.actualValue = "4111 1111 1111 1111"
-        cardNumber?.textField.secureText = "4111 1111 1111 1111"
+        cardNumber?.textField.secureText = "4111111111111111"
+        cardNumber?.textFieldDidEndEditing(cardNumber!.textField)
         
         window.addSubview(cardNumber!)
         
@@ -503,7 +503,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testForCardNumber() {
-        let card = CardType.forCardNumber(cardNumber: "4111")
+        let card = CardType.forCardNumber(cardNumber: "4111111111111111").instance
         XCTAssertEqual(card.defaultName, "Visa")
     }
     
@@ -532,7 +532,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testDefaultErrorPrecedenceOnCollectFailure() {
-        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -556,7 +556,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testCustomValidationErrorOnCollectFailure() {
-        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -605,7 +605,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
     }
     
-    func testTriggerErrorOnCollect() {let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
+    func testSetErrorOnCollect() {
+        let myRegexRule = RegexMatch(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -627,6 +628,35 @@ final class skyflow_iOS_collectTests: XCTestCase {
         print("======", myCallback.data, myCallback.receivedResponse)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardNumber triggered error\n")
+    }
+    func testElementValueMatchRule() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectOptions = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        
+        let pinElement = container?.create(input: collectInput, options: collectOptions)
+        
+        var vs = ValidationSet()
+        vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
+        
+        let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
+        
+        let confirmPin = container?.create(input: collectInput2, options: collectOptions)
+        
+        pinElement!.textField.secureText = "1234"
+        pinElement!.textFieldDidEndEditing(pinElement!.textField)
+        
+        confirmPin!.textField.secureText = "1235"
+        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        
+        XCTAssertFalse((confirmPin?.state.getState()["isValid"]) as! Bool)
+        
+        confirmPin!.textField.secureText = "1234"
+        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        
+        XCTAssertTrue((confirmPin?.state.getState()["isValid"]) as! Bool)
     }
     
     

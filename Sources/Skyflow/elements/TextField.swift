@@ -156,7 +156,7 @@ public class TextField: SkyflowElement, Element {
         
         if self.fieldType == .CARD_NUMBER {
             let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
-            let card = CardType.forCardNumber(cardNumber: t)
+            let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
         
@@ -305,7 +305,7 @@ extension TextField: UITextFieldDelegate {
         
         if self.fieldType == .CARD_NUMBER {
             let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
-            let card = CardType.forCardNumber(cardNumber: t)
+            let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
     }
@@ -317,6 +317,7 @@ extension TextField: UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         self.hasFocus = false
+        updateActualValue()
         textFieldValueChanged()
 
         // Set label styles to base
@@ -331,7 +332,6 @@ extension TextField: UITextFieldDelegate {
     
     func updateErrorMessage() {
         let currentState = state.getState()
-
         if self.errorTriggered == false {
             // Error styles
             if currentState["isEmpty"] as! Bool {
@@ -350,7 +350,12 @@ extension TextField: UITextFieldDelegate {
                 errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
             }
             else if currentState["isCustomRuleFailed"] as! Bool{
-                errorMessage.text = "Validation failed"
+                if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
+                  errorMessage.text = "Validation failed"
+                }
+                else {
+                  errorMessage.text = currentState["validationError"] as? String
+                }
             }
         } else {
             updateInputStyle(collectInput!.inputStyles.invalid)
@@ -441,7 +446,7 @@ internal extension TextField {
     func textFieldValueChanged() {
         /// update format pattern after field input changed
         //        if self.fieldType == .cardNumber {
-        //            let card = CardType.forCardNumber(cardNumber: getOutput()!)
+        //            let card = CardType.forCardNumber(cardNumber: getOutput()!).instance
         //            if card.defaultName != "Empty"  {
         //                self.textField.formatPattern = card.formatPattern
         //              } else {
