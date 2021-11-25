@@ -25,7 +25,8 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func getRevealElementInput() -> RevealElementInput {
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        let styles = Styles(base: bstyle)
+        let istyle = Style(textColor: .red)
+        let styles = Styles(base: bstyle, invalid: istyle)
 
         let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
 
@@ -256,6 +257,54 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual((errors[0]["error"] as! NSError).code, 404)
         XCTAssertEqual(errors[0]["token"] as! String, "invalidtoken")
-
+    }
+    
+    func testSetError() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let errorMessage = "Triggered Error"
+        
+        revealElement!.setError(errorMessage)
+        
+        XCTAssertEqual(revealElement?.errorMessage.alpha, 1.0)
+        XCTAssertEqual(revealElement?.errorMessage.text, errorMessage)
+        XCTAssertEqual(revealElement?.skyflowLabelView.textColor, .red)
+        
+    }
+    
+    func testSetErrorOnReveal() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        revealElementInput.token = "invalidtoken"
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let errorMessage = "Triggered Error"
+        
+        revealElement!.setError(errorMessage)
+        
+        let expectFailure = XCTestExpectation(description: "Should fail with triggered error message")
+        
+        let window = UIWindow()
+        window.addSubview(revealElement!)
+        
+        let callback = DemoAPICallback(expectation: expectFailure)
+        revealContainer?.reveal(callback: callback)
+        
+        wait(for: [expectFailure], timeout: 10.0)
+        
+        XCTAssertEqual(callback.receivedResponse, errorMessage)
+        
+    }
+    
+    func testResetError() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let errorMessage = "Triggered Error"
+        
+        revealElement!.setError(errorMessage)
+        revealElement!.resetError()
+        
+        XCTAssertEqual(revealElement?.errorMessage.alpha, 0.0)
     }
 }

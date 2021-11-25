@@ -15,6 +15,9 @@ public class Label: UIView, Element {
     internal var stackView = UIStackView()
     internal var labelField = PaddingLabel(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
+    
+    internal var errorTriggered: Bool = false
+    internal var triggeredErrorMessage: String = ""
 
 
     internal var horizontalConstraints = [NSLayoutConstraint]()
@@ -115,11 +118,24 @@ public class Label: UIView, Element {
     }
 
     func hideError() {
-        self.errorMessage.alpha = 0.0
+        if !self.errorTriggered {
+            self.errorMessage.alpha = 0.0
+        }
     }
 
     internal func getValue() -> String {
 //        return self.skyflowLabelView.getValue()
         return self.actualValue
+    }
+    
+    internal func setError(_ error: String) {
+        self.errorTriggered = true
+        self.triggeredErrorMessage = error
+        showError(message: error)
+    }
+    
+    internal func resetError() {
+        self.errorTriggered = false
+        hideError()
     }
 }
