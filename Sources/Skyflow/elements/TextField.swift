@@ -15,6 +15,8 @@ public class TextField: SkyflowElement, Element {
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
     
+    internal var errorTriggered: Bool = false
+    
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
     }
@@ -185,11 +187,17 @@ public class TextField: SkyflowElement, Element {
     
     override func validate() -> SkyflowValidationError {
         let str = textField.getSecureRawText ?? ""
+        if self.errorTriggered {
+            return self.errorMessage.text!
+        }
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
     
      func validateCustomRules() -> SkyflowValidationError {
         let str = textField.getSecureRawText ?? ""
+        if self.errorTriggered {
+            return ""
+        }
         return SkyflowValidator.validate(input: str, rules: userValidationRules)
     }
 
@@ -311,22 +319,9 @@ extension TextField: UITextFieldDelegate {
         self.hasFocus = false
         updateActualValue()
         textFieldValueChanged()
-        let state = self.state.getState()
 
         // Set label styles to base
         updateLabelStyle()
-
-        if state["isEmpty"] as! Bool {
-            updateInputStyle(collectInput!.inputStyles.empty)
-            errorMessage.alpha = 0.0 // Hide error message
-        } else if !(state["isValid"] as! Bool) {
-            updateInputStyle(collectInput!.inputStyles.invalid)
-            errorMessage.alpha = 1.0 // Show error message
-
-        } else {
-            updateInputStyle(collectInput!.inputStyles.complete)
-            errorMessage.alpha = 0.0 // Hide error message
-        }
         updateErrorMessage()
         onBlurHandler?((self.state as! StateforText).getStateForListener())
     }
@@ -337,16 +332,34 @@ extension TextField: UITextFieldDelegate {
     
     func updateErrorMessage() {
         let currentState = state.getState()
-        if  currentState["isDefaultRuleFailed"] as! Bool{
-            errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
-        }
-        else if currentState["isCustomRuleFailed"] as! Bool{
-            if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
-                errorMessage.text = "Validation failed"
+        if self.errorTriggered == false {
+            // Error styles
+            if currentState["isEmpty"] as! Bool {
+                updateInputStyle(collectInput!.inputStyles.empty)
+                errorMessage.alpha = 0.0 // Hide error message
+            } else if !(currentState["isValid"] as! Bool) {
+                updateInputStyle(collectInput!.inputStyles.invalid)
+                errorMessage.alpha = 1.0 // Show error message
+            } else {
+                updateInputStyle(collectInput!.inputStyles.complete)
+                errorMessage.alpha = 0.0 // Hide error message
             }
-            else {
-                errorMessage.text = currentState["validationError"] as? String
+            
+            // Error message
+            if  currentState["isDefaultRuleFailed"] as! Bool{
+                errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
             }
+            else if currentState["isCustomRuleFailed"] as! Bool{
+                if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
+                  errorMessage.text = "Validation failed"
+                }
+                else {
+                  errorMessage.text = currentState["validationError"] as? String
+                }
+            }
+        } else {
+            updateInputStyle(collectInput!.inputStyles.invalid)
+            errorMessage.alpha = 1.0 // Always show error message
         }
     }
 }
@@ -449,5 +462,19 @@ internal extension TextField {
         // change status
         textField.becomeFirstResponder()
         textFieldValueChanged()
+    }
+}
+
+extension TextField {
+    public func setError(_ error: String) {
+        self.errorTriggered = true
+        self.errorMessage.text = error
+        updateErrorMessage()
+    }
+    
+    public func resetError() {
+        self.errorMessage.text = ""
+        self.errorTriggered = false
+        updateErrorMessage()
     }
 }

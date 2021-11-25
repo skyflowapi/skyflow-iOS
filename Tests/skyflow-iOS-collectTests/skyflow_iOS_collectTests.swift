@@ -1,6 +1,7 @@
 import XCTest
 @testable import Skyflow
 
+// swiftlint:disable:next type_body_length
 final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
@@ -605,6 +606,29 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
     }
     
+    func testSetErrorOnCollect() {
+        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
+        let myRules = ValidationSet(rules: [myRegexRule])
+        
+        let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let textField = mycontainer?.create(input: collectInput)
+        
+        let window = UIWindow()
+        window.addSubview(textField!)
+        
+
+        textField?.textField.secureText = "invalid"
+        textField?.setError("triggered error")
+        textField?.textFieldDidEndEditing(textField!.textField)
+        let expectFailure = XCTestExpectation(description: "Should fail")
+        let myCallback = DemoAPICallback(expectation: expectFailure)
+        mycontainer?.collect(callback: myCallback)
+        wait(for: [expectFailure], timeout: 10.0)
+        
+        XCTAssertEqual(myCallback.receivedResponse, "for cardNumber triggered error\n")
+    }
     func testElementValueMatchRule() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         

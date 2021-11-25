@@ -28,6 +28,11 @@ public extension Container {
             return
         }
         for element in self.revealElements {
+            if element.errorTriggered {
+                errorCode = .ERROR_TRIGGERED(value: element.triggeredErrorMessage)
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                return
+            }
             if element.getValue().isEmpty {
                 errorCode = .EMPTY_TOKEN_ID()
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))

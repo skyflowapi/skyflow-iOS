@@ -2,7 +2,7 @@
 import XCTest
 @testable import Skyflow
 
-
+// swiftlint:disable:next type_body_length
 class skyflow_iOS_elementTests: XCTestCase {
 
     var collectOptions: CollectElementOptions!
@@ -158,4 +158,36 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 0.0)
     }
+    
+    func testTriggerError() {
+        let errorStyle = Style(textColor: .red)
+        let inputStyle = Styles(invalid: errorStyle)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+
+        textField.textField.secureText = "invalid"
+        textField.setError("triggered error")
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        // Takes precendence over all errors
+        XCTAssertEqual(textField.errorMessage.text, "triggered error")
+        XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
+    }
+    
+    func testResetError() {
+        let errorStyle = Style(textColor: .red)
+        let inputStyle = Styles(invalid: errorStyle)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
+
+        textField.textField.secureText = "invalid"
+        textField.setError("triggered error")
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.resetError()
+        
+        XCTAssertEqual(textField.errorMessage.alpha, 1.0)
+        XCTAssertEqual(textField.errorMessage.text, "Invalid element")
+        XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
+    }
+
 }
