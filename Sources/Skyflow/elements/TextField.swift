@@ -318,24 +318,9 @@ extension TextField: UITextFieldDelegate {
     public func textFieldDidEndEditing(_ textField: UITextField) {
         self.hasFocus = false
         textFieldValueChanged()
-        let state = self.state.getState()
 
         // Set label styles to base
         updateLabelStyle()
-
-        if self.errorTriggered == false {
-            if state["isEmpty"] as! Bool {
-                updateInputStyle(collectInput!.inputStyles.empty)
-                errorMessage.alpha = 0.0 // Hide error message
-            } else if !(state["isValid"] as! Bool) {
-                updateInputStyle(collectInput!.inputStyles.invalid)
-                errorMessage.alpha = 1.0 // Show error message
-
-            } else {
-                updateInputStyle(collectInput!.inputStyles.complete)
-                errorMessage.alpha = 0.0 // Hide error message
-            }
-        }
         updateErrorMessage()
         onBlurHandler?((self.state as! StateforText).getStateForListener())
     }
@@ -346,13 +331,30 @@ extension TextField: UITextFieldDelegate {
     
     func updateErrorMessage() {
         let currentState = state.getState()
+
         if self.errorTriggered == false {
+            // Error styles
+            if currentState["isEmpty"] as! Bool {
+                updateInputStyle(collectInput!.inputStyles.empty)
+                errorMessage.alpha = 0.0 // Hide error message
+            } else if !(currentState["isValid"] as! Bool) {
+                updateInputStyle(collectInput!.inputStyles.invalid)
+                errorMessage.alpha = 1.0 // Show error message
+            } else {
+                updateInputStyle(collectInput!.inputStyles.complete)
+                errorMessage.alpha = 0.0 // Hide error message
+            }
+            
+            // Error message
             if  currentState["isDefaultRuleFailed"] as! Bool{
                 errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
             }
             else if currentState["isCustomRuleFailed"] as! Bool{
                 errorMessage.text = "Validation failed"
             }
+        } else {
+            updateInputStyle(collectInput!.inputStyles.invalid)
+            errorMessage.alpha = 1.0 // Always show error message
         }
     }
 }
@@ -462,11 +464,12 @@ extension TextField {
     public func triggerError(_ error: String) {
         self.errorTriggered = true
         self.errorMessage.text = error
-        self.errorMessage.alpha = 1.0
+        updateErrorMessage()
     }
     
     public func resetError() {
+        self.errorMessage.text = ""
         self.errorTriggered = false
-        self.errorMessage.alpha = 0.0
+        updateErrorMessage()
     }
 }

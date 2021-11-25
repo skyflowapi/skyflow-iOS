@@ -152,7 +152,9 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testTriggerError() {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let errorStyle = Style(textColor: .red)
+        let inputStyle = Styles(invalid: errorStyle)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
         textField.textField.secureText = "invalid"
@@ -161,10 +163,13 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
         // Takes precendence over all errors
         XCTAssertEqual(textField.errorMessage.text, "triggered error")
+        XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
     }
     
     func testResetError() {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let errorStyle = Style(textColor: .red)
+        let inputStyle = Styles(invalid: errorStyle)
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
         textField.textField.secureText = "invalid"
@@ -172,13 +177,9 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.textFieldDidEndEditing(textField.textField)
         textField.resetError()
         
-        XCTAssertEqual(textField.errorMessage.alpha, 0.0)
-        XCTAssertEqual(textField.errorMessage.text, "triggered error")
-        
-        // change nothing, onBlur. Changes error message
-        textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
         XCTAssertEqual(textField.errorMessage.text, "Invalid element")
+        XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
     }
 
 }
