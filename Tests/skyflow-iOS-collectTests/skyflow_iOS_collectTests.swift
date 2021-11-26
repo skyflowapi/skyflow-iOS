@@ -91,7 +91,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let data = callback.receivedResponse
         let message = data
         
-        XCTAssertTrue(message.contains("Value not found"))
+        XCTAssertTrue(message.contains("document does not exist"))
     }
     
     func testCreateSkyflowElement() {
@@ -643,20 +643,60 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
         
-        let confirmPin = container?.create(input: collectInput2, options: collectOptions)
+        let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
         pinElement!.textField.secureText = "1234"
         pinElement!.textFieldDidEndEditing(pinElement!.textField)
         
-        confirmPin!.textField.secureText = "1235"
-        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        confirmPinElement!.textField.secureText = "1235"
+        confirmPinElement!.textFieldDidEndEditing(confirmPinElement!.textField)
         
-        XCTAssertFalse((confirmPin?.state.getState()["isValid"]) as! Bool)
+        XCTAssertFalse((confirmPinElement?.state.getState()["isValid"]) as! Bool)
         
-        confirmPin!.textField.secureText = "1234"
-        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        confirmPinElement!.textField.secureText = "1234"
+        confirmPinElement!.textFieldDidEndEditing(confirmPinElement!.textField)
         
-        XCTAssertTrue((confirmPin?.state.getState()["isValid"]) as! Bool)
+        XCTAssertTrue((confirmPinElement?.state.getState()["isValid"]) as! Bool)
+    }
+    
+    func testCollectCreateRequestBodyWithElementValueMatchRule(){
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectOptions = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        
+        let pinElement = container?.create(input: collectInput, options: collectOptions)
+        
+        var vs = ValidationSet()
+        vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
+        
+        let collectInput2 = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN, validations: vs)
+        
+        let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
+        
+        pinElement!.textField.secureText = "1234"
+        pinElement!.textFieldDidEndEditing(pinElement!.textField)
+        
+        confirmPinElement!.textField.secureText = "1235"
+        confirmPinElement!.textFieldDidEndEditing(confirmPinElement!.textField)
+        
+        var elements: [TextField] = []
+        
+        elements.append(pinElement!)
+        elements.append(confirmPinElement!)
+        
+        let expectSuccess = XCTestExpectation(description: "Should succeed")
+        let myCallback = DemoAPICallback(expectation: expectSuccess)
+        
+        let records = CollectRequestBody.createRequestBody(elements: elements, callback: myCallback, contextOptions: ContextOptions())
+        
+        let recordElement = (records?["records"] as? [[String: Any]])?[0]
+        let fields = recordElement?["fields"] as? [String: Any]
+        let pin = fields?["pin"] as? String
+        
+        XCTAssertEqual(pin, "1234")
     }
     
     
