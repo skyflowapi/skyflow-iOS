@@ -1,0 +1,1 @@
+This sample illustrates how to use secure Skyflow elements to invoke a third-party integration to pull funds, using a Skyflow connection.
