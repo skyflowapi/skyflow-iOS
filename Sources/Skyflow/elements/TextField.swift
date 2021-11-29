@@ -67,7 +67,23 @@ public class TextField: SkyflowElement, Element {
         self.userValidationRules.append(input.validations)
         // add delegate
         self.textField.delegate = self
+        
+        setFormatPattern()
         setupField()
+    }
+    
+    internal func setFormatPattern() {
+        switch fieldType {
+        case .CARD_NUMBER:
+            let cardType = CardType.forCardNumber(cardNumber: self.actualValue).instance
+            self.textField.formatPattern = cardType.formatPattern
+        case .EXPIRATION_DATE:
+            self.textField.formatPattern = self.options.expiryDateFormat.replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
+        default:
+            if let instance = fieldType.instance {
+                self.textField.formatPattern = instance.formatPattern
+            }
+        }
     }
 
     required internal init?(coder aDecoder: NSCoder) {
@@ -157,10 +173,12 @@ public class TextField: SkyflowElement, Element {
         }
         
         if self.fieldType == .CARD_NUMBER {
-            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
+        
+        setFormatPattern()
         
     }
 
@@ -188,7 +206,7 @@ public class TextField: SkyflowElement, Element {
     }
     
     override func validate() -> SkyflowValidationError {
-        let str = textField.getSecureRawText ?? ""
+        let str = actualValue
         if self.errorTriggered {
             return self.errorMessage.text!
         }
@@ -196,7 +214,7 @@ public class TextField: SkyflowElement, Element {
     }
     
      func validateCustomRules() -> SkyflowValidationError {
-        let str = textField.getSecureRawText ?? ""
+        let str = actualValue
         if self.errorTriggered {
             return ""
         }
@@ -306,14 +324,19 @@ extension TextField: UITextFieldDelegate {
         onChangeHandler?((self.state as! StateforText).getStateForListener())
         
         if self.fieldType == .CARD_NUMBER {
-            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
+        setFormatPattern()
     }
 
     func updateActualValue() {
-        self.actualValue = textField.secureText ?? ""
+        if self.fieldType == .CARD_NUMBER {
+            self.actualValue = textField.getSecureRawText ?? ""
+        } else {
+            self.actualValue = textField.secureText ?? ""
+        }
     }
 
     /// Wrap native `UITextField` delegate method for `didEndEditing`.

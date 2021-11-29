@@ -69,7 +69,7 @@ public enum ElementType: Int, CaseIterable {
             rules.add(rule: RegexMatchRule(regex: "\\d*$",
                                                    error: SkyflowValidationErrorType.regex.rawValue))
             rules.add(rule: SkyflowValidateLengthMatch(lengths: [3, 4], error: SkyflowValidationErrorType.lengthMatches.rawValue))
-            return Type(formatPattern: "####", regex: "\\d*$",
+            return Type(formatPattern: "", regex: "\\d*$",
                         validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 4)
         
         case .INPUT_FIELD:
@@ -79,7 +79,7 @@ public enum ElementType: Int, CaseIterable {
         rules.add(rule: RegexMatchRule(regex: "\\d*$",
                                                error: SkyflowValidationErrorType.regex.rawValue))
             rules.add(rule: SkyflowValidateLengthMatch(lengths: (4..<13).map({$0}), error: SkyflowValidationErrorType.lengthMatches.rawValue))
-        return Type(formatPattern: "####", regex: "\\d*$",
+        return Type(formatPattern: "", regex: "\\d*$",
                     validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 12)
         }
     }

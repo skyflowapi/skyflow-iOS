@@ -15,43 +15,33 @@ extension TextField {
         
         if let elementType = self.fieldType.instance {
             
-            
             if let acceptabledCharacters = elementType.acceptableCharacters, string.rangeOfCharacter(from: acceptabledCharacters) == nil {
                 return false
             }
             if let maxLength = elementType.maxLength, count > maxLength {
                 return false
             }
+            
+            if !elementType.formatPattern.isEmpty {
+                if let replacementText = self.textField.formatText(string) {
+                    textField.text = replacementText
+                } else {
+                    return false
+                }
+            }
         }
 
-        // get type of textfield
-        // check if type accepts character
-        // yes - get replacement text
-        //     - set space/seperator if needed, to textfield.text
+        /* Steps to follow */
+        // get type of textfield - done
+        // check if type accepts character, length - done
+        // yes - check if type has format pattern - done
+        //       yes - get text with format pattern (also update actualValue)
+        //           - set textField text
+        // - return false for all the above
         //
-        // return false
+        // return true for no
 
         return true
     }
-//    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        let text = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-//
-//        let count = text.count
-//
-//        print("---------",text, text.count)
-//        print("=========", string, range)
-//
-//        // get type of textfield
-//        // check if type accepts character
-//        // yes - get replacement text
-//        //     - set space/seperator if needed, to textfield.text
-//        //
-//        // return false
-//
-//        if count > 5 {
-//            return false
-//        }
-//
-//        return true
-//    }
+
 }
