@@ -65,6 +65,8 @@ public class TextField: SkyflowElement, Element {
         super.init(input: input, options: options, contextOptions: contextOptions)
         //        self.contextOptions = contextOptions
         self.userValidationRules.append(input.validations)
+        // add delegate
+        self.textField.delegate = self
         setupField()
     }
 
@@ -297,7 +299,7 @@ extension TextField: UITextFieldDelegate {
     }
 
     /// Wrap native `UITextField` delegate method for `didChange`.
-    @objc func textFieldDidChange(_ textField: UITextField) {
+    @objc func  textFieldDidChange(_ textField: UITextField) {
         isDirty = true
         updateActualValue()
         textFieldValueChanged()
@@ -412,10 +414,10 @@ internal extension TextField {
     @objc
     func addTextFieldObservers() {
         /// delegates
-        textField.addSomeTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
-        /// Note: .allEditingEvents doesn't work proparly when set text programatically. Use setText instead!
-        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
-        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditingOnExit), for: .editingDidEndOnExit)
+//        textField.addSomeTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
+//        /// Note: .allEditingEvents doesn't work proparly when set text programatically. Use setText instead!
+//        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
+//        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditingOnExit), for: .editingDidEndOnExit)
         NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange), name: UITextField.textDidChangeNotification, object: textField)
         /// tap gesture for update focus state
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(focusOn))
