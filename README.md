@@ -288,7 +288,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
-  required: false  //indicates whether the field is marked as required. Defaults to 'false',
+  required: false,  //indicates whether the field is marked as required. Defaults to 'false',
   enableCardIcon: true // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
 )
 
@@ -346,9 +346,9 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
 //Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
-let completedStyle = Skyflow.Style(borderColor: UIColor.green)
+let completeStyle = Skyflow.Style(borderColor: UIColor.green)
 val focusTextStyle = Skyflow.Style(textColor = UIColor.red)
-let inputStyles = Skyflow.Styles(base: baseStyle, completed: completedStyle)
+let inputStyles = Skyflow.Styles(base: baseStyle, complete: completeStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle, focus: focusTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
  
@@ -564,7 +564,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     [
       "records":[
         [
-          "token": "string"     // token for the record to be fetched
+          "token": String     // token for the record to be fetched
         ]
       ]
     ]
@@ -597,7 +597,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
       "records":[
         [
           "ids": ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
-          "table": "string",                    // name of table holding the above skyflow_id's
+          "table": String,                    // name of table holding the above skyflow_id's
           "redaction": Skyflow.RedactionType    //redaction to be applied to retrieved data
         ]
       ]
