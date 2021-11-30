@@ -15,6 +15,8 @@ public class TextField: SkyflowElement, Element {
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
     
+    internal var textFieldDelegate: UITextFieldDelegate? = nil
+    
     internal var errorTriggered: Bool = false
     
     internal var isErrorMessageShowing: Bool {
@@ -66,7 +68,8 @@ public class TextField: SkyflowElement, Element {
         //        self.contextOptions = contextOptions
         self.userValidationRules.append(input.validations)
         // add delegate
-        self.textField.delegate = self
+        self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
+        self.textField.delegate = self.textFieldDelegate!
         
         setFormatPattern()
         setupField()
@@ -286,9 +289,9 @@ extension TextField {
     
 }
 
-/// Textfield delegate
-extension TextField: UITextFieldDelegate {
-    private func updateInputStyle(_ style: Style? = nil) {
+/// Textfield updates
+extension TextField {
+    internal func updateInputStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput.inputStyles.base
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
@@ -303,26 +306,19 @@ extension TextField: UITextFieldDelegate {
         self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
     }
 
-    private func updateLabelStyle(_ style: Style? = nil) {
+    internal func updateLabelStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput!.labelStyles.base
         self.textFieldLabel.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         self.textFieldLabel.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textFieldLabel.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .left
         self.textFieldLabel.insets = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
-
-
-    /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
-    public func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.hasFocus = true
-        textFieldValueChanged()
-        // element styles on focus
-        updateInputStyle(collectInput.inputStyles.focus)
-
-        // label styles on focus
-        updateLabelStyle(collectInput!.labelStyles.focus)
-        onFocusHandler?((self.state as! StateforText).getStateForListener())
+    
+    // For tests compatibility
+    internal func textFieldDidEndEditing(_ textField: UITextField) {
+        self.textField.delegate?.textFieldDidEndEditing?(textField)
     }
+
 
     /// Wrap native `UITextField` delegate method for `didChange`.
     @objc func  textFieldDidChange(_ textField: UITextField) {
@@ -345,22 +341,6 @@ extension TextField: UITextFieldDelegate {
         } else {
             self.actualValue = textField.secureText ?? ""
         }
-    }
-
-    /// Wrap native `UITextField` delegate method for `didEndEditing`.
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        self.hasFocus = false
-        updateActualValue()
-        textFieldValueChanged()
-
-        // Set label styles to base
-        updateLabelStyle()
-        updateErrorMessage()
-        onBlurHandler?((self.state as! StateforText).getStateForListener())
-    }
-
-    @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
-        textFieldValueChanged()
     }
     
     func updateErrorMessage() {

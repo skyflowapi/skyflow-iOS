@@ -31,17 +31,6 @@ extension TextField {
             }
         }
 
-        /* Steps to follow */
-        // get type of textfield - done
-        // check if type accepts character, length - done
-        // yes - check if type has format pattern - done
-        //       yes - get text with format pattern (also update actualValue)
-        //           - set textField text
-        // - return false for all the above
-        //
-        // return true for no
-
         return true
     }
-
 }
