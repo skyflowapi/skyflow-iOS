@@ -132,42 +132,42 @@ internal class FormatTextField: UITextField {
     /**
      Func that formats the text based on formatPattern
      */
-    func formatText(_ replacementString: String) -> String? {
-        if self.formatPattern.isEmpty {
-            return ""
-        }
+    func formatText(_ text: String, _ range: NSRange, _ isEmpty: Bool) -> FormatResult {
+
         
         var formattedText = ""
-        
         var offset = 0
+        var seperatorsCount = 0
         
-        if let text = super.text {
-            
-            if text.count >= formatPattern.count {
-                return nil
-            }
-            
-            if text.count > 0 {
-                var filteredText  = self.getFilteredString(text)
-                filteredText.append(replacementString)
-                for char in formatPattern {
-                    if filteredText.count <= offset {
-                        break
+        
+        if self.formatPattern.isEmpty {
+            return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount)
+        }
+    
+        if text.count > formatPattern.count {
+            return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount, isSuccess: false)
+        }
+        
+        if text.count > 0 {
+            let  filteredText  = self.getFilteredString(text)
+            for (id, char) in formatPattern.enumerated() {
+                if filteredText.count <= offset {
+                    break
+                }
+                if char != "#" {
+                    if id <= range.location, !isEmpty {
+                        seperatorsCount += 1
                     }
-                    if char != "#" {
-                        formattedText.append(char)
-                    } else {
-                        let currentChar = filteredText[filteredText.index(text.startIndex, offsetBy: offset)]
-                        formattedText.append(currentChar)
-                        offset += 1
-                    }
+                    formattedText.append(char)
+                } else {
+                    let currentChar = filteredText[filteredText.index(text.startIndex, offsetBy: offset)]
+                    formattedText.append(currentChar)
+                    offset += 1
                 }
             }
         }
-        if formattedText.count > 0 {
-            formattedText.removeLast()
-        }
-        return formattedText
+        
+        return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount)
     }
 }
 
@@ -189,5 +189,18 @@ extension FormatTextField {
 
     func addSomeTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         super.addTarget(target, action: action, for: controlEvents)
+    }
+}
+
+
+internal struct FormatResult {
+    internal var formattedText: String
+    internal var isSuccess: Bool
+    internal var numOfSeperatorsAdded: Int
+    
+    public init(formattedText: String, numOfSeperatorsAdded: Int, isSuccess: Bool = true) {
+        self.formattedText = formattedText
+        self.numOfSeperatorsAdded = numOfSeperatorsAdded
+        self.isSuccess = isSuccess
     }
 }
