@@ -140,6 +140,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput, options: options)
         
         cardNumber?.textField.secureText = "411"
+        cardNumber?.updateActualValue()
         
         let state = cardNumber?.getState()
         
@@ -269,7 +270,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let cardExpiration = container?.create(input: collectInput3, options: options)
         
-        cardExpiration?.actualValue = "1222"
+        cardExpiration?.actualValue = "12/2023"
         window.addSubview(cardExpiration!)
         
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
@@ -316,7 +317,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Invalid Value 411 as per Regex in Field card_number")
+        XCTAssertEqual(callback.receivedResponse, "for card_number INVALID_CARD_NUMBER\n")
     }
     
     func testContainerInsertInvalidInputUIEdit() {
@@ -390,7 +391,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Invalid Value 2 as per Regex in Field cvv")
+        XCTAssertEqual(callback.receivedResponse, "for cvv INVALID_LENGTH\n")
     }
     
     func testContainerInsertIsRequiredAndEmpty() {
@@ -557,7 +558,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
     
     func testCustomValidationErrorOnCollectFailure() {
-        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "(\\d-){4}+\\d{4}", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -575,7 +576,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myCallback = DemoAPICallback(expectation: expectFailure)
         mycontainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
-        print("======", myCallback.data, myCallback.receivedResponse)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardNumber Regex match failed\n")
     }
@@ -593,16 +593,16 @@ final class skyflow_iOS_collectTests: XCTestCase {
         pinElement?.textField.secureText = "1234"
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "abc$%6"
+        pinElement?.actualValue = "abc$%6"
         XCTAssertFalse((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "123"
+        pinElement?.actualValue = "123"
         XCTAssertFalse((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "1234567890123456"
+        pinElement?.actualValue = "1234567890123456"
         XCTAssertFalse((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "123456789012"
+        pinElement?.actualValue = "123456789012"
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
     }
     
