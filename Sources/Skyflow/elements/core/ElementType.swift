@@ -59,11 +59,11 @@ public enum ElementType: Int, CaseIterable {
                         validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits)
 
         case .EXPIRATION_DATE :
-            rules.add(rule: RegexMatchRule(regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
+            let cardExpRegex = "(^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$|^([0-9]{4}|[0-9]{2})\\/?(0[1-9]|1[0-2])$)"
+            rules.add(rule: RegexMatchRule(regex: cardExpRegex,
                                                    error: SkyflowValidationErrorType.regex.rawValue))
-            rules.add(rule: SkyflowValidateCardExpirationDate(error: SkyflowValidationErrorType.expirationDate.rawValue))
-            return Type(formatPattern: "##/##", regex: "^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$",
-                        validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 5)
+            return Type(formatPattern: "##/##", regex: cardExpRegex,
+                        validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 7)
 
         case .CVV :
             rules.add(rule: RegexMatchRule(regex: "\\d*$",

@@ -72,6 +72,13 @@ public class TextField: SkyflowElement, Element {
         setupField()
     }
     
+    internal func addValidations() {
+        if self.fieldType == .EXPIRATION_DATE {
+            let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.expiryDateFormat, error: SkyflowValidationErrorType.expirationDate.rawValue)
+            self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
+        }
+    }
+    
     internal func setFormatPattern() {
         switch fieldType {
         case .CARD_NUMBER:
@@ -135,6 +142,7 @@ public class TextField: SkyflowElement, Element {
             validationRules = instance.validation
             textField.keyboardType = instance.keyboardType
         }
+        addValidations()
 
 
         // Base label styles
