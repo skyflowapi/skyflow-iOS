@@ -1,0 +1,32 @@
+//
+//  File.swift
+//  
+//
+//  Created by Akhil Anil Mangala on 29/11/21.
+//
+
+import Foundation
+
+internal enum InterfaceName {
+    case COLLECT_CONTAINER
+    case REVEAL_CONTAINER
+    case CLIENT
+    case INSERT
+    case DETOKENIZE
+    case GETBYID
+    case INVOKE_CONNECTION
+    case EMPTY
+    
+    var description: String {
+        switch self {
+        case .COLLECT_CONTAINER: return "collect container"
+        case .REVEAL_CONTAINER: return "reveal container"
+        case .CLIENT: return "client"
+        case .INSERT: return "client insert"
+        case .DETOKENIZE: return "client detokenize"
+        case .GETBYID: return "client getById"
+        case .INVOKE_CONNECTION: return "invokeConnection"
+        case .EMPTY: return ""
+        }
+    }
+}

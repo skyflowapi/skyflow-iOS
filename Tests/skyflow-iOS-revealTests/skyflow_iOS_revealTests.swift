@@ -8,7 +8,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     var revealTestId: String!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG)))
         self.revealTestId = ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!
     }
 
@@ -109,6 +109,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
+      
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
         let revealedOutput = ProcessInfo.processInfo.environment["DETOKENIZE_TEST_VALUE"]!
@@ -179,7 +180,7 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(errorCount, 1)
-        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 404)
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
     }
     
     func testCreateRevealRequestBody() {
@@ -285,7 +286,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         wait(for: [expectFailure], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, errorMessage)
+        XCTAssertEqual(callback.receivedResponse, "Interface: reveal container - \(errorMessage)")
         
     }
     

@@ -19,14 +19,16 @@ public extension Container {
     }
 
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
+        var tempContextOptions = self.skyflow.contextOptions
+        tempContextOptions.interface = .COLLECT_CONTAINER
         var errors = ""
         var errorCode: ErrorCodes?
-        Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
 
         for element in self.elements {
             errorCode = checkElement(element: element)
             if errorCode != nil {
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             }
 
@@ -49,34 +51,39 @@ public extension Container {
         }
         if options?.additionalFields != nil {
             if options?.additionalFields!["records"] == nil {
-                errorCode = .INVALID_RECORDS_TYPE()
-                return callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+//                errorCode = .INVALID_RECORDS_TYPE()
+                errorCode = .MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
+                return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             }
             if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
+                if additionalFieldEntries.isEmpty {
+                    errorCode = .EMPTY_RECORDS_OBJECT()
+                    return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
+                }
                 for record in additionalFieldEntries {
                     errorCode = checkRecord(record: record)
                     if errorCode != nil {
-                        return callback.onFailure(errorCode?.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                        return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                     }
                 }
             } else {
-                errorCode = .MISSING_RECORDS_ARRAY()
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                errorCode = .INVALID_RECORDS_TYPE()
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             }
         }
-        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: self.skyflow.contextOptions)
+        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
 
         if records != nil {
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
                 onSuccessHandler: {
-                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
+                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
                 },
                 onFailureHandler: {
                 }
             )
-            self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: self.skyflow.contextOptions)
+            self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
     }
 
@@ -103,11 +110,18 @@ public extension Container {
         if !(record["table"] is String) {
             return .INVALID_TABLE_NAME_TYPE()
         }
+        if (record["table"] as? String == "") {
+            return .EMPTY_TABLE_NAME()
+        }
         if record["fields"] == nil {
             return .FIELDS_KEY_ERROR()
         }
         if !(record["fields"] is [String: Any]) {
             return .INVALID_FIELDS_TYPE()
+        }
+        let fields = record["fields"] as! [String: Any]
+        if (fields.isEmpty){
+            return .EMPTY_FIELDS_KEY()
         }
 
         return nil

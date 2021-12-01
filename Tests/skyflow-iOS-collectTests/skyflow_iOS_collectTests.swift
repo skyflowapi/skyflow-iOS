@@ -9,7 +9,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         self.skyflow = Skyflow.initialize(
             Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                           vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
-                          tokenProvider: DemoTokenProvider())
+                          tokenProvider: DemoTokenProvider(),
+                          options: Options(logLevel: .DEBUG, env: .DEV))
         )
     }
     
@@ -91,7 +92,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let data = callback.receivedResponse
         let message = data
         
-        XCTAssertTrue(message.contains("Value not found"))
+        XCTAssertTrue(message.contains("document does not exist"))
     }
     
     func testCreateSkyflowElement() {
@@ -316,7 +317,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Invalid Value 411 as per Regex in Field card_number")
+        XCTAssertEqual(callback.receivedResponse, "Interface: collect container - Invalid Value 411 as per Regex in Field card_number")
     }
     
     func testContainerInsertInvalidInputUIEdit() {
@@ -390,7 +391,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Invalid Value 2 as per Regex in Field cvv")
+        XCTAssertEqual(callback.receivedResponse, "Interface: collect container - Invalid Value 2 as per Regex in Field cvv")
     }
     
     func testContainerInsertIsRequiredAndEmpty() {
@@ -658,7 +659,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         XCTAssertTrue((confirmPin?.state.getState()["isValid"]) as! Bool)
     }
-    
     
     static var allTests = [
         ("testPureInsert", testPureInsert),
