@@ -344,12 +344,21 @@ extension TextField {
     }
     
     func updateErrorMessage() {
+        
+        var isRequiredCheckFailed = false
+        
         let currentState = state.getState()
         if self.errorTriggered == false {
             // Error styles
             if currentState["isEmpty"] as! Bool {
-                updateInputStyle(collectInput!.inputStyles.empty)
-                errorMessage.alpha = 0.0 // Hide error message
+                if currentState["isRequired"] as! Bool {
+                    isRequiredCheckFailed = true
+                    updateInputStyle(collectInput!.inputStyles.invalid)
+                    errorMessage.alpha = 1.0
+                } else {
+                    updateInputStyle(collectInput!.inputStyles.empty)
+                    errorMessage.alpha = 0.0 // Hide error message
+                }
             } else if !(currentState["isValid"] as! Bool) {
                 updateInputStyle(collectInput!.inputStyles.invalid)
                 errorMessage.alpha = 1.0 // Show error message
@@ -357,10 +366,14 @@ extension TextField {
                 updateInputStyle(collectInput!.inputStyles.complete)
                 errorMessage.alpha = 0.0 // Hide error message
             }
-            
+            let label = self.collectInput.label
+
             // Error message
-            if  currentState["isDefaultRuleFailed"] as! Bool{
-                errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
+            if isRequiredCheckFailed {
+                errorMessage.text =  "Value is required"
+            }
+            else if  currentState["isDefaultRuleFailed"] as! Bool{
+                errorMessage.text = "Invalid " + (label != "" ? label : "element")
             }
             else if currentState["isCustomRuleFailed"] as! Bool{
                 if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
