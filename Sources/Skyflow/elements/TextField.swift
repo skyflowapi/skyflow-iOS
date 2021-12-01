@@ -240,6 +240,7 @@ public class TextField: SkyflowElement, Element {
         if !(state["isValid"] as! Bool) {
             return false
         }
+        
         return true
     }
 
@@ -350,7 +351,7 @@ extension TextField {
         let currentState = state.getState()
         if self.errorTriggered == false {
             // Error styles
-            if currentState["isEmpty"] as! Bool {
+            if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
                 if currentState["isRequired"] as! Bool {
                     isRequiredCheckFailed = true
                     updateInputStyle(collectInput!.inputStyles.invalid)

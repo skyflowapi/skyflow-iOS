@@ -34,6 +34,7 @@ class ConversionHelpers {
                 return textField.getValue()
             } else {
                 errorCode = .VALIDATIONS_FAILED()
+                textField.updateErrorMessage()
                 throw errorCode!.getErrorObject(contextOptions: contextOptions)
             }
         } else if element is Label {
