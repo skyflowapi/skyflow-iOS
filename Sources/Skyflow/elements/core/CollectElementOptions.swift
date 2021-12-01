@@ -6,8 +6,11 @@ import UIKit
 public struct CollectElementOptions {
     var required: Bool
     var enableCardIcon: Bool
-    public init(required: Bool? = false, enableCardIcon: Bool = true) {
+    var expiryDateFormat: String
+    public init(required: Bool? = false, enableCardIcon: Bool = true, expiryDateFormat: String = "mm/yyyy") {
         self.required = required!
         self.enableCardIcon = enableCardIcon
+        self.expiryDateFormat = expiryDateFormat
     }
 }
+

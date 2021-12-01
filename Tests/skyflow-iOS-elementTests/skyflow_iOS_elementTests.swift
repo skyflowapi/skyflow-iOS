@@ -189,5 +189,40 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(textField.errorMessage.text, "Invalid element")
         XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
     }
+    
+    func testCardExpiryValidationMMYY() {
+        let mmyy = "12/23"
+        
+        let cardexpValidation = SkyflowValidateCardExpirationDate(format: "mm/yy", error: "Invalid Card expiration date")
+        XCTAssertTrue(SkyflowValidator.validate(input: mmyy, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
+    }
+    
+    func testCardExpiryValidationMMYYYY() {
+        let mmyyyy = "12/2023"
+        
+        let cardexpValidation = SkyflowValidateCardExpirationDate(format: "mm/yyyy", error: "Invalid Card expiration date")
+        XCTAssertTrue(SkyflowValidator.validate(input: mmyyyy, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
+    }
+    
+    func testCardExpiryValidationYYMM() {
+        let yymm = "23/12"
+        
+        let cardexpValidation = SkyflowValidateCardExpirationDate(format: "yy/mm", error: "Invalid Card expiration date")
+        XCTAssertTrue(SkyflowValidator.validate(input: yymm, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
+    }
+    
+    func testCardExpiryValidationYYYYMM() {
+        let yyyymm = "2023/12"
+        
+        let cardexpValidation = SkyflowValidateCardExpirationDate(format: "yyyy/mm", error: "Invalid Card expiration date")
+        XCTAssertTrue(SkyflowValidator.validate(input: yyyymm, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
+    }
+    
+    func testCardExpiryValidationFailure() {
+        let mmyy = "12/23"
+        
+        let cardexpValidation = SkyflowValidateCardExpirationDate(format: "ab/y", error: "Invalid Card expiration date")
+        XCTAssertFalse(SkyflowValidator.validate(input: mmyy, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
+    }
 
 }

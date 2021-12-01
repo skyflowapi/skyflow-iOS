@@ -241,9 +241,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         revealContainer?.reveal(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
-        
-        print("=====", callback.data)
-        
+                
         XCTAssertNotNil(callback.data["errors"])
         XCTAssertNotNil(callback.data["records"])
         let errors = callback.data["errors"] as! [[String: Any]]
