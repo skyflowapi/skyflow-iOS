@@ -141,6 +141,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let cardNumber = container?.create(input: collectInput, options: options)
         
         cardNumber?.textField.secureText = "411"
+        cardNumber?.updateActualValue()
         
         let state = cardNumber?.getState()
         
@@ -270,7 +271,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let cardExpiration = container?.create(input: collectInput3, options: options)
         
-        cardExpiration?.actualValue = "1222"
+        cardExpiration?.actualValue = "12/2023"
         window.addSubview(cardExpiration!)
         
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
@@ -318,6 +319,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         XCTAssertEqual(callback.receivedResponse, "Interface: collect container - Invalid Value 411 as per Regex in Field card_number")
+        // XCTAssertEqual(callback.receivedResponse, "for card_number INVALID_CARD_NUMBER\n")
     }
     
     func testContainerInsertInvalidInputUIEdit() {
@@ -391,7 +393,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Interface: collect container - Invalid Value 2 as per Regex in Field cvv")
+        // XCTAssertEqual(callback.receivedResponse, "Interface: collect container - Invalid Value 2 as per Regex in Field cvv")
+        XCTAssertEqual(callback.receivedResponse, "for cvv INVALID_LENGTH\n")
     }
     
     func testContainerInsertIsRequiredAndEmpty() {
@@ -552,13 +555,12 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myCallback = DemoAPICallback(expectation: expectFailure)
         mycontainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
-        print("======", myCallback.data, myCallback.receivedResponse)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardNumber INVALID_CARD_NUMBER\n")
     }
     
     func testCustomValidationErrorOnCollectFailure() {
-        let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
+        let myRegexRule = RegexMatchRule(regex: "(\\d-){4}+\\d{4}", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -576,7 +578,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myCallback = DemoAPICallback(expectation: expectFailure)
         mycontainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
-        print("======", myCallback.data, myCallback.receivedResponse)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardNumber Regex match failed\n")
     }
@@ -594,16 +595,16 @@ final class skyflow_iOS_collectTests: XCTestCase {
         pinElement?.textField.secureText = "1234"
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "abc$%6"
+        pinElement?.actualValue = "abc$%6"
         XCTAssertFalse((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "123"
+        pinElement?.actualValue = "123"
         XCTAssertFalse((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "1234567890123456"
+        pinElement?.actualValue = "1234567890123456"
         XCTAssertFalse((pinElement?.state.getState()["isValid"]) as! Bool)
         
-        pinElement?.textField.secureText = "123456789012"
+        pinElement?.actualValue = "123456789012"
         XCTAssertTrue((pinElement?.state.getState()["isValid"]) as! Bool)
     }
     
@@ -644,20 +645,60 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
         
-        let confirmPin = container?.create(input: collectInput2, options: collectOptions)
+        let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
         pinElement!.textField.secureText = "1234"
         pinElement!.textFieldDidEndEditing(pinElement!.textField)
         
-        confirmPin!.textField.secureText = "1235"
-        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        confirmPinElement!.textField.secureText = "1235"
+        confirmPinElement!.textFieldDidEndEditing(confirmPinElement!.textField)
         
-        XCTAssertFalse((confirmPin?.state.getState()["isValid"]) as! Bool)
+        XCTAssertFalse((confirmPinElement?.state.getState()["isValid"]) as! Bool)
         
-        confirmPin!.textField.secureText = "1234"
-        confirmPin!.textFieldDidEndEditing(confirmPin!.textField)
+        confirmPinElement!.textField.secureText = "1234"
+        confirmPinElement!.textFieldDidEndEditing(confirmPinElement!.textField)
         
-        XCTAssertTrue((confirmPin?.state.getState()["isValid"]) as! Bool)
+        XCTAssertTrue((confirmPinElement?.state.getState()["isValid"]) as! Bool)
+    }
+    
+    func testCollectCreateRequestBodyWithElementValueMatchRule(){
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectOptions = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        
+        let pinElement = container?.create(input: collectInput, options: collectOptions)
+        
+        var vs = ValidationSet()
+        vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
+        
+        let collectInput2 = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN, validations: vs)
+        
+        let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
+        
+        pinElement!.textField.secureText = "1234"
+        pinElement!.textFieldDidEndEditing(pinElement!.textField)
+        
+        confirmPinElement!.textField.secureText = "1235"
+        confirmPinElement!.textFieldDidEndEditing(confirmPinElement!.textField)
+        
+        var elements: [TextField] = []
+        
+        elements.append(pinElement!)
+        elements.append(confirmPinElement!)
+        
+        let expectSuccess = XCTestExpectation(description: "Should succeed")
+        let myCallback = DemoAPICallback(expectation: expectSuccess)
+        
+        let records = CollectRequestBody.createRequestBody(elements: elements, callback: myCallback, contextOptions: ContextOptions())
+        
+        let recordElement = (records?["records"] as? [[String: Any]])?[0]
+        let fields = recordElement?["fields"] as? [String: Any]
+        let pin = fields?["pin"] as? String
+        
+        XCTAssertEqual(pin, "1234")
     }
     
     static var allTests = [
