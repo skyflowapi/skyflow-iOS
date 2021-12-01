@@ -271,7 +271,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let cardExpiration = container?.create(input: collectInput3, options: options)
         
-        cardExpiration?.actualValue = "12/2023"
+        cardExpiration?.actualValue = "12/23"
         window.addSubview(cardExpiration!)
         
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
@@ -318,8 +318,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Interface: collect container - Invalid Value 411 as per Regex in Field card_number")
-        // XCTAssertEqual(callback.receivedResponse, "for card_number INVALID_CARD_NUMBER\n")
+         XCTAssertEqual(callback.receivedResponse, "for card_number INVALID_CARD_NUMBER\n")
     }
     
     func testContainerInsertInvalidInputUIEdit() {
