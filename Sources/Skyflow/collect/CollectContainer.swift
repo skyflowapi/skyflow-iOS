@@ -35,6 +35,7 @@ public extension Container {
             let error = state["validationError"]
             if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
                 errors += element.columnName + " is empty" + "\n"
+                element.updateErrorMessage()
             }
             if !(state["isValid"] as! Bool) {
                 errors += "for " + element.columnName + " " + (error as! String) + "\n"
