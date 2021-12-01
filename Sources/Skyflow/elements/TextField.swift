@@ -76,8 +76,13 @@ public class TextField: SkyflowElement, Element {
     }
     
     internal func addValidations() {
+        let defaultFormat = "mm/yy"
+        let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
+        if !supportedFormats.contains(self.options.format) {
+            self.options.format = defaultFormat
+        }
         if self.fieldType == .EXPIRATION_DATE {
-            let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.expiryDateFormat, error: SkyflowValidationErrorType.expirationDate.rawValue)
+            let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
             self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
         }
     }
@@ -88,7 +93,7 @@ public class TextField: SkyflowElement, Element {
             let cardType = CardType.forCardNumber(cardNumber: self.actualValue).instance
             self.textField.formatPattern = cardType.formatPattern
         case .EXPIRATION_DATE:
-            self.textField.formatPattern = self.options.expiryDateFormat.replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
+            self.textField.formatPattern = self.options.format.replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
         default:
             if let instance = fieldType.instance {
                 self.textField.formatPattern = instance.formatPattern
