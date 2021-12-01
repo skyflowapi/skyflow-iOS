@@ -55,7 +55,7 @@ public enum  CardType: CaseIterable {
         case .DISCOVER : return Card(
             defaultName: "Discover", regex: "^(6011|65|64[4-9]|622)\\d*",
             cardLengths: [16, 17, 18, 19],
-            formatPattern: "#### #### #### ####", securityCodeLength: 3, securityCodeName: SecurityCode.cid.rawValue, imageName: "Discover-Card")
+            formatPattern: "#### #### #### #### ###", securityCodeLength: 3, securityCodeName: SecurityCode.cid.rawValue, imageName: "Discover-Card")
 
         case .AMEX: return Card(
             defaultName: "Amex", regex: "^3[47]\\d*",
@@ -65,7 +65,7 @@ public enum  CardType: CaseIterable {
         case .DINERS_CLUB: return Card(
             defaultName: "Diners Club", regex: "^(36|38|30[0-5])\\d*",
             cardLengths: [14,15,16, 17, 18, 19],
-            formatPattern: "#### #### #### ####", securityCodeLength: 3,
+            formatPattern: "#### ###### #########", securityCodeLength: 3,
             securityCodeName: SecurityCode.cvv.rawValue, imageName: "Diners-Card")
 
         case .JCB: return Card(
