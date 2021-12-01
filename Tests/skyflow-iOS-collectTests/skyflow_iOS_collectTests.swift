@@ -552,7 +552,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myCallback = DemoAPICallback(expectation: expectFailure)
         mycontainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
-        print("======", myCallback.data, myCallback.receivedResponse)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardNumber INVALID_CARD_NUMBER\n")
     }

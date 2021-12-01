@@ -51,7 +51,10 @@ class InputFormattingTests: XCTestCase {
 
         let currentText = "4111 1111 1111 111"
         cardNumber?.textField.secureText = currentText
-        let result = cardNumber?.textField.delegate?.textField?(cardNumber!.textField, shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText), replacementString: "1")
+        let result = cardNumber?.textField.delegate?.textField?(
+            cardNumber!.textField,
+            shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText),
+            replacementString: "1")
         
         XCTAssertFalse(result!)
         XCTAssertEqual(cardNumber?.actualValue, "4111111111111111")
@@ -64,7 +67,10 @@ class InputFormattingTests: XCTestCase {
         let currentText = "4111 1111 1111 1"
         cardNumber?.textField.secureText = currentText
         let lastIndex = currentText.index(before: currentText.endIndex)
-        let result = cardNumber?.textField.delegate?.textField?(cardNumber!.textField, shouldChangeCharactersIn: NSRange(lastIndex..<currentText.endIndex, in: currentText), replacementString: "")
+        let result = cardNumber?.textField.delegate?.textField?(
+            cardNumber!.textField,
+            shouldChangeCharactersIn: NSRange(lastIndex..<currentText.endIndex, in: currentText),
+            replacementString: "")
         
         
         XCTAssertFalse(result!)
@@ -77,7 +83,10 @@ class InputFormattingTests: XCTestCase {
 
         let currentText = "23"
         expiryDate?.textField.secureText = currentText
-        let result = expiryDate?.textField.delegate?.textField?(expiryDate!.textField, shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText), replacementString: "1")
+        let result = expiryDate?.textField.delegate?.textField?(
+            expiryDate!.textField,
+            shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText),
+            replacementString: "1")
         
         XCTAssertFalse(result!)
         XCTAssertEqual(expiryDate?.actualValue, "23/1")
@@ -90,7 +99,10 @@ class InputFormattingTests: XCTestCase {
         let currentText = "23/1"
         expiryDate?.textField.secureText = currentText
         let lastIndex = currentText.index(before: currentText.endIndex)
-        let result = expiryDate?.textField.delegate?.textField?(expiryDate!.textField, shouldChangeCharactersIn: NSRange(lastIndex..<currentText.endIndex, in: currentText), replacementString: "")
+        let result = expiryDate?.textField.delegate?.textField?(
+            expiryDate!.textField,
+            shouldChangeCharactersIn: NSRange(lastIndex..<currentText.endIndex, in: currentText),
+            replacementString: "")
         
         
         XCTAssertFalse(result!)
