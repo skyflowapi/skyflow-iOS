@@ -130,6 +130,7 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 -  [**Using Skyflow Elements to collect data**](#using-skyflow-elements-to-collect-data)
 -  [**Using validations on Collect Elements**](#validations)
 -  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
+-  [**UI Error for Collect Elements**](#ui-error-for-collect-elements)
 
 ## Inserting data into the vault
 
@@ -271,6 +272,28 @@ Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the
 
 The `INPUT_FIELD` type is a custom UI element without any built-in validations. See the section on [validations](#validations) for more information on validations.
 
+Along with `CollectElementInput` we can define other options which are optional inside the `CollectElementOptions` object which is described below.
+
+```swift
+Skyflow.CollectElementOptions(
+  required: Boolean, //indicates whether the field is marked as required. Defaults to 'false'
+  enableCardIcon: Boolean, //indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
+  format: String //Format for the element (only applicable currently for "EXPIRATION_DATE")
+)
+```
+	
+`required` parameter indicates whether the field is marked as required or not, if not provided, it defaults to `false`
+
+`enableCardIcon` paramenter indicates whether the icon is visible for the `CARD_NUMBER` element, defaults to `true`
+
+`format` parameter takes string value and indicates the format pattern applicable to the element type, It's currently only applicable to `EXPIRATION_DATE` element type, the values that are accepted are
+  - mm/yy
+  - mm/yyyy
+  - yy/mm
+  - yyyy/mm
+
+`NOTE`: If not specified or invalid value is passed to the `format` for `EXPIRATION_DATE` element, then it defaults to `mm/yy` format.
+
 Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
 
 ```swift
@@ -288,8 +311,9 @@ let collectElementInput =  Skyflow.CollectElementInput(
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
-  required: false  //indicates whether the field is marked as required. Defaults to 'false',
-  enableCardIcon: true // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
+  required: false,  //indicates whether the field is marked as required. Defaults to 'false',
+  enableCardIcon: true, // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
+  format: "mm/yy" //Format for the element (only applies currently for EXPIRATION_DATE element type)
 )
 
 const element = container.create(input: collectElementInput, options: collectElementOptions)
@@ -549,11 +573,46 @@ cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
    "value": ""
 ]
 ```
+### UI Error for Collect Elements
+
+Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
+
+`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+
+`resetError()` method is used to clear the custom error message that is set using `setError`.
+
+##### Sample code snippet for setError and resetError
+
+```swift
+//create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG))
+
+let skyflowClient = Skyflow.initialize(config)
+
+let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+ 
+// Create a CollectElementInput
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+)
+
+let cardNumber = container.create(input: cardNumberInput)
+
+//Set custom error
+cardNumber.setError("custom error")
+
+//reset custom error
+cardNumber.resetError()
+}
+```
 
 ---
 # Securely revealing data client-side
 -  [**Retrieving data from the vault**](#retrieving-data-from-the-vault)
 -  [**Using Skyflow Elements to reveal data**](#using-skyflow-elements-to-reveal-data)
+-  [**UI Error for Reveal Elements**](#ui-error-for-reveal-elements)
 
 ## Retrieving data from the vault
 For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
@@ -727,6 +786,14 @@ let revealCallback = RevealCallback()  // Custom callback - implementation of Sk
 container.reveal(callback: revealCallback)
 ```
 
+### UI Error for Reveal Elements
+
+Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
+
+`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+
+`resetError()` method is used to clear the custom error message that is set using `setError`.
+
 ### End to end example of revealing data with Skyflow Elements
 #### Sample Code:
 ```swift
@@ -769,6 +836,11 @@ let cvvInput = Skyflow.RevealElementInput(
 let cvvElement = container.create(input: cvvInput)
 
 //Can interact with these objects as a normal UIView Object and add to View
+
+//set error to the element
+cvvElement.setError("custom error")
+//reset error to the element
+cvvElement.resetError()
  
 //Implement a custom Skyflow.Callback to be called on Reveal success/failure
 public class RevealCallback: Skyflow.Callback {
