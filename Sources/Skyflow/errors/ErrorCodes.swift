@@ -46,10 +46,11 @@ internal enum ErrorCodes: CustomStringConvertible {
     // New
     case UNMOUNTED_COLLECT_ELEMENT(code: Int = 400, message: String = "Element with column name <COLUMN_NAME> is unmounted", value: String)
     case UNMOUNTED_REVEAL_ELEMENT(code: Int = 400, message: String = "Element with token <TOKEN> is unmounted", value: String)
-    
+    case UNMOUNTED_ELEMENT_INVOKE_CONNECTION(code: Int = 400, message: String = "element for <FIELD_NAME> is not mounted", value: String)
     case ERROR_TRIGGERED(code: Int = 400, message: String = "<TRIGGERED_ERROR_MESSAGE>", value: String)
-
-
+    case EMPTY_COLUMN_NAME_IN_COLLECT(code: Int = 400, message: String = "element with type <TYPE> - Column key cannot be empty.", value: String)
+    case EMPTY_TABLE_NAME_IN_COLLECT(code: Int = 400, message: String = "element with type <TYPE> - Table key cannot be empty.", value: String)
+    case EMPTY_TOKEN_INVOKE_CONNECTION(code: Int = 400, message: String = "element for <FIELD_NAME> must have token", value: String)
     // Multiple message values
     case INVALID_TABLE_NAME(code: Int = 400, message: String = "<TABLE_NAME> passed doesn’t exist in the vault with id <VAULT_ID>", values: [String])
     // changed
@@ -66,7 +67,7 @@ internal enum ErrorCodes: CustomStringConvertible {
             return code
         // Single value formatting
         // swiftlint:disable:next line_length
-        case .EMPTY_VAULT(let code, _, _), .INVALID_REDACTION_TYPE(let code, _, _), .INVALID_DATA_TYPE_PASSED(let code, _, _), .INVALID_VALUE(let code, _, _), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY(let code, _, _), .MISSING_KEY_IN_RESPONSE(let code, _, _), .UNMOUNTED_COLLECT_ELEMENT(let code, _, _), .UNMOUNTED_REVEAL_ELEMENT(let code, _, _), .ERROR_TRIGGERED(let code, _, _):
+        case .EMPTY_VAULT(let code, _, _), .INVALID_REDACTION_TYPE(let code, _, _), .INVALID_DATA_TYPE_PASSED(let code, _, _), .INVALID_VALUE(let code, _, _), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY(let code, _, _), .MISSING_KEY_IN_RESPONSE(let code, _, _), .UNMOUNTED_COLLECT_ELEMENT(let code, _, _), .UNMOUNTED_REVEAL_ELEMENT(let code, _, _), .UNMOUNTED_ELEMENT_INVOKE_CONNECTION(let code, _, _), .ERROR_TRIGGERED(let code, _, _), .EMPTY_COLUMN_NAME_IN_COLLECT(let code, _, _), .EMPTY_TABLE_NAME_IN_COLLECT(let code, _, _), .EMPTY_TOKEN_INVOKE_CONNECTION(let code, _, _):
             return code
         // Multi value formatting
         case .INVALID_TABLE_NAME(let code, _, _), .DUPLICATE_ELEMENT_FOUND(let code, _, _), .DUPLICATE_ADDITIONAL_FIELD_FOUND(let code, _, _):
@@ -83,7 +84,7 @@ internal enum ErrorCodes: CustomStringConvertible {
             return message
         // Single value formatting
         // swiftlint:disable:next line_length
-        case .EMPTY_VAULT( _, let message, let value), .INVALID_REDACTION_TYPE( _, let message, let value), .INVALID_DATA_TYPE_PASSED( _, let message, let value), .INVALID_VALUE( _, let message, let value), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY( _, let message, let value), .MISSING_KEY_IN_RESPONSE( _, let message, let value), .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value), .ERROR_TRIGGERED( _, let message, let value):
+        case .EMPTY_VAULT( _, let message, let value), .INVALID_REDACTION_TYPE( _, let message, let value), .INVALID_DATA_TYPE_PASSED( _, let message, let value), .INVALID_VALUE( _, let message, let value), .DUPLICATE_ELEMENT_IN_RESPONSE_BODY( _, let message, let value), .MISSING_KEY_IN_RESPONSE( _, let message, let value), .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value), .UNMOUNTED_ELEMENT_INVOKE_CONNECTION( _, let message, let value), .ERROR_TRIGGERED( _, let message, let value), .EMPTY_COLUMN_NAME_IN_COLLECT( _, let message, let value), .EMPTY_TABLE_NAME_IN_COLLECT( _, let message, let value), .EMPTY_TOKEN_INVOKE_CONNECTION( _, let message, let value):
             return formatMessage(message, [value])
         // Multi value formatting
         case .INVALID_TABLE_NAME( _, let message, let values), .DUPLICATE_ELEMENT_FOUND( _, let message, let values), .DUPLICATE_ADDITIONAL_FIELD_FOUND( _, let message, let values):

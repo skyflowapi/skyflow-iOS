@@ -185,7 +185,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.EMPTY_TABLE_NAME().description)
+        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.EMPTY_TABLE_NAME_IN_COLLECT(value: ElementType.CARD_NUMBER.name).description)
         
     }
     
@@ -220,7 +220,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.EMPTY_COLUMN_NAME().description)
+        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.EMPTY_COLUMN_NAME_IN_COLLECT(value: ElementType.CARD_NUMBER.name).description)
         
     }
     
