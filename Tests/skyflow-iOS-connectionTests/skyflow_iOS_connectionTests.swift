@@ -572,7 +572,7 @@ final class skyflow_iOS_connectionTests: XCTestCase {
         let singleValueReplace = ErrorCodes.EMPTY_VAULT(value: "vault#123")
         let multiValueReplace = ErrorCodes.INVALID_TABLE_NAME(values: ["Table#42", "Vault#666"])
         
-        XCTAssertEqual(noValueReplace.description, "Table Name is empty")
+        XCTAssertEqual(noValueReplace.description, "table key cannot be empty")
         XCTAssertEqual(singleValueReplace.description, "Vault ID vault#123 is invalid")
         XCTAssertEqual(multiValueReplace.description, "Table#42 passed doesn’t exist in the vault with id Vault#666")
     }
@@ -615,7 +615,7 @@ final class skyflow_iOS_connectionTests: XCTestCase {
             .MISSING_KEY_IN_RESPONSE(value: "nosuchkey")
         ]
         for error in errors {
-            XCTAssert(result.contains(error.errorObject))
+            XCTAssert(result.contains(error.getErrorObject(contextOptions: ContextOptions())))
         }
     }
     

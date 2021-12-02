@@ -61,38 +61,32 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
     func testDetokenizeNoRecords() {
         let records = ["typo": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
         let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.RECORDS_KEY_ERROR().description)
+        XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.RECORDS_KEY_ERROR().description)
     }
 
     func testDetokenizeBadRecords() {
         let records = ["records": 123]
         let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_RECORDS_TYPE().description)
+        XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.INVALID_RECORDS_TYPE().description)
+    }
+    
+    func testDetokenizeEmptyRecords() {
+        let records = ["records": []]
+        let result = getDataFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.EMPTY_RECORDS_OBJECT().description)
     }
 
     func testDetokenizeNoTokens() {
         let records = ["records": [["redaction": RedactionType.DEFAULT]]]
         let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.ID_KEY_ERROR().description)
+        XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.ID_KEY_ERROR().description)
     }
 
     func testDetokenizeBadTokens() {
         let records = ["records": [["token": [], "redaction": RedactionType.DEFAULT]]]
         let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_TYPE().description)
+        XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.INVALID_TOKEN_TYPE().description)
     }
-
-//    func testDetokenizeNoRedaction() {
-//        let records = ["records": [["token": []]]]
-//        let result = getDataFromClientWithExpectation(records: records)
-//        XCTAssertEqual(result, ErrorCodes.REDACTION_KEY_ERROR().description)
-//    }
-//    
-//    func testDetokenizeInvalidRedaction() {
-//        let records = ["records": [["token": [], "redaction": "abc"]]]
-//        let result = getDataFromClientWithExpectation(records: records)
-//        XCTAssertEqual(result, ErrorCodes.INVALID_REDACTION_TYPE(value: "abc").description)
-//    }
 
     func testContainerRevealWithUnmountedElements() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
@@ -108,7 +102,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
         let result = callback.receivedResponse
 
-        XCTAssertEqual(result, ErrorCodes.UNMOUNTED_REVEAL_ELEMENT(value: revealTestId).description)
+        XCTAssertEqual(result, "Interface: reveal container - " + ErrorCodes.UNMOUNTED_REVEAL_ELEMENT(value: revealTestId).description)
     }
 
     func testContainerRevealWithEmptyToken() {
@@ -128,54 +122,54 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
         let result = callback.receivedResponse
 
-        XCTAssertEqual(result, ErrorCodes.EMPTY_TOKEN_ID().description)
+        XCTAssertEqual(result, "Interface: reveal container - " + ErrorCodes.EMPTY_TOKEN_ID().description)
     }
 
     func testGetByIdNoRecords() {
         let records = ["ok": [["redaction": RedactionType.DEFAULT]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.RECORDS_KEY_ERROR().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.EMPTY_RECORDS_OBJECT().description)
     }
 
     func testGetByIdInvalidRecords() {
-        let records = ["records": 123]
+        let records = ["records": 12]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_RECORDS_TYPE().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.INVALID_RECORDS_TYPE().description)
     }
 
     func testGetByIdNoIds() {
         let records = ["records": [["redaction": RedactionType.DEFAULT]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.MISSING_KEY_IDS().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.MISSING_KEY_IDS().description)
     }
 
     func testGetByIdInvalidIds() {
         let records = ["records": [["ids": RedactionType.DEFAULT]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_IDS_TYPE().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.INVALID_IDS_TYPE().description)
     }
 
     func testGetByIdNoTable() {
         let records = ["records": [["ids": ["abc"]]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.TABLE_KEY_ERROR().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.TABLE_KEY_ERROR().description)
     }
 
     func testGetByIdInvalidTable() {
         let records = ["records": [["ids": ["abc"], "table": ["abc"]]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_TABLE_NAME_TYPE().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.INVALID_TABLE_NAME_TYPE().description)
     }
 
     func testGetByIdNoRedaction() {
         let records = ["records": [["ids": ["abc"], "table": "table"]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.REDACTION_KEY_ERROR().description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.REDACTION_KEY_ERROR().description)
     }
 
     func testGetByIdInvalidRedaction() {
         let records = ["records": [["ids": ["abc"], "table": "table", "redaction": "DEFAULT"]]]
         let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result, ErrorCodes.INVALID_REDACTION_TYPE(value: "DEFAULT").description)
+        XCTAssertEqual(result, "Interface: client getById - " + ErrorCodes.INVALID_REDACTION_TYPE(value: "DEFAULT").description)
     }
 }
