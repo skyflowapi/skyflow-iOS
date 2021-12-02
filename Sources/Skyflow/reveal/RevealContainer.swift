@@ -12,9 +12,11 @@ public class RevealContainer: ContainerProtocol {
 
 public extension Container {
     func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
+        var tempContextOptions = self.skyflow.contextOptions
+        tempContextOptions.interface = .REVEAL_CONTAINER
         let revealElement = Label(input: input, options: options!)
         revealElements.append(revealElement)
-        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: tempContextOptions)
         return revealElement
     }
 
@@ -24,7 +26,6 @@ public extension Container {
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
-            let label = element.revealInput.label != "" ? " \(element.revealInput.label)" : ""
             errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
             callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             return
