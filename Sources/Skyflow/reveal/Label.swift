@@ -138,4 +138,18 @@ public class Label: UIView, Element {
         self.errorTriggered = false
         hideError()
     }
+    
+    internal func setToken(_ token: String) {
+        self.actualValue = token
+    }
+    
+    internal func setAltText(_ altText: String) {
+        self.revealInput.altText = altText
+        self.skyflowLabelView.updateVal(value: altText)
+    }
+    
+    internal func clearAltText() {
+        self.revealInput.altText = ""
+        self.skyflowLabelView.updateVal(value: actualValue)
+    }
 }

@@ -147,4 +147,5 @@ public class SkyflowLabelView: UIView {
     internal func getValue() -> String {
         return self.revealInput.token
     }
+    
 }
