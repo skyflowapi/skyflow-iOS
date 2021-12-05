@@ -9,12 +9,11 @@ public struct CollectElementInput {
     var label: String
     var placeholder: String
     var type: ElementType
-    var altText: String?
     var validations: ValidationSet
 
     public init(table: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
-                placeholder: String? = "", type: ElementType, altText: String? = "", validations: ValidationSet=ValidationSet()) {
+                placeholder: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {
         self.table = table
         self.column = column
         self.inputStyles = inputStyles!
@@ -23,7 +22,21 @@ public struct CollectElementInput {
         self.label = label!
         self.placeholder = placeholder!
         self.type = type
-        self.altText = altText
         self.validations = validations
+    }
+
+    @available(*, deprecated, message: "altText param is deprecated")
+    public init(table: String = "", column: String = "",
+            inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
+            placeholder: String? = "", altText: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {
+    self.table = table
+    self.column = column
+    self.inputStyles = inputStyles!
+    self.labelStyles = labelStyles!
+    self.errorTextStyles = errorTextStyles!
+    self.label = label!
+    self.placeholder = placeholder!
+    self.type = type
+    self.validations = validations
     }
 }
