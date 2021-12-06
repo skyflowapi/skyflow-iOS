@@ -23,6 +23,7 @@ public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
+        self.skyflow.checkVaultConfig(contextOptions: tempContextOptions)
         var errors = ""
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)

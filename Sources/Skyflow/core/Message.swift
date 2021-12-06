@@ -93,6 +93,9 @@ internal enum Message {
     case MISSING_REDACTION_VALUE
     case ELEMENT_MUST_HAVE_TOKEN
     case DUPLICATE_ELEMENT
+    
+    case VAULT_ID_EMPTY_WARNING
+    case VAULT_URL_EMPTY_WARNING
 
 
     var description: String {
@@ -184,6 +187,9 @@ internal enum Message {
         case .MISSING_REDACTION_VALUE: return "Missing redaction value"
         case .ELEMENT_MUST_HAVE_TOKEN: return "Element must have token"
         case .DUPLICATE_ELEMENT: return "Duplicate column <> found in <>"
+            
+        case .VAULT_ID_EMPTY_WARNING: return "Invalid client credentials. VaultID is required."
+        case .VAULT_URL_EMPTY_WARNING: return "Invalid client credentials. VaultURL cannot be empty."
         }
     }
 
