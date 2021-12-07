@@ -146,8 +146,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
     public func setValue(value: String) {
         if(contextOptions.env == .DEV){
             actualValue = value
-            self.textField.addFormattedText(value)
-            
+            self.textField.addAndFormatText(value)
             textFieldDidChange(self.textField)
         }
     }

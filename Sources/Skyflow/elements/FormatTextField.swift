@@ -170,9 +170,13 @@ internal class FormatTextField: UITextField {
         return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount)
     }
     
-    func addFormattedText(_ text: String){
+    func addAndFormatText(_ text: String){
         var formattedText = ""
         var offset = 0
+        if self.formatPattern.isEmpty {
+            self.secureText = text
+            return
+        }
         for char in formatPattern {
             if text.count <= offset {
                 break
