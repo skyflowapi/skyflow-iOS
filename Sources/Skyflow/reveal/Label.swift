@@ -140,6 +140,9 @@ public class Label: UIView, Element, BaseElement {
     
     public func setToken(_ token: String) {
         self.revealInput.token = token
+        if self.revealInput.altText.isEmpty {
+            self.skyflowLabelView.updateVal(value: token)
+        }
     }
     
     public func setAltText(_ altText: String) {

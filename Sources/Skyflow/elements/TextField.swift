@@ -148,6 +148,10 @@ public class TextField: SkyflowElement, Element, BaseElement {
             actualValue = value
             self.textField.addAndFormatText(value)
             textFieldDidChange(self.textField)
+        } else {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
         }
     }
     
@@ -155,6 +159,10 @@ public class TextField: SkyflowElement, Element, BaseElement {
         if(contextOptions.env == .DEV){
             actualValue = ""
             textField.secureText = ""
+        } else {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
         }
     }
 
