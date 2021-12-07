@@ -37,7 +37,7 @@ public extension Container {
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             }
-            if element.getValue().isEmpty {
+            if element.getToken().isEmpty {
                 errorCode = .EMPTY_TOKEN_ID()
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return

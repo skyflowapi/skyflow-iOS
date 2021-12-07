@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class Label: UIView, Element {
+public class Label: UIView, Element, BaseElement {
     internal var skyflowLabelView: SkyflowLabelView!
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!
@@ -124,18 +124,35 @@ public class Label: UIView, Element {
     }
 
     internal func getValue() -> String {
-//        return self.skyflowLabelView.getValue()
         return self.actualValue
     }
     
-    internal func setError(_ error: String) {
+    public func setError(_ error: String) {
         self.errorTriggered = true
         self.triggeredErrorMessage = error
         showError(message: error)
     }
     
-    internal func resetError() {
+    public func resetError() {
         self.errorTriggered = false
         hideError()
+    }
+    
+    public func setToken(_ token: String) {
+        self.revealInput.token = token
+    }
+    
+    public func setAltText(_ altText: String) {
+        self.revealInput.altText = altText
+        self.skyflowLabelView.updateVal(value: altText)
+    }
+    
+    public func clearAltText() {
+        self.revealInput.altText = ""
+        self.skyflowLabelView.updateVal(value: actualValue.isEmpty ? revealInput.token : actualValue)
+    }
+    
+    internal func getToken() -> String{
+        return self.revealInput.token
     }
 }

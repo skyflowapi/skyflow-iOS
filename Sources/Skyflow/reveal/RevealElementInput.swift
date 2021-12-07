@@ -14,10 +14,10 @@ public struct RevealElementInput {
     internal var errorTextStyles: Styles?
     internal var label: String
     internal var redaction: RedactionType
-    internal var altText: String?
+    internal var altText: String
 
     @available(*, deprecated, message: "redaction param is deprecated")
-    public init(token: String = "", inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String, redaction: RedactionType = .DEFAULT, altText: String? = nil) {
+    public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, redaction: RedactionType = .DEFAULT, altText: String = "") {
         self.token = token
         self.inputStyles = inputStyles
         self.labelStyles = labelStyles
@@ -27,7 +27,7 @@ public struct RevealElementInput {
         self.altText = altText
     }
 
-    public init(token: String = "", inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String, altText: String? = nil) {
+    public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, altText: String = "") {
         self.token = token
         self.inputStyles = inputStyles
         self.labelStyles = labelStyles
