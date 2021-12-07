@@ -169,6 +169,29 @@ internal class FormatTextField: UITextField {
         
         return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount)
     }
+    
+    func addAndFormatText(_ text: String){
+        var formattedText = ""
+        var offset = 0
+        if self.formatPattern.isEmpty {
+            self.secureText = text
+            return
+        }
+        for char in formatPattern {
+            if text.count <= offset {
+                break
+            }
+            if char != "#" {
+                formattedText.append(char)
+            } else {
+                let currentChar = text[text.index(text.startIndex, offsetBy: offset)]
+                formattedText.append(currentChar)
+                offset += 1
+            }
+        }
+        
+        self.secureText = formattedText
+    }
 }
 
 extension FormatTextField {
