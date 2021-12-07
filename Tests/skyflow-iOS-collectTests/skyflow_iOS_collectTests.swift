@@ -199,7 +199,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
 //        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
 //
 //        let options = CollectElementOptions(required: false)
-//        
 //        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
 //
 //        let cardNumber = container?.create(input: collectInput1, options: options)

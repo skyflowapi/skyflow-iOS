@@ -23,7 +23,14 @@ public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
-        self.skyflow.checkVaultConfig(contextOptions: tempContextOptions)
+        if self.skyflow.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.skyflow.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
         var errors = ""
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
