@@ -23,6 +23,7 @@ public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
+        self.skyflow.checkVaultConfig(contextOptions: tempContextOptions)
         var errors = ""
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
@@ -54,7 +55,6 @@ public extension Container {
         }
         if options?.additionalFields != nil {
             if options?.additionalFields!["records"] == nil {
-//                errorCode = .INVALID_RECORDS_TYPE()
                 errorCode = .MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
                 return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             }
@@ -92,12 +92,10 @@ public extension Container {
 
     private func checkElement(element: TextField) -> ErrorCodes? {
         if element.collectInput.table.isEmpty {
-            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-            return .EMPTY_TABLE_NAME()
+            return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type.name)
         }
         if element.collectInput.column.isEmpty {
-            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-            return .EMPTY_COLUMN_NAME()
+            return .EMPTY_COLUMN_NAME_IN_COLLECT(value: element.collectInput.type.name)
         }
         if !element.isMounted() {
             return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)

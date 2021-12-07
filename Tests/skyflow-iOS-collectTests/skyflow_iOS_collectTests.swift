@@ -700,6 +700,27 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(pin, "1234")
     }
     
+    func testCollectElementSetValueAndClearValue(){
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        
+        let cvvElement = container?.create(input: collectInput)
+        
+        XCTAssertEqual(cvvElement?.actualValue, "")
+        XCTAssertEqual(cvvElement?.textField.secureText, "")
+        
+        cvvElement?.setValue(value: "123")
+        
+        XCTAssertEqual(cvvElement?.actualValue, "123")
+        XCTAssertEqual(cvvElement?.textField.secureText, "123")
+        
+        cvvElement?.clearValue()
+        
+        XCTAssertEqual(cvvElement?.actualValue, "")
+        XCTAssertEqual(cvvElement?.textField.secureText, "")
+    }
+    
     static var allTests = [
 //        ("testPureInsert", testPureInsert),
         ("testInvalidVault", testInvalidVault),

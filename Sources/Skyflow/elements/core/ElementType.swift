@@ -83,4 +83,15 @@ public enum ElementType: Int, CaseIterable {
                     validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 12)
         }
     }
+    
+    var name: String {
+        switch self {
+        case .CARDHOLDER_NAME: return "CARDHOLDER_NAME"
+        case .CARD_NUMBER: return "CARD_NUMBER"
+        case .EXPIRATION_DATE: return "EXPIRATION_DATE"
+        case .CVV: return "CVV"
+        case .INPUT_FIELD: return "INPUT_FIELD"
+        case .PIN: return "PIN"
+        }
+    }
 }

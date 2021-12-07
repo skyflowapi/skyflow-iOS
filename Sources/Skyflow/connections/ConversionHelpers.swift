@@ -113,16 +113,16 @@ class ConversionHelpers {
         return nil
     }
 
-    static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false, contextOptions: ContextOptions) throws {
+    static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false, emptyTokenAllowed: Bool = false, contextOptions: ContextOptions) throws {
         var traversedElements: [Any] = []
         var errorCode: ErrorCodes?
 
-        func checkElement(_ element: Any) throws {
+        func checkElement(_ key: String, _ element: Any) throws {
             if checkIfPrimitive(element) {
                 return
             } else if element is [Any] {
                 try (element as! [Any]).forEach {
-                        try checkElement($0)
+                    try checkElement(key, $0)
                 }
             } else if element is TextField {
                 let textField = element as! TextField
@@ -131,7 +131,7 @@ class ConversionHelpers {
                     throw errorCode!.getErrorObject(contextOptions: contextOptions)
                 }
                 if !(element as! TextField).isMounted() {
-                    errorCode = .UNMOUNTED_COLLECT_ELEMENT(value: textField.collectInput.column)
+                    errorCode = .UNMOUNTED_ELEMENT_INVOKE_CONNECTION(value: textField.collectInput.column)
                     throw errorCode!.getErrorObject(contextOptions: contextOptions)
                 }
                 traversedElements.append(element)
@@ -142,7 +142,11 @@ class ConversionHelpers {
                     throw errorCode!.getErrorObject(contextOptions: contextOptions)
                 }
                 if !(element as! Label).isMounted() {
-                    errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: label.revealInput.token)
+                    errorCode = .UNMOUNTED_ELEMENT_INVOKE_CONNECTION(value: label.revealInput.token)
+                    throw errorCode!.getErrorObject(contextOptions: contextOptions)
+                }
+                if !emptyTokenAllowed && (element as! Label).actualValue.isEmpty {
+                    errorCode = .EMPTY_TOKEN_INVOKE_CONNECTION(value: key)
                     throw errorCode!.getErrorObject(contextOptions: contextOptions)
                 }
                 traversedElements.append(element)
@@ -155,8 +159,8 @@ class ConversionHelpers {
         }
 
         func checkDict(_ dict: [String: Any]) throws {
-            for (_, value) in dict {
-                try checkElement(value)
+            for (key, value) in dict {
+                try checkElement(key, value)
             }
         }
 
