@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - `format` parameter in `collectElementOptions` to support different type of date formats for `EXPIRATION_DATE` element
 - `setValue(value: String)` and `clearValue()` method in DEV env, to set/clear the value of a collect element.
 - `setToken(value: String)` method to set the token for a reveal element.
-- `setAltText(value: String)t` and `clearAltText()` method to set/clear the altText for a reveal 
+- `setAltText(value: String)` and `clearAltText()` method to set/clear the altText for a reveal 
 
 ### Changed
 - Changed error messages in the logs and callback errors.

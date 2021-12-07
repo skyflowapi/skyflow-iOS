@@ -650,7 +650,7 @@ cardNumber.clearValue()
 -  [**Using Skyflow Elements to reveal data**](#using-skyflow-elements-to-reveal-data)
 -  [**UI Error for Reveal Elements**](#ui-error-for-reveal-elements)
 -  [**Set token for Reveal Elements**](#set-token-for-reveal-elements)
-- [**Set and clear altText for Reveal Elements**](#set-and-clear-alttext-for-reveal-elements)
+-  [**Set and clear altText for Reveal Elements**](#set-and-clear-alttext-for-reveal-elements)
 
 ## Retrieving data from the vault
 For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
