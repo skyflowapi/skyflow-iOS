@@ -121,7 +121,7 @@ public class SkyflowLabelView: UIView {
     }
 
     internal func buildLabel() {
-        self.label.secureText = self.revealInput.altText ?? self.revealInput.token
+        self.label.secureText = self.revealInput.altText.isEmpty ? self.revealInput.token : self.revealInput.altText
         self.translatesAutoresizingMaskIntoConstraints = false
         self.label.translatesAutoresizingMaskIntoConstraints = false
         self.textAlignment = revealInput.inputStyles?.base?.textAlignment ?? .natural
