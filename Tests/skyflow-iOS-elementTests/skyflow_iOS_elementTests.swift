@@ -234,21 +234,22 @@ class skyflow_iOS_elementTests: XCTestCase {
         let dummyToken = "dummyToken"
         self.label.setToken(dummyToken)
         
-        XCTAssertEqual(self.label.actualValue, dummyToken)
+        XCTAssertEqual(self.label.actualValue, "token")
+        XCTAssertEqual(self.label.revealInput.token, dummyToken)
     }
     
     func testLabelSetAltText() {
         let dummyAltText = "dummyAltText"
         self.label.setAltText(dummyAltText)
         
-        XCTAssertEqual(self.label.actualValue, "token")
+        XCTAssertEqual(self.label.revealInput.token, "token")
         XCTAssertEqual(self.label.skyflowLabelView.label.secureText, dummyAltText)
     }
     
     func testLabelClearAltText() {
         self.label.clearAltText()
         
-        XCTAssertEqual(self.label.actualValue, "token")
+        XCTAssertEqual(self.label.revealInput.token, "token")
         XCTAssertEqual(self.label.skyflowLabelView.label.secureText, "token")
     }
 
