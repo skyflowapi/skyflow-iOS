@@ -151,7 +151,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: self.contextOptions)
+            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
         }
     }
     
@@ -162,7 +162,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: self.contextOptions)
+            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
         }
     }
 
