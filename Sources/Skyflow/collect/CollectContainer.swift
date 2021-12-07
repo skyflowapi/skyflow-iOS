@@ -12,21 +12,33 @@ public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
-        let skyflowElement = TextField(input: input, options: options!, contextOptions: self.skyflow.contextOptions)
+        var tempContextOptions = self.skyflow.contextOptions
+        tempContextOptions.interface = .COLLECT_CONTAINER
+        let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions)
         elements.append(skyflowElement)
-        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: tempContextOptions)
         return skyflowElement
     }
 
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
+        var tempContextOptions = self.skyflow.contextOptions
+        tempContextOptions.interface = .COLLECT_CONTAINER
+        if self.skyflow.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.skyflow.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
         var errors = ""
         var errorCode: ErrorCodes?
-        Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
 
         for element in self.elements {
             errorCode = checkElement(element: element)
             if errorCode != nil {
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             }
 
@@ -35,6 +47,7 @@ public extension Container {
             let error = state["validationError"]
             if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
                 errors += element.columnName + " is empty" + "\n"
+                element.updateErrorMessage()
             }
             if !(state["isValid"] as! Bool) {
                 errors += "for " + element.columnName + " " + (error as! String) + "\n"
@@ -49,45 +62,47 @@ public extension Container {
         }
         if options?.additionalFields != nil {
             if options?.additionalFields!["records"] == nil {
-                errorCode = .INVALID_RECORDS_TYPE()
-                return callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                errorCode = .MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
+                return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             }
             if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
+                if additionalFieldEntries.isEmpty {
+                    errorCode = .EMPTY_RECORDS_OBJECT()
+                    return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
+                }
                 for record in additionalFieldEntries {
                     errorCode = checkRecord(record: record)
                     if errorCode != nil {
-                        return callback.onFailure(errorCode?.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                        return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                     }
                 }
             } else {
-                errorCode = .MISSING_RECORDS_ARRAY()
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.skyflow.contextOptions))
+                errorCode = .INVALID_RECORDS_TYPE()
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             }
         }
-        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: self.skyflow.contextOptions)
+        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
 
         if records != nil {
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
                 onSuccessHandler: {
-                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: self.skyflow.contextOptions)
+                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
                 },
                 onFailureHandler: {
                 }
             )
-            self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: self.skyflow.contextOptions)
+            self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
     }
 
     private func checkElement(element: TextField) -> ErrorCodes? {
         if element.collectInput.table.isEmpty {
-            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-            return .EMPTY_TABLE_NAME()
+            return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type.name)
         }
         if element.collectInput.column.isEmpty {
-            let label = element.collectInput.label != "" ? " \(element.collectInput.label)" : ""
-            return .EMPTY_COLUMN_NAME()
+            return .EMPTY_COLUMN_NAME_IN_COLLECT(value: element.collectInput.type.name)
         }
         if !element.isMounted() {
             return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
@@ -103,11 +118,18 @@ public extension Container {
         if !(record["table"] is String) {
             return .INVALID_TABLE_NAME_TYPE()
         }
+        if (record["table"] as? String == "") {
+            return .EMPTY_TABLE_NAME()
+        }
         if record["fields"] == nil {
             return .FIELDS_KEY_ERROR()
         }
         if !(record["fields"] is [String: Any]) {
             return .INVALID_FIELDS_TYPE()
+        }
+        let fields = record["fields"] as! [String: Any]
+        if (fields.isEmpty){
+            return .EMPTY_FIELDS_KEY()
         }
 
         return nil

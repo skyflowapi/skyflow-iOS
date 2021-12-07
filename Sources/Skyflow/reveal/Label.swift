@@ -8,13 +8,16 @@
 import Foundation
 import UIKit
 
-public class Label: UIView, Element {
+public class Label: UIView, Element, BaseElement {
     internal var skyflowLabelView: SkyflowLabelView!
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!
     internal var stackView = UIStackView()
     internal var labelField = PaddingLabel(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
+    
+    internal var errorTriggered: Bool = false
+    internal var triggeredErrorMessage: String = ""
 
 
     internal var horizontalConstraints = [NSLayoutConstraint]()
@@ -115,11 +118,44 @@ public class Label: UIView, Element {
     }
 
     func hideError() {
-        self.errorMessage.alpha = 0.0
+        if !self.errorTriggered {
+            self.errorMessage.alpha = 0.0
+        }
     }
 
     internal func getValue() -> String {
-//        return self.skyflowLabelView.getValue()
         return self.actualValue
+    }
+    
+    public func setError(_ error: String) {
+        self.errorTriggered = true
+        self.triggeredErrorMessage = error
+        showError(message: error)
+    }
+    
+    public func resetError() {
+        self.errorTriggered = false
+        hideError()
+    }
+    
+    public func setToken(_ token: String) {
+        self.revealInput.token = token
+        if self.revealInput.altText.isEmpty {
+            self.skyflowLabelView.updateVal(value: token)
+        }
+    }
+    
+    public func setAltText(_ altText: String) {
+        self.revealInput.altText = altText
+        self.skyflowLabelView.updateVal(value: altText)
+    }
+    
+    public func clearAltText() {
+        self.revealInput.altText = ""
+        self.skyflowLabelView.updateVal(value: actualValue.isEmpty ? revealInput.token : actualValue)
+    }
+    
+    internal func getToken() -> String{
+        return self.revealInput.token
     }
 }

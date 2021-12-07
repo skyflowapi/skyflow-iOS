@@ -34,10 +34,12 @@ internal enum SkyflowCardExpirationDateFormat {
 internal struct SkyflowValidateCardExpirationDate: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
+    public let format: String
 
     /// Initialzation
-    public init(error: SkyflowValidationError) {
+    public init(format: String, error: SkyflowValidationError) {
         self.error = error
+        self.format = format
     }
 }
 
@@ -51,6 +53,10 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
         
         if text.isEmpty {
             return true
+        }
+        
+        if text.count != format.count {
+            return false
         }
 
         var dateFormat: SkyflowCardExpirationDateFormat
@@ -67,8 +73,15 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
         let yearChars = dateFormat.yearCharacters
         guard text.count == (monthChars + yearChars + 1) else { return false }
 
-        let month = text.prefix(monthChars)
-        let year = text.suffix(yearChars)
+        var month: String
+        var year: String
+        if format.starts(with: "mm") {
+            month = String(text.prefix(monthChars))
+            year = String(text.suffix(yearChars))
+        } else {
+            month = String(text.suffix(monthChars))
+            year = String(text.prefix(yearChars))
+        }
 
         let presentYear = Calendar(identifier: .gregorian).component(.year, from: Date())
         let presentMonth = Calendar(identifier: .gregorian).component(.month, from: Date())

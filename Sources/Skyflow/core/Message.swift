@@ -93,6 +93,12 @@ internal enum Message {
     case MISSING_REDACTION_VALUE
     case ELEMENT_MUST_HAVE_TOKEN
     case DUPLICATE_ELEMENT
+    case INVALID_EXPIRYDATE_FORMAT
+    case VAULT_ID_EMPTY_WARNING
+    case VAULT_URL_EMPTY_WARNING
+    case SET_VALUE_WARNING
+    case CLEAR_VALUE_WARNING
+
 
 
     var description: String {
@@ -184,6 +190,11 @@ internal enum Message {
         case .MISSING_REDACTION_VALUE: return "Missing redaction value"
         case .ELEMENT_MUST_HAVE_TOKEN: return "Element must have token"
         case .DUPLICATE_ELEMENT: return "Duplicate column <> found in <>"
+        case .INVALID_EXPIRYDATE_FORMAT: return "<FORMAT> is not a valid date format"
+        case .VAULT_ID_EMPTY_WARNING: return "Invalid client credentials. VaultID is required."
+        case .VAULT_URL_EMPTY_WARNING: return "Invalid client credentials. VaultURL cannot be empty."
+        case .SET_VALUE_WARNING: return "<ELEMENT_TYPE> setValue() cannot be invoked while in PROD env. It is Not Recommended."
+        case .CLEAR_VALUE_WARNING: return "<ELEMENT_TYPE> clearValue() cannot be invoked while in PROD env. It is Not Recommended."
         }
     }
 

@@ -1,21 +1,17 @@
-//
-//  File.swift
-//  
-//
-//  Created by Tejesh Reddy Allampati on 04/10/21.
-//
-
 import Foundation
 import XCTest
 @testable import Skyflow
 
-
+// swiftlint:disable:next type_body_length
 class skyflow_iOS_revealTests: XCTestCase {
     var skyflow: Client!
     var revealTestId: String!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(
+                                vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                                vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                                tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG)))
         self.revealTestId = ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!
     }
 
@@ -25,7 +21,8 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     func getRevealElementInput() -> RevealElementInput {
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        let styles = Styles(base: bstyle)
+        let istyle = Style(textColor: .red)
+        let styles = Styles(base: bstyle, invalid: istyle)
 
         let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
 
@@ -115,6 +112,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
+      
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
         let revealedOutput = ProcessInfo.processInfo.environment["DETOKENIZE_TEST_VALUE"]!
@@ -185,7 +183,7 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         XCTAssertNotNil(jsonData)
         XCTAssertEqual(errorCount, 1)
-        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 404)
+        XCTAssertEqual((((errors[0] as! [String: Any])["error"]) as! NSError).code, 500)
     }
     
     func testCreateRevealRequestBody() {
@@ -247,15 +245,61 @@ class skyflow_iOS_revealTests: XCTestCase {
         revealContainer?.reveal(callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
-        
-        print("=====", callback.data)
-        
+                
         XCTAssertNotNil(callback.data["errors"])
         XCTAssertNotNil(callback.data["records"])
         let errors = callback.data["errors"] as! [[String: Any]]
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual((errors[0]["error"] as! NSError).code, 404)
         XCTAssertEqual(errors[0]["token"] as! String, "invalidtoken")
-
+    }
+    
+    func testSetError() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let errorMessage = "Triggered Error"
+        
+        revealElement!.setError(errorMessage)
+        
+        XCTAssertEqual(revealElement?.errorMessage.alpha, 1.0)
+        XCTAssertEqual(revealElement?.errorMessage.text, errorMessage)
+        XCTAssertEqual(revealElement?.skyflowLabelView.textColor, .red)
+        
+    }
+    
+    func testSetErrorOnReveal() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        revealElementInput.token = "invalidtoken"
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let errorMessage = "Triggered Error"
+        
+        revealElement!.setError(errorMessage)
+        
+        let expectFailure = XCTestExpectation(description: "Should fail with triggered error message")
+        
+        let window = UIWindow()
+        window.addSubview(revealElement!)
+        
+        let callback = DemoAPICallback(expectation: expectFailure)
+        revealContainer?.reveal(callback: callback)
+        
+        wait(for: [expectFailure], timeout: 10.0)
+        
+        XCTAssertEqual(callback.receivedResponse, "Interface: reveal container - \(errorMessage)")
+        
+    }
+    
+    func testResetError() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        var revealElementInput = getRevealElementInput()
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let errorMessage = "Triggered Error"
+        
+        revealElement!.setError(errorMessage)
+        revealElement!.resetError()
+        
+        XCTAssertEqual(revealElement?.errorMessage.alpha, 0.0)
     }
 }

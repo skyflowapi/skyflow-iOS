@@ -11,27 +11,37 @@ public class Client {
     var apiClient: APIClient
     var vaultURL: String
     var contextOptions: ContextOptions
-
+    
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
         self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
         self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: self.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
-        self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel, env: skyflowConfig.options!.env)
+        self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel, env: skyflowConfig.options!.env, interface: .CLIENT)
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
-    public func insert(records: [String: Any], options: InsertOptions? = InsertOptions(), callback: Callback) {
-        Log.info(message: .INSERT_TRIGGERED, contextOptions: self.contextOptions)
-        let icOptions = ICOptions(tokens: options!.tokens)
+    public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
+        var tempContextOptions = self.contextOptions
+        tempContextOptions.interface = .INSERT
+        Log.info(message: .INSERT_TRIGGERED, contextOptions: tempContextOptions)
+        if self.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        let icOptions = ICOptions(tokens: options.tokens)
         var errorCode: ErrorCodes?
 
         if records["records"] == nil {
             errorCode = .RECORDS_KEY_ERROR()
-            callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
+            callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             return
         }
 
-        Log.info(message: .VALIDATE_RECORDS, contextOptions: self.contextOptions)
+        Log.info(message: .VALIDATE_RECORDS, contextOptions: tempContextOptions)
         if let recordEntries = records["records"] as? [[String: Any]] {
             for record in recordEntries {
                 if record["table"] != nil {
@@ -44,6 +54,11 @@ public class Client {
                             if record["fields"] != nil {
                                 if !(record["fields"] is [String: Any]) {
                                     errorCode = .INVALID_FIELDS_TYPE()
+                                    break
+                                }
+                                let fields = record["fields"] as! [String: Any]
+                                if fields.isEmpty {
+                                    errorCode = .EMPTY_FIELDS_KEY()
                                 }
                              } else {
                                 errorCode = .FIELDS_KEY_ERROR()
@@ -55,21 +70,21 @@ public class Client {
                 }
             }
             if errorCode != nil {
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
+                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             } else {
-                let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
+                let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions,
                     onSuccessHandler: {
-                        Log.info(message: .INSERT_DATA_SUCCESS, contextOptions: self.contextOptions)
+                        Log.info(message: .INSERT_DATA_SUCCESS, contextOptions: tempContextOptions)
                     },
                     onFailureHandler: {
                     }
                 )
-                self.apiClient.post(records: records, callback: logCallback, options: icOptions, contextOptions: self.contextOptions)
+                self.apiClient.post(records: records, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
             }
         } else {
             errorCode = .INVALID_RECORDS_TYPE()
-            callback.onFailure(errorCode!.getErrorObject(contextOptions: self.contextOptions))
+            callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
         }
     }
 
@@ -92,6 +107,8 @@ public class Client {
     }
 
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
+        var tempContextOptions = self.contextOptions
+        tempContextOptions.interface = .DETOKENIZE
         func checkRecord(_ token: [String: Any]) -> ErrorCodes? {
                 if token["token"] == nil {
                     return .ID_KEY_ERROR()
@@ -103,52 +120,88 @@ public class Client {
             return nil
         }
 
-        Log.info(message: .DETOKENIZE_TRIGGERED, contextOptions: self.contextOptions)
-        Log.info(message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: self.contextOptions)
+        Log.info(message: .DETOKENIZE_TRIGGERED, contextOptions: tempContextOptions)
+        if self.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        Log.info(message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: tempContextOptions)
 
         if records["records"] == nil {
-            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().getErrorObject(contextOptions: self.contextOptions))
+            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().getErrorObject(contextOptions: tempContextOptions))
         }
 
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
+            if tokens.isEmpty {
+                return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions))
+            }
             for token in tokens {
                 let errorCode = checkRecord(token)
                 if errorCode == nil, let id = token["token"] as? String {
                     list.append(RevealRequestRecord(token: id))
                 } else {
-                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 }
             }
-            let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
+            let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions,
                 onSuccessHandler: {
-                    Log.info(message: .DETOKENIZE_SUCCESS, contextOptions: self.contextOptions)
+                    Log.info(message: .DETOKENIZE_SUCCESS, contextOptions: tempContextOptions)
                 },
                 onFailureHandler: {
                 }
             )
-            self.apiClient.get(records: list, callback: logCallback, contextOptions: contextOptions)
+            self.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
         } else {
-            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: self.contextOptions))
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
 
     public func getById(records: [String: Any], callback: Callback) {
-        Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: self.contextOptions)
-        Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: self.contextOptions)
+        var tempContextOptions = self.contextOptions
+        tempContextOptions.interface = .GETBYID
+        Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: tempContextOptions)
+        if self.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: tempContextOptions)
 
         func checkEntry(entry: [String: Any]) -> ErrorCodes? {
+            if entry.isEmpty {
+                return .EMPTY_RECORDS_OBJECT()
+            }
             if entry["ids"] == nil {
                 return .MISSING_KEY_IDS()
             }
             if !(entry["ids"] is [String]) {
                 return .INVALID_IDS_TYPE()
             }
+            if ((entry["ids"] as? [String])?.count == 0) {
+                return .EMPTY_IDS()
+            }
+            let ids = entry["ids"] as! [String]
+            for id in ids {
+                if (id == "") {
+                    return .EMPTY_ID_VALUE()
+                }
+            }
             if entry["table"] == nil {
                 return .TABLE_KEY_ERROR()
             }
             if !(entry["table"] is String) {
                 return .INVALID_TABLE_NAME_TYPE()
+            }
+            if ((entry["table"] as? String) == "") {
+                return .EMPTY_TABLE_NAME()
             }
             if entry["redaction"] == nil {
                 return .REDACTION_KEY_ERROR()
@@ -161,31 +214,34 @@ public class Client {
         }
 
         if records["records"] == nil {
-            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.RECORDS_KEY_ERROR().errorObject)
+            return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions)) //Check
         }
 
         if let entries = records["records"] as? [[String: Any]] {
             var list: [GetByIdRecord] = []
+            if entries.isEmpty {
+                return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions))
+            }
             for entry in entries {
                 let errorCode = checkEntry(entry: entry)
                 if errorCode != nil {
-                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
+                    return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 } else {
                     if let ids = entry["ids"] as? [String], let table = entry["table"] as? String, let redaction = entry["redaction"] as? RedactionType {
                         list.append(GetByIdRecord(ids: ids, table: table, redaction: redaction.rawValue))
                     }
                 }
             }
-            let logCallback = LogCallback(clientCallback: callback, contextOptions: self.contextOptions,
+            let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions,
                 onSuccessHandler: {
-                    Log.info(message: .GET_BY_ID_SUCCESS, contextOptions: self.contextOptions)
+                    Log.info(message: .GET_BY_ID_SUCCESS, contextOptions: tempContextOptions)
                 },
                 onFailureHandler: {
                 }
             )
-            self.apiClient.getById(records: list, callback: logCallback, contextOptions: contextOptions)
+            self.apiClient.getById(records: list, callback: logCallback, contextOptions: tempContextOptions)
         } else {
-            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: self.contextOptions))
+            callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
 
@@ -195,12 +251,14 @@ public class Client {
     }
 
     public func invokeConnection(config: ConnectionConfig, callback: Callback) {
-        Log.info(message: .INVOKE_CONNECTION_TRIGGERED, contextOptions: self.contextOptions)
-        let connectionAPIClient = ConnectionAPIClient(callback: callback, contextOptions: self.contextOptions)
+        var tempContextOptions = self.contextOptions
+        tempContextOptions.interface = .INVOKE_CONNECTION
+        Log.info(message: .INVOKE_CONNECTION_TRIGGERED, contextOptions: tempContextOptions)
+        let connectionAPIClient = ConnectionAPIClient(callback: callback, contextOptions: tempContextOptions)
 
         do {
-            let connectionTokenCallback = ConnectionTokenCallback(client: connectionAPIClient, config: try config.convert(contextOptions: self.contextOptions), clientCallback: callback)
-            self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: self.contextOptions)
+            let connectionTokenCallback = ConnectionTokenCallback(client: connectionAPIClient, config: try config.convert(contextOptions: tempContextOptions), clientCallback: callback)
+            self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: tempContextOptions)
         } catch {
             callRevealOnFailure(callback: callback, errorObject: error)
         }
@@ -243,10 +301,12 @@ internal class LogCallback: Callback {
         self.onSuccessHandler = onSuccessHandler
         self.onFailureHandler = onFailureHandler
     }
+    
     func onSuccess(_ responseBody: Any) {
         self.onSuccessHandler()
         clientCallback.onSuccess(responseBody)
     }
+    
     func onFailure(_ error: Any) {
         self.onFailureHandler()
         clientCallback.onFailure(error)

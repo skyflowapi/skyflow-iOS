@@ -53,7 +53,7 @@ public struct ConnectionConfig {
 
         if let responseConfig = self.responseBody {
             do {
-                try ConversionHelpers.checkElements(responseConfig, contextOptions: contextOptions)
+                try ConversionHelpers.checkElements(responseConfig, emptyTokenAllowed: true, contextOptions: contextOptions)
             } catch {
                 throw error
             }

@@ -8,6 +8,7 @@
 import XCTest
 @testable import Skyflow
 
+// swiftlint:disable:next type_body_length
 class Skyflow_iOS_connectionErrorTests: XCTestCase {
     var skyflow: Client!
 
@@ -69,7 +70,7 @@ class Skyflow_iOS_connectionErrorTests: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
 
-        XCTAssertEqual(getError(callback.data), ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "cardNumber").description)
+        XCTAssertEqual(getError(callback.data), "Interface: invokeConnection - " + ErrorCodes.UNMOUNTED_ELEMENT_INVOKE_CONNECTION(value: "cardNumber").description)
     }
 
     func testInvokeConnectionDuplicateElements() {
@@ -97,6 +98,6 @@ class Skyflow_iOS_connectionErrorTests: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
 
-        XCTAssertEqual(getError(callback.data), ErrorCodes.DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: "").description)
+        XCTAssertEqual(getError(callback.data), "Interface: invokeConnection - " + ErrorCodes.DUPLICATE_ELEMENT_IN_RESPONSE_BODY(value: "").description)
     }
 }

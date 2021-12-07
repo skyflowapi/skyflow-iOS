@@ -5,7 +5,7 @@ import UIKit
 #endif
 
 
-public class TextField: SkyflowElement, Element {
+public class TextField: SkyflowElement, Element, BaseElement {
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty = false
@@ -14,6 +14,10 @@ public class TextField: SkyflowElement, Element {
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
+    
+    internal var textFieldDelegate: UITextFieldDelegate? = nil
+    
+    internal var errorTriggered: Bool = false
     
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
@@ -63,7 +67,41 @@ public class TextField: SkyflowElement, Element {
         super.init(input: input, options: options, contextOptions: contextOptions)
         //        self.contextOptions = contextOptions
         self.userValidationRules.append(input.validations)
+        // add delegate
+        self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
+        self.textField.delegate = self.textFieldDelegate!
+        
+        setFormatPattern()
         setupField()
+    }
+    
+    internal func addValidations() {
+        let defaultFormat = "mm/yy"
+        let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
+        if !supportedFormats.contains(self.options.format) {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .INVALID_EXPIRYDATE_FORMAT, values: [self.options.format], contextOptions: context!)
+            self.options.format = defaultFormat
+        }
+        if self.fieldType == .EXPIRATION_DATE {
+            let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
+            self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
+        }
+    }
+    
+    internal func setFormatPattern() {
+        switch fieldType {
+        case .CARD_NUMBER:
+            let cardType = CardType.forCardNumber(cardNumber: self.actualValue).instance
+            self.textField.formatPattern = cardType.formatPattern
+        case .EXPIRATION_DATE:
+            self.textField.formatPattern = self.options.format.replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
+        default:
+            if let instance = fieldType.instance {
+                self.textField.formatPattern = instance.formatPattern
+            }
+        }
     }
 
     required internal init?(coder aDecoder: NSCoder) {
@@ -104,6 +142,29 @@ public class TextField: SkyflowElement, Element {
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }
+    
+    public func setValue(value: String) {
+        if(contextOptions.env == .DEV){
+            actualValue = value
+            self.textField.addAndFormatText(value)
+            textFieldDidChange(self.textField)
+        } else {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
+        }
+    }
+    
+    public func clearValue(){
+        if(contextOptions.env == .DEV){
+            actualValue = ""
+            textField.secureText = ""
+        } else {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
+        }
+    }
 
     /// Field Configuration
     override func setupField() {
@@ -115,6 +176,7 @@ public class TextField: SkyflowElement, Element {
             validationRules = instance.validation
             textField.keyboardType = instance.keyboardType
         }
+        addValidations()
 
 
         // Base label styles
@@ -147,16 +209,14 @@ public class TextField: SkyflowElement, Element {
             containerView.addSubview(imageView)
             textField.leftView = containerView
         }
-
-        if let altText = self.collectInput.altText {
-            self.textField.secureText = altText
-        }
         
         if self.fieldType == .CARD_NUMBER {
-            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
+        
+        setFormatPattern()
         
     }
 
@@ -184,12 +244,18 @@ public class TextField: SkyflowElement, Element {
     }
     
     override func validate() -> SkyflowValidationError {
-        let str = textField.getSecureRawText ?? ""
+        let str = actualValue
+        if self.errorTriggered {
+            return self.errorMessage.text!
+        }
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
     
      func validateCustomRules() -> SkyflowValidationError {
-        let str = textField.getSecureRawText ?? ""
+        let str = actualValue
+        if self.errorTriggered {
+            return ""
+        }
         return SkyflowValidator.validate(input: str, rules: userValidationRules)
     }
 
@@ -201,6 +267,7 @@ public class TextField: SkyflowElement, Element {
         if !(state["isValid"] as! Bool) {
             return false
         }
+        
         return true
     }
 
@@ -250,9 +317,9 @@ extension TextField {
     
 }
 
-/// Textfield delegate
-extension TextField: UITextFieldDelegate {
-    private func updateInputStyle(_ style: Style? = nil) {
+/// Textfield updates
+extension TextField {
+    internal func updateInputStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput.inputStyles.base
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
@@ -267,86 +334,86 @@ extension TextField: UITextFieldDelegate {
         self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
     }
 
-    private func updateLabelStyle(_ style: Style? = nil) {
+    internal func updateLabelStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput!.labelStyles.base
         self.textFieldLabel.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         self.textFieldLabel.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textFieldLabel.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .left
         self.textFieldLabel.insets = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
-
-
-    /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
-    public func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.hasFocus = true
-        textFieldValueChanged()
-        // element styles on focus
-        updateInputStyle(collectInput.inputStyles.focus)
-
-        // label styles on focus
-        updateLabelStyle(collectInput!.labelStyles.focus)
-        onFocusHandler?((self.state as! StateforText).getStateForListener())
+    
+    // For tests compatibility
+    internal func textFieldDidEndEditing(_ textField: UITextField) {
+        self.textField.delegate?.textFieldDidEndEditing?(textField)
     }
 
+
     /// Wrap native `UITextField` delegate method for `didChange`.
-    @objc func textFieldDidChange(_ textField: UITextField) {
+    @objc func  textFieldDidChange(_ textField: UITextField) {
         isDirty = true
         updateActualValue()
         textFieldValueChanged()
         onChangeHandler?((self.state as! StateforText).getStateForListener())
         
         if self.fieldType == .CARD_NUMBER {
-            let t = getOutput()!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
+        setFormatPattern()
     }
 
     func updateActualValue() {
-        self.actualValue = textField.secureText ?? ""
-    }
-
-    /// Wrap native `UITextField` delegate method for `didEndEditing`.
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        self.hasFocus = false
-        updateActualValue()
-        textFieldValueChanged()
-        let state = self.state.getState()
-
-        // Set label styles to base
-        updateLabelStyle()
-
-        if state["isEmpty"] as! Bool {
-            updateInputStyle(collectInput!.inputStyles.empty)
-            errorMessage.alpha = 0.0 // Hide error message
-        } else if !(state["isValid"] as! Bool) {
-            updateInputStyle(collectInput!.inputStyles.invalid)
-            errorMessage.alpha = 1.0 // Show error message
-
+        if self.fieldType == .CARD_NUMBER {
+            self.actualValue = textField.getSecureRawText ?? ""
         } else {
-            updateInputStyle(collectInput!.inputStyles.complete)
-            errorMessage.alpha = 0.0 // Hide error message
+            self.actualValue = textField.secureText ?? ""
         }
-        updateErrorMessage()
-        onBlurHandler?((self.state as! StateforText).getStateForListener())
-    }
-
-    @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
-        textFieldValueChanged()
     }
     
     func updateErrorMessage() {
+        
+        var isRequiredCheckFailed = false
+        
         let currentState = state.getState()
-        if  currentState["isDefaultRuleFailed"] as! Bool{
-            errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
-        }
-        else if currentState["isCustomRuleFailed"] as! Bool{
-            if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
-                errorMessage.text = "Validation failed"
+        if self.errorTriggered == false {
+            // Error styles
+            if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
+                if currentState["isRequired"] as! Bool {
+                    isRequiredCheckFailed = true
+                    updateInputStyle(collectInput!.inputStyles.invalid)
+                    errorMessage.alpha = 1.0
+                } else {
+                    updateInputStyle(collectInput!.inputStyles.empty)
+                    errorMessage.alpha = 0.0 // Hide error message
+                }
+            } else if !(currentState["isValid"] as! Bool) {
+                updateInputStyle(collectInput!.inputStyles.invalid)
+                errorMessage.alpha = 1.0 // Show error message
+            } else {
+                updateInputStyle(collectInput!.inputStyles.complete)
+                errorMessage.alpha = 0.0 // Hide error message
             }
-            else {
-                errorMessage.text = currentState["validationError"] as? String
+            let label = self.collectInput.label
+
+            // Error message
+            if isRequiredCheckFailed {
+                errorMessage.text =  "Value is required"
             }
+            else if  currentState["isDefaultRuleFailed"] as! Bool{
+                errorMessage.text = "Invalid " + (label != "" ? label : "element")
+            }
+            else if currentState["isCustomRuleFailed"] as! Bool{
+                if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
+                  errorMessage.text = "Validation failed"
+                }
+                else {
+                  errorMessage.text = currentState["validationError"] as? String
+                }
+            }
+        } else {
+            updateInputStyle(collectInput!.inputStyles.invalid)
+            errorMessage.alpha = 1.0 // Always show error message
         }
     }
 }
@@ -399,10 +466,10 @@ internal extension TextField {
     @objc
     func addTextFieldObservers() {
         /// delegates
-        textField.addSomeTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
-        /// Note: .allEditingEvents doesn't work proparly when set text programatically. Use setText instead!
-        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
-        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditingOnExit), for: .editingDidEndOnExit)
+//        textField.addSomeTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
+//        /// Note: .allEditingEvents doesn't work proparly when set text programatically. Use setText instead!
+//        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
+//        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditingOnExit), for: .editingDidEndOnExit)
         NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange), name: UITextField.textDidChangeNotification, object: textField)
         /// tap gesture for update focus state
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(focusOn))
@@ -449,5 +516,19 @@ internal extension TextField {
         // change status
         textField.becomeFirstResponder()
         textFieldValueChanged()
+    }
+}
+
+extension TextField {
+    public func setError(_ error: String) {
+        self.errorTriggered = true
+        self.errorMessage.text = error
+        updateErrorMessage()
+    }
+    
+    public func resetError() {
+        self.errorMessage.text = ""
+        self.errorTriggered = false
+        updateErrorMessage()
     }
 }
