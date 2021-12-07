@@ -79,6 +79,9 @@ public class TextField: SkyflowElement, Element, BaseElement {
         let defaultFormat = "mm/yy"
         let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
         if !supportedFormats.contains(self.options.format) {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .INVALID_EXPIRYDATE_FORMAT, values: [self.options.format], contextOptions: context!)
             self.options.format = defaultFormat
         }
         if self.fieldType == .EXPIRATION_DATE {

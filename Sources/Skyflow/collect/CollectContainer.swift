@@ -12,9 +12,11 @@ public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
-        let skyflowElement = TextField(input: input, options: options!, contextOptions: self.skyflow.contextOptions)
+        var tempContextOptions = self.skyflow.contextOptions
+        tempContextOptions.interface = .COLLECT_CONTAINER
+        let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions)
         elements.append(skyflowElement)
-        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: self.skyflow.contextOptions)
+        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: tempContextOptions)
         return skyflowElement
     }
 
