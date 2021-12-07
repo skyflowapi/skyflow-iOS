@@ -13,7 +13,7 @@ public struct Configuration {
     var tokenProvider: TokenProvider
     var options: Options?
 
-    public init(vaultID: String, vaultURL: String, tokenProvider: TokenProvider, options: Options? = Options()) {
+    public init(vaultID: String = "", vaultURL: String = "", tokenProvider: TokenProvider, options: Options? = Options()) {
         self.vaultID = vaultID
         self.vaultURL = vaultURL
         self.tokenProvider = tokenProvider

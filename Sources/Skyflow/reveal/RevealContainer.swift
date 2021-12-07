@@ -23,6 +23,7 @@ public extension Container {
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
+        self.skyflow.checkVaultConfig(contextOptions: tempContextOptions)
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
