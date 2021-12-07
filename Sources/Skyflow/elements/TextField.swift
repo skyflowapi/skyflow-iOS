@@ -139,6 +139,20 @@ public class TextField: SkyflowElement, Element {
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }
+    
+    public func setValue(value: String) {
+        if(contextOptions.env == .DEV){
+            actualValue = value
+            textField.secureText = value
+        }
+    }
+    
+    public func clearValue(){
+        if(contextOptions.env == .DEV){
+            actualValue = ""
+            textField.secureText = ""
+        }
+    }
 
     /// Field Configuration
     override func setupField() {
@@ -182,10 +196,6 @@ public class TextField: SkyflowElement, Element {
             let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 20))
             containerView.addSubview(imageView)
             textField.leftView = containerView
-        }
-
-        if let altText = self.collectInput.altText {
-            self.textField.secureText = altText
         }
         
         if self.fieldType == .CARD_NUMBER {
