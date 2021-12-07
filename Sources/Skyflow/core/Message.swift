@@ -96,6 +96,8 @@ internal enum Message {
     case INVALID_EXPIRYDATE_FORMAT
     case VAULT_ID_EMPTY_WARNING
     case VAULT_URL_EMPTY_WARNING
+    case SET_VALUE_WARNING
+    case CLEAR_VALUE_WARNING
 
 
 
@@ -191,6 +193,8 @@ internal enum Message {
         case .INVALID_EXPIRYDATE_FORMAT: return "<FORMAT> is not a valid date format"
         case .VAULT_ID_EMPTY_WARNING: return "Invalid client credentials. VaultID is required."
         case .VAULT_URL_EMPTY_WARNING: return "Invalid client credentials. VaultURL cannot be empty."
+        case .SET_VALUE_WARNING: return "<ELEMENT_TYPE> setValue() cannot invoked while in PROD env. It is Not Recommeded"
+        case .CLEAR_VALUE_WARNING: return "<ELEMENT_TYPE> clearValue() cannot invoked while in PROD env. It is Not Recommeded"
         }
     }
 
