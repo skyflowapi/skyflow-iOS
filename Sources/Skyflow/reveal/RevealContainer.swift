@@ -23,7 +23,14 @@ public extension Container {
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
-        self.skyflow.checkVaultConfig(contextOptions: tempContextOptions)
+        if self.skyflow.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.skyflow.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
         if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {

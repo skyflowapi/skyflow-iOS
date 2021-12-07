@@ -11,15 +11,6 @@ public class Client {
     var apiClient: APIClient
     var vaultURL: String
     var contextOptions: ContextOptions
-
-    internal func checkVaultConfig(contextOptions: ContextOptions){
-        if self.vaultID.isEmpty {
-            Log.warn(message: .VAULT_ID_EMPTY_WARNING, contextOptions: contextOptions)
-        }
-        if self.vaultURL.isEmpty {
-            Log.warn(message: .VAULT_URL_EMPTY_WARNING, contextOptions: contextOptions)
-        }
-    }
     
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
@@ -33,7 +24,14 @@ public class Client {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INSERT
         Log.info(message: .INSERT_TRIGGERED, contextOptions: tempContextOptions)
-        self.checkVaultConfig(contextOptions: tempContextOptions)
+        if self.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
         let icOptions = ICOptions(tokens: options.tokens)
         var errorCode: ErrorCodes?
 
@@ -123,7 +121,14 @@ public class Client {
         }
 
         Log.info(message: .DETOKENIZE_TRIGGERED, contextOptions: tempContextOptions)
-        self.checkVaultConfig(contextOptions: tempContextOptions)
+        if self.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
         Log.info(message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: tempContextOptions)
 
         if records["records"] == nil {
@@ -160,7 +165,14 @@ public class Client {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GETBYID
         Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: tempContextOptions)
-        self.checkVaultConfig(contextOptions: tempContextOptions)
+        if self.vaultID.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if self.vaultURL == "/v1/vaults/"  {
+            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+            return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
         Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: tempContextOptions)
 
         func checkEntry(entry: [String: Any]) -> ErrorCodes? {
