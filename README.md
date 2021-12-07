@@ -131,6 +131,7 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 -  [**Using validations on Collect Elements**](#validations)
 -  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
 -  [**UI Error for Collect Elements**](#ui-error-for-collect-elements)
+- [**Set and Clear value for Collect Elements (DEV ENV ONLY)**](#set-and-clear-value-for-collect-elements-dev-env-only)
 
 ## Inserting data into the vault
 
@@ -207,7 +208,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
    errorTextStyles: Skyflow.Styles, //optional styles that will be applied to the errorText of the collect element
    label: String,                   //optional label for the form element
    placeholder: String,             //optional placeholder for the form element
-   altText: String,                 //optional string that acts as an initial value for the collect element
+   altText: String,                 //(DEPRECATED) optional string that acts as an initial value for the collect element
    validations: ValidationSet       // optional set of validations for the input element
 )
 ```
@@ -306,7 +307,7 @@ let collectElementInput =  Skyflow.CollectElementInput(
     errorTextStyles: Skyflow.Styles, //optional styles that will be applied to the errorText of the collect element
     label: String,                   //optional label for the form element
     placeholder: String,             //optional placeholder for the form element
-    altText: String,                 //optional string that acts as an initial value for the collect element
+    altText: String,                 //(DEPRECATED) optional string that acts as an initial value for the collect element
     validations: ValidationSet       // optional set of validations for the input element
 )
 
@@ -608,11 +609,48 @@ cardNumber.resetError()
 }
 ```
 
+### Set and Clear value for Collect Elements (DEV ENV ONLY)
+
+`setValue(value: String)` method is used to set the value of the element. This method will override any previous value present in the element.
+
+`clearValue()` method is used to reset the value of the element.
+
+`Note:` This methods are only available in DEV env for testing/developmental purposes and MUST NOT be used in PROD env.
+
+##### Sample code snippet for setValue and clearValue
+
+```swift
+//create skyflow client with env DEV 
+let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(env: Skyflow.Env.DEV))
+
+let skyflowClient = Skyflow.initialize(config)
+
+let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+ 
+// Create a CollectElementInput
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+)
+
+let cardNumber = container.create(input: cardNumberInput)
+
+//Set a value programatically
+cardNumber.setValue("4111111111111111")
+
+//Clear the value
+cardNumber.clearValue()
+}
+```
+
 ---
 # Securely revealing data client-side
 -  [**Retrieving data from the vault**](#retrieving-data-from-the-vault)
 -  [**Using Skyflow Elements to reveal data**](#using-skyflow-elements-to-reveal-data)
 -  [**UI Error for Reveal Elements**](#ui-error-for-reveal-elements)
+-  [**Set token for Reveal Elements**](#set-token-for-reveal-elements)
+- [**Set and clear altText for Reveal Elements**](#set-and-clear-alttext-for-reveal-elements)
 
 ## Retrieving data from the vault
 For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
@@ -794,6 +832,16 @@ Helps to display custom error messages on the Skyflow Elements through the metho
 
 `resetError()` method is used to clear the custom error message that is set using `setError`.
 
+### Set token for Reveal Elements
+
+The `setToken(value: String)` method can be used to set the token of the Reveal Element. If no altText is set, the set token will be displayed on the UI as well. If altText is set, then there will be no change in the UI but the token of the element will be internally updated.
+
+### Set and Clear altText for Reveal Elements
+
+The `setAltText(value: String)` method can be used to set the altText of the Reveal Element. This will cause the altText to be displayed in the UI regardless of whether the token or value is currently being displayed.
+
+`clearAltText()` method can be used to clear the altText, this will cause the element to display the token or actual value of the element. If the element has no token, the element will be empty.
+
 ### End to end example of revealing data with Skyflow Elements
 #### Sample Code:
 ```swift
@@ -915,7 +963,7 @@ Sample use-cases on using invokeConnection():
 Merchant acceptance - customers should be able to complete payment checkout without cvv touching their application. This means that the merchant should be able to receive a CVV and process a payment without exposing their front-end to any PCI data
 ```swift
 // step 1
-let config = Skyflow.Configuration(vaultID: <VAULT_ID>, vaultURL: <VAULT_URL>, tokenProvider: demoTokenProvider)
+let config = Skyflow.Configuration(tokenProvider: demoTokenProvider)
 
 let skyflowClient = Skyflow.initialize(config)
 
@@ -979,7 +1027,7 @@ In the above example,  CVV is being collected from the user input at the time of
  Card issuance -  customers want to issue cards from card issuer service and should generate the CVV dynamically without increasing their PCI scope.
 ```swift
 // step 1
-let config = Skyflow.Configuration(vaultID: <VAULT_ID>, vaultURL: <VAULT_URL>, tokenProvider: demoTokenProvider)
+let config = Skyflow.Configuration(tokenProvider: demoTokenProvider)
 
 let skyflowClient = Skyflow.initialize(config)
 
