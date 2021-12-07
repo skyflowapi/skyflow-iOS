@@ -146,7 +146,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
     public func setValue(value: String) {
         if(contextOptions.env == .DEV){
             actualValue = value
-            textField.secureText = value
+            self.textField.secureText = value
+            textFieldDidChange(self.textField)
         }
     }
     
