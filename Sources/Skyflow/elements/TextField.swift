@@ -5,7 +5,7 @@ import UIKit
 #endif
 
 
-public class TextField: SkyflowElement, Element {
+public class TextField: SkyflowElement, Element, BaseElement {
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty = false
@@ -79,6 +79,9 @@ public class TextField: SkyflowElement, Element {
         let defaultFormat = "mm/yy"
         let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
         if !supportedFormats.contains(self.options.format) {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            Log.warn(message: .INVALID_EXPIRYDATE_FORMAT, values: [self.options.format], contextOptions: context!)
             self.options.format = defaultFormat
         }
         if self.fieldType == .EXPIRATION_DATE {
@@ -143,7 +146,8 @@ public class TextField: SkyflowElement, Element {
     public func setValue(value: String) {
         if(contextOptions.env == .DEV){
             actualValue = value
-            textField.secureText = value
+            self.textField.addAndFormatText(value)
+            textFieldDidChange(self.textField)
         }
     }
     
