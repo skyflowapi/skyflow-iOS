@@ -141,7 +141,7 @@ internal class FormatTextField: UITextField {
         
         
         if self.formatPattern.isEmpty {
-            return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount)
+            return FormatResult(formattedText: text, numOfSeperatorsAdded: seperatorsCount)
         }
     
         if text.count > formatPattern.count {
