@@ -91,8 +91,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let data = callback.receivedResponse
         let message = data
-        
-        XCTAssertTrue(message.contains("document does not exist"))
+        XCTAssertTrue(message.contains("Value not found"))
     }
     
     func testCreateSkyflowElement() {

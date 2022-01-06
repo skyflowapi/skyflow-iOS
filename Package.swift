@@ -14,13 +14,14 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/tadija/AEXML.git", from: "4.6.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Skyflow",
-            dependencies: [],
+            dependencies: ["AEXML"],
             resources: [
                    .process("Resources")
                  ]
@@ -31,6 +32,8 @@ let package = Package(
         .testTarget(name: "skyflow-iOS-revealTests",
                     dependencies: ["Skyflow"]),
         .testTarget(name: "skyflow-iOS-connectionTests",
+                    dependencies: ["Skyflow"]),
+        .testTarget(name: "skyflow-iOS-soapConnectionTests",
                     dependencies: ["Skyflow"]),
         .testTarget(name: "skyflow-iOS-errorTests",
                     dependencies: ["Skyflow"]),
