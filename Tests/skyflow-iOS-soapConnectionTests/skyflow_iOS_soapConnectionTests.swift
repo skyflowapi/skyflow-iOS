@@ -6,7 +6,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = Client(Configuration(tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG)))
     }
     
     override func tearDown() {
@@ -176,7 +176,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         var contextOptions = ContextOptions()
         contextOptions.interface = .INVOKE_CONNECTION
         let collectContainer = self.skyflow.container(type: ContainerType.COLLECT)
-        let collectElement = collectContainer?.create(input: CollectElementInput(label: "collectElement", type: .INPUT_FIELD))
+        let collectElement = collectContainer?.create(input: CollectElementInput(label: "collectElement", altText: "collect element", type: .CARDHOLDER_NAME))
         let collectElementID = collectElement!.getID()
         let xml = """
             <s:Envelope>
@@ -266,6 +266,12 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
 
         do {
             try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
+            //For testing code with DispatchQueue.main.async
+            let expectation = self.expectation(description: "Test")
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
+            self.waitForExpectations(timeout: 1, handler: nil)
             XCTAssertEqual(revealElement?.actualValue, "123")
         }
         catch {
@@ -348,6 +354,11 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
 
         do {
             try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
+            let expectation = self.expectation(description: "Test")
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
+            self.waitForExpectations(timeout: 1, handler: nil)
             XCTAssertEqual(collectElement?.actualValue, "123")
         }
         catch {
@@ -453,6 +464,11 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
 
         do {
             try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
+            let expectation = self.expectation(description: "Test")
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
+            self.waitForExpectations(timeout: 1, handler: nil)
             XCTAssertEqual(revealElement1?.actualValue, "123")
             XCTAssertEqual(revealElement2?.actualValue, "456")
         }
@@ -582,6 +598,11 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
 
         do {
             try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
+            let expectation = self.expectation(description: "Test")
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
+            self.waitForExpectations(timeout: 1, handler: nil)
             XCTAssertEqual(revealElement1?.actualValue, "123")
             XCTAssertEqual(revealElement2?.actualValue, "456")
         }
