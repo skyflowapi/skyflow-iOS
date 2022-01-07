@@ -1114,6 +1114,8 @@ The values in the **requestXML** can contain collect element IDs or reveal eleme
 
 `Note:` If the user needs to use Skyflow Elements in place of values in the requestXML or responseXML, they will pass in an additional tag **Skyflow** containing the ID of the particular element.
 
+Please ensure that the paths configured in the responseXML are present in the actual response. In case of a misconfigured path, the response from the server will be discarded and an error will be thrown.
+
 ```swift
 let config = Skyflow.Configuration(
     tokenProvider = demoTokenProvider
