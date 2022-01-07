@@ -14,7 +14,11 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG)))
+        self.skyflow = Client(Configuration(
+            vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+            vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+            tokenProvider: DemoTokenProvider(),
+            options: Options(logLevel: .DEBUG)))
     }
 
     override func tearDown() {
