@@ -1,7 +1,7 @@
 import XCTest
 @testable import Skyflow
-import skyflow_iOS_getByIdTests
 
+// swiftlint:disable:next type_body_length
 final class skyflow_iOS_soapConnectionTests: XCTestCase {
     var skyflow: Client!
     

@@ -76,7 +76,11 @@ public class SoapConnectionAPIClient {
             }
             var newActualResponse: String = ""
             do {
-            newActualResponse = try SoapRequestHelpers.handleXMLResponse(responseXML: config.responseXML, actualResponse: String(data: data, encoding: .utf8)!, skyflow: self.skyflow, contextOptions: self.contextOptions)
+            newActualResponse = try SoapRequestHelpers.handleXMLResponse(
+                responseXML: config.responseXML,
+                actualResponse: String(data: data, encoding: .utf8)!,
+                skyflow: self.skyflow,
+                contextOptions: self.contextOptions)
             }
             catch {
                 errorObject = error
