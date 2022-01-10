@@ -259,7 +259,11 @@ public class Client {
         let connectionAPIClient = ConnectionAPIClient(callback: callback, contextOptions: tempContextOptions)
 
         do {
-            let connectionTokenCallback = ConnectionTokenCallback(client: connectionAPIClient, connectionType: .REST, config: try config.convert(contextOptions: tempContextOptions), clientCallback: callback)
+            let connectionTokenCallback = ConnectionTokenCallback(
+                client: connectionAPIClient,
+                connectionType: .REST,
+                config: try config.convert(contextOptions: tempContextOptions),
+                clientCallback: callback)
             self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: tempContextOptions)
         } catch {
             callRevealOnFailure(callback: callback, errorObject: error)
@@ -323,31 +327,6 @@ private class ConnectionTokenCallback: Callback {
         clientCallback.onFailure(error)
     }
 }
-
-//private class SoapConnectionTokenCallback: Callback {
-//    var client: SoapConnectionAPIClient
-//    var config: SoapConnectionConfig
-//    var clientCallback: Callback
-//
-//    init(client: SoapConnectionAPIClient, config: SoapConnectionConfig, clientCallback: Callback) {
-//        self.client = client
-//        self.config = config
-//        self.clientCallback = clientCallback
-//    }
-//
-//    func onSuccess(_ responseBody: Any) {
-//        do {
-//            try client.invokeSoapConnection(token: responseBody as! String, config: config)
-//        } catch {
-//            clientCallback.onFailure(error)
-//        }
-//    }
-//
-//    func onFailure(_ error: Any) {
-//        clientCallback.onFailure(error)
-//    }
-//}
-
 
 internal class LogCallback: Callback {
     var clientCallback: Callback
