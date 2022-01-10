@@ -87,7 +87,6 @@ public class SoapConnectionAPIClient {
                 return
             }
             self.callback.onSuccess(newActualResponse)
-          semaphore.signal()
         }
 
         task.resume()
