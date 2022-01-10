@@ -5,12 +5,14 @@
 //  Created by Akhil Anil Mangala on 19/07/21.
 //
 import Foundation
+import AEXML
 
 public class Client {
     var vaultID: String
     var apiClient: APIClient
     var vaultURL: String
     var contextOptions: ContextOptions
+    var elementLookup: [String: Any] = [:]
     
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
@@ -257,28 +259,65 @@ public class Client {
         let connectionAPIClient = ConnectionAPIClient(callback: callback, contextOptions: tempContextOptions)
 
         do {
-            let connectionTokenCallback = ConnectionTokenCallback(client: connectionAPIClient, config: try config.convert(contextOptions: tempContextOptions), clientCallback: callback)
+            let connectionTokenCallback = ConnectionTokenCallback(
+                client: connectionAPIClient,
+                connectionType: .REST,
+                config: try config.convert(contextOptions: tempContextOptions),
+                clientCallback: callback)
             self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: tempContextOptions)
         } catch {
             callRevealOnFailure(callback: callback, errorObject: error)
         }
     }
+    
+    public func invokeSoapConnection(config: SoapConnectionConfig, callback: Callback) {
+        var tempContextOptions = self.contextOptions
+        tempContextOptions.interface = .INVOKE_CONNECTION
+        Log.info(message: .INVOKE_CONNECTION_TRIGGERED, contextOptions: tempContextOptions)
+        if config.connectionURL.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_CONNECTION_URL()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        if config.requestXML.isEmpty {
+            let errorCode = ErrorCodes.EMPTY_REQUEST_XML()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        do {
+            let requestXMLDocument = try AEXMLDocument(xml: config.requestXML)
+        }
+        catch {
+            let errorCode = ErrorCodes.INVALID_REQUEST_XML()
+            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+        }
+        let soapConnectionAPIClient = SoapConnectionAPIClient(callback: callback, skyflow: self, contextOptions: tempContextOptions)
+
+        let soapConnectionTokenCallback = ConnectionTokenCallback(client: soapConnectionAPIClient, connectionType: .SOAP, config: config, clientCallback: callback)
+        self.apiClient.getAccessToken(callback: soapConnectionTokenCallback, contextOptions: tempContextOptions)
+    }
 }
 
 private class ConnectionTokenCallback: Callback {
-    var client: ConnectionAPIClient
-    var config: ConnectionConfig
+    var client: Any
+    var config: Any
     var clientCallback: Callback
+    var connectionType: ConnectionType
 
-    init(client: ConnectionAPIClient, config: ConnectionConfig, clientCallback: Callback) {
+    init(client: Any, connectionType: ConnectionType, config: Any, clientCallback: Callback) {
         self.client = client
         self.config = config
         self.clientCallback = clientCallback
+        self.connectionType = connectionType
     }
 
     func onSuccess(_ responseBody: Any) {
         do {
-            try client.invokeConnection(token: responseBody as! String, config: config)
+            if connectionType == .REST {
+            try (client as! ConnectionAPIClient).invokeConnection(
+                token: responseBody as! String, config: config as! ConnectionConfig)
+            }
+            else {
+                try (client as! SoapConnectionAPIClient).invokeSoapConnection(token: responseBody as! String, config: config as! SoapConnectionConfig)
+            }
         } catch {
             clientCallback.onFailure(error)
         }
@@ -311,4 +350,9 @@ internal class LogCallback: Callback {
         self.onFailureHandler()
         clientCallback.onFailure(error)
     }
+}
+
+internal enum ConnectionType {
+    case REST
+    case SOAP
 }

@@ -184,7 +184,7 @@ class ConversionHelpers {
         return false
     }
 
-    static func removeEmptyValuesFrom(response: [String: Any], contextOptions: ContextOptions)throws -> [String: Any] {
+    static func removeEmptyValuesFrom(response: [String: Any], contextOptions: ContextOptions) throws -> [String: Any] {
         var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
 
         func recurseDict(_ dict: [String: Any]) throws -> [String: Any] {

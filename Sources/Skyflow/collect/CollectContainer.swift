@@ -16,6 +16,9 @@ public extension Container {
         tempContextOptions.interface = .COLLECT_CONTAINER
         let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions)
         elements.append(skyflowElement)
+        let uuid = NSUUID().uuidString
+        self.skyflow.elementLookup[uuid] = skyflowElement
+        skyflowElement.uuid = uuid
         Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: tempContextOptions)
         return skyflowElement
     }

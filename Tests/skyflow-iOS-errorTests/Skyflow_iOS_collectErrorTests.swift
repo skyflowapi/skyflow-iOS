@@ -21,7 +21,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         self.skyflow = Client(
             Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                           vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
-                          tokenProvider: DemoTokenProvider())
+                          tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG))
         )
         self.firstFields = ["cvv": "123",
                             "cardExpiration": "1221",

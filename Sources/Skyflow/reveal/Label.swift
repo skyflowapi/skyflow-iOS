@@ -18,7 +18,7 @@ public class Label: UIView, Element, BaseElement {
     
     internal var errorTriggered: Bool = false
     internal var triggeredErrorMessage: String = ""
-
+    internal var uuid: String = ""
 
     internal var horizontalConstraints = [NSLayoutConstraint]()
 
@@ -136,6 +136,10 @@ public class Label: UIView, Element, BaseElement {
     public func resetError() {
         self.errorTriggered = false
         hideError()
+    }
+    
+    public func getID() -> String {
+        return uuid;
     }
     
     public func setToken(_ token: String) {
