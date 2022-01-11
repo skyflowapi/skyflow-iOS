@@ -234,8 +234,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let dummyToken = "dummyToken"
         self.label.setToken(dummyToken)
         
-        XCTAssertEqual(self.label.actualValue, "token")
-        XCTAssertEqual(self.label.revealInput.token, dummyToken)
+        XCTAssertEqual(self.label.getToken(), dummyToken)
     }
     
     func testLabelSetAltText() {
