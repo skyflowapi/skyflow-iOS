@@ -43,7 +43,7 @@ class ConnectionAPIClient {
                 if let httpResponse = response as? HTTPURLResponse {
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
-                        var desc = "Invoke Connection call failed with the following status code" + String(httpResponse.statusCode)
+                        var desc = "Invoke Connection call failed with the following status code " + String(httpResponse.statusCode)
 
                         if let safeData = data {
                             desc = String(decoding: safeData, as: UTF8.self)

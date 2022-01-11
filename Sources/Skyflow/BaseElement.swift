@@ -7,7 +7,8 @@
 
 import Foundation
 
-public protocol  BaseElement {
+public protocol BaseElement {
     func setError(_ error: String)
     func resetError()
+    func getID() -> String
 }

@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+import AEXML
 @testable import Skyflow
 
 // swiftlint:disable:next type_body_length
@@ -302,4 +303,20 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         XCTAssertEqual(revealElement?.errorMessage.alpha, 0.0)
     }
+    
+    func testGetID() {
+        let collectContainer = skyflow.container(type: ContainerType.COLLECT)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL)
+        let collectElementInput = CollectElementInput(type: .PIN)
+        let collectElement = collectContainer?.create(input: collectElementInput)
+        let revealElementInput = RevealElementInput(label: "")
+        let revealElement = revealContainer?.create(input: revealElementInput)
+        
+        let collectID = collectElement?.getID()
+        let revealID = revealElement?.getID()
+
+        XCTAssertNotEqual(collectID, "")
+        XCTAssertNotEqual(revealID, "")
+    }
+    
 }

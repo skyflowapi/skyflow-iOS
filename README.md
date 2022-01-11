@@ -8,6 +8,7 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
 - [**Securely collecting data client-side**](#securely-collecting-data-client-side)
 - [**Securely revealing data client-side**](#securely-revealing-data-client-side)
 - [**Securely invoking connection client-side**](#Securely-invoking-connection-client-side)
+- [**Securely invoking Connections client-side using SOAP**](#Securely-invoking-Connections-client-side-using-soap)
 
 # Installing skyflow-iOS
 ---
@@ -956,7 +957,7 @@ skyflowClient.invokeConnection(config: connectionConfig, callback: callback);
 The values in the above parameters can contain collect elements, reveal elements or actual values. When elements are provided inplace of values, they get replaced with the value entered in the collect elements or value present in the reveal elements
 
 **responseBody**:  
-It is a JSON object represented as a dictionary that specifies where to render the response in the UI. The values in the responseBody can contain collect elements or reveal elements. 
+It is a JSON object represented as a dictionary that specifies where to render the response in the UI. The values in the responseBody can contain collect elements or reveal elements. The actual values corresponding to these elements will be stripped out from the actual response, which is then forwarded from the SDK to the client application.
 
 Sample use-cases on using invokeConnection():
 ###  Sample use-case 1:
@@ -1092,3 +1093,141 @@ Sample Response:
 `Note`:
 - `token` is optional for creating reveal element, if it is used for invokeConnection
 - responseBody contains collect or reveal elements to render the response from the connection on UI 
+
+# Securely invoking Connections client-side using SOAP
+ To invoke Connections using SOAP, use the `invokeSoapConnection(connectionConfig)` method of the Skyflow client as shown below:
+ ```swift
+let connectionConfig = SoapConnectionConfig(
+  connectionURL: String,    // connection url received when creating a Skyflow Connection
+  httpHeaders: [String: String],    // optional
+  requestXML: String,
+  responseXML: String,  // optional
+)
+skyflowClient.invokeSoapConnection(config: connectionConfig, callback: callback);
+```
+**httpHeaders** is the dictionary containing key-value pairs that are sent as request headers.
+
+**requestXML** accepts the entire XML request as a string.
+The values in the **requestXML** can contain collect element IDs or reveal element IDs or actual values. When the IDs are provided in place of values, they get replaced with the value entered in the collect elements or value present in the reveal elements.
+
+**responseXML** accepts the entire XML request as a string. It specifies where to render the response in the UI. The values in the responseXML can contain collect element IDs or reveal element IDs. The actual values corresponding to these IDs will be stripped out from the actual response, which is then forwarded from the SDK to the client application.
+
+`Note:` If the user needs to use Skyflow Elements in place of values in the requestXML or responseXML, they will pass in an additional tag **Skyflow** containing the ID of the particular element.
+
+Please ensure that the paths configured in the responseXML are present in the actual response. In case of a misconfigured path, the response from the server will be discarded and an error will be thrown.
+
+```swift
+let config = Skyflow.Configuration(
+    tokenProvider = demoTokenProvider
+)
+let skyflowClient = Skyflow.initialize(config)
+
+// step 2
+let revealContainer = skyflowClient.container(type: Skyflow.ContainerType.REVEAL)
+let collectContainer = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+
+// step 3
+let cardNumberInput = Skyflow.CollectElementInput(type: SkyflowElementType.CARD_NUMBER)
+
+let expirationDateInput = Skyflow.CollectElementInput(type: Skyflow.SkyflowElementType.EXPIRATION_DATE, label: "expiry date")
+
+let cvvInput = Skyflow.RevealElementInput(label: "cvv", altText: "cvv not generated") 
+
+let cardNumberElement = collectContainer.create(input: cardNumberInput)
+let expirationDateElement = collectContainer.create(input: expirationDateInput)
+let cvvElement = revealContainer.create(input: cvvInput)
+
+//Can interact with these objects as a normal UIView Object and add to View
+
+//step 4
+let cardNumberID = cardNumberElement.getID()  // to get element ID
+let expirationDateID = expirationDateElement.getID()
+let cvvElementID = cvvElement.getID()
+
+// step 5
+val requestXML = """<soapenv:Envelope>
+    <soapenv:Header>
+        <ClientID>
+            1234
+        </ClientID>
+    </soapenv:Header>
+    <soapenv:Body>
+    	<GenerateCVV>
+               <CardNumber>
+                  <Skyflow>
+                    ${cardNumberID}
+                  </Skyflow>
+               </CardNumber>
+               <ExpiryDate>
+                  <Skyflow>
+                    ${expirationDateID}
+                  </Skyflow>
+               </ExpiryDate>
+        </GenerateCVV>
+    </soapenv:Body>
+</soapenv:Envelope>"""
+
+let httpHeaders: [String: String] = [:] //optional parameter
+httpHeaders["SOAPAction"] = "<soap_action>"
+
+let responseXML = """<soapenv:Envelope>
+    <soapenv:Body>
+	    <GenerateCVV>
+            <CVV>
+    		    <Skyflow>
+                    ${cvvElementID}
+                </Skyflow>
+    		</CVV>
+        </GenerateCVV>
+    </soapenv:Body>
+</soapenv:Envelope>"""
+
+let soapConnectionConfig = SoapConnectionConfig(connectionURL: "<connection_url>", httpHeaders: httpHeaders, requestXML: requestXML, responseXML: responseXML)
+
+//Implement a custom Skyflow.Callback to be called on Reveal success/failure
+public class InvokeSoapConnectionCallback: Skyflow.Callback {
+  public func onSuccess(_ responseBody: Any) {
+    print(responseBody)
+  }
+   public func onFailure(_ error: Any) {
+    print("error object", error)
+    let skyflowErrorObj = error as? SkyflowError
+    let xml = skyflowErrorObj?.getXml()
+    if(xml != nil && !xml.isEmpty) {
+        print("error xml response from server", xml)
+    }
+  }
+}
+
+//Initialize custom Skyflow.Callback
+let invokeSoapConnectionCallback = InvokeSoapConnectionCallback()
+
+skyflowClient.invokeSoapConnection(config: soapConnectionConfig, callback: invokeSoapConnectionCallback)
+```
+
+Sample Response on success:
+```xml
+<soapenv:Envelope>
+    <soapenv:Header>
+      <HeaderList>
+        <HeaderItem>
+            <Name>NodeId</Name>
+        </HeaderItem>
+        <HeaderItem>
+            <Name>ProgramId</Name>
+        </HeaderItem>
+      </HeaderList>
+    </soapenv:Header>
+    <soapenv:Body>
+      <GenerateCVV>
+        <ReceivedTimestamp>2019-05-29 21:49:56.625</ReceivedTimestamp>
+      </GenerateCVV>
+    </soapenv:Body>
+</soapenv:Envelope>
+```
+
+`Note`: In responseXML we provide the tags that needs to be rendered in UI and stripped out from the actual response. 
+1. For uniquely identifiable tag, we can give the elementID within a skyflow tag directly corresponding to the actual value.
+Please refer to the CVV tag in the above example. Here, we wish to strip the actual value present within the CVV tag.
+2. For arrays, since we have multiple tags with the same name, we will need to provide identifiers to uniquely identify the required tag.
+Please refer to HeaderItem tag. Here, we have provided NodeId within the Name tag which acts as an identifier and we wish to strip the actual value present in the Value tag.

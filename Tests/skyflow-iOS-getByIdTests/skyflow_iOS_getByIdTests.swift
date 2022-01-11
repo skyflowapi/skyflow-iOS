@@ -14,7 +14,11 @@ class skyflow_iOS_getByIdTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: DemoTokenProvider()))
+        self.skyflow = Client(Configuration(
+            vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+            vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+            tokenProvider: DemoTokenProvider(),
+            options: Options(logLevel: .DEBUG)))
     }
 
     override func tearDown() {
@@ -43,20 +47,20 @@ class skyflow_iOS_getByIdTests: XCTestCase {
             ]
         ]
         let expectation = XCTestExpectation(description: "getById call")
-        
+
         let callback = DemoAPICallback(expectation: expectation)
 
         self.skyflow?.getById(records: records, callback: callback)
-        
+
         wait(for: [expectation], timeout: 30.0)
-        
+
         let responseData = Data(callback.receivedResponse.utf8)
         let jsonData = try! JSONSerialization.jsonObject(with: responseData, options: []) as! [String: Any]
         let responseEntries = jsonData["records"] as! [Any]
-        
+
         XCTAssertEqual(responseEntries.count, 4)
         XCTAssertNotNil((responseEntries[0] as? [String: Any])?["fields"])
-        
+
     }
     
     func testGetByIdInvalidToken(){
@@ -206,13 +210,13 @@ class skyflow_iOS_getByIdTests: XCTestCase {
             ]
         ]
         let expectation = XCTestExpectation(description: "getById call")
-        
+
         let callback = DemoAPICallback(expectation: expectation)
 
         self.skyflow?.getById(records: records, callback: callback)
-        
+
         wait(for: [expectation], timeout: 30.0)
-        
+
 
         let jsonData = callback.data
 

@@ -16,6 +16,9 @@ public extension Container {
         tempContextOptions.interface = .REVEAL_CONTAINER
         let revealElement = Label(input: input, options: options!)
         revealElements.append(revealElement)
+        let uuid = NSUUID().uuidString
+        self.skyflow.elementLookup[uuid] = revealElement
+        revealElement.uuid = uuid
         Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: tempContextOptions)
         return revealElement
     }

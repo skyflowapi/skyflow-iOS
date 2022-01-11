@@ -23,6 +23,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
         return self.errorMessage.alpha == 1.0
     }
 
+    internal var uuid: String = ""
+    
     internal var textFieldCornerRadius: CGFloat {
         get {
             return textField.layer.cornerRadius
@@ -530,5 +532,9 @@ extension TextField {
         self.errorMessage.text = ""
         self.errorTriggered = false
         updateErrorMessage()
+    }
+    
+    public func getID() -> String {
+        return uuid;
     }
 }
