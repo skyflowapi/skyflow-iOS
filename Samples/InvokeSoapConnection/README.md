@@ -1,0 +1,1 @@
+This sample illustrates how to use secure Skyflow elements to invoke a third-party integration over the SOAP protocol, using a Skyflow connection.
