@@ -64,7 +64,7 @@ public class Label: UIView, Element, BaseElement {
         self.translatesAutoresizingMaskIntoConstraints = false
 
         // Set label base styles
-        self.actualValue = self.revealInput.token
+        self.actualValue = ""
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
         self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
