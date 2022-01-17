@@ -23,7 +23,7 @@ class ConnectionAPIClient {
             let url = try RequestHelpers.createRequestURL(baseURL: config.connectionURL, pathParams: config.pathParams, queryParams: config.queryParams, contextOptions: self.contextOptions)
             var request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader, contextOptions: self.contextOptions)
 
-            request.addValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
+            request.setValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
 
             let session = URLSession(configuration: .default)
 

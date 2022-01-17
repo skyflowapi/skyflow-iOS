@@ -41,14 +41,15 @@ public class SoapConnectionAPIClient {
 
         let postData = parameters.data(using: .utf8)
 
-        if config.httpHeaders["Content-Type"] == nil {
-            request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        }
+        
         for (key, val) in config.httpHeaders {
-            request.addValue(val, forHTTPHeaderField: key)
+            request.setValue(val, forHTTPHeaderField: key)
         }
+        if config.httpHeaders["Content-Type"] == nil {
+            request.setValue("text/xml; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        }
+        request.setValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
 
-        request.addValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
 
         request.httpMethod = "POST"
         request.httpBody = postData
