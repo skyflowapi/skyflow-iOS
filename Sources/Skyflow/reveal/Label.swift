@@ -19,6 +19,8 @@ public class Label: UIView, Element, BaseElement {
     internal var errorTriggered: Bool = false
     internal var triggeredErrorMessage: String = ""
     internal var uuid: String = ""
+    
+    internal var actualValue: String? = nil
 
     internal var horizontalConstraints = [NSLayoutConstraint]()
 
@@ -41,7 +43,6 @@ public class Label: UIView, Element, BaseElement {
         super.init(coder: aDecoder)
     }
 
-    internal var actualValue: String = ""
     
     internal func updateVal(value: String) {
         self.skyflowLabelView.updateVal(value: value)
@@ -64,7 +65,6 @@ public class Label: UIView, Element, BaseElement {
         self.translatesAutoresizingMaskIntoConstraints = false
 
         // Set label base styles
-        self.actualValue = ""
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
         self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
@@ -124,7 +124,7 @@ public class Label: UIView, Element, BaseElement {
     }
 
     internal func getValue() -> String {
-        return self.actualValue
+        return self.actualValue ?? ""
     }
     
     public func setError(_ error: String) {
@@ -156,7 +156,7 @@ public class Label: UIView, Element, BaseElement {
     
     public func clearAltText() {
         self.revealInput.altText = ""
-        self.skyflowLabelView.updateVal(value: actualValue.isEmpty ? revealInput.token : actualValue)
+        self.skyflowLabelView.updateVal(value: actualValue == nil ? revealInput.token : actualValue!)
     }
     
     internal func getToken() -> String{
