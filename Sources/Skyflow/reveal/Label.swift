@@ -162,4 +162,12 @@ public class Label: UIView, Element, BaseElement {
     internal func getToken() -> String{
         return self.revealInput.token
     }
+    
+    internal func getValueForConnections() -> String {
+        if actualValue != nil {
+            return getValue()
+        } else {
+            return getToken()
+        }
+    }
 }
