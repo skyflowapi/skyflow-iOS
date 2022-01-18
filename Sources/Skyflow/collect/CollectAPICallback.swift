@@ -35,7 +35,7 @@ internal class CollectAPICallback: Callback {
                 return
             }
 
-            request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+            request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
 
             let session = URLSession(configuration: .default)
 

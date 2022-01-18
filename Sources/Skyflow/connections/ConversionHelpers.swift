@@ -40,11 +40,10 @@ class ConversionHelpers {
         } else if element is Label {
             let label = element as! Label
 
-            let result = label.getValue()
-            if result.isEmpty {
+            if label.actualValue == nil {
                 return label.getToken()
             } else {
-                return result
+                return label.getValue()
             }
         } else if nested, element is [String: Any] {
             return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions)
@@ -150,7 +149,7 @@ class ConversionHelpers {
                     errorCode = .UNMOUNTED_ELEMENT_INVOKE_CONNECTION(value: label.revealInput.token)
                     throw errorCode!.getErrorObject(contextOptions: contextOptions)
                 }
-                if !emptyTokenAllowed && (element as! Label).actualValue.isEmpty && (element as! Label).getToken().isEmpty {
+                if !emptyTokenAllowed && (element as! Label).actualValue == nil && (element as! Label).getToken().isEmpty {
                     errorCode = .EMPTY_TOKEN_INVOKE_CONNECTION(value: key)
                     throw errorCode!.getErrorObject(contextOptions: contextOptions)
                 }

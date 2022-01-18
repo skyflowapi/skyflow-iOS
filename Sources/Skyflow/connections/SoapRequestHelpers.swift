@@ -59,7 +59,7 @@ class SoapRequestHelpers {
                         throw errorCode.getErrorObject(contextOptions: contextOptions)
                     }
                     else {
-                        res = label.getValue()
+                        res = label.getValueForConnections()
                     }
                 }
             }
