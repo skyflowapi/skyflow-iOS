@@ -46,9 +46,9 @@ class RevealApiCallback: Callback {
             revealRequestGroup.enter()
             var request = URLRequest(url: url!)
             request.httpMethod = "POST"
-            request.addValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            request.addValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+            request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
 
             do {
                 let bodyObject: [String: Any] =

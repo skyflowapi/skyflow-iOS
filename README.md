@@ -956,6 +956,8 @@ skyflowClient.invokeConnection(config: connectionConfig, callback: callback);
 **pathParams, queryParams, requestHeader, requestBody** are the JSON objects represented as dictionaries that will be sent through the connection integration url.
 The values in the above parameters can contain collect elements, reveal elements or actual values. When elements are provided inplace of values, they get replaced with the value entered in the collect elements or value present in the reveal elements
 
+`Note:` "X-Skyflow-Authorization" key is added in headers by SDK internally. If user specifies it again,it overrides
+
 **responseBody**:  
 It is a JSON object represented as a dictionary that specifies where to render the response in the UI. The values in the responseBody can contain collect elements or reveal elements. The actual values corresponding to these elements will be stripped out from the actual response, which is then forwarded from the SDK to the client application.
 
@@ -1106,6 +1108,8 @@ let connectionConfig = SoapConnectionConfig(
 skyflowClient.invokeSoapConnection(config: connectionConfig, callback: callback);
 ```
 **httpHeaders** is the dictionary containing key-value pairs that are sent as request headers.
+
+`Note:` "X-Skyflow-Authorization" key is added in headers by SDK internally. If user specifies it again,it overrides.
 
 **requestXML** accepts the entire XML request as a string.
 The values in the **requestXML** can contain collect element IDs or reveal element IDs or actual values. When the IDs are provided in place of values, they get replaced with the value entered in the collect elements or value present in the reveal elements.

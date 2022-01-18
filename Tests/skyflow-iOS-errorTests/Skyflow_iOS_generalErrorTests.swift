@@ -145,7 +145,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         
         XCTAssertEqual(false, apiClient.isTokenValid())
         apiClient.getAccessToken(callback: DemoAPICallback(expectation: expectation), contextOptions: ContextOptions())
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: 60.0)
         XCTAssertEqual(true, apiClient.isTokenValid())
         
         
