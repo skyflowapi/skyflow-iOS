@@ -286,7 +286,11 @@ public class Client {
             let requestXMLDocument = try AEXMLDocument(xml: config.requestXML)
         }
         catch {
-            let errorCode = ErrorCodes.INVALID_REQUEST_XML()
+            let userInfo = (error as NSError).userInfo
+            var errorCode = ErrorCodes.INVALID_REQUEST_XML(value : userInfo.description)
+            if userInfo.isEmpty {
+                errorCode = ErrorCodes.INVALID_REQUEST_XML(value: (error as NSError).description)
+            }
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         let soapConnectionAPIClient = SoapConnectionAPIClient(callback: callback, skyflow: self, contextOptions: tempContextOptions)

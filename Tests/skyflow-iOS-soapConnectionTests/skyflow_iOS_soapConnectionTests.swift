@@ -45,7 +45,12 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             </s:Envelope>
         """
         
-        let requestXML = "<"
+        let requestXML = """
+        <s:Envelope>
+            <s:Header/>
+            <s:Body>
+        </s:Envelope>
+        """
         
         let config = SoapConnectionConfig(connectionURL: "https://www.skyflow.com", requestXML: requestXML, responseXML: responseXML)
         
@@ -58,7 +63,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: invokeConnection - " + ErrorCodes.INVALID_REQUEST_XML().description)
+        XCTAssertTrue(String(responseData).contains("Opening and ending tag mismatch: Body line 0 and Envelope"))
     }
     
     func testEmptyConnectionUrl() {
@@ -615,7 +620,16 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         var contextOptions = ContextOptions()
         contextOptions.interface = .INVOKE_CONNECTION
         
-        let responseXML = "<"
+        let responseXML = """
+        <s:Envelope>
+            <s:Header/>
+            <s:Body>
+                <Value>
+                    123
+                </Valu>
+            </s:Body>
+        </s:Envelope>
+        """
         
         let actualResponse = """
             <s:Envelope>
@@ -623,7 +637,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
                 <s:Body>
                     <Value>
                         123
-                    </Value>
+                    </Valu>
                 </s:Body>
             </s:Envelope>
         """
@@ -633,7 +647,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             XCTFail()
         }
         catch {
-            XCTAssertEqual(error.localizedDescription, "Interface: invokeConnection - " + ErrorCodes.INVALID_RESPONSE_XML().description)
+            XCTAssertTrue(error.localizedDescription.contains("Opening and ending tag mismatch: Value line 0 and Valu"))
         }
     }
     
@@ -654,14 +668,16 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             </s:Envelope>
         """
 
-        let actualResponse = "<"
+        let actualResponse = """
+            <
+            """
         
         do {
             try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
             XCTFail()
         }
         catch {
-            XCTAssertEqual(error.localizedDescription, "Interface: invokeConnection - " + ErrorCodes.INVALID_ACTUAL_RESPONSE_XML().description)
+            XCTAssertTrue(error.localizedDescription.contains("parsingFailed"))
         }
     }
     

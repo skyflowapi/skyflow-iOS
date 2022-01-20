@@ -329,7 +329,11 @@ class SoapRequestHelpers {
         }
         catch {
             //throw responseXML invalid error
-            let errorCode = ErrorCodes.INVALID_RESPONSE_XML()
+            let userInfo = (error as NSError).userInfo
+            var errorCode = ErrorCodes.INVALID_RESPONSE_XML(value : userInfo.description)
+            if userInfo.isEmpty {
+                errorCode = ErrorCodes.INVALID_RESPONSE_XML(value: (error as NSError).description)
+            }
             throw errorCode.getErrorObject(contextOptions: contextOptions)
         }
         do {
@@ -337,7 +341,11 @@ class SoapRequestHelpers {
         }
         catch {
             //throw actualResponseXML invalid error
-            let errorCode = ErrorCodes.INVALID_ACTUAL_RESPONSE_XML()
+            let userInfo = (error as NSError).userInfo
+            var errorCode = ErrorCodes.INVALID_ACTUAL_RESPONSE_XML(value : userInfo.description)
+            if userInfo.isEmpty {
+                errorCode = ErrorCodes.INVALID_ACTUAL_RESPONSE_XML(value: (error as NSError).description)
+            }
             throw errorCode.getErrorObject(contextOptions: contextOptions)
         }
 
