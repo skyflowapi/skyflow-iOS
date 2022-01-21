@@ -2,7 +2,7 @@ import Foundation
 
 
 class ConversionHelpers {
-    static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions) throws -> [String: Any] {
+    static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> [String: Any] {
         var convertedRequest = [String: Any]()
         var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
         for (key, value) in requestBody {
@@ -19,7 +19,7 @@ class ConversionHelpers {
         return convertedRequest
     }
 
-    private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool, contextOptions: ContextOptions) throws -> Any {
+    private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> Any {
         var errorCode: ErrorCodes?
         if checkIfPrimitive(element) {
             return element
@@ -40,11 +40,15 @@ class ConversionHelpers {
         } else if element is Label {
             let label = element as! Label
 
-            if label.actualValue == nil {
-                return label.getToken()
-            } else {
-                return label.getValue()
+            // Format regex: Will be deprecated in the future
+            if !label.options.formatRegex.isEmpty {
+                if detokenizedValues.keys.contains(label.uuid) {
+                    return try detokenizedValues[label.uuid]!.getFirstRegexMatch(of: label.options.formatRegex)
+                } else {
+                    throw NSError(domain: "", code: 400, userInfo: ["Error": "Unable to detokenize value"])
+                }
             }
+            return label.getValueForConnections()
         } else if nested, element is [String: Any] {
             return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions)
         } else {
@@ -53,10 +57,10 @@ class ConversionHelpers {
         }
     }
 
-    static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions) throws -> [String: Any]? {
+    static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> [String: Any]? {
         if let unwrappedValue = value {
             do {
-                let convertedValue = try convertJSONValues(unwrappedValue, nested, arraySupport, contextOptions: contextOptions)
+                let convertedValue = try convertJSONValues(unwrappedValue, nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
                 return convertedValue
             }
         }
