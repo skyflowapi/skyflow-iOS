@@ -132,9 +132,9 @@ internal class RevealValueCallback: Callback {
         var result = [String: String]()
         if let errorsObj = errors {
             for error in errorsObj {
-                let token = error["token"] as! String
-
-                result[token] = "Invalid Token"
+                if let token = error["token"] as? String {
+                    result[token] = "Invalid Token"
+                }
             }
         }
         return result
