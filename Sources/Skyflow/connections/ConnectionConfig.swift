@@ -24,7 +24,7 @@ public struct ConnectionConfig {
 
 
     internal func convert(contextOptions: ContextOptions) throws -> ConnectionConfig {
-        try verifyRequestAndResponseElements(contextOptions: contextOptions)
+        try validate(contextOptions: contextOptions)
 
         let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false, contextOptions: contextOptions)
         let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false, contextOptions: contextOptions)
@@ -45,7 +45,7 @@ public struct ConnectionConfig {
     }
     
     internal func convert(detokenizedValues: [String: String], contextOptions: ContextOptions) throws -> ConnectionConfig {
-        try verifyRequestAndResponseElements(contextOptions: contextOptions)
+        try validate(contextOptions: contextOptions)
 
         let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
         let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
@@ -64,34 +64,33 @@ public struct ConnectionConfig {
                              requestHeader: convertedRequestHeader,
                              responseBody: responseBody)
     }
+
     
-    internal func getFormatRegexLabels() -> [String] {
-        let result = [] as [String]
+    internal func validate(contextOptions: ContextOptions) throws  {
+        try ConversionHelpers.checkElements(self.pathParams ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.queryParams ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.requestHeader ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.requestBody ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.responseBody ?? [:], contextOptions: contextOptions)
+    }
+    
+    internal func getLabelsToFormatInRequest(contextOptions: ContextOptions) throws -> [String: String] {
+        try validate(contextOptions: contextOptions)
         
-        // TODO: Traverse params and get LabelViews with formatRegex option
+        var result = [:] as [String: String]
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.requestBody ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.pathParams ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.queryParams ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.requestHeader ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
         
         return result
-    }
-
-    internal func verifyRequestAndResponseElements(contextOptions: ContextOptions) throws {
-        if let requestConfig = self.requestBody {
-            do {
-                try ConversionHelpers.checkElements(requestConfig, true, contextOptions: contextOptions)
-            } catch {
-                throw error
-            }
-        }
-
-        if let responseConfig = self.responseBody {
-            do {
-                try ConversionHelpers.checkElements(responseConfig, emptyTokenAllowed: true, contextOptions: contextOptions)
-            } catch {
-                throw error
-            }
-        }
-    }
-    
-    internal func validate() throws -> ConnectionConfig {
-        return self
     }
 }

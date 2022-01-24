@@ -175,6 +175,7 @@ class ConversionHelpers {
 
         try checkDict(elements)
     }
+    
 
     static func presentIn(_ array: [Any], value: Any) -> Bool {
         for element in array {
@@ -258,5 +259,30 @@ class ConversionHelpers {
         } else {
             return nil
         }
+    }
+    
+    static func getElementTokensWithFormatRegex(_ json: [String: Any], contextOptions: ContextOptions) throws -> [String: String] {
+        
+        var result = [:] as [String: String]
+        
+        
+        for (_, value) in json {
+            if value is Label  && !((value as! Label).options.formatRegex.isEmpty) {
+                let valueAsLabel = (value as! Label)
+                let token = valueAsLabel.getToken()
+                
+                if token.isEmpty {
+                    throw NSError(domain: "", code: 400, userInfo: ["Error": "No Token Found for Label with formatRegex"])
+                } else {
+                    result[valueAsLabel.getID()] = token
+                }
+            }
+            else if value is [String: Any] {
+                result.merge(try getElementTokensWithFormatRegex((value as! [String: Any]), contextOptions: contextOptions)) { (first, _) in first
+                }
+            }
+        }
+        
+        return result
     }
 }
