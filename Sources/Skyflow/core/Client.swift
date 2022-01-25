@@ -269,6 +269,14 @@ public class Client {
                     clientCallback: callback)
                             self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: tempContextOptions)
             } else {
+                if self.vaultID.isEmpty {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
+                if self.vaultURL == "/v1/vaults/"  {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
                 let connectionTokenCallback = ConnectionDetokenizeCallback(
                     skyflowClient: self,
                     labelIDsToTokens: labelIDsToTokens,
@@ -318,6 +326,14 @@ public class Client {
                 let soapConnectionTokenCallback = ConnectionTokenCallback(client: soapConnectionAPIClient, connectionType: .SOAP, config: config, clientCallback: callback)
                 self.apiClient.getAccessToken(callback: soapConnectionTokenCallback, contextOptions: tempContextOptions)
             } else {
+                if self.vaultID.isEmpty {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
+                if self.vaultURL == "/v1/vaults/"  {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
                 let connectionTokenCallback = ConnectionDetokenizeCallback(
                     skyflowClient: self,
                     labelIDsToTokens: labelIDsToTokens,
