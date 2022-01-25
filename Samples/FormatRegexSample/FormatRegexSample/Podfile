@@ -3,7 +3,7 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-target 'FormatRegexSamples' do
+target 'FormatRegexSample' do
   #use_frameworks!
 
   pod 'Skyflow'
