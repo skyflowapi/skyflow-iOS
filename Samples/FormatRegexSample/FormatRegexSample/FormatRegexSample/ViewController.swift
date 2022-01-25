@@ -51,6 +51,16 @@ class ViewController: UIViewController {
             // With formatRegex option to get only last to digits (e.g. 2022 -> 22)
             self.expiryYearElement = self.revealContainer?.create(input: expiryYearInput, options: Skyflow.RevealElementOptions(formatRegex: "..$"))
             
+            
+            let cvvElementInput = RevealElementInput(token: "", inputStyles: styles, label: "CVV", redaction: .DEFAULT)
+            self.cvvElement = self.revealContainer?.create(input: cvvElementInput, options: Skyflow.RevealElementOptions())
+            
+            let nameElementInput = RevealElementInput(token: "<YEAR_TOKEN>", inputStyles: styles, label: "First Name", redaction: .DEFAULT)
+        
+            // With formatRegex option to get only first name
+            self.nameElement = self.revealContainer?.create(input: nameElementInput, options: Skyflow.RevealElementOptions(formatRegex: "(?<=name : )(.+)(?= (.*))"))
+            
+            
             let invokeConnectionBtn:UIButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 40))
             invokeConnectionBtn.backgroundColor = .blue
             invokeConnectionBtn.setTitle("Submit", for: .normal)
