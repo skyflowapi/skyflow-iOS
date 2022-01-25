@@ -422,7 +422,6 @@ final class skyflow_iOS_connectionTests: XCTestCase {
         let responseBody: [String: Any] = [
             "resource": [
                 "card_number": cardNumber,
-                "reveal": revealElement!,
                 "nestedFields": [
                     "reveal": revealElement
                 ]
@@ -433,7 +432,6 @@ final class skyflow_iOS_connectionTests: XCTestCase {
         let response: [String: Any] = [
             "resource": [
                 "card_number": "cardNumber",
-                "reveal": "1234",
                 "nestedFields": [
                     "card_number": "4111-1111-1111-1111",
                     "reveal": "abcd"
@@ -452,7 +450,7 @@ final class skyflow_iOS_connectionTests: XCTestCase {
             XCTAssertNil((convertedResponse["resource"] as! [String: Any])["card_number"])
             XCTAssertNil((convertedResponse["resource"] as! [String: Any])["reveal"])
              XCTAssertEqual(cardNumber.getValue(), "cardNumber")
-             XCTAssertEqual(revealElement?.getValue(), "1234")
+             XCTAssertEqual(revealElement?.getValue(), "abcd")
             
         } catch {
             XCTFail()

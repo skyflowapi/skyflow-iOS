@@ -49,36 +49,24 @@ internal class RevealValueCallback: Callback {
 
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
-//                revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
-                
-                
-                    if let v = tokens[revealElement.revealInput.token]{
-                        revealElement.updateVal(value: v)
-                    }
-//                    else if(revealElement.revealInput.altText != nil){
-//                        revealElement.updateVal(value: revealElement.revealInput.token)
-//                    }
-                
+                if let v = tokens[revealElement.revealInput.token]{
+                    revealElement.updateVal(value: v)
+                }
+            
                 let inputToken = revealElement.revealInput.token
                 revealElement.hideError()
-//                revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
+                
                 if let errorMessage = tokensToErrors[inputToken] {
                     revealElement.showError(message: errorMessage)
                 } else {
                     Log.info(message: .ELEMENT_REVEALED, values: [revealElement.revealInput.label], contextOptions: self.contextOptions)
                 }
             }
-
-//            let dataString = String(data: try! JSONSerialization.data(withJSONObject: response), encoding: .utf8)
-
             self.clientCallback.onSuccess(response)
         }
     }
 
     func onFailure(_ error: Any) {
-        func getTokens(_ records: [String: Any], _ errors: [String: Any]) {
-        }
-
         if error is [String: Any] {
             var tokens: [String: String] = [:]
 
@@ -109,16 +97,12 @@ internal class RevealValueCallback: Callback {
 
             DispatchQueue.main.async {
                 for revealElement in self.revealElements {
-//                    revealElement.updateVal(value: tokens[revealElement.revealInput.token] ?? (revealElement.revealInput.altText ?? revealElement.revealInput.token))
-//                    if(revealElement.revealInput.altText != nil){
-                        if let v = tokens[revealElement.revealInput.token]{
-                            revealElement.updateVal(value: v)
-                        }
-//                    }
+                    if let v = tokens[revealElement.revealInput.token]{
+                        revealElement.updateVal(value: v)
+                    }
                     
                     let inputToken = revealElement.revealInput.token
                     revealElement.hideError()
-//                    revealElement.updateVal(value: tokens[inputToken] ?? inputToken)
                     if let errorMessage = tokensToErrors[inputToken] {
                         revealElement.showError(message: errorMessage)
                     }
