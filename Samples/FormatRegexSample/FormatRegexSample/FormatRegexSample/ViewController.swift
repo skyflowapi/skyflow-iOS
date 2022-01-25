@@ -4,8 +4,9 @@ import Skyflow
 class ViewController: UIViewController {
     
     private var skyflow: Client? = nil
-    private var collectContainer: Container? = nil
-    private var revealContainer: Container? = nil
+    private var collectContainer: Skyflow.Container<Skyflow.CollectContainer>?
+    private var revealContainer: Skyflow.Container<Skyflow.RevealContainer>?
+    private var stackView: UIStackView!
     
     
     private var expiryYearElement: Label? = nil
@@ -42,20 +43,20 @@ class ViewController: UIViewController {
             let styles = getStyles()
             
             let cardNumberInput = CollectElementInput(inputStyles: styles, label: "Card Number", placeholder: "4111-1111-1111-1111", type: Skyflow.ElementType.CARD_NUMBER)
-            self.cardNumberElement = collectContainer?.create()
-            let expirymMonthInput = RevealElementInput(token: "<MONTH_TOKEN>", inputStyles: styles, label: "Expiry Month", redaction: .DEFAULT)
-            self.expiryMonthElement = self.revealContainer?.create(input: expiryYearInput, options: Skyflow.RevealElementOptions())
+            self.cardNumberElement = collectContainer?.create(input: cardNumberInput)
+            let expirymMonthInput = RevealElementInput(token: "<MONTH_TOKEN>", inputStyles: styles, label: "Expiry Month")
+            self.expiryMonthElement = self.revealContainer?.create(input: expirymMonthInput, options: Skyflow.RevealElementOptions())
             
-            let expiryYearInput = RevealElementInput(token: "<YEAR_TOKEN>", inputStyles: styles, label: "Expiry Year", redaction: .DEFAULT)
+            let expiryYearInput = RevealElementInput(token: "<YEAR_TOKEN>", inputStyles: styles, label: "Expiry Year")
         
             // With formatRegex option to get only last to digits (e.g. 2022 -> 22)
             self.expiryYearElement = self.revealContainer?.create(input: expiryYearInput, options: Skyflow.RevealElementOptions(formatRegex: "..$"))
             
             
-            let cvvElementInput = RevealElementInput(token: "", inputStyles: styles, label: "CVV", redaction: .DEFAULT)
+            let cvvElementInput = RevealElementInput(token: "", inputStyles: styles, label: "CVV")
             self.cvvElement = self.revealContainer?.create(input: cvvElementInput, options: Skyflow.RevealElementOptions())
             
-            let nameElementInput = RevealElementInput(token: "<YEAR_TOKEN>", inputStyles: styles, label: "First Name", redaction: .DEFAULT)
+            let nameElementInput = RevealElementInput(token: "<YEAR_TOKEN>", inputStyles: styles, label: "First Name")
         
             // With formatRegex option to get only first name
             self.nameElement = self.revealContainer?.create(input: nameElementInput, options: Skyflow.RevealElementOptions(formatRegex: "(?<=name : )(.+)(?= (.*))"))
@@ -71,6 +72,10 @@ class ViewController: UIViewController {
             stackView.addArrangedSubview(self.expiryMonthElement!)
             stackView.addArrangedSubview(self.expiryYearElement!)
             stackView.addArrangedSubview(invokeConnectionBtn)
+            
+            
+            stackView.addArrangedSubview(self.nameElement!)
+            stackView.addArrangedSubview(self.cvvElement!)
             
             stackView.axis = .vertical
             stackView.distribution = .fill
@@ -119,11 +124,11 @@ class ViewController: UIViewController {
     @objc func formatRegexConnection() {
 
 
-        let cardNumberID = self.cardNumberElement.getID()  // to get element ID
-        let expiryMonthID = self.expiryMonthElement.getID()
-        let expiryYearID = self.expiryYearElement.getID()
-        let cvvElementID = self.cvvElement.getID()
-        let holderNameID = self.nameElement.getID()
+        let cardNumberID = self.cardNumberElement!.getID()  // to get element ID
+        let expiryMonthID = self.expiryMonthElement!.getID()
+        let expiryYearID = self.expiryYearElement!.getID()
+        let cvvElementID = self.cvvElement!.getID()
+        let holderNameID = self.nameElement!.getID()
 
         let requestXML = """
             <soapenv:Envelope>
@@ -176,9 +181,9 @@ class ViewController: UIViewController {
         """
         
         let connectionUrl = "<YOUR_CONNECTION_URL>"
-        let soapConfig = SoapConnectionConfig(connectionUrl: connectionUrl, httpHeaders: httpHeaders, requestXML: requestXML, responseXML: responseXML)
+        let soapConfig = SoapConnectionConfig(connectionURL: connectionUrl, httpHeaders: httpHeaders, requestXML: requestXML, responseXML: responseXML)
         
-        self.skyflow.invokeSoapConnection(config: soapConfig, callback: ExampleCallback)
+        self.skyflow?.invokeSoapConnection(config: soapConfig, callback: ExampleAPICallback())
     }
 
 
