@@ -3,6 +3,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2022-01-25
+
+### Fixed
+- Resolved App crashing issue with invalid vaultURL in `reveal`
+
+### Added
+- `formatRegex` option for `RevealElement`
+
 ## [1.9.1] - 2022-01-18
 
 ### Fixed
