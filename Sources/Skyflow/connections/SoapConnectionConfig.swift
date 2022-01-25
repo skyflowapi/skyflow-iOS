@@ -19,4 +19,10 @@ public class SoapConnectionConfig {
         self.requestXML = requestXML
         self.responseXML = responseXML
     }
+    
+    internal func convert(skyflow: Client, detokenizedValues: [String: String], contextOptions: ContextOptions) throws -> SoapConnectionConfig {
+        let convertedRequestXml = try SoapRequestHelpers.replaceElementsInXML(xml: self.requestXML, skyflow: skyflow, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
+        
+        return SoapConnectionConfig(connectionURL: self.connectionURL, httpHeaders: self.httpHeaders, requestXML: convertedRequestXml, responseXML: self.responseXML)
+    }
 }

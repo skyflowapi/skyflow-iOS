@@ -19,6 +19,15 @@ class skyflow_iOS_revealTests: XCTestCase {
     override func tearDown() {
         skyflow = nil
     }
+    
+    func waitForUIUpdates() {
+        
+        let expectation = self.expectation(description: "Test")
+        DispatchQueue.main.async {
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 1, handler: nil)
+    }
 
     func getRevealElementInput() -> RevealElementInput {
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
@@ -126,6 +135,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         revealContainer?.reveal(callback: callback)
 
         wait(for: [expectation], timeout: 30.0)
+        waitForUIUpdates()
         
         XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
         XCTAssertEqual(revealElement?.getValue(), revealedOutput)
@@ -319,4 +329,71 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertNotEqual(revealID, "")
     }
     
+    func testRevealContainersRevealWithFormatRegex() {
+        let window = UIWindow()
+        
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let revealElementInput = getRevealElementInput()
+      
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions(formatRegex: "..$"))
+
+        var revealedOutput = ""
+        
+        do {
+            revealedOutput = try ProcessInfo.processInfo.environment["DETOKENIZE_TEST_VALUE"]!.getFirstRegexMatch(of: "..$", contextOptions: ContextOptions())
+        } catch {
+            XCTFail()
+        }
+        
+        window.addSubview(revealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should return reveal output")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        revealContainer?.reveal(callback: callback)
+
+        wait(for: [expectation], timeout: 30.0)
+        waitForUIUpdates()
+        
+        XCTAssertEqual(revealElement?.skyflowLabelView.label.secureText, revealedOutput)
+        XCTAssertEqual(revealElement?.getValue(), revealedOutput)
+    }
+    
+    func testRevealContainersRevealWithInvalidFormatRegex() {
+        let window = UIWindow()
+        
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let revealElementInput = getRevealElementInput()
+      
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions(formatRegex: "abc"))
+
+        var revealedOutput = ""
+        
+        do {
+            revealedOutput = try ProcessInfo.processInfo.environment["DETOKENIZE_TEST_VALUE"]!.getFirstRegexMatch(of: "..$", contextOptions: ContextOptions())
+        } catch {
+            XCTFail()
+        }
+        
+        window.addSubview(revealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should return reveal output")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        revealContainer?.reveal(callback: callback)
+
+        wait(for: [expectation], timeout: 30.0)
+        waitForUIUpdates()
+        
+        do {
+            let response = try JSONSerialization.jsonObject(with: callback.receivedResponse.data(using: .utf8)!) as! [String: Any]
+            let errors = response["errors"] as! [[String: String]]
+
+            XCTAssert(errors.count == 1)
+            XCTAssertEqual(errors[0]["token"], revealTestId)
+            XCTAssertEqual(errors[0]["error"], "Interface: reveal container - No match found for regex: abc")
+        } catch {
+            XCTFail()
+        }
+    }
 }

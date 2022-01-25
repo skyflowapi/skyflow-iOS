@@ -259,12 +259,36 @@ public class Client {
         let connectionAPIClient = ConnectionAPIClient(callback: callback, contextOptions: tempContextOptions)
 
         do {
-            let connectionTokenCallback = ConnectionTokenCallback(
-                client: connectionAPIClient,
-                connectionType: .REST,
-                config: try config.convert(contextOptions: tempContextOptions),
-                clientCallback: callback)
-            self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: tempContextOptions)
+            let labelIDsToTokens = try config.getLabelsToFormatInRequest(contextOptions: tempContextOptions)
+            
+            if labelIDsToTokens.isEmpty {
+                let connectionTokenCallback = ConnectionTokenCallback(
+                                client: connectionAPIClient,
+                                connectionType: .REST,
+                                config: try config.convert(contextOptions: tempContextOptions),
+                    clientCallback: callback)
+                            self.apiClient.getAccessToken(callback: connectionTokenCallback, contextOptions: tempContextOptions)
+            } else {
+                if self.vaultID.isEmpty {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
+                if self.vaultURL == "/v1/vaults/"  {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
+                let connectionTokenCallback = ConnectionDetokenizeCallback(
+                    skyflowClient: self,
+                    labelIDsToTokens: labelIDsToTokens,
+                    apiClient: connectionAPIClient,
+                    connectionType: .REST,
+                    config: config,
+                    clientCallback: callback,
+                    contextOptions: tempContextOptions)
+                let recordsToDetokenize = createDetokenizeRecords(labelIDsToTokens)
+                        
+                self.detokenize(records: recordsToDetokenize, callback: connectionTokenCallback)
+            }
         } catch {
             callRevealOnFailure(callback: callback, errorObject: error)
         }
@@ -286,19 +310,64 @@ public class Client {
             let requestXMLDocument = try AEXMLDocument(xml: config.requestXML)
         }
         catch {
-            let errorCode = ErrorCodes.INVALID_REQUEST_XML()
+            let userInfo = (error as NSError).userInfo
+            var errorCode = ErrorCodes.INVALID_REQUEST_XML(value : userInfo.description)
+            if userInfo.isEmpty {
+                errorCode = ErrorCodes.INVALID_REQUEST_XML(value: (error as NSError).description)
+            }
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
+        
         let soapConnectionAPIClient = SoapConnectionAPIClient(callback: callback, skyflow: self, contextOptions: tempContextOptions)
-
-        let soapConnectionTokenCallback = ConnectionTokenCallback(client: soapConnectionAPIClient, connectionType: .SOAP, config: config, clientCallback: callback)
-        self.apiClient.getAccessToken(callback: soapConnectionTokenCallback, contextOptions: tempContextOptions)
+        
+        do {
+            let labelIDsToTokens = try SoapRequestHelpers.getElementTokensWithFormatRegex(xml: config.requestXML, skyflow: self, contextOptions: tempContextOptions)
+            if labelIDsToTokens.isEmpty {
+                let soapConnectionTokenCallback = ConnectionTokenCallback(client: soapConnectionAPIClient, connectionType: .SOAP, config: config, clientCallback: callback)
+                self.apiClient.getAccessToken(callback: soapConnectionTokenCallback, contextOptions: tempContextOptions)
+            } else {
+                if self.vaultID.isEmpty {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_ID()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
+                if self.vaultURL == "/v1/vaults/"  {
+                    let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
+                }
+                let connectionTokenCallback = ConnectionDetokenizeCallback(
+                    skyflowClient: self,
+                    labelIDsToTokens: labelIDsToTokens,
+                    apiClient: apiClient,
+                    connectionType: .SOAP,
+                    config: config,
+                    clientCallback: callback,
+                    contextOptions: tempContextOptions)
+                let recordsToDetokenize = createDetokenizeRecords(labelIDsToTokens)
+                        
+                self.detokenize(records: recordsToDetokenize, callback: connectionTokenCallback)
+            }
+        }
+        catch {
+            callback.onFailure(error)
+        }
+        
+    }
+    
+    internal func createDetokenizeRecords(_ IDsToTokens: [String: String]) -> [String: [[String: String]]]{
+        var records = [[:]] as [[String : String]]
+        var index = 0
+        for (_, token) in IDsToTokens {
+            records[index]["token"] = token
+            index += 1
+        }
+        
+        return ["records": records]
     }
 }
 
 private class ConnectionTokenCallback: Callback {
     var client: Any
-    var config: Any
+    public var config: Any
     var clientCallback: Callback
     var connectionType: ConnectionType
 
@@ -355,4 +424,77 @@ internal class LogCallback: Callback {
 internal enum ConnectionType {
     case REST
     case SOAP
+}
+
+
+
+fileprivate class ConnectionDetokenizeCallback: Callback {
+    var skyflowClient: Client
+    var apiClient: Any
+    var config: Any
+    var clientCallback: Callback
+    var connectionType: ConnectionType
+    var contextOptions: ContextOptions
+    var tokenCallback: ConnectionTokenCallback
+    var labelIDsToTokens: [String: String]
+
+    init(skyflowClient: Client, labelIDsToTokens: [String: String], apiClient: Any, connectionType: ConnectionType, config: Any, clientCallback: Callback, contextOptions: ContextOptions) {
+        self.skyflowClient = skyflowClient
+        self.apiClient = apiClient
+        self.config = config
+        self.clientCallback = clientCallback
+        self.connectionType = connectionType
+        self.contextOptions = contextOptions
+        self.labelIDsToTokens = labelIDsToTokens
+        self.tokenCallback = ConnectionTokenCallback(client: self.apiClient, connectionType: self.connectionType, config: self.config, clientCallback: self.clientCallback)
+    }
+    
+    func onSuccess(_ responseBody: Any) {
+        if let detokenizeOutput = responseBody as? [String: [[String: String]]] {
+            do {
+                let detokenizeOutput = self.convertDetokenizeOutput(detokenizeOutput)
+                let detokenizedValues = mergeDicts(self.labelIDsToTokens, detokenizeOutput)
+                switch connectionType {
+                case .REST:
+                    let convertedConfig = try (self.config as! ConnectionConfig).convert(detokenizedValues: detokenizedValues, contextOptions: self.contextOptions)
+                    self.tokenCallback.config = convertedConfig
+                    self.skyflowClient.apiClient.getAccessToken(callback: self.tokenCallback, contextOptions: self.contextOptions)
+                case .SOAP:
+                    let convertedConfig = try (self.config as! SoapConnectionConfig).convert(skyflow: self.skyflowClient, detokenizedValues: detokenizedValues, contextOptions: self.contextOptions)
+                    self.tokenCallback.config = convertedConfig
+                    self.skyflowClient.apiClient.getAccessToken(callback: self.tokenCallback, contextOptions: self.contextOptions)
+                }
+            } catch {
+                self.tokenCallback.onFailure(error)
+            }
+        } else {
+            self.tokenCallback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Response from detokenize"]))
+        }
+    }
+    
+    func onFailure(_ error: Any) {
+        self.tokenCallback.onFailure(error)
+    }
+    
+    func convertDetokenizeOutput(_ detokenizeOutput: [String: Any]) -> [String: String]{
+        let records = detokenizeOutput["records"] as! [[String: String]]
+        var result = [:] as [String: String]
+        for record in records {
+            result[record["token"]!] = record["value"]
+        }
+        
+        return result
+    }
+    
+    
+    func mergeDicts(_ first: [String: String], _ second: [String: String]) -> [String: String]{
+        var result = [:] as [String: String]
+        for (key, value) in first {
+            if second.keys.contains(value) {
+                result[key] = second[value]
+            }
+        }
+        
+        return result
+    }
 }

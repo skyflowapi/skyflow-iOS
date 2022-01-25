@@ -8,5 +8,8 @@
 import Foundation
 
 public struct RevealElementOptions {
-    public init() {}
+    var formatRegex: String
+    public init(formatRegex: String = "") {
+        self.formatRegex = formatRegex
+    }
 }

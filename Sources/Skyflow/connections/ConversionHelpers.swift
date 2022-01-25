@@ -2,12 +2,12 @@ import Foundation
 
 
 class ConversionHelpers {
-    static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions) throws -> [String: Any] {
+    static func convertJSONValues(_ requestBody: [String: Any], _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> [String: Any] {
         var convertedRequest = [String: Any]()
         var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
         for (key, value) in requestBody {
             do {
-                convertedRequest[key] = try convertValue(value, nested, arraySupport, contextOptions: contextOptions)
+                convertedRequest[key] = try convertValue(value, nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
             } catch {
                 if error.localizedDescription == errorCode.description {
                     errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
@@ -19,13 +19,13 @@ class ConversionHelpers {
         return convertedRequest
     }
 
-    private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool, contextOptions: ContextOptions) throws -> Any {
+    private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> Any {
         var errorCode: ErrorCodes?
         if checkIfPrimitive(element) {
             return element
         } else if arraySupport, element is [Any] {
             return try (element as! [Any]).map {
-                try convertValue($0, nested, arraySupport, contextOptions: contextOptions)
+                try convertValue($0, nested, arraySupport, contextOptions: contextOptions, detokenizedValues:  detokenizedValues)
             }
         } else if element is TextField {
             let textField = element as! TextField
@@ -40,23 +40,25 @@ class ConversionHelpers {
         } else if element is Label {
             let label = element as! Label
 
-            if label.actualValue == nil {
-                return label.getToken()
-            } else {
-                return label.getValue()
+            // Format regex: Will be deprecated in the future
+            if !label.options.formatRegex.isEmpty {
+                if detokenizedValues.keys.contains(label.getID()) {
+                    return try detokenizedValues[label.getID()]!.getFirstRegexMatch(of: label.options.formatRegex, contextOptions: contextOptions)
+                }
             }
+            return label.getValueForConnections()
         } else if nested, element is [String: Any] {
-            return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions)
+            return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
         } else {
             errorCode = .INVALID_DATA_TYPE_PASSED(value: "")
             throw errorCode!.getErrorObject(contextOptions: contextOptions)
         }
     }
 
-    static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions) throws -> [String: Any]? {
+    static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> [String: Any]? {
         if let unwrappedValue = value {
             do {
-                let convertedValue = try convertJSONValues(unwrappedValue, nested, arraySupport, contextOptions: contextOptions)
+                let convertedValue = try convertJSONValues(unwrappedValue, nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
                 return convertedValue
             }
         }
@@ -171,6 +173,7 @@ class ConversionHelpers {
 
         try checkDict(elements)
     }
+    
 
     static func presentIn(_ array: [Any], value: Any) -> Bool {
         for element in array {
@@ -254,5 +257,30 @@ class ConversionHelpers {
         } else {
             return nil
         }
+    }
+    
+    static func getElementTokensWithFormatRegex(_ json: [String: Any], contextOptions: ContextOptions) throws -> [String: String] {
+        
+        var result = [:] as [String: String]
+        
+        
+        for (key, value) in json {
+            if value is Label  && !((value as! Label).options.formatRegex.isEmpty) {
+                let valueAsLabel = (value as! Label)
+                let token = valueAsLabel.getToken()
+                
+                if token.isEmpty {
+                    throw ErrorCodes.EMPTY_TOKEN_INVOKE_CONNECTION(value: key).getErrorObject(contextOptions: contextOptions)
+                } else {
+                    result[valueAsLabel.getID()] = token
+                }
+            }
+            else if value is [String: Any] {
+                result.merge(try getElementTokensWithFormatRegex((value as! [String: Any]), contextOptions: contextOptions)) { (first, _) in first
+                }
+            }
+        }
+        
+        return result
     }
 }

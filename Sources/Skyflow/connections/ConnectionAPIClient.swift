@@ -18,7 +18,7 @@ class ConnectionAPIClient {
         var convertedResponse: [String: Any]?
         var stringResponse: String?
         var errors: [NSError] = []
-
+        
         do {
             let url = try RequestHelpers.createRequestURL(baseURL: config.connectionURL, pathParams: config.pathParams, queryParams: config.queryParams, contextOptions: self.contextOptions)
             var request = try RequestHelpers.createRequest(url: url, method: config.method, body: config.requestBody, headers: config.requestHeader, contextOptions: self.contextOptions)

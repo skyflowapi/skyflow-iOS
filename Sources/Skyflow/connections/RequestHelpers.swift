@@ -169,8 +169,13 @@ class RequestHelpers {
                     }
                     return nil
                 } else if responseBodyValue is Label {
+                    let responseLabel = (responseBodyValue as! Label)
+                    var formattedValue = (value as! String)
+                    if !responseLabel.options.formatRegex.isEmpty {
+                        formattedValue = try formattedValue.getFirstRegexMatch(of: responseLabel.options.formatRegex, contextOptions: contextOptions)
+                    }
                     DispatchQueue.main.async {
-                        (responseBodyValue as! Label).updateVal(value: value as! String)
+                        responseLabel.updateVal(value: formattedValue)
                     }
                     return nil
                 } else if let valueDict = value as? [String: Any] {

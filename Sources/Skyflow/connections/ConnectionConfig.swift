@@ -1,6 +1,8 @@
 import Foundation
 
 
+// TODO: Implement getFormatRegexLabels and validate methods, add detokenizedValues to ConversionHelpers.convertOrFail() in convert()
+
 public struct ConnectionConfig {
     var connectionURL: String
     var method: RequestMethod
@@ -22,7 +24,7 @@ public struct ConnectionConfig {
 
 
     internal func convert(contextOptions: ContextOptions) throws -> ConnectionConfig {
-        try verifyRequestAndResponseElements(contextOptions: contextOptions)
+        try validate(contextOptions: contextOptions)
 
         let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false, contextOptions: contextOptions)
         let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false, contextOptions: contextOptions)
@@ -41,22 +43,54 @@ public struct ConnectionConfig {
                              requestHeader: convertedRequestHeader,
                              responseBody: responseBody)
     }
+    
+    internal func convert(detokenizedValues: [String: String], contextOptions: ContextOptions) throws -> ConnectionConfig {
+        try validate(contextOptions: contextOptions)
 
-    internal func verifyRequestAndResponseElements(contextOptions: ContextOptions) throws {
-        if let requestConfig = self.requestBody {
-            do {
-                try ConversionHelpers.checkElements(requestConfig, true, contextOptions: contextOptions)
-            } catch {
-                throw error
-            }
-        }
+        let convertedPathParams = try ConversionHelpers.convertOrFail(self.pathParams, false, false, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
+        let convertedQueryParams = try ConversionHelpers.convertOrFail(self.queryParams, false, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
+        let convertedRequestBody = try ConversionHelpers.convertOrFail(self.requestBody, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
+        let convertedRequestHeader = try ConversionHelpers.convertOrFail(self.requestHeader, contextOptions: contextOptions, detokenizedValues: detokenizedValues)  as! [String: String]?
 
-        if let responseConfig = self.responseBody {
-            do {
-                try ConversionHelpers.checkElements(responseConfig, emptyTokenAllowed: true, contextOptions: contextOptions)
-            } catch {
-                throw error
-            }
+
+        let stringedPathParams = ConversionHelpers.stringifyDict(convertedPathParams)
+        let stringedQueryParams = ConversionHelpers.stringifyDict(convertedQueryParams)
+
+        return ConnectionConfig(connectionURL: connectionURL,
+                             method: method,
+                             pathParams: stringedPathParams,
+                             queryParams: stringedQueryParams,
+                             requestBody: convertedRequestBody,
+                             requestHeader: convertedRequestHeader,
+                             responseBody: responseBody)
+    }
+
+    
+    internal func validate(contextOptions: ContextOptions) throws  {
+        try ConversionHelpers.checkElements(self.pathParams ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.queryParams ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.requestHeader ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.requestBody ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.responseBody ?? [:], emptyTokenAllowed: true, contextOptions: contextOptions)
+    }
+    
+    internal func getLabelsToFormatInRequest(contextOptions: ContextOptions) throws -> [String: String] {
+        try validate(contextOptions: contextOptions)
+        
+        var result = [:] as [String: String]
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.requestBody ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
         }
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.pathParams ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.queryParams ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
+        result.merge(try ConversionHelpers.getElementTokensWithFormatRegex(self.requestHeader ?? [:], contextOptions: contextOptions)) {
+            (_, second) in second
+        }
+        
+        return result
     }
 }

@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import XCTest
 @testable import Skyflow
 
@@ -45,7 +46,12 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             </s:Envelope>
         """
         
-        let requestXML = "<"
+        let requestXML = """
+        <s:Envelope>
+            <s:Header/>
+            <s:Body>
+        </s:Envelope>
+        """
         
         let config = SoapConnectionConfig(connectionURL: "https://www.skyflow.com", requestXML: requestXML, responseXML: responseXML)
         
@@ -58,7 +64,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: invokeConnection - " + ErrorCodes.INVALID_REQUEST_XML().description)
+        XCTAssertTrue(String(responseData).contains("Opening and ending tag mismatch: Body line 0 and Envelope"))
     }
     
     func testEmptyConnectionUrl() {
@@ -615,7 +621,16 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         var contextOptions = ContextOptions()
         contextOptions.interface = .INVOKE_CONNECTION
         
-        let responseXML = "<"
+        let responseXML = """
+        <s:Envelope>
+            <s:Header/>
+            <s:Body>
+                <Value>
+                    123
+                </Valu>
+            </s:Body>
+        </s:Envelope>
+        """
         
         let actualResponse = """
             <s:Envelope>
@@ -623,7 +638,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
                 <s:Body>
                     <Value>
                         123
-                    </Value>
+                    </Valu>
                 </s:Body>
             </s:Envelope>
         """
@@ -633,7 +648,7 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             XCTFail()
         }
         catch {
-            XCTAssertEqual(error.localizedDescription, "Interface: invokeConnection - " + ErrorCodes.INVALID_RESPONSE_XML().description)
+            XCTAssertTrue(error.localizedDescription.contains("Opening and ending tag mismatch: Value line 0 and Valu"))
         }
     }
     
@@ -654,14 +669,16 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             </s:Envelope>
         """
 
-        let actualResponse = "<"
+        let actualResponse = """
+            <
+            """
         
         do {
             try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
             XCTFail()
         }
         catch {
-            XCTAssertEqual(error.localizedDescription, "Interface: invokeConnection - " + ErrorCodes.INVALID_ACTUAL_RESPONSE_XML().description)
+            XCTAssertTrue(error.localizedDescription.contains("parsingFailed"))
         }
     }
     
@@ -762,6 +779,161 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         }
         catch {
             XCTAssertEqual(error.localizedDescription, "Interface: invokeConnection - " + ErrorCodes.INVALID_IDENTIFIERS_IN_SOAP_CONNECTION(value: "s:Envelope.s:Body").description)
+        }
+    }
+    
+    func testParseXmlWithFormatRegex() {
+        var contextOptions = ContextOptions()
+        contextOptions.interface = .INVOKE_CONNECTION
+        let revealContainer = self.skyflow.container(type: ContainerType.REVEAL)
+        let revealElement = revealContainer?.create(input: RevealElementInput(label: "revealElement"), options: RevealElementOptions(formatRegex: "..$"))
+        let revealElementID = revealElement!.getID()
+        
+        let window = UIWindow()
+        window.addSubview(revealElement!)
+        
+        let detokenizedValues = [revealElementID : "2023"]
+        
+        let xml = """
+            <s:Envelope>
+                <s:Header/>
+                <s:Body>
+                    <Value>
+                        <Skyflow>
+                            \(revealElementID)
+                        </Skyflow>
+                    </Value>
+                </s:Body>
+            </s:Envelope>
+        """
+
+        do {
+            let replacedRequestXML = try SoapRequestHelpers.replaceElementsInXML(xml: xml, skyflow: self.skyflow, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
+            XCTAssert(replacedRequestXML.contains("23"))
+        }
+        catch {
+            XCTFail()
+        }
+    }
+    
+    func testGetElementTokensWithFormatRegex() {
+        var contextOptions = ContextOptions()
+        contextOptions.interface = .INVOKE_CONNECTION
+        let revealContainer = self.skyflow.container(type: ContainerType.REVEAL)
+        let revealElement = revealContainer?.create(input: RevealElementInput(label: "revealElement"), options: RevealElementOptions(formatRegex: "..$"))
+        let revealElementID = revealElement!.getID()
+        
+        
+        let revealElement2 = revealContainer?.create(input: RevealElementInput(label: "revealElement"))
+        let revealElementID2 = revealElement2!.getID()
+        
+        let window = UIWindow()
+        window.addSubview(revealElement!)
+        window.addSubview(revealElement2!)
+        revealElement?.actualValue = "123"
+        let xml = """
+            <s:Envelope>
+                <s:Header/>
+                <s:Body>
+                    <Value>
+                        <Skyflow>
+                            \(revealElementID)
+                        </Skyflow>
+                        <Skyflow>
+                             \(revealElementID2)
+                        </Skyflow>
+                    </Value>
+                </s:Body>
+            </s:Envelope>
+        """
+
+        do {
+            let elements = try SoapRequestHelpers.getElementTokensWithFormatRegex(xml: xml, skyflow: self.skyflow, contextOptions: contextOptions)
+            XCTAssert(elements.keys.contains(revealElementID))
+            XCTAssertEqual(elements[revealElementID], "")
+            XCTAssert(!elements.keys.contains(revealElementID2))
+        }
+        catch {
+            XCTFail()
+        }
+    }
+    
+    func testHandleXMLResponseWithFormatRegex() {
+        var contextOptions = ContextOptions()
+        contextOptions.interface = .INVOKE_CONNECTION
+        let revealContainer = self.skyflow.container(type: ContainerType.REVEAL)
+        let revealElement1 = revealContainer?.create(input: RevealElementInput(label: "revealElement1"), options: RevealElementOptions(formatRegex: "..$"))
+        let revealElement2 = revealContainer?.create(input: RevealElementInput(label: "revealElement2"))
+        let revealElementID1 = revealElement1!.getID()
+        let revealElementID2 = revealElement2!.getID()
+        
+        let window = UIWindow()
+        window.addSubview(revealElement1!)
+        window.addSubview(revealElement2!)
+        
+        let responseXML = """
+            <s:Envelope>
+                <s:Header>
+                    <Header>
+                    <List>
+                        <Item>
+                            <Name>1</Name>
+                            <Value>
+                                <SubValue>
+                                    <Skyflow>
+                                        \(revealElementID1)
+                                    </Skyflow>
+                                </SubValue>
+                            </Value>
+                        </Item>
+                        <Item>
+                            <Name>2</Name>
+                            <Value>
+                                <Skyflow>
+                                    \(revealElementID2)
+                                </Skyflow>
+                            </Value>
+                        </Item>
+                    </List>
+                    </Header>
+                </s:Header>
+            </s:Envelope>
+        """
+        
+        let actualResponse = """
+            <s:Envelope>
+                <s:Header>
+                    <Header>
+                    <List>
+                        <Item>
+                            <Name>1</Name>
+                            <Value>
+                                <SubValue> 2023 </SubValue>
+                            </Value>
+                        </Item>
+                        <Item>
+                            <Name>2</Name>
+                            <Value>456</Value>
+                        </Item>
+                    </List>
+                    </Header>
+                </s:Header>
+                <s:Body/>
+            </s:Envelope>
+        """
+
+        do {
+            try SoapRequestHelpers.handleXMLResponse(responseXML: responseXML, actualResponse: actualResponse, skyflow: self.skyflow, contextOptions: contextOptions)
+            let expectation = self.expectation(description: "Test")
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
+            self.waitForExpectations(timeout: 1, handler: nil)
+            XCTAssertEqual(revealElement1?.actualValue, "23")
+            XCTAssertEqual(revealElement2?.actualValue, "456")
+        }
+        catch {
+            XCTFail()
         }
     }
 
