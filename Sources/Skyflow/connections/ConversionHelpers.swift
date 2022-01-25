@@ -7,7 +7,7 @@ class ConversionHelpers {
         var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
         for (key, value) in requestBody {
             do {
-                convertedRequest[key] = try convertValue(value, nested, arraySupport, contextOptions: contextOptions)
+                convertedRequest[key] = try convertValue(value, nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
             } catch {
                 if error.localizedDescription == errorCode.description {
                     errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
@@ -25,7 +25,7 @@ class ConversionHelpers {
             return element
         } else if arraySupport, element is [Any] {
             return try (element as! [Any]).map {
-                try convertValue($0, nested, arraySupport, contextOptions: contextOptions)
+                try convertValue($0, nested, arraySupport, contextOptions: contextOptions, detokenizedValues:  detokenizedValues)
             }
         } else if element is TextField {
             let textField = element as! TextField
@@ -42,15 +42,15 @@ class ConversionHelpers {
 
             // Format regex: Will be deprecated in the future
             if !label.options.formatRegex.isEmpty {
-                if detokenizedValues.keys.contains(label.uuid) {
-                    return try detokenizedValues[label.uuid]!.getFirstRegexMatch(of: label.options.formatRegex)
+                if detokenizedValues.keys.contains(label.getID()) {
+                    return try detokenizedValues[label.getID()]!.getFirstRegexMatch(of: label.options.formatRegex)
                 } else {
                     throw NSError(domain: "", code: 400, userInfo: ["Error": "Unable to detokenize value"])
                 }
             }
             return label.getValueForConnections()
         } else if nested, element is [String: Any] {
-            return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions)
+            return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
         } else {
             errorCode = .INVALID_DATA_TYPE_PASSED(value: "")
             throw errorCode!.getErrorObject(contextOptions: contextOptions)

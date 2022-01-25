@@ -24,7 +24,7 @@ class SoapRequestHelpers {
         }
     }
 
-    static func replaceElementsInXML(xml: String, skyflow: Client, contextOptions: ContextOptions) throws -> String {
+    static func replaceElementsInXML(xml: String, skyflow: Client, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> String {
         
         var tempXML = xml
         let matched = matches(for: "<skyflow>([\\s\\S]*?)<\\/skyflow>", in: xml)
@@ -59,7 +59,11 @@ class SoapRequestHelpers {
                         throw errorCode.getErrorObject(contextOptions: contextOptions)
                     }
                     else {
-                        res = label.getValueForConnections()
+                        if label.options.formatRegex.isEmpty {
+                            res = label.getValueForConnections()
+                        } else {
+                            res = try (detokenizedValues[label.getID()]?.getFirstRegexMatch(of: label.options.formatRegex)) ?? ""
+                        }
                     }
                 }
             }
@@ -94,8 +98,12 @@ class SoapRequestHelpers {
                         throw errorCode.getErrorObject(contextOptions: contextOptions)
                     }
                     else {
+                        var formattedValue = val
+                        if !label.options.formatRegex.isEmpty {
+                            formattedValue = try val.getFirstRegexMatch(of: label.options.formatRegex)
+                        }
                         DispatchQueue.main.async {
-                            label.updateVal(value: val)
+                            label.updateVal(value: formattedValue)
                         }
                     }
                 }
@@ -381,6 +389,27 @@ class SoapRequestHelpers {
         }
     
         return actualXML.xml
+    }
+    
+    static func getElementTokensWithFormatRegex(xml: String, skyflow: Client, contextOptions: ContextOptions) throws -> [String: String] {
+        let matched = matches(for: "<skyflow>([\\s\\S]*?)<\\/skyflow>", in: xml)
+        var res = [String: String]()
+
+        for match in matched {
+            var temp = match
+            temp.removeFirst(9)
+            temp.removeLast(10)
+            temp = temp.trimmingCharacters(in: .whitespacesAndNewlines)
+            if skyflow.elementLookup[temp] != nil {
+                let element = skyflow.elementLookup[temp]
+                if let label = element as? Label {
+                    if !label.options.formatRegex.isEmpty {
+                        res[label.getID()] = label.getToken()
+                    }
+                }
+            }
+        }
+        return res
     }
     
 }

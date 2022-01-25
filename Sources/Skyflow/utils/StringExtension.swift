@@ -15,7 +15,7 @@ extension String {
     }
     
     func getFirstRegexMatch(of regex: String) throws -> String {
-        guard let range = self.range(of: regex) else { throw NSError(domain: "", code: 400, userInfo: ["Error": "No Match Found"])}
+        guard let range = self.range(of: regex, options: .regularExpression) else { throw NSError(domain: "", code: 400, userInfo: ["Error": "No Match Found"])}
         return String(self[range])
     }
 }

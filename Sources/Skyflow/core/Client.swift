@@ -309,10 +309,32 @@ public class Client {
             }
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
+        
         let soapConnectionAPIClient = SoapConnectionAPIClient(callback: callback, skyflow: self, contextOptions: tempContextOptions)
-
-        let soapConnectionTokenCallback = ConnectionTokenCallback(client: soapConnectionAPIClient, connectionType: .SOAP, config: config, clientCallback: callback)
-        self.apiClient.getAccessToken(callback: soapConnectionTokenCallback, contextOptions: tempContextOptions)
+        
+        do {
+            let labelIDsToTokens = try SoapRequestHelpers.getElementTokensWithFormatRegex(xml: config.requestXML, skyflow: self, contextOptions: tempContextOptions)
+            if labelIDsToTokens.isEmpty {
+                let soapConnectionTokenCallback = ConnectionTokenCallback(client: soapConnectionAPIClient, connectionType: .SOAP, config: config, clientCallback: callback)
+                self.apiClient.getAccessToken(callback: soapConnectionTokenCallback, contextOptions: tempContextOptions)
+            } else {
+                let connectionTokenCallback = ConnectionDetokenizeCallback(
+                    skyflowClient: self,
+                    labelIDsToTokens: labelIDsToTokens,
+                    apiClient: apiClient,
+                    connectionType: .SOAP,
+                    config: config,
+                    clientCallback: callback,
+                    contextOptions: tempContextOptions)
+                let recordsToDetokenize = createDetokenizeRecords(labelIDsToTokens)
+                        
+                self.detokenize(records: recordsToDetokenize, callback: connectionTokenCallback)
+            }
+        }
+        catch {
+            callback.onFailure(error)
+        }
+        
     }
     
     internal func createDetokenizeRecords(_ IDsToTokens: [String: String]) -> [String: [[String: String]]]{
@@ -412,17 +434,26 @@ fileprivate class ConnectionDetokenizeCallback: Callback {
     }
     
     func onSuccess(_ responseBody: Any) {
-        if let detokenizeOutput = responseBody as? [String: String] {
+        if let detokenizeOutput = responseBody as? [String: [[String: String]]] {
             do {
-                let detokenizedValues = self.convertDetokenizeOutput(detokenizeOutput)
-                let convertedConfig = try (self.config as! ConnectionConfig).convert(detokenizedValues: mergeDicts(self.labelIDsToTokens, detokenizedValues), contextOptions: self.contextOptions)
-                self.tokenCallback.config = convertedConfig
-                self.skyflowClient.apiClient.getAccessToken(callback: self.tokenCallback, contextOptions: self.contextOptions)
+                let detokenizeOutput = self.convertDetokenizeOutput(detokenizeOutput)
+                let detokenizedValues = mergeDicts(self.labelIDsToTokens, detokenizeOutput)
+                switch connectionType {
+                case .REST:
+                    let convertedConfig = try (self.config as! ConnectionConfig).convert(detokenizedValues: detokenizedValues, contextOptions: self.contextOptions)
+                    self.tokenCallback.config = convertedConfig
+                    self.skyflowClient.apiClient.getAccessToken(callback: self.tokenCallback, contextOptions: self.contextOptions)
+                case .SOAP:
+                    let convertedConfig = try (self.config as! SoapConnectionConfig).convert(skyflow: self.skyflowClient, detokenizedValues: detokenizedValues, contextOptions: self.contextOptions)
+                    self.tokenCallback.config = convertedConfig
+                    self.skyflowClient.apiClient.getAccessToken(callback: self.tokenCallback, contextOptions: self.contextOptions)
+                }
             } catch {
                 self.tokenCallback.onFailure(error)
             }
         } else {
-            self.tokenCallback.onFailure(NSError(domain: "", code: 400, userInfo: ["Error": "Invalid Response from token provider"]))
+            print("----", responseBody)
+            self.tokenCallback.onFailure(NSError(domain: "", code: 400, userInfo: ["Error": "Invalid Response from detokenize"]))
         }
     }
     

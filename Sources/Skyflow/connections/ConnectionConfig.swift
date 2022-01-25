@@ -71,7 +71,7 @@ public struct ConnectionConfig {
         try ConversionHelpers.checkElements(self.queryParams ?? [:], contextOptions: contextOptions)
         try ConversionHelpers.checkElements(self.requestHeader ?? [:], contextOptions: contextOptions)
         try ConversionHelpers.checkElements(self.requestBody ?? [:], contextOptions: contextOptions)
-        try ConversionHelpers.checkElements(self.responseBody ?? [:], contextOptions: contextOptions)
+        try ConversionHelpers.checkElements(self.responseBody ?? [:], emptyTokenAllowed: true, contextOptions: contextOptions)
     }
     
     internal func getLabelsToFormatInRequest(contextOptions: ContextOptions) throws -> [String: String] {
