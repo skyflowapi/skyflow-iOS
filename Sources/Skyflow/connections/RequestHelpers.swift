@@ -172,7 +172,7 @@ class RequestHelpers {
                     let responseLabel = (responseBodyValue as! Label)
                     var formattedValue = (value as! String)
                     if !responseLabel.options.formatRegex.isEmpty {
-                        formattedValue = try formattedValue.getFirstRegexMatch(of: responseLabel.options.formatRegex)
+                        formattedValue = try formattedValue.getFirstRegexMatch(of: responseLabel.options.formatRegex, contextOptions: contextOptions)
                     }
                     DispatchQueue.main.async {
                         responseLabel.updateVal(value: formattedValue)

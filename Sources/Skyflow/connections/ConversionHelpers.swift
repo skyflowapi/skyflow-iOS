@@ -43,9 +43,7 @@ class ConversionHelpers {
             // Format regex: Will be deprecated in the future
             if !label.options.formatRegex.isEmpty {
                 if detokenizedValues.keys.contains(label.getID()) {
-                    return try detokenizedValues[label.getID()]!.getFirstRegexMatch(of: label.options.formatRegex)
-                } else {
-                    throw NSError(domain: "", code: 400, userInfo: ["Error": "Unable to detokenize value"])
+                    return try detokenizedValues[label.getID()]!.getFirstRegexMatch(of: label.options.formatRegex, contextOptions: contextOptions)
                 }
             }
             return label.getValueForConnections()
@@ -266,13 +264,13 @@ class ConversionHelpers {
         var result = [:] as [String: String]
         
         
-        for (_, value) in json {
+        for (key, value) in json {
             if value is Label  && !((value as! Label).options.formatRegex.isEmpty) {
                 let valueAsLabel = (value as! Label)
                 let token = valueAsLabel.getToken()
                 
                 if token.isEmpty {
-                    throw NSError(domain: "", code: 400, userInfo: ["Error": "No Token Found for Label with formatRegex"])
+                    throw ErrorCodes.EMPTY_TOKEN_INVOKE_CONNECTION(value: key).getErrorObject(contextOptions: contextOptions)
                 } else {
                     result[valueAsLabel.getID()] = token
                 }

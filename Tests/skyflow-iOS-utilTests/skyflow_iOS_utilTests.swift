@@ -9,7 +9,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
     }
     
     func testGetRegexMatch() {
-        XCTAssertEqual("abcdef".getFirstRegexMatch(of: "..$"), "ef")
-        XCTAssertEqual("abcdef".getFirstRegexMatch(of: "9$"), "")
+        XCTAssertEqual("abcdef".getFirstRegexMatch(of: "..$", contextOptions: ContextOptions()), "ef")
+        XCTAssertEqual("abcdef".getFirstRegexMatch(of: "9$", contextOptions: ContextOptions()), "")
     }
 }

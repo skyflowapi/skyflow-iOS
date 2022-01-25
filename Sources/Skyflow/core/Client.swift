@@ -452,7 +452,7 @@ fileprivate class ConnectionDetokenizeCallback: Callback {
                 self.tokenCallback.onFailure(error)
             }
         } else {
-            self.tokenCallback.onFailure(NSError(domain: "", code: 400, userInfo: ["Error": "Invalid Response from detokenize"]))
+            self.tokenCallback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Response from detokenize"]))
         }
     }
     

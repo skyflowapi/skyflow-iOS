@@ -14,8 +14,8 @@ extension String {
         return self.replacingCharacters(in: range, with: replacement)
     }
     
-    func getFirstRegexMatch(of regex: String) throws -> String {
-        guard let range = self.range(of: regex, options: .regularExpression) else { throw NSError(domain: "", code: 400, userInfo: ["Error": "No Match Found"])}
+    func getFirstRegexMatch(of regex: String, contextOptions: ContextOptions) throws -> String {
+        guard let range = self.range(of: regex, options: .regularExpression) else { throw ErrorCodes.REGEX_MATCH_FAILED(value: regex).getErrorObject(contextOptions: contextOptions)}
         return String(self[range])
     }
 }

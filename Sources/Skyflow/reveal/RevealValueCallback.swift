@@ -22,28 +22,59 @@ internal class RevealValueCallback: Callback {
         var tokens: [String: String] = [:]
 
 
-        let responseJson = responseBody as? [String: Any]
+        let responseJson = responseBody as! [String: Any]
         var response: [String: Any] = [:]
-        var successResponses: [[String: String]] = []
+        var tempSuccessResponses: [[String: String]] = []
 
-        if let records = responseJson?["records"] as? [Any] {
+        if let records = responseJson["records"] as? [Any] {
             for record in records {
                 let dict = record as! [String: Any]
                 let token = dict["token"] as! String
                 let value = dict["value"] as? String
                 tokens[token] = value ?? token
+                
                 var successEntry: [String: String] = [:]
                 successEntry["token"] = token
-                successResponses.append(successEntry)
+                tempSuccessResponses.append(successEntry)
+            }
+        }
+        
+        var regexFails = [String: Any]()
+        var successResponses: [[String: String]] = []
+        for revealElement in self.revealElements {
+            if let v = tokens[revealElement.revealInput.token]{
+                if !revealElement.options.formatRegex.isEmpty {
+                    do {
+                        let formattedVal = try v.getFirstRegexMatch(of: revealElement.options.formatRegex, contextOptions: contextOptions)
+                        tokens[revealElement.revealInput.token] = formattedVal
+                    } catch {
+                        regexFails[revealElement.revealInput.token] = error
+                        tokens[revealElement.revealInput.token] = revealElement.revealInput.token
+                    }
+                }
+            }
+        }
+        for entry in tempSuccessResponses {
+            if let token = entry["token"] {
+                if !regexFails.keys.contains(token) {
+                    successResponses.append(entry)
+                }
             }
         }
 
         if successResponses.count != 0 {
             response["success"] = successResponses
         }
-        let errors = responseJson?["errors"] as? [[String: Any]]
+        var errors =  [] as [[String: Any]]
+        if let responseErrors = response["errors"] as? [[String: Any]] {
+            errors = responseErrors
+        }
+        for (token, error) in regexFails {
+            let entry = ["token": token, "error": (error as! NSError).localizedDescription]
+            errors.append(entry)
+        }
         let tokensToErrors = getTokensToErrors(errors)
-        if errors?.count != 0 {
+        if errors.count != 0 {
             response["errors"] = errors
         }
 
@@ -62,8 +93,8 @@ internal class RevealValueCallback: Callback {
                     Log.info(message: .ELEMENT_REVEALED, values: [revealElement.revealInput.label], contextOptions: self.contextOptions)
                 }
             }
-            self.clientCallback.onSuccess(response)
         }
+        self.clientCallback.onSuccess(response)
     }
 
     func onFailure(_ error: Any) {
@@ -72,7 +103,7 @@ internal class RevealValueCallback: Callback {
 
             let responseJson = error as! [String: Any]
             var response: [String: Any] = [:]
-            var successResponses: [Any] = []
+            var tempSuccessResponses: [[String: String]] = []
 
             if let records = responseJson["records"] as? [Any] {
                 for record in records {
@@ -80,21 +111,52 @@ internal class RevealValueCallback: Callback {
                     let token = dict["token"] as! String
                     let value = dict["value"] as? String
                     tokens[token] = value ?? token
+                    
                     var successEntry: [String: String] = [:]
                     successEntry["token"] = token
-                    successResponses.append(successEntry)
+                    tempSuccessResponses.append(successEntry)
+                }
+            }
+            
+            var regexFails = [String: Any]()
+            var successResponses: [[String: String]] = []
+            for revealElement in self.revealElements {
+                if let v = tokens[revealElement.revealInput.token]{
+                    if !revealElement.options.formatRegex.isEmpty {
+                        do {
+                            let formattedVal = try v.getFirstRegexMatch(of: revealElement.options.formatRegex, contextOptions: contextOptions)
+                            tokens[revealElement.revealInput.token] = formattedVal
+                        } catch {
+                            regexFails[revealElement.revealInput.token] = error
+                            tokens[revealElement.revealInput.token] = revealElement.revealInput.token
+                        }
+                    }
+                }
+            }
+            for entry in tempSuccessResponses {
+                if let token = entry["token"] {
+                    if !regexFails.keys.contains(token) {
+                        successResponses.append(entry)
+                    }
                 }
             }
 
             if successResponses.count != 0 {
                 response["success"] = successResponses
             }
-            let errors = responseJson["errors"] as? [[String: Any]]
+            var errors =  [[:]] as [[String: Any]]
+            if let responseErrors = response["errors"] as? [[String: Any]] {
+                errors = responseErrors
+            }
+            for (token, error) in regexFails {
+                let entry = ["token": token, "error": (error as! NSError).localizedDescription]
+                errors.append(entry)
+            }
             let tokensToErrors = getTokensToErrors(errors)
-            if errors?.count != 0 {
+            if errors.count != 0 {
                 response["errors"] = errors
             }
-
+            
             DispatchQueue.main.async {
                 for revealElement in self.revealElements {
                     if let v = tokens[revealElement.revealInput.token]{
