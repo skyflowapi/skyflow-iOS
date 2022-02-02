@@ -61,7 +61,7 @@ class SoapRequestHelpers {
                         if label.options.formatRegex.isEmpty {
                             res = label.getValueForConnections()
                         } else {
-                            res = try (detokenizedValues[label.getID()]?.getFirstRegexMatch(of: label.options.formatRegex, contextOptions: contextOptions)) ?? ""
+                            res = (detokenizedValues[label.getID()]?.getFormattedText(with: label.options.formatRegex, replacementString: label.options.replaceText, contextOptions: contextOptions)) ?? ""
                         }
                     }
                 }
@@ -99,7 +99,7 @@ class SoapRequestHelpers {
                     else {
                         var formattedValue = val
                         if !label.options.formatRegex.isEmpty {
-                            formattedValue = try val.getFirstRegexMatch(of: label.options.formatRegex, contextOptions: contextOptions)
+                            formattedValue = val.getFormattedText(with: label.options.formatRegex, replacementString: label.options.replaceText, contextOptions: contextOptions)
                         }
                         DispatchQueue.main.async {
                             label.updateVal(value: formattedValue)
