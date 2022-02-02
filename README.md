@@ -780,16 +780,9 @@ let revealElementInput = Skyflow.RevealElementInput(
     errorTextStyles: Skyflow.Styles(),   //optional styles that will be applied to the errorText of the reveal element
     label: "cardNumber"                  //optional, label for the element,
     altText: "XXXX XXXX XXXX XXXX"       //optional, string that is shown before reveal, will show token if altText is not provided
-    )
-
-
-let revealElementOptions = RevealElementOptions(
-    formatRegex: "regex" //optional, regex to specify the format on the value that has been revealed
-    )
 ```
 `Note`: 
 - `token` is optional only if it is being used in invokeConnection()
-- If there are multiple matches found with the given `formatRegex` option, then always the first match is applied to the revealed value
 
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
 
@@ -818,7 +811,7 @@ let labelStyles = Skyflow.Styles(base: Skyflow.Style(textColor: UIColor.red))
 Once you've defined a `Skyflow.RevealElementInput` object, you can use the `create()` method of the container to create the Element as shown below:
 
 ```swift
-let element = container.create(input: revealElementInput, options: RevealElementOptions(formatRegex: "..$"))
+let element = container.create(input: revealElementInput)
 ```
 
 ### Step 3: Mount Elements to the Screen
@@ -973,11 +966,7 @@ Sample use-cases on using invokeConnection():
 Merchant acceptance - customers should be able to complete payment checkout without cvv touching their application. This means that the merchant should be able to receive a CVV and process a payment without exposing their front-end to any PCI data
 ```swift
 // step 1
-let config = Skyflow.Configuration(
-    vaultID: "<VAULT_ID>", // optional, required only when a revealElement is present with formatRegex option
-    vaultURL: "<VAULT_URL>", // optional, required only when a revealElement is present with formatRegex option
-  tokenProvider: demoTokenProvider
-  )
+let config = Skyflow.Configuration(tokenProvider: demoTokenProvider)
 
 let skyflowClient = Skyflow.initialize(config)
 
@@ -1133,9 +1122,7 @@ Please ensure that the paths configured in the responseXML are present in the ac
 
 ```swift
 let config = Skyflow.Configuration(
-    vaultID: "<VAULT_ID>", // optional, required only when a revealElement is present with formatRegex option
-    vaultURL: "<VAULT_URL>", // optional, required only when a revealElement is present with formatRegex option
-    tokenProvider: demoTokenProvider
+    tokenProvider = demoTokenProvider
 )
 let skyflowClient = Skyflow.initialize(config)
 
@@ -1146,23 +1133,19 @@ let collectContainer = skyflowClient.container(type: Skyflow.ContainerType.COLLE
 // step 3
 let cardNumberInput = Skyflow.CollectElementInput(type: SkyflowElementType.CARD_NUMBER)
 
-let expireMonthInput = RevealElementInput(token: "<token>",altText: "Expiry Month")
-let expireYearInput = RevealElementInput(token: "<token>",altText: "Expiry Year")
-
+let expirationDateInput = Skyflow.CollectElementInput(type: Skyflow.SkyflowElementType.EXPIRATION_DATE, label: "expiry date")
 
 let cvvInput = Skyflow.RevealElementInput(label: "cvv", altText: "cvv not generated") 
 
 let cardNumberElement = collectContainer.create(input: cardNumberInput)
-let expiryMonthElement = revealContainer.create(input: expireMonthInput)
-let expiryYearElement =  revealContainer.create(input: expireInput,RevealElementOptions(formatRegex: "/..$/")) //  only last 2 characters are sent for invoking connection
+let expirationDateElement = collectContainer.create(input: expirationDateInput)
 let cvvElement = revealContainer.create(input: cvvInput)
 
 //Can interact with these objects as a normal UIView Object and add to View
 
 //step 4
 let cardNumberID = cardNumberElement.getID()  // to get element ID
-let expiryMonthID = expiryMonthElement.getID()
-let expiryYearID = expiryYearElement.getID()
+let expirationDateID = expirationDateElement.getID()
 let cvvElementID = cvvElement.getID()
 
 // step 5
@@ -1180,16 +1163,9 @@ val requestXML = """<soapenv:Envelope>
                   </Skyflow>
                </CardNumber>
                <ExpiryDate>
-                    <ExpiryMonth>
-                      <skyflow>
-                        ${expiryMonthID}
-                      </skyflow>
-                    </ExpiryMonth>
-                    <ExpirYear>
-                      <skyflow>
-                        ${expiryYearID}
-                      </skyflow>
-                    </ExpiryYear>
+                  <Skyflow>
+                    ${expirationDateID}
+                  </Skyflow>
                </ExpiryDate>
         </GenerateCVV>
     </soapenv:Body>
@@ -1254,10 +1230,8 @@ Sample Response on success:
 </soapenv:Envelope>
 ```
 
-`Note`: 
-- In responseXML we provide the tags that needs to be rendered in UI and stripped out from the actual response. 
-    1. For uniquely identifiable tag, we can give the elementID within a skyflow tag directly corresponding to the actual value.
-    Please refer to the CVV tag in the above example. Here, we wish to strip the actual value present within the CVV tag.
-    2. For arrays, since we have multiple tags with the same name, we will need to provide identifiers to uniquely identify the required tag.
-    Please refer to HeaderItem tag. Here, we have provided NodeId within the Name tag which acts as an identifier and we wish to strip the actual value present in the Value tag.
-- In responseXML, if revealElement with formatRegex option is present, then value is revealed in the UI according to the match found with respect to the given formatRegex
+`Note`: In responseXML we provide the tags that needs to be rendered in UI and stripped out from the actual response. 
+1. For uniquely identifiable tag, we can give the elementID within a skyflow tag directly corresponding to the actual value.
+Please refer to the CVV tag in the above example. Here, we wish to strip the actual value present within the CVV tag.
+2. For arrays, since we have multiple tags with the same name, we will need to provide identifiers to uniquely identify the required tag.
+Please refer to HeaderItem tag. Here, we have provided NodeId within the Name tag which acts as an identifier and we wish to strip the actual value present in the Value tag.
