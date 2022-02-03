@@ -45,7 +45,7 @@ internal class RevealValueCallback: Callback {
             if let v = tokens[revealElement.revealInput.token]{
                 if !revealElement.options.formatRegex.isEmpty {
                     do {
-                        let formattedVal = try v.getFirstRegexMatch(of: revealElement.options.formatRegex, contextOptions: contextOptions)
+                        let formattedVal = v.getFormattedText(with: revealElement.options.formatRegex, replacementString: revealElement.options.replaceText, contextOptions: contextOptions)
                         tokens[revealElement.revealInput.token] = formattedVal
                     } catch {
                         regexFails[revealElement.revealInput.token] = error
@@ -124,7 +124,7 @@ internal class RevealValueCallback: Callback {
                 if let v = tokens[revealElement.revealInput.token]{
                     if !revealElement.options.formatRegex.isEmpty {
                         do {
-                            let formattedVal = try v.getFirstRegexMatch(of: revealElement.options.formatRegex, contextOptions: contextOptions)
+                            let formattedVal = v.getFormattedText(with: revealElement.options.formatRegex, replacementString: revealElement.options.replaceText, contextOptions: contextOptions)
                             tokens[revealElement.revealInput.token] = formattedVal
                         } catch {
                             regexFails[revealElement.revealInput.token] = error
