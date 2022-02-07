@@ -61,7 +61,10 @@ class SoapRequestHelpers {
                         if label.options.formatRegex.isEmpty {
                             res = label.getValueForConnections()
                         } else {
-                            res = (detokenizedValues[label.getID()]?.getFormattedText(with: label.options.formatRegex, replacementString: label.options.replaceText, contextOptions: contextOptions)) ?? ""
+                            res = (detokenizedValues[label.getID()]?
+                                    .getFormattedText(with: label.options.formatRegex,
+                                                      replacementString: label.options.replaceText,
+                                                      contextOptions: contextOptions)) ?? ""
                         }
                     }
                 }
