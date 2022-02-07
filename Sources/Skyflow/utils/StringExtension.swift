@@ -15,7 +15,8 @@ extension String {
     }
     
     func getFirstRegexMatch(of regex: String, contextOptions: ContextOptions) throws -> String {
-        guard let range = self.range(of: regex, options: .regularExpression) else { throw ErrorCodes.REGEX_MATCH_FAILED(value: regex).getErrorObject(contextOptions: contextOptions)}
+        guard let range = self.range(of: regex, options: .regularExpression) else { throw ErrorCodes.REGEX_MATCH_FAILED(value: regex).errorObject
+        }
         return String(self[range])
     }
     

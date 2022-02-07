@@ -792,4 +792,105 @@ final class skyflow_iOS_connectionTests: XCTestCase {
             XCTFail()
         }
     }
+    
+    func testConvertOrFailWithReplaceText() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container!.create(input: collectInput, options: options)
+        cardNumber.actualValue = "4111-1111-1111-1111"
+
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
+        let revealElement: Label? = revealContainer?.create(input: revealInput, options: RevealElementOptions(formatRegex: "^([0-9])$", replaceText: "0$1"))
+        
+        
+        let requestBody: [String: Any] = [
+            "resource": [
+                "card_number": cardNumber,
+                "reveal": revealElement!,
+                "nestedFields": [
+                    "reveal": revealElement
+                ]
+            ],
+            "expirationDate": "12/22"
+        ]
+        
+        let detokenizedValues = [revealElement!.getID(): "1"]
+        
+        do {
+            let result = try ConversionHelpers.convertOrFail(requestBody, contextOptions: ContextOptions(), detokenizedValues: detokenizedValues)
+            XCTAssertEqual((result!["resource"] as! [String: Any])["card_number"] as! String, "4111-1111-1111-1111")
+            XCTAssertEqual((result!["resource"] as! [String: Any])["reveal"] as! String, "01")
+        }
+        catch {
+            XCTFail()
+        }
+        
+    }
+    
+    func testParseAndConvertResponseWithReplaceText() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container!.create(input: collectInput, options: options)
+        cardNumber.textField.secureText = "4111-1111-1111-1111"
+        
+        let revealInput = RevealElementInput(token: "abc", inputStyles: styles, label: "reveal", altText: "reveal")
+        // with format regex for month double digit
+        let revealElement: Label? = revealContainer?.create(input: revealInput, options: RevealElementOptions(formatRegex: "^([0-9])$", replaceText: "0$1"))
+        
+        
+        let responseBody: [String: Any] = [
+            "resource": [
+                "card_number": cardNumber,
+                "nestedFields": [
+                    "month": revealElement!
+                ]
+            ],
+            "expirationDate": "12/22"
+        ]
+        
+        let response: [String: Any] = [
+            "resource": [
+                "card_number": "cardNumber",
+                "nestedFields": [
+                    "card_number": "4111-1111-1111-1111",
+                    "month": "2"
+                ]
+            ],
+            "expirationDate": "12/22"
+        ]
+        
+        
+        do {
+            let convertedResponse = try RequestHelpers.parseActualResponseAndUpdateElements(response: response, responseBody: responseBody, contextOptions: ContextOptions())
+            waitForUIUpdates()
+            
+            XCTAssertEqual(convertedResponse["expirationDate"] as! String, "12/22")
+            XCTAssertNil((convertedResponse["resource"] as! [String: Any])["card_number"])
+            XCTAssertNil((convertedResponse["resource"] as! [String: Any])["reveal"])
+             XCTAssertEqual(cardNumber.getValue(), "cardNumber")
+             XCTAssertEqual(revealElement?.getValue(), "02")
+            
+        } catch {
+            XCTFail()
+        }
+    }
+
 }

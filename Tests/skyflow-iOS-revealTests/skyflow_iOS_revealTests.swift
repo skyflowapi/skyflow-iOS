@@ -366,14 +366,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealElementInput = getRevealElementInput()
       
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions(formatRegex: "abc"))
-
-        var revealedOutput = ""
-        
-        do {
-            revealedOutput = try ProcessInfo.processInfo.environment["DETOKENIZE_TEST_VALUE"]!.getFirstRegexMatch(of: "..$", contextOptions: ContextOptions())
-        } catch {
-            XCTFail()
-        }
         
         window.addSubview(revealElement!)
         
@@ -387,11 +379,45 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         do {
             let response = try JSONSerialization.jsonObject(with: callback.receivedResponse.data(using: .utf8)!) as! [String: Any]
-//            slet errors = response["errors"] as! [[String: String]]
-//
-//            XCTAssert(errors.count == 1)
-//            XCTAssertEqual(errors[0]["token"], revealTestId)
-//            XCTAssertEqual(errors[0]["error"], "Interface: reveal container - No match found for regex: abc")
+            let records = response["success"] as! [[String: String]]
+            
+            print(records)
+
+            XCTAssert(records.count == 1)
+            XCTAssertEqual(records[0]["token"], revealTestId)
+            XCTAssertEqual(revealElement?.actualValue, ProcessInfo.processInfo.environment["DETOKENIZE_TEST_VALUE"]!)
+        } catch {
+            XCTFail()
+        }
+    }
+    
+    func testRevealContainersRevealWithReplaceText() {
+        let window = UIWindow()
+        
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let revealElementInput = getRevealElementInput()
+      
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions(formatRegex: "^(.+)(..)$", replaceText: "$2a"))
+        
+        window.addSubview(revealElement!)
+        
+        let expectation = XCTestExpectation(description: "Should return reveal output")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        revealContainer?.reveal(callback: callback)
+
+        wait(for: [expectation], timeout: 30.0)
+        waitForUIUpdates()
+        
+        do {
+            let response = try JSONSerialization.jsonObject(with: callback.receivedResponse.data(using: .utf8)!) as! [String: Any]
+            let records = response["success"] as! [[String: String]]
+            
+            print(records)
+
+            XCTAssert(records.count == 1)
+            XCTAssertEqual(records[0]["token"], revealTestId)
+            XCTAssertEqual(revealElement?.actualValue, "11a")
         } catch {
             XCTFail()
         }
