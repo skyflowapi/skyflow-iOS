@@ -39,26 +39,18 @@ internal class RevealValueCallback: Callback {
             }
         }
         
-        var regexFails = [String: Any]()
         var successResponses: [[String: String]] = []
         for revealElement in self.revealElements {
             if let v = tokens[revealElement.revealInput.token]{
                 if !revealElement.options.formatRegex.isEmpty {
-                    do {
-                        let formattedVal = try v.getFirstRegexMatch(of: revealElement.options.formatRegex, contextOptions: contextOptions)
-                        tokens[revealElement.revealInput.token] = formattedVal
-                    } catch {
-                        regexFails[revealElement.revealInput.token] = error
-                        tokens[revealElement.revealInput.token] = revealElement.revealInput.token
-                    }
+                    let formattedVal = v.getFormattedText(with: revealElement.options.formatRegex, replacementString: revealElement.options.replaceText, contextOptions: contextOptions)
+                    tokens[revealElement.revealInput.token] = formattedVal
                 }
             }
         }
         for entry in tempSuccessResponses {
             if let token = entry["token"] {
-                if !regexFails.keys.contains(token) {
-                    successResponses.append(entry)
-                }
+                successResponses.append(entry)
             }
         }
 
@@ -68,10 +60,6 @@ internal class RevealValueCallback: Callback {
         var errors =  [] as [[String: Any]]
         if let responseErrors = response["errors"] as? [[String: Any]] {
             errors = responseErrors
-        }
-        for (token, error) in regexFails {
-            let entry = ["token": token, "error": (error as! NSError).localizedDescription]
-            errors.append(entry)
         }
         let tokensToErrors = getTokensToErrors(errors)
         if errors.count != 0 {
@@ -118,26 +106,18 @@ internal class RevealValueCallback: Callback {
                 }
             }
             
-            var regexFails = [String: Any]()
             var successResponses: [[String: String]] = []
             for revealElement in self.revealElements {
                 if let v = tokens[revealElement.revealInput.token]{
                     if !revealElement.options.formatRegex.isEmpty {
-                        do {
-                            let formattedVal = try v.getFirstRegexMatch(of: revealElement.options.formatRegex, contextOptions: contextOptions)
-                            tokens[revealElement.revealInput.token] = formattedVal
-                        } catch {
-                            regexFails[revealElement.revealInput.token] = error
-                            tokens[revealElement.revealInput.token] = revealElement.revealInput.token
-                        }
+                        let formattedVal = v.getFormattedText(with: revealElement.options.formatRegex, replacementString: revealElement.options.replaceText, contextOptions: contextOptions)
+                        tokens[revealElement.revealInput.token] = formattedVal
                     }
                 }
             }
             for entry in tempSuccessResponses {
                 if let token = entry["token"] {
-                    if !regexFails.keys.contains(token) {
-                        successResponses.append(entry)
-                    }
+                    successResponses.append(entry)
                 }
             }
 
@@ -148,10 +128,7 @@ internal class RevealValueCallback: Callback {
             if let responseErrors = response["errors"] as? [[String: Any]] {
                 errors = responseErrors
             }
-            for (token, error) in regexFails {
-                let entry = ["token": token, "error": (error as! NSError).localizedDescription]
-                errors.append(entry)
-            }
+            
             let tokensToErrors = getTokensToErrors(errors)
             if errors.count != 0 {
                 response["errors"] = errors

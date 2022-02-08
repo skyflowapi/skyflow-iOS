@@ -43,7 +43,7 @@ class ConversionHelpers {
             // Format regex: Will be deprecated in the future
             if !label.options.formatRegex.isEmpty {
                 if detokenizedValues.keys.contains(label.getID()) {
-                    return try detokenizedValues[label.getID()]!.getFirstRegexMatch(of: label.options.formatRegex, contextOptions: contextOptions)
+                    return detokenizedValues[label.getID()]!.getFormattedText(with: label.options.formatRegex, replacementString: label.options.replaceText, contextOptions: contextOptions)
                 }
             }
             return label.getValueForConnections()

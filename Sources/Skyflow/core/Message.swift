@@ -41,6 +41,7 @@ internal enum Message {
     case VAULT_URL_EMPTY_WARNING
     case SET_VALUE_WARNING
     case CLEAR_VALUE_WARNING
+    case NO_REGEX_MATCH_FOUND
 
 
 
@@ -79,6 +80,7 @@ internal enum Message {
         case .VAULT_URL_EMPTY_WARNING: return "Invalid client credentials. VaultURL cannot be empty."
         case .SET_VALUE_WARNING: return "<ELEMENT_TYPE> setValue() cannot be invoked while in PROD env. It is Not Recommended."
         case .CLEAR_VALUE_WARNING: return "<ELEMENT_TYPE> clearValue() cannot be invoked while in PROD env. It is Not Recommended."
+        case .NO_REGEX_MATCH_FOUND: return "No match found for regex - <REGEX>"
         }
     }
 
