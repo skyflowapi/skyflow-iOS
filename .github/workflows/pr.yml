@@ -4,6 +4,7 @@ on: [pull_request]
 
 jobs:
   SwiftLint:
+   name: Check Code Quality
    runs-on: ubuntu-latest
    steps:
      - uses: actions/checkout@v1
@@ -14,7 +15,7 @@ jobs:
        with:
           args: --config .swiftlint.yml
   xcode-build:
-    name: Xcode Build
+    name: Run Tests
     runs-on: macOS-10.15
     timeout-minutes: 30
 
@@ -34,4 +35,4 @@ jobs:
         run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=14.2,name=iPhone 11" VAULT_URL="${{ secrets.VAULT_URL }}" CAVV_TEST_TOKEN="${{ secrets.CAVV_TEST_TOKEN }}" PULL_FUNDS_INTEGRATION_CONNECTION_URL="${{ secrets.PULL_FUNDS_INTEGRATION_CONNECTION_URL }}" CVV_INTEGRATION_PATH="${{ secrets.CVV_INTEGRATION_PATH }}" CVV_INTEGRATION_CONNECTION_URL="${{ secrets.CVV_INTEGRATION_CONNECTION_URL }}" CONNECTION_URL="${{ secrets.CONNECTION_URL }}" TEST_EXPIRATION_DATE_TOKEN="${{ secrets.TEST_EXPIRATION_DATE_TOKEN }}" TEST_CARD_NUMBER="${{ secrets.TEST_CARD_NUMBER }}" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="${{ secrets.TEST_SKYFLOW_ID3 }}" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" DETOKENIZE_TEST_TOKEN="${{ secrets.DETOKENIZE_TEST_TOKEN }}" DETOKENIZE_TEST_VALUE="${{ secrets.DETOKENIZE_TEST_VALUE }}" TOKEN_ENDPOINT="${{ secrets.TOKEN_ENDPOINT }}" PULL_FUNDS_INTEGRATION_ID="${{ secrets.PULL_FUNDS_INTEGRATION_ID }}" VISA_BASIC_AUTH="${{ secrets.VISA_BASIC_AUTH }}" CVV_INTEGRATION_ID="${{ secrets.CVV_INTEGRATION_ID }}" VAULT_ID="${{ secrets.VAULT_ID }}" test
         
       - name: Coverage
-        run: xcrun xccov view Build/Logs/Test/*.xccovreport --json
+        run: xcrun xccov view /Users/runner/Library/Developer/Xcode/DerivedData/skyflow-iOS-exswcpnbgmegaccylrjhaazusykz/Logs/Test/*.xcresult --json
