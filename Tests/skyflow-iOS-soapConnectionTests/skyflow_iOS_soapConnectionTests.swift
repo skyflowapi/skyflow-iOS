@@ -1119,7 +1119,6 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         let connectionConfig = SoapConnectionConfig(connectionURL: "", requestXML: requestBody)
         do {
             let res = try SoapRequestHelpers.getElementTokensWithFormatRegex(xml: connectionConfig.requestXML, skyflow: skyflow, contextOptions: ContextOptions())
-            print("===>", res)
             XCTAssertEqual(res.count, 3)
         } catch {
             XCTFail()
