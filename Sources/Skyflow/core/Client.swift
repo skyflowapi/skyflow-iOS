@@ -354,10 +354,10 @@ public class Client {
     }
     
     internal func createDetokenizeRecords(_ IDsToTokens: [String: String]) -> [String: [[String: String]]]{
-        var records = [[:]] as [[String : String]]
+        var records = [] as [[String : String]]
         var index = 0
         for (_, token) in IDsToTokens {
-            records[index]["token"] = token
+            records.append(["token": token])
             index += 1
         }
         

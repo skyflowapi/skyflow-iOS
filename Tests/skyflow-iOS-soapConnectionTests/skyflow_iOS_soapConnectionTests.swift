@@ -1051,4 +1051,79 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
             XCTFail()
         }
     }
+    
+    func testDetokenizeRecords() {
+        let IdsMap = ["yearID": "yearToken", "yearID2": "yearToken2", "monthID": "monthToken"]
+        
+        
+        let records = skyflow.createDetokenizeRecords(IdsMap)
+        
+        XCTAssertNotNil(records["records"])
+        XCTAssertEqual(records["records"]?.count, 3)
+    }
+    
+    func testGetFormatRegexIdsMap() {
+        
+        let window = UIWindow()
+
+        let collectContainer = self.skyflow?.container(type: Skyflow.ContainerType.COLLECT, options: nil)
+
+        let revealContainer = self.skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
+
+        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+
+        let cardNumberElement = collectContainer?.create(input: cardNumberInput)
+
+        cardNumberElement?.actualValue = ProcessInfo.processInfo.environment["TEST_CARD_NUMBER"]!
+
+        window.addSubview(cardNumberElement!)
+
+        
+        let monthInput = RevealElementInput(token: "month", inputStyles: Styles(), label: "month", altText: "Month")
+
+        let monthElement = revealContainer?.create(input: monthInput, options: RevealElementOptions(formatRegex: "^([0-9])$", replaceText: "0$1"))
+        
+        let yearInput = RevealElementInput(token: "year", inputStyles: Styles(), label: "year", altText: "Year")
+
+        let yearElement = revealContainer?.create(input: yearInput, options: RevealElementOptions(formatRegex: "..$"))
+
+        let newElement = revealContainer?.create(input: yearInput, options: RevealElementOptions(formatRegex: "..$"))
+
+        window.addSubview(monthElement!)
+        window.addSubview(yearElement!)
+        window.addSubview(newElement!)
+        
+        let requestBody = """
+            <s:Envelope>
+                <s:Header/>
+                <s:Body>
+                    <Value>
+                        <skyflow>
+                            \(monthElement!.getID())
+                        </skyflow>
+                        <skyflow>
+                             \(cardNumberElement!.getID())
+                        </skyflow>
+                            <nested>
+                                <skyflow>
+                                     \(yearElement!.getID())
+                                </skyflow>
+                                <skyflow> \(newElement!.getID()) </skyflow>
+                            </nested>
+                    </Value>
+                </s:Body>
+            </s:Envelope>
+        """
+        
+        
+        let connectionConfig = SoapConnectionConfig(connectionURL: "", requestXML: requestBody)
+        do {
+            let res = try SoapRequestHelpers.getElementTokensWithFormatRegex(xml: connectionConfig.requestXML, skyflow: skyflow, contextOptions: ContextOptions())
+            print("===>", res)
+            XCTAssertEqual(res.count, 3)
+        } catch {
+            XCTFail()
+        }
+    }
+    
 }
