@@ -396,6 +396,7 @@ class SoapRequestHelpers {
     static func getElementTokensWithFormatRegex(xml: String, skyflow: Client, contextOptions: ContextOptions) throws -> [String: String] {
         let matched = matches(for: "<skyflow>([\\s\\S]*?)<\\/skyflow>", in: xml)
         var res = [String: String]()
+        
 
         for match in matched {
             var temp = match
@@ -404,6 +405,7 @@ class SoapRequestHelpers {
             temp = temp.trimmingCharacters(in: .whitespacesAndNewlines)
             if skyflow.elementLookup[temp] != nil {
                 let element = skyflow.elementLookup[temp]
+
                 if let label = element as? Label {
                     if !label.options.formatRegex.isEmpty {
                         res[label.getID()] = label.getToken()
