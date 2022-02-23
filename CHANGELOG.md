@@ -3,6 +3,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2022-02-23
+- Add Request ID in error logs and error responses for API Errors
+
 ## [1.11.1] - 2022-02-08
 
 ### Fixed
