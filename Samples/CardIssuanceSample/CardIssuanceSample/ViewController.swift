@@ -111,7 +111,7 @@ class ViewController: UIViewController {
                 "cvv2": self.revealCVV
             ]]
         
-        let connectionConfig = ConnectionConfgi(connectionURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
+        let connectionConfig = ConnectionConfig(connectionURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
         
         self.skyflowClient?.invokeConnection(config: connectionConfig, callback: ExampleAPICallback())
     }
