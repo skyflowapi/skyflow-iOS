@@ -35,9 +35,9 @@ internal class APIClient {
 
         let json = try! JSONSerialization.jsonObject(with: payloadData, options: []) as! [String: Any]
         let exp = json["exp"] as! Int
-        let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
+        let expDate = Date(timeIntervalSince1970: TimeInterval(exp)).addingTimeInterval(300)
 
-        return expDate.compare(Date().addingTimeInterval(300)) == .orderedDescending
+        return expDate.compare(Date()) == .orderedDescending
     }
 
     internal func getAccessToken(callback: Callback, contextOptions: ContextOptions) {
