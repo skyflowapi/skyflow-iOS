@@ -91,9 +91,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let data = callback.receivedResponse
         let message = data
-        print("=======message", message)
-
-        XCTAssertTrue(message.contains("Value not found"))
+        
+        XCTAssertTrue(message.contains("invalid-id not found"))
     }
     
     func testCreateSkyflowElement() {

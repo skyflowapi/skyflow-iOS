@@ -47,7 +47,6 @@ internal class CollectAPICallback: Callback {
 
                 if let httpResponse = response as? HTTPURLResponse {
                     let range = 400...599
-                    let requestId = httpResponse.allHeaderFields["x-request-id"]
                     if range ~= httpResponse.statusCode {
                         var description = "Insert call failed with the following status code" + String(httpResponse.statusCode)
                         var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
@@ -57,7 +56,9 @@ internal class CollectAPICallback: Callback {
                                 let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                                 let error = desc["error"] as! [String: Any]
                                 description = error["message"] as! String
-                                description += "[\"request-id\": \(requestId)]"
+                                if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                                    description += " - request-id: \(requestId)"
+                                }
                                 errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                             } catch let error {
                                 errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8)!).getErrorObject(contextOptions: self.contextOptions)
