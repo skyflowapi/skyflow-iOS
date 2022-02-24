@@ -37,7 +37,7 @@ internal class APIClient {
         let exp = json["exp"] as! Int
         let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
 
-        return expDate.compare(Date()) == .orderedDescending
+        return expDate.compare(Date().addingTimeInterval(300)) == .orderedDescending
     }
 
     internal func getAccessToken(callback: Callback, contextOptions: ContextOptions) {

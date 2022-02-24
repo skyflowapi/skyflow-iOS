@@ -56,6 +56,9 @@ internal class CollectAPICallback: Callback {
                                 let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                                 let error = desc["error"] as! [String: Any]
                                 description = error["message"] as! String
+                                if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                                    description += " - request-id: \(requestId)"
+                                }
                                 errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
                             } catch let error {
                                 errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8)!).getErrorObject(contextOptions: self.contextOptions)
