@@ -8,8 +8,8 @@ on:
     paths-ignore:
       - 'Skyflow.podspec'
       - '*.md'
-    branches:
-      - 'main'
+    branches: 
+      - release/*
 
 jobs:
   deploy_private_pod:
