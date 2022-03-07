@@ -27,7 +27,7 @@ final class skyflow_iOS_scenarioTests: XCTestCase {
         // Client no records
         let client = ClientScenario(tokenProvider: self.tokenProvider)
             .setVaultID(vaultId: "")
-            .setVaultUrl(vaultURL: testData.VAULT_URL)
+            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
         InsertScenario(client: client, callback: callback)
             .execute()
         
@@ -44,7 +44,7 @@ final class skyflow_iOS_scenarioTests: XCTestCase {
         
         // Client no records
         let client = ClientScenario(tokenProvider: self.tokenProvider)
-            .setVaultID(vaultId: testData.VAULT_ID)
+            .setVaultID(vaultId: testData.CLIENT.VAULT_ID)
             .setVaultUrl(vaultURL: "")
         InsertScenario(client: client, callback: callback)
             .execute()
@@ -61,8 +61,8 @@ final class skyflow_iOS_scenarioTests: XCTestCase {
         
         // Normal Client - No records key
         let client = ClientScenario(tokenProvider: self.tokenProvider)
-            .setVaultID(vaultId: testData.VAULT_ID)
-            .setVaultUrl(vaultURL: testData.VAULT_URL)
+            .setVaultID(vaultId: testData.CLIENT.VAULT_ID)
+            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
         InsertScenario(client: client, callback: callback)
             .execute()
         wait(for: [expectation], timeout: 10.0)
@@ -78,12 +78,12 @@ final class skyflow_iOS_scenarioTests: XCTestCase {
         let callback = DemoAPICallback(expectation: expectation)
         
         let client = ClientScenario(tokenProvider: tokenProvider)
-            .setVaultID(vaultId: testData.VAULT_ID)
-            .setVaultUrl(vaultURL: testData.VAULT_URL)
+            .setVaultID(vaultId: testData.CLIENT.VAULT_ID)
+            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
         
         InsertScenario(client: client, callback: callback)
             .initiateRecords()
-            .addRecord(record: ["table": testData.TABLE_NAME])
+            .addRecord(record: ["table": testData.VAULT.TABLE_NAME])
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
