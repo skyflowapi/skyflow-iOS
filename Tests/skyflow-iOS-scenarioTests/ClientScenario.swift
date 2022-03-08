@@ -34,5 +34,21 @@ class ClientScenario {
         let client = Client(config)
         client.insert(records: records, callback: callback)
     }
+    
+    func detokenize(tokens: [String], callback: Callback) {
+        let client = Client(self.config)
+        client.detokenize(records: detokenizeRequestBody(tokens), callback: callback)
+    }
+    
+    private func detokenizeRequestBody(_ tokens: [String]) -> [String: [[String: String]]]{
+        var records = [] as [[String: String]]
+        
+        for token in tokens {
+            let newRecord = ["token": token]
+            records.append(newRecord)
+        }
+        
+        return ["records": records]
+    }
 }
 

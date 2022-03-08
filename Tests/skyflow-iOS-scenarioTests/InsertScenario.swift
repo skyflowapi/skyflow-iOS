@@ -16,8 +16,17 @@ class InsertScenario {
         return self
     }
     
-    func addRecord(record: [String: Any]) -> InsertScenario {
-        self.records["records"]?.append(record)
+    func addRecord(_ record: [String: Any]) -> InsertScenario {
+        if let _ = self.records["records"] {
+            self.records["records"]!.append(record)
+        } else {
+            self.records = ["records": [record]]
+        }
+        return self
+    }
+    
+    func setRecords(_ records: [[String: Any]]) -> InsertScenario {
+        self.records["records"] = records
         
         return self
     }
