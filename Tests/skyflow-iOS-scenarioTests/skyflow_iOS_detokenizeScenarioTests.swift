@@ -18,8 +18,15 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
         skyflow = nil
     }
     
+    private func getFieldValues() -> [String] {
+        var result = [] as [String]
+        for field in testData.VAULT.VALID_FIELDS {
+            result.append(field.VALUE)
+        }
+        
+        return result
+    }
     
-    // FIX - invalid test
     func testInsertNoVaultID() {
         let errorObj = ErrorCodes.EMPTY_VAULT_ID().errorObject
         let expectation = XCTestExpectation(description: "no records")
@@ -29,8 +36,7 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
         let client = ClientScenario(tokenProvider: self.tokenProvider)
             .setVaultID(vaultId: "")
             .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
-        GetByIdScenario(client: client, callback: callback)
-            .initiatializeRecords()
+        DetokenizeScenario(client: client, callback: callback)
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
@@ -49,7 +55,7 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
         let client = ClientScenario(tokenProvider: self.tokenProvider)
             .setVaultID(vaultId: testData.CLIENT.VAULT_ID)
             .setVaultUrl(vaultURL: "")
-        GetByIdScenario(client: client, callback: callback)
+        DetokenizeScenario(client: client, callback: callback)
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
@@ -59,26 +65,26 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
         XCTAssert(error.localizedDescription.contains(errorObj.localizedDescription))
     }
     
-    func testGetByIdInvalidVaultID() {
-        let expectation = XCTestExpectation(description: "invalid vault id")
-        let callback = DemoAPICallback(expectation: expectation)
-        
-        let client = ClientScenario(tokenProvider: self.tokenProvider)
-            .setVaultID(vaultId: testData.CLIENT.INVALID_VAULT_ID)
-            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
-        GetByIdScenario(client: client, callback: callback)
-            .initiatializeRecords()
-            .addIds(["ids": [testData.VAULT.INVALID_ID], "table": testData.VAULT.TABLE_NAME, "redaction": RedactionType.DEFAULT])
-            .execute()
-        
-        wait(for: [expectation], timeout: 10.0)
-        let errors = callback.data["errors"] as! [[String: Any]]
-        XCTAssertNotNil(errors)
-        XCTAssertNil(callback.error)
-        let error = errors[0]["error"] as! NSError
-        XCTAssertEqual(error.code, 404)
-        XCTAssert(((error.localizedDescription.contains(" not found")) != nil))
-    }
+//    func testInsertInvalidVaultID() {
+//        let expectation = XCTestExpectation(description: "invalid vault id")
+//        let callback = DemoAPICallback(expectation: expectation)
+//        
+//        // Client no records
+//        let client = ClientScenario(tokenProvider: self.tokenProvider)
+//            .setVaultID(vaultId: testData.CLIENT.INVALID_VAULT_ID)
+//            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
+//        DetokenizeScenario(client: client, callback: callback)
+//            .addToken(testData.VAULT.INVALID_TOKEN)
+//            .execute()
+//        
+//        wait(for: [expectation], timeout: 10.0)
+//        
+//        let errors = callback.data["errors"] as! [[String: Any]]
+//        let error = errors[0]["error"] as! NSError
+//        print(error)
+//        XCTAssertEqual(error.code, 404)
+//        XCTAssert(error.localizedDescription.contains(" not found"))
+//    }
     
     func testInsertInvalidVaultURL() {
         let expectation = XCTestExpectation(description: "invalid vault url")
@@ -88,9 +94,8 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
         let client = ClientScenario(tokenProvider: self.tokenProvider)
             .setVaultID(vaultId: testData.CLIENT.VAULT_ID)
             .setVaultUrl(vaultURL: testData.CLIENT.INVALID_VAULT_URL)
-        GetByIdScenario(client: client, callback: callback)
-            .initiatializeRecords()
-            .addIds(["ids": [testData.VAULT.INVALID_ID], "table": testData.VAULT.TABLE_NAME, "redaction": RedactionType.DEFAULT])
+        DetokenizeScenario(client: client, callback: callback)
+            .addToken(testData.VAULT.INVALID_TOKEN)
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
@@ -102,4 +107,3 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
     
 
 }
-

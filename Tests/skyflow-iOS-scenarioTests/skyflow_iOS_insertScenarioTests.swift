@@ -61,24 +61,24 @@ final class skyflow_iOS_insertScenarioTests: XCTestCase {
         XCTAssert(callback.error!.localizedDescription.contains(error.localizedDescription))
     }
     
-    func testInsertInvalidVaultID() {
-        let expectation = XCTestExpectation(description: "invalid vault id")
-        let callback = DemoAPICallback(expectation: expectation)
-        
-        // Client no records
-        let client = ClientScenario(tokenProvider: self.tokenProvider)
-            .setVaultID(vaultId: testData.CLIENT.INVALID_VAULT_ID)
-            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
-        InsertScenario(client: client, callback: callback)
-            .addRecord([
-                    "fields": getFieldValues(),
-                    "table": testData.VAULT.TABLE_NAME])
-            .execute()
-        
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.error?.code, 404)
-        XCTAssert(callback.error!.localizedDescription.contains(" not found"))
-    }
+//    func testInsertInvalidVaultID() {
+//        let expectation = XCTestExpectation(description: "invalid vault id")
+//        let callback = DemoAPICallback(expectation: expectation)
+//
+//        // Client no records
+//        let client = ClientScenario(tokenProvider: self.tokenProvider)
+//            .setVaultID(vaultId: testData.CLIENT.INVALID_VAULT_ID)
+//            .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
+//        InsertScenario(client: client, callback: callback)
+//            .addRecord([
+//                    "fields": getFieldValues(),
+//                    "table": testData.VAULT.TABLE_NAME])
+//            .execute()
+//
+//        wait(for: [expectation], timeout: 10.0)
+//        XCTAssertEqual(callback.error?.code, 404)
+//        XCTAssert(callback.error!.localizedDescription.contains(" not found"))
+//    }
     
     func testInsertInvalidVaultURL() {
         let expectation = XCTestExpectation(description: "invalid vault url")
