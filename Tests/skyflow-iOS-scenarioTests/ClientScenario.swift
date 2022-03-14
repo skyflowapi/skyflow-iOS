@@ -40,6 +40,10 @@ class ClientScenario {
         client.detokenize(records: detokenizeRequestBody(tokens), callback: callback)
     }
     
+    func getById(ids: [String: Any], callback: Callback) {
+        Client(self.config).getById(records: ids, callback: callback)
+    }
+    
     private func detokenizeRequestBody(_ tokens: [String]) -> [String: [[String: String]]]{
         var records = [] as [[String: String]]
         

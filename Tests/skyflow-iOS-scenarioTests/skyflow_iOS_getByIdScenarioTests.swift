@@ -3,7 +3,7 @@ import XCTest
 @testable import Skyflow
 
 // swiftlint:disable:next type_body_length
-final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
+final class skyflow_iOS_getByIdScenarioTests: XCTestCase {
     var skyflow: Client!
     var tokenProvider: TokenProvider!
     
@@ -18,10 +18,17 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
         skyflow = nil
     }
     
+    private func getFieldValues() -> [String] {
+        var result = [] as [String]
+        for field in testData.VAULT.VALID_FIELDS {
+            result.append(field.VALUE)
+        }
+        
+        return result
+    }
     
-    // FIX - invalid test
     func testInsertNoVaultID() {
-        let errorObj = ErrorCodes.EMPTY_VAULT_ID().errorObject
+        let error = ErrorCodes.EMPTY_VAULT_ID().errorObject
         let expectation = XCTestExpectation(description: "no records")
         let callback = DemoAPICallback(expectation: expectation)
         
@@ -30,18 +37,15 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
             .setVaultID(vaultId: "")
             .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
         GetByIdScenario(client: client, callback: callback)
-            .initiatializeRecords()
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
-        let errors = callback.data["errors"] as! [NSError]
-        let error = errors[0]
-        XCTAssertEqual(error.code, errorObj.code)
-        XCTAssert(error.localizedDescription.contains(errorObj.localizedDescription))
+        XCTAssertEqual(callback.error?.code, error.code)
+        XCTAssert(callback.error!.localizedDescription.contains(error.localizedDescription))
     }
     
     func testInsertNoVaultURL() {
-        let errorObj = ErrorCodes.EMPTY_VAULT_URL().errorObject
+        let error = ErrorCodes.EMPTY_VAULT_URL().errorObject
         let expectation = XCTestExpectation(description: "no records")
         let callback = DemoAPICallback(expectation: expectation)
         
@@ -53,31 +57,25 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
-        let errors = callback.data["errors"] as! [NSError]
-        let error = errors[0]
-        XCTAssertEqual(error.code, errorObj.code)
-        XCTAssert(error.localizedDescription.contains(errorObj.localizedDescription))
+        XCTAssertEqual(callback.error?.code, error.code)
+        XCTAssert(callback.error!.localizedDescription.contains(error.localizedDescription))
     }
     
-    func testGetByIdInvalidVaultID() {
+    func testInsertInvalidVaultID() {
         let expectation = XCTestExpectation(description: "invalid vault id")
         let callback = DemoAPICallback(expectation: expectation)
         
+        // Client no records
         let client = ClientScenario(tokenProvider: self.tokenProvider)
             .setVaultID(vaultId: testData.CLIENT.INVALID_VAULT_ID)
             .setVaultUrl(vaultURL: testData.CLIENT.VAULT_URL)
         GetByIdScenario(client: client, callback: callback)
-            .initiatializeRecords()
-            .addIds(["ids": [testData.VAULT.INVALID_ID], "table": testData.VAULT.TABLE_NAME, "redaction": RedactionType.DEFAULT])
+            .addIds(["ids": testData.VAULT.VALID_IDS, "table": testData.VAULT.TABLE_NAME])
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
-        let errors = callback.data["errors"] as! [[String: Any]]
-        XCTAssertNotNil(errors)
-        XCTAssertNil(callback.error)
-        let error = errors[0]["error"] as! NSError
-        XCTAssertEqual(error.code, 404)
-        XCTAssert(((error.localizedDescription.contains(" not found")) != nil))
+        XCTAssertEqual(callback.error?.code, 404)
+//        XCTAssert(callback.error!.localizedDescription.contains(" not found"))
     }
     
     func testInsertInvalidVaultURL() {
@@ -89,17 +87,13 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
             .setVaultID(vaultId: testData.CLIENT.VAULT_ID)
             .setVaultUrl(vaultURL: testData.CLIENT.INVALID_VAULT_URL)
         GetByIdScenario(client: client, callback: callback)
-            .initiatializeRecords()
-            .addIds(["ids": [testData.VAULT.INVALID_ID], "table": testData.VAULT.TABLE_NAME, "redaction": RedactionType.DEFAULT])
+            .addIds(["ids": testData.VAULT.VALID_IDS, "table": testData.VAULT.TABLE_NAME])
             .execute()
         
         wait(for: [expectation], timeout: 10.0)
-        let errors = callback.data["errors"] as! [[String: Any]]
-        let error = errors[0]["error"] as! NSError
-        XCTAssertEqual(error.code, -1002)
-        XCTAssert(error.localizedDescription.contains("unsupported URL"))
+        XCTAssertEqual(callback.error?.code, -1002)
+        XCTAssert(callback.error!.localizedDescription.contains("unsupported URL"))
     }
     
 
 }
-

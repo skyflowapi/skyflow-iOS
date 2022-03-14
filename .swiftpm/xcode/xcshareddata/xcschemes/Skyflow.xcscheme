@@ -247,6 +247,11 @@
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
+            key = "TEST_DATA"
+            value = "$(TEST_DATA)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
             key = "PULL_FUNDS_INTEGRATION_CONNECTION_URL"
             value = "${PULL_FUNDS_INTEGRATION_CONNECTION_URL}"
             isEnabled = "YES">
