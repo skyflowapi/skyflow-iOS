@@ -3,14 +3,21 @@
 Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensitive data in the mobile without exposing your front-end infrastructure to sensitive data. 
 
 # Table of Contents
-- [**Installing Skyflow-iOS**](#installing-skyflow-iOS) 
-- [**Initializing Skyflow-iOS**](#initializing-skyflow-iOS)
-- [**Securely collecting data client-side**](#securely-collecting-data-client-side)
-- [**Securely revealing data client-side**](#securely-revealing-data-client-side)
-- [**Securely invoking connection client-side**](#Securely-invoking-connection-client-side)
-- [**Securely invoking Connections client-side using SOAP**](#Securely-invoking-Connections-client-side-using-soap)
+- [Installation](#installation)
+    - [Requirements](#requirements)
+    - [Configuration](#configuration)
+- [Initializing Skyflow-iOS](#initializing-skyflow-iOS)
+- [Securely collecting data client-side](#securely-collecting-data-client-side)
+- [Securely revealing data client-side](#securely-revealing-data-client-side)
+- [Securely invoking connection client-side](#Securely-invoking-connection-client-side)
+- [Securely invoking Connections client-side using SOAP](#Securely-invoking-Connections-client-side-using-soap)
 
-# Installing skyflow-iOS
+# Installation
+
+## Requirements
+- iOS 13.0.0 and above
+
+## Configuration
 ---
 ### SPM (Swift Package Manager)
 - Go to File -> Swift Packages -> New Package Dependency (in Xcode IDE)
