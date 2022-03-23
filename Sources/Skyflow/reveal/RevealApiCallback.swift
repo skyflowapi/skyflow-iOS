@@ -88,6 +88,9 @@ class RevealApiCallback: Callback {
                                 let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                                 let error = desc["error"] as! [String: Any]
                                 description = error["message"] as! String
+                                if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                                    description += " - request-id: \(requestId)"
+                                }
                             } catch let error {
                                 isSuccess = false
                                 errorObject = error

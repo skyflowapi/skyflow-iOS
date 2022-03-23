@@ -86,6 +86,10 @@ class RevealByIDAPICallback: Callback {
                                 let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                                 if let error = desc["error"] as? [String: Any], let message = error["message"] as? String {
                                     description = message
+                                    
+                                    if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                                        description += " - request-id: \(requestId)"
+                                    }
                                     var errorEntryDict: [String: Any] = [
                                         "ids": record.ids
                                     ]

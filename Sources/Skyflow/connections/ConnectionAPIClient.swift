@@ -26,6 +26,9 @@ class ConnectionAPIClient {
             if !(request.allHTTPHeaderFields?.keys.contains("X-Skyflow-Authorization") ?? false){
                 request.setValue(token, forHTTPHeaderField: "X-Skyflow-Authorization")
             }
+            if !(request.allHTTPHeaderFields?.keys.contains("Content-Type") ?? false){
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
 
             let session = URLSession(configuration: .default)
 
