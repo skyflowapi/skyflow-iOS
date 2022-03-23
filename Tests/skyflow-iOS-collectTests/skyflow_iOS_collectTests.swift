@@ -631,7 +631,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         mycontainer?.collect(callback: myCallback)
         
         wait(for: [expectFailure], timeout: 10.0)
-        
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber triggered error\n")
     }
     func testElementValueMatchRule() {
