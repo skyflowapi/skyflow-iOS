@@ -59,11 +59,7 @@ class Skyflow_iOS_connectionErrorTests: XCTestCase {
         let requestBody: [String: Any] = [
             "card_number": cardNumber,
             "holder_name": "john doe",
-            "reveal": revealElement as Any,
-            "nestedFields": [
-                "card_number": cardNumber,
-                "reveal": revealElement as Any
-            ]
+            "reveal": revealElement as Any
         ]
 
         let connectionConfig = ConnectionConfig(connectionURL: "https://skyflow.com/", method: .POST, requestBody: requestBody)
