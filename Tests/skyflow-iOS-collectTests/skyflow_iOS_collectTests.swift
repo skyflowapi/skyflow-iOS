@@ -626,9 +626,11 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField?.textField.secureText = "invalid"
         textField?.setError("triggered error")
         textField?.textFieldDidEndEditing(textField!.textField)
+        
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
         mycontainer?.collect(callback: myCallback)
+        
         wait(for: [expectFailure], timeout: 10.0)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber triggered error\n")

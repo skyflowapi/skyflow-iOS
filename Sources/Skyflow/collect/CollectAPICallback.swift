@@ -34,7 +34,7 @@ internal class CollectAPICallback: Callback {
                 self.callback.onFailure(error)
                 return
             }
-
+            
             request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
 
             let session = URLSession(configuration: .default)
