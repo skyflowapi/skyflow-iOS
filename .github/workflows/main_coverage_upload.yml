@@ -1,11 +1,12 @@
-name: CI Checks
+name: Upload Coverage
 
 on:
   push:
-    branch: master
+    branches:
+      - main
 
 jobs:
-  Upload coverage:
+  CoverageReport:
     name: Xcode Build
     runs-on: macOS-10.15
     timeout-minutes: 30
