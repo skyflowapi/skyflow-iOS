@@ -1,19 +1,11 @@
 name: CI Checks
 
-on: [pull_request]
+on:
+  push:
+    branch: master
 
 jobs:
-  SwiftLint:
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v1
-     - name: SwiftLint 
-       uses: norio-nomura/action-swiftlint@3.2.1
-       env:
-         DIFF_BASE: ${{ github.base_ref }}
-       with:
-          args: --config .swiftlint.yml
-  xcode-build:
+  Upload coverage:
     name: Xcode Build
     runs-on: macOS-10.15
     timeout-minutes: 30
