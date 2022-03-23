@@ -125,7 +125,7 @@
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "skyflow-iOS-gatewayTests"
@@ -209,6 +209,16 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "skyflow-iOS-scenarioTests"
+               BuildableName = "skyflow-iOS-scenarioTests"
+               BlueprintName = "skyflow-iOS-scenarioTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -234,6 +244,11 @@
          <EnvironmentVariable
             key = "PULL_FUNDS_INTEGRATION_ID"
             value = "$(PULL_FUNDS_INTEGRATION_ID)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_DATA"
+            value = "$(TEST_DATA)"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
