@@ -20,9 +20,16 @@ internal class TokenAPICallback: Callback {
 
     internal func onSuccess(_ responseBody: Any) {
         if responseBody is String {
-            self.apiClient.token = responseBody as! String
             Log.info(message: .BEARER_TOKEN_RECEIVED, contextOptions: self.contextOptions)
-            callback.onSuccess(responseBody as! String)
+            let previousToken = self.apiClient.token
+            self.apiClient.token = responseBody as! String
+            
+            if !self.apiClient.isTokenValid() {
+                self.apiClient.token = previousToken
+                callback.onFailure(ErrorCodes.INVALID_BEARER_TOKEN_FORMAT().getErrorObject(contextOptions: contextOptions))
+            } else {
+                callback.onSuccess(responseBody as! String)
+            }
         } else {
             self.callback.onFailure(ErrorCodes.INVALID_BEARER_TOKEN_FORMAT().getErrorObject(contextOptions: contextOptions))
         }
