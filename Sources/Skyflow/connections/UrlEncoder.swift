@@ -10,8 +10,10 @@ internal class UrlEncoder {
         var parents = [] as [Any]
         var pairs = [:] as [String: String]
         let simpleJSON = encodeByType(parents: &parents, pairs: &pairs, data: json)
+        let encoded = encodeSimpleJson(json: simpleJSON)
+        print("====", encoded)
         
-        return encodeSimpleJson(json: simpleJSON)
+        return encoded.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? encoded
     }
     
     
@@ -27,7 +29,7 @@ internal class UrlEncoder {
         var parents = parents
         
         if let array = data as? [Any] {
-            for i in 0...array.count {
+            for i in 0..<array.count {
                 parents.append(i)
                 encodeByType(parents: &parents, pairs: &pairs, data: array[i])
                 parents.removeLast()
@@ -71,8 +73,12 @@ internal class UrlEncoder {
     }
     
     class func encodeSimpleJson(json: [String: String]) -> String {
-        return String(json.reduce("") {
-            "\($0)\($1.0)=\($1.1)&"
-        }.dropLast())
+        
+        var result = ""
+        for (key, value) in json {
+            result += key + "=" + value + "&"
+        }
+        
+        return String(result.dropLast())
     }
 }
