@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - 2022-04-05
+
+### Added
+- Support for application/x-www-form-urlencoded and multipart/form-data content-types in connections.
+
 
 ## [1.12.1] - 2022-03-29
 

@@ -24,7 +24,13 @@ internal class APIClient {
             return false
         }
 
-        var payload64 = token.components(separatedBy: ".")[1]
+        let components = token.components(separatedBy: ".")
+        
+        if components.count < 2 {
+            return false
+        }
+        
+        var payload64 = components[1]
 
         while payload64.count % 4 != 0 {
             payload64 += "="
@@ -33,11 +39,15 @@ internal class APIClient {
         let payloadData = Data(base64Encoded: payload64,
                                options: .ignoreUnknownCharacters)!
 
-        let json = try! JSONSerialization.jsonObject(with: payloadData, options: []) as! [String: Any]
-        let exp = json["exp"] as! Int
-        let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
+        do {
+            let json = try JSONSerialization.jsonObject(with: payloadData, options: []) as! [String: Any]
+            let exp = json["exp"] as! Int
+            let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
 
-        return expDate.compare(Date().addingTimeInterval(300)) == .orderedDescending
+            return expDate.compare(Date().addingTimeInterval(300)) == .orderedDescending
+        } catch {
+            return false
+        }
     }
 
     internal func getAccessToken(callback: Callback, contextOptions: ContextOptions) {
