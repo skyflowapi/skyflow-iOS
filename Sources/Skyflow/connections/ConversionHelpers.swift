@@ -50,7 +50,7 @@ class ConversionHelpers {
         } else if nested, element is [String: Any] {
             return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
         } else {
-            errorCode = .INVALID_DATA_TYPE_PASSED(value: "")
+            errorCode = .INVALID_DATA_TYPE_PASSED(value: "\(type(of: element))")
             throw errorCode!.getErrorObject(contextOptions: contextOptions)
         }
     }
@@ -159,7 +159,7 @@ class ConversionHelpers {
             } else if element is [String: Any] {
                 try checkDict((element as! [String: Any]))
             } else {
-                errorCode = .INVALID_DATA_TYPE_PASSED(value: "")
+                errorCode = .INVALID_DATA_TYPE_PASSED(value: key)
                 throw errorCode!.getErrorObject(contextOptions: contextOptions)
             }
         }
@@ -192,9 +192,10 @@ class ConversionHelpers {
     }
 
     static func removeEmptyValuesFrom(response: [String: Any], contextOptions: ContextOptions) throws -> [String: Any] {
-        var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
 
         func recurseDict(_ dict: [String: Any]) throws -> [String: Any] {
+            var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
+
             var result: [String: Any] = [:]
             for (key, value) in dict {
                 do {
@@ -214,6 +215,7 @@ class ConversionHelpers {
         }
 
         func getValue(_ value: Any) throws -> Any? {
+
             if value is String || value is Int || value is Double || value is Bool {
                 return value
             } else if value is [Any] {
@@ -228,7 +230,7 @@ class ConversionHelpers {
                     }
                 }
             } else {
-                throw errorCode.getErrorObject(contextOptions: contextOptions)
+                return value
             }
             return nil
         }
