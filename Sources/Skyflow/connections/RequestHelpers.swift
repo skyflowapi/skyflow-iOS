@@ -203,7 +203,12 @@ class RequestHelpers {
     
     class func getRequestByContentType(_ request: URLRequest, _ body: [String: Any]) throws -> URLRequest {
         // Assuming content-type is present as we are giving application/json by default
-        let contentType = request.allHTTPHeaderFields!["content-type"]!
+        guard let headers = request.allHTTPHeaderFields else {
+            return request
+        }
+        guard let contentType = headers["content-type"] else {
+            return request
+        }
         var resultRequest = request
         switch contentType {
         case SupportedContentTypes.URLENCODED.rawValue:
