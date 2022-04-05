@@ -33,10 +33,13 @@ struct MultipartFormDataRequest {
     }
 
     
-    func asURLRequest() -> URLRequest {
+    func asURLRequest(with headers: [String: String]) -> URLRequest {
         var request = URLRequest(url: url)
 
         request.httpMethod = "POST"
+        for (key, value) in headers {
+            request.addValue(value, forHTTPHeaderField: key)
+        }
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 
         httpBody.append("--\(boundary)--")

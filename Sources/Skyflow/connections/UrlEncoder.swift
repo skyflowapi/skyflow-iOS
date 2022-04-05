@@ -11,7 +11,6 @@ internal class UrlEncoder {
         var pairs = [:] as [String: String]
         let simpleJSON = encodeByType(parents: &parents, pairs: &pairs, data: json)
         let encoded = encodeSimpleJson(json: simpleJSON)
-        print("====", encoded)
         
         return encoded.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? encoded
     }

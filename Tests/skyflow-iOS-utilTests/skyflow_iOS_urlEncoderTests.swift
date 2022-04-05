@@ -73,4 +73,17 @@ final class skyflow_iOS_urlEncoderTests: XCTestCase {
         XCTAssert(encodedJson.contains("card%5Bexp_year%5D=2023"))
         XCTAssert(encodedJson.contains("card%5Bcvc%5D=314"))
     }
+    
+    func testOK() {
+        let req = [
+            "type": "card",
+            "card": [
+                "number": "4242424242424242",
+                "exp_month": 1,
+                "exp_year": 2023,
+                "cvc": 314
+            ]
+        ] as [String: Any]
+        
+    }
 }

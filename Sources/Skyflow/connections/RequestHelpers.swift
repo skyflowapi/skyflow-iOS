@@ -83,11 +83,11 @@ class RequestHelpers {
         
         if let unwrappedHeaders = headers {
             for (key, value) in unwrappedHeaders {
-                request.allHTTPHeaderFields?[key.lowercased()] = value
+                request.setValue(value, forHTTPHeaderField: key)
             }
         }
         
-        if !(request.allHTTPHeaderFields?.keys.contains("content-type") ?? false){
+        if !(getLowerCasedHeaders(headers: request.allHTTPHeaderFields).keys.contains("content-type")){
             request.setValue("application/json", forHTTPHeaderField: "content-type")
         }
 
@@ -202,29 +202,41 @@ class RequestHelpers {
     }
     
     class func getRequestByContentType(_ request: URLRequest, _ body: [String: Any]) throws -> URLRequest {
-        // Assuming content-type is present as we are giving application/json by default
         guard let headers = request.allHTTPHeaderFields else {
             return request
         }
-        guard let contentType = headers["content-type"] else {
+        guard let contentType = headers["Content-Type"] else {
             return request
         }
         var resultRequest = request
         switch contentType {
-        case SupportedContentTypes.URLENCODED.rawValue:
+        case SupportedContentTypes.FORMDATA.rawValue:
             var parents = [] as [Any]
             var pairs = [:] as [String: String]
             let encodedJson = UrlEncoder.encodeByType(parents: &parents, pairs: &pairs, data: body)
             let multipartRequest = MultipartFormDataRequest(url: request.url!)
             multipartRequest.addValues(json: encodedJson)
-            resultRequest = multipartRequest.asURLRequest()
-        case SupportedContentTypes.FORMDATA.rawValue:
+            resultRequest = multipartRequest.asURLRequest(with: headers)
+        case SupportedContentTypes.URLENCODED.rawValue:
             resultRequest.httpBody = UrlEncoder.encode(json: body).data(using: .utf8)
         default:
             resultRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
         }
         
         return resultRequest
+    }
+    
+    static func getLowerCasedHeaders(headers: [String: String]?) -> [String: String] {
+        
+        var lowerCasedHeaders = [:] as [String: String]
+        
+        if let unwrappedHeaders = headers {
+            for (key, value) in unwrappedHeaders {
+                lowerCasedHeaders[key.lowercased()] = value
+            }
+        }
+        
+        return lowerCasedHeaders
     }
 }
 
