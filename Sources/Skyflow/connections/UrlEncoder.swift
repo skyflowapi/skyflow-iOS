@@ -41,7 +41,10 @@ internal class UrlEncoder {
                 parents.removeLast()
             }
         } else {
-            pairs[encodeKey(parents)] = "\(data)"
+            let encodedKey = encodeKey(parents)
+            if encodedKey.count > 0 {
+                pairs[encodeKey(parents)] = "\(data)"
+            }
         }
         
                 
