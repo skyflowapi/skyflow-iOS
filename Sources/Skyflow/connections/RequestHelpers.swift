@@ -79,7 +79,6 @@ class RequestHelpers {
 
     static func createRequest(url: URL, method: RequestMethod, body: [String: Any]?, headers: [String: String]?, contextOptions: ContextOptions) throws -> URLRequest {
         var request = URLRequest(url: url)
-        request.httpMethod = method.rawValue
         
         if let unwrappedHeaders = headers {
             for (key, value) in unwrappedHeaders {
@@ -98,8 +97,9 @@ class RequestHelpers {
         } catch {
             throw ErrorCodes.INVALID_REQUEST_BODY().getErrorObject(contextOptions: contextOptions)
         }
-
-
+        
+        request.httpMethod = method.rawValue
+        
         return request
     }
 
