@@ -13,7 +13,7 @@ final class skyflow_iOS_formDataTests: XCTestCase {
         let value = "4111-1111-1111-1111"
         self.formRequest.addTextField(named: name, value: value)
         
-        let request = formRequest.asURLRequest()
+        let request = formRequest.asURLRequest(with: [:])
         XCTAssertNotNil(request.httpBody)
         XCTAssert(String(data: request.httpBody!, encoding: .utf8)!.contains("Content-Disposition: form-data; name=\"\(name)\"\r\n"))
         XCTAssert(String(data: request.httpBody!, encoding: .utf8)!.contains("\(value)\r\n"))
@@ -28,7 +28,7 @@ final class skyflow_iOS_formDataTests: XCTestCase {
         ]
         self.formRequest.addValues(json: values)
         
-        let request = formRequest.asURLRequest()
+        let request = formRequest.asURLRequest(with: [:])
         XCTAssertNotNil(request.httpBody)
         XCTAssert(String(data: request.httpBody!, encoding: .utf8)!.contains("Content-Disposition: form-data; name=\"name\"\r\n"))
         XCTAssert(String(data: request.httpBody!, encoding: .utf8)!.contains("value\r\n"))
@@ -51,7 +51,7 @@ final class skyflow_iOS_formDataTests: XCTestCase {
         let values = UrlEncoder.encodeByType(parents: &parents, pairs: &pairs, data: nestedValues)
         self.formRequest.addValues(json: values)
         
-        let request = formRequest.asURLRequest()
+        let request = formRequest.asURLRequest(with: [:])
         XCTAssertNotNil(request.httpBody)
         XCTAssert(String(data: request.httpBody!, encoding: .utf8)!.contains("Content-Disposition: form-data; name=\"name\"\r\n"))
         XCTAssert(String(data: request.httpBody!, encoding: .utf8)!.contains("value\r\n"))
