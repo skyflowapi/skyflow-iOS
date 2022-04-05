@@ -11,6 +11,7 @@ import Foundation
 class RequestHelpers {
     static var paths: [String] = []
     static var recursiveFailed = false
+    
 
     static func createRequestURL(baseURL: String, pathParams: [String: Any]?, queryParams: [String: Any]?, contextOptions: ContextOptions) throws -> URL {
         var errorCode: ErrorCodes?
@@ -79,11 +80,20 @@ class RequestHelpers {
     static func createRequest(url: URL, method: RequestMethod, body: [String: Any]?, headers: [String: String]?, contextOptions: ContextOptions) throws -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        request.allHTTPHeaderFields = headers
+        
+        if let unwrappedHeaders = headers {
+            for (key, value) in unwrappedHeaders {
+                request.allHTTPHeaderFields?[key.lowercased()] = value
+            }
+        }
+        
+        if !(request.allHTTPHeaderFields?.keys.contains("content-type") ?? false){
+            request.setValue("application/json", forHTTPHeaderField: "content-type")
+        }
 
         do {
             if let requestBody = body {
-                request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+                request = try getRequestByContentType(request, requestBody)
             }
         } catch {
             throw ErrorCodes.INVALID_REQUEST_BODY().getErrorObject(contextOptions: contextOptions)
@@ -190,4 +200,31 @@ class RequestHelpers {
 
         return nil
     }
+    
+    class func getRequestByContentType(_ request: URLRequest, _ body: [String: Any]) throws -> URLRequest {
+        // Assuming content-type is present as we are giving application/json by default
+        let contentType = request.allHTTPHeaderFields!["content-type"]!
+        var resultRequest = request
+        switch contentType {
+        case SupportedContentTypes.URLENCODED.rawValue:
+            var parents = [] as [Any]
+            var pairs = [:] as [String: String]
+            let encodedJson = UrlEncoder.encodeByType(parents: &parents, pairs: &pairs, data: body)
+            let multipartRequest = MultipartFormDataRequest(url: request.url!)
+            multipartRequest.addValues(json: encodedJson)
+            resultRequest = multipartRequest.asURLRequest()
+        case SupportedContentTypes.FORMDATA.rawValue:
+            resultRequest.httpBody = UrlEncoder.encode(json: body).data(using: .utf8)
+        default:
+            resultRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
+        }
+        
+        return resultRequest
+    }
+}
+
+enum SupportedContentTypes: String {
+    case URLENCODED = "application/x-www-form-urlencoded"
+    case FORMDATA = "multipart/form-data"
+    case JSON = "application/json"
 }
