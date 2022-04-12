@@ -30,6 +30,7 @@ class RevealByIDAPICallback: Callback {
         var errorArray: [[String: Any]] = []
         var isSuccess: Bool?
         var errorObject: Error!
+        print("started")
 
         if URL(string: (connectionUrl + "/")) == nil {
             self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
@@ -37,16 +38,7 @@ class RevealByIDAPICallback: Callback {
         }
 
         for record in records {
-            var urlComponents = URLComponents(string: (connectionUrl + "/" + record.table))
-
-            urlComponents?.queryItems = []
-
-            for id in record.ids {
-                urlComponents?.queryItems?.append(URLQueryItem(name: "skyflow_ids", value: id))
-            }
-
-            urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
-
+            var urlComponents = getUrlComponents(record: record)
 
             if urlComponents?.url?.absoluteURL == nil {
                 var errorEntryDict: [String: Any] = [
@@ -61,12 +53,8 @@ class RevealByIDAPICallback: Callback {
                 continue
             }
             getByIdRequestGroup.enter()
-            var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
-            request.httpMethod = "GET"
-            request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
-            request.setValue("application/json", forHTTPHeaderField: "Accept")
-            request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
-            let session = URLSession(configuration: .default)
+            let (request, session) = getRequestSession(urlComponents: urlComponents)
+            
             let task = session.dataTask(with: request) { data, response, error in
                 defer {
                     getByIdRequestGroup.leave()
@@ -79,24 +67,11 @@ class RevealByIDAPICallback: Callback {
                 if let httpResponse = response as? HTTPURLResponse {
                     let range = 400...599
                     if range ~= httpResponse.statusCode {
-                        var description = "getById call failed with the following status code" + String(httpResponse.statusCode)
 
                         if let safeData = data {
                             do {
-                                let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-                                if let error = desc["error"] as? [String: Any], let message = error["message"] as? String {
-                                    description = message
-                                    
-                                    if let requestId = httpResponse.allHeaderFields["x-request-id"] {
-                                        description += " - request-id: \(requestId)"
-                                    }
-                                    var errorEntryDict: [String: Any] = [
-                                        "ids": record.ids
-                                    ]
-                                    let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
-                                    errorEntryDict["error"] = errorDict
-                                    errorArray.append(errorEntryDict)
-                                }
+                                let errorEntry = try self.constructApiError(record: record, safeData, httpResponse)
+                                errorArray.append(errorEntry)
                             } catch let error {
                                 isSuccess = false
                                 errorObject = error
@@ -108,17 +83,8 @@ class RevealByIDAPICallback: Callback {
 
                 if let safeData = data {
                     do {
-                        let originalString = String(decoding: safeData, as: UTF8.self)
-                        let replacedString = originalString.replacingOccurrences(of: "\"skyflow_id\":", with: "\"id\":")
-                        let changedData = Data(replacedString.utf8)
-                        let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
-                        if let jsonDataArray = jsonData["records"] as? [[String: Any]] {
-                            for entry in jsonDataArray {
-                                var entryDict = self.buildFieldsDict(dict: entry)
-                                entryDict["table"] = record.table
-                                outputArray.append(entryDict)
-                            }
-                        }
+                        let resultArray = try self.processResponse(record: record, safeData)
+                        outputArray.append(contentsOf: resultArray)
                     } catch let error {
                         isSuccess = false
                         errorObject = error
@@ -129,13 +95,7 @@ class RevealByIDAPICallback: Callback {
             task.resume()
         }
         getByIdRequestGroup.notify(queue: .main) {
-            var records: [String: Any] = [:]
-            if outputArray.count != 0 {
-                records["records"] = outputArray
-            }
-            if errorArray.count != 0 {
-                records["errors"] = errorArray
-            }
+            let records = self.constructRevealRecords(outputArray, errorArray)
             if isSuccess ?? true {
                 if errorArray.isEmpty {
                     self.callback.onSuccess(records)
@@ -171,4 +131,78 @@ class RevealByIDAPICallback: Callback {
         let result = ["errors": [["error" : errorObject]]]
         callback.onFailure(result)
     }
+    
+    internal func getRequestSession(urlComponents: URLComponents?) -> (URLRequest, URLSession) {
+        var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
+        request.httpMethod = "GET"
+        request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+        return (request, URLSession(configuration: .default))
+    }
+    
+    internal func getUrlComponents(record: GetByIdRecord) -> URLComponents? {
+        var urlComponents = URLComponents(string: (connectionUrl + "/" + record.table))
+
+        urlComponents?.queryItems = []
+
+        for id in record.ids {
+            urlComponents?.queryItems?.append(URLQueryItem(name: "skyflow_ids", value: id))
+        }
+
+        urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
+        
+        return urlComponents
+    }
+
+    func constructApiError(record: GetByIdRecord, _ safeData: Data, _ httpResponse: HTTPURLResponse) throws -> [String: Any] {
+        let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
+        var description = "getById call failed with the following status code" + String(httpResponse.statusCode)
+
+        var errorEntryDict: [String: Any] = [
+            "ids": record.ids
+        ]
+        
+        if let error = desc["error"] as? [String: Any], let message = error["message"] as? String {
+            description = message
+            
+            if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                description += " - request-id: \(requestId)"
+            }
+            let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
+            errorEntryDict["error"] = errorDict
+        }
+        
+        return errorEntryDict
+    }
+    
+    func processResponse(record: GetByIdRecord, _ safeData: Data) throws -> [[String: Any]] {
+        var outputArray = [[String: Any]]()
+        let originalString = String(decoding: safeData, as: UTF8.self)
+        let replacedString = originalString.replacingOccurrences(of: "\"skyflow_id\":", with: "\"id\":")
+        let changedData = Data(replacedString.utf8)
+        let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
+        if let jsonDataArray = jsonData["records"] as? [[String: Any]] {
+            for entry in jsonDataArray {
+                var entryDict = self.buildFieldsDict(dict: entry)
+                entryDict["table"] = record.table
+                outputArray.append(entryDict)
+            }
+        }
+        
+        return outputArray
+    }
+    
+    func constructRevealRecords(_ outputArray: [[String: Any]], _ errorArray: [[String: Any]]) -> [String: Any]{
+        var records: [String: Any] = [:]
+        if outputArray.count != 0 {
+            records["records"] = outputArray
+        }
+        if errorArray.count != 0 {
+            records["errors"] = errorArray
+        }
+        
+        return records
+    }
+    
 }
