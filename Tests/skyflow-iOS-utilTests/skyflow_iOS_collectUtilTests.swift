@@ -42,7 +42,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             XCTAssertEqual(request.allHTTPHeaderFields!["Authorization"], "Bearer ") // From DemoTokenProvider()
             let body = try JSONSerialization.jsonObject(with: request.httpBody!, options: .allowFragments) as! [String: Any]
             let records = body["records"] as! [[String: Any]]
-            XCTAssertEqual(records.count, 2)
+            XCTAssertEqual(records.count, 1)
             XCTAssertEqual(records[0]["fields"] as! [String: String], ["field": "value"])
             XCTAssertEqual(records[0]["method"] as! String, "POST")
             XCTAssertEqual(records[0]["tableName"] as! String, "table")
