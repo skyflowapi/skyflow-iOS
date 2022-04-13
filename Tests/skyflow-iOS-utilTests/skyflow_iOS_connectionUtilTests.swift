@@ -118,4 +118,51 @@ final class skyflow_iOS_connectionUtilTests: XCTestCase {
             XCTAssertEqual(error.localizedDescription, netError.localizedDescription)
         }
     }
+    
+    func testInvokeConnectionError() {
+        let config = ConnectionConfig(connectionURL: "invalid url . com", method: .POST)
+        do {
+            try self.connectionApiClient.invokeConnection(token: "dummy_token", config: config)
+            XCTFail("Not throwing on invalid url")
+        } catch {
+        }
+    }
+    
+    func testConnectionCallbackHandler() {
+        let expectation = XCTestExpectation(description: "success")
+        let callback = DemoAPICallback(expectation: expectation)
+        self.connectionApiClient.callback = callback
+        let convertedResponse = ["message": "success"]
+        
+        self.connectionApiClient.handleCallbacks(isSuccess: true, convertedResponse: convertedResponse, stringResponse: nil, errors: [], errorObject: nil)
+        wait(for: [expectation], timeout: 20.0)
+        let result = callback.data
+        XCTAssertEqual(result as! [String: String], convertedResponse)
+    }
+    
+    func testConnectionCallbackHandlerOnPartialFailure() {
+        let expectation = XCTestExpectation(description: "success")
+        let callback = DemoAPICallback(expectation: expectation)
+        self.connectionApiClient.callback = callback
+        let convertedResponse = ["message": "error"]
+        let errors = [ErrorCodes.EMPTY_CONNECTION_URL().getErrorObject(contextOptions: ContextOptions())]
+        
+        self.connectionApiClient.handleCallbacks(isSuccess: false, convertedResponse: convertedResponse, stringResponse: nil, errors: errors, errorObject: nil)
+        wait(for: [expectation], timeout: 20.0)
+        let result = callback.data
+        XCTAssertEqual(result["success"] as! [String: String], convertedResponse)
+        XCTAssertEqual(result["errors"] as! [NSError], errors)
+    }
+    
+    func testConnectionCallbackHandlerOnFailure() {
+        let expectation = XCTestExpectation(description: "success")
+        let callback = DemoAPICallback(expectation: expectation)
+        self.connectionApiClient.callback = callback
+        let error = ErrorCodes.EMPTY_CONNECTION_URL().getErrorObject(contextOptions: ContextOptions())
+        
+        self.connectionApiClient.handleCallbacks(isSuccess: false, convertedResponse: nil, stringResponse: nil, errors: [], errorObject: error)
+        wait(for: [expectation], timeout: 20.0)
+        let result = callback.data
+        XCTAssertEqual(result["errors"] as! [SkyflowError], [error])
+    }
 }
