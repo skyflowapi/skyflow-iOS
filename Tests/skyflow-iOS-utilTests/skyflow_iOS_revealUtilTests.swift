@@ -8,7 +8,11 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     var revealApiCallback: RevealByIDAPICallback! = nil
     
     override func setUp() {
-        self.revealApiCallback = RevealByIDAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()), apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()), connectionUrl: "", records: [], contextOptions: ContextOptions())
+        self.revealApiCallback = RevealByIDAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
+                                                       apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
+                                                       connectionUrl: "",
+                                                       records: [],
+                                                       contextOptions: ContextOptions())
     }
     
     func testBuildFields() {
@@ -63,7 +67,8 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             let errorObj = try self.revealApiCallback.constructApiError(record: record, data, httpResponse)
             
             XCTAssertNotNil(errorObj["error"])
-            XCTAssertEqual(errorObj["error"] as! NSError, ErrorCodes.APIError(code: httpResponse.statusCode, message: "Internal Server Error - request-id: RID").getErrorObject(contextOptions: ContextOptions()))
+            XCTAssertEqual(errorObj["error"] as! NSError,
+                           ErrorCodes.APIError(code: httpResponse.statusCode, message: "Internal Server Error - request-id: RID").getErrorObject(contextOptions: ContextOptions()))
         } catch {
             XCTFail(error.localizedDescription)
         }

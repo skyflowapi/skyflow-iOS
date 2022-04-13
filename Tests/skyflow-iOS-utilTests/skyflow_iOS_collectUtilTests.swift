@@ -7,7 +7,11 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
     var defaultRecord: [String: Any] = ["records": [["table": "table", "fields": ["field": "value"]]]]
     
     override func setUp() {
-        self.collectCallback = CollectAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()), apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()), records: defaultRecord, options: ICOptions(tokens: false, additionalFields: nil), contextOptions: ContextOptions())
+        self.collectCallback = CollectAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
+                                                  apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
+                                                  records: defaultRecord,
+                                                  options: ICOptions(tokens: false, additionalFields: nil),
+                                                  contextOptions: ContextOptions())
     }
     
     func testBuildFieldsDict() {

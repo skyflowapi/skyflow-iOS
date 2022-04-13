@@ -8,8 +8,11 @@ final class skyflow_iOS_connectionUtilTests: XCTestCase {
     var connectionApiClient: ConnectionAPIClient! = nil
     
     override func setUp() {
-        self.soapApiClient = SoapConnectionAPIClient(callback: DemoAPICallback(expectation: XCTestExpectation()), skyflow: Client(Configuration(tokenProvider: DemoTokenProvider())), contextOptions: ContextOptions())
-        self.connectionApiClient = ConnectionAPIClient(callback: DemoAPICallback(expectation: XCTestExpectation()), contextOptions: ContextOptions())
+        self.soapApiClient = SoapConnectionAPIClient(callback: DemoAPICallback(expectation: XCTestExpectation()),
+                                                     skyflow: Client(Configuration(tokenProvider: DemoTokenProvider())),
+                                                     contextOptions: ContextOptions())
+        self.connectionApiClient = ConnectionAPIClient(callback: DemoAPICallback(expectation: XCTestExpectation()),
+                                                       contextOptions: ContextOptions())
     }
     
     func testSoapProcessResponse() {
