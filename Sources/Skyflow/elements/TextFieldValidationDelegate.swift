@@ -44,6 +44,29 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             if let acceptabledCharacters = elementType.acceptableCharacters, string.rangeOfCharacter(from: acceptabledCharacters) == nil {
                 return false
             }
+            
+            if collectField.fieldType == .EXPIRATION_MONTH {
+                if count == 1 && string.count == 1{
+                    let newText = "0" + string
+                    textField.text = newText
+                    return false
+                } else {
+                    if let month = Int(text) {
+                        if month > 0 && month < 10 {
+                            textField.text = "0\(month)"
+                        }
+                        else if month <= 12 {
+                            textField.text = "\(month)"
+                        }
+                    }
+                    return false
+                }
+            } else if collectField.fieldType == .EXPIRATION_YEAR {
+                if count > collectField.options.format.count {
+                    return false
+                }
+            }
+            
             if let maxLength = elementType.maxLength, count > maxLength {
                 return false
             }
@@ -51,6 +74,8 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             if !elementType.formatPattern.isEmpty {
                 return updateFormat(text)
             }
+            
+            
         }
 
         return true
