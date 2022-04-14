@@ -78,6 +78,16 @@ public class TextField: SkyflowElement, Element, BaseElement {
     }
     
     internal func addValidations() {
+        if self.collectInput.type == .EXPIRATION_DATE {
+            self.addDateValidations()
+        } else if self.collectInput.type == .EXPIRATION_YEAR {
+            self.addYearValidations()
+        } else if self.collectInput.type == .EXPIRATION_MONTH {
+            self.addMonthValidations()
+        }
+    }
+    
+    internal func addDateValidations() {
         let defaultFormat = "mm/yy"
         let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
         if !supportedFormats.contains(self.options.format) {
@@ -90,6 +100,22 @@ public class TextField: SkyflowElement, Element, BaseElement {
             let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
             self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
         }
+    }
+    
+    internal func addYearValidations() {
+        let format = "mm"
+        let monthRule = SkyflowValidateExpirationMonth(format: format, error: SkyflowValidationErrorType.expirationMonth.rawValue)
+        self.validationRules.append(ValidationSet(rules: [monthRule]))
+    }
+    
+    internal func addMonthValidations() {
+        var format = "yyyy"
+        if self.options.format.lowercased() == "yy" {
+            format = "yy"
+        }
+        
+        let yearRule = SkyflowValidateExpirationYear(format: format, error: SkyflowValidationErrorType.expirationYear.rawValue)
+        self.validationRules.append(ValidationSet(rules: [yearRule]))
     }
     
     internal func setFormatPattern() {
