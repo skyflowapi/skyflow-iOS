@@ -1,4 +1,6 @@
-internal struct SkyflowValidateExpirationMonth: ValidationRule {
+import Foundation
+
+internal struct SkyflowValidateExpirationYear: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
     public let format: String
@@ -10,7 +12,7 @@ internal struct SkyflowValidateExpirationMonth: ValidationRule {
     }
 }
 
-extension SkyflowValidateExpirationMonth: SkyflowInternalValidationProtocol {
+extension SkyflowValidateExpirationYear: SkyflowInternalValidationProtocol {
     /// Validation function for expire date.
     public func validate(_ text: String?) -> Bool {
         
@@ -31,13 +33,9 @@ extension SkyflowValidateExpirationMonth: SkyflowInternalValidationProtocol {
         }
         
         let presentYear = Calendar(identifier: .gregorian).component(.year, from: Date())
-        year = format.count == 2 ? (inputYear + 2000) : inputYear
+        year = format.count == 2 ? (year + 2000) : year
         
         if year < presentYear || year > (presentYear + 20) {
-            return false
-        }
-
-        if year == presentYear && year < presentMonth {
             return false
         }
         

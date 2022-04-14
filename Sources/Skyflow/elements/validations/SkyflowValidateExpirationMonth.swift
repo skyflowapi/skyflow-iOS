@@ -1,9 +1,11 @@
+import Foundation
+
 internal struct SkyflowValidateExpirationMonth: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
     /// Initialzation
-    public init(format: String, error: SkyflowValidationError) {
+    public init(error: SkyflowValidationError) {
         self.error = error
     }
 }
@@ -20,7 +22,7 @@ extension SkyflowValidateExpirationMonth: SkyflowInternalValidationProtocol {
             return true
         }
         
-        if text.count != format.count {
+        if text.count != 2 {
             return false
         }
         

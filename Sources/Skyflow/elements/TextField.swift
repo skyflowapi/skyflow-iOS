@@ -103,8 +103,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
     }
     
     internal func addYearValidations() {
-        let format = "mm"
-        let monthRule = SkyflowValidateExpirationMonth(format: format, error: SkyflowValidationErrorType.expirationMonth.rawValue)
+        let monthRule = SkyflowValidateExpirationMonth(error: SkyflowValidationErrorType.expirationMonth.rawValue)
         self.validationRules.append(ValidationSet(rules: [monthRule]))
     }
     
