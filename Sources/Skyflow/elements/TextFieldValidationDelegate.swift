@@ -46,21 +46,15 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             }
             
             if collectField.fieldType == .EXPIRATION_MONTH {
-                if count == 1 && string.count == 1{
-                    let newText = "0" + string
-                    textField.text = newText
-                    return false
-                } else {
-                    if let month = Int(text) {
-                        if month > 0 && month < 10 {
-                            textField.text = "0\(month)"
-                        }
-                        else if month <= 12 {
-                            textField.text = "\(month)"
-                        }
+                if let month = Int(text) {
+                    if month > 0 && month < 10 {
+                        textField.text = "0\(month)"
                     }
-                    return false
+                    else if month <= 12 {
+                        textField.text = "\(month)"
+                    }
                 }
+                return false
             } else if collectField.fieldType == .EXPIRATION_YEAR {
                 if count > collectField.options.format.count {
                     return false
