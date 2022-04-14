@@ -42,6 +42,11 @@ public enum ElementType: Int, CaseIterable {
     case INPUT_FIELD
     
     case PIN
+    
+    case EXPIRATION_MONTH
+    
+    case EXPIRATION_YEAR
+    
 
     var instance: Type? {
         var rules = ValidationSet()
@@ -81,6 +86,17 @@ public enum ElementType: Int, CaseIterable {
             rules.add(rule: SkyflowValidateLengthMatch(lengths: (4..<13).map({$0}), error: SkyflowValidationErrorType.lengthMatches.rawValue))
         return Type(formatPattern: "", regex: "\\d*$",
                     validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 12)
+        case .EXPIRATION_MONTH:
+            let monthRegex = "^(0[1-9]|1[0-2])$"
+            rules.add(rule: RegexMatchRule(regex: monthRegex,
+                      error: SkyflowValidationErrorType.regex.rawValue))
+            
+            return Type(formatPattern: "", regex: monthRegex, validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 2)
+        case .EXPIRATION_YEAR:
+            let yearRegex = "^([0-9]{4}|[0-9]{2})$"
+            rules.add(rule: RegexMatchRule(regex: yearRegex, error: SkyflowValidationErrorType.regex.rawValue))
+            
+            return Type(formatPattern: "", regex: yearRegex, validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 4)
         }
     }
     
@@ -92,6 +108,8 @@ public enum ElementType: Int, CaseIterable {
         case .CVV: return "CVV"
         case .INPUT_FIELD: return "INPUT_FIELD"
         case .PIN: return "PIN"
+        case .EXPIRATION_MONTH: return "EXPIRATION_MONTH"
+        case .EXPIRATION_YEAR: return "EXPIRATION_YEAR"
         }
     }
 }
