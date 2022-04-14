@@ -21,4 +21,7 @@ internal enum SkyflowValidationErrorType: String {
     case expirationDate = "INVALID_EXPIRATION_DATE"
     
     case elementValueMatch = "ELEMENT_VALUE_MATCH_FAILED"
+    
+    /// Default Validation error for `SkyflowValidateExpirationMonth`
+    case expiratoinMonth = "INVALID_EXPIRATION_MONTH"
 }
