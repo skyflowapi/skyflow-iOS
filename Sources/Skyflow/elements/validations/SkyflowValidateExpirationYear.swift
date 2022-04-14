@@ -35,11 +35,9 @@ extension SkyflowValidateExpirationYear: SkyflowInternalValidationProtocol {
         let presentYear = Calendar(identifier: .gregorian).component(.year, from: Date())
         year = format.count == 2 ? (year + 2000) : year
         
-        if year < presentYear || year > (presentYear + 20) {
-            return false
-        }
+
         
-        return true
+        return (year >= presentYear && year <= presentYear + 20)
         
     }
 }
