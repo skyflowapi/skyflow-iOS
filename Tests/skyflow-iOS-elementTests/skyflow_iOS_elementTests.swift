@@ -251,5 +251,35 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(self.label.revealInput.token, "token")
         XCTAssertEqual(self.label.skyflowLabelView.label.secureText, "token")
     }
+    
+    func testExpiryYearValidationYY() {
+        
+        let yearValidation = SkyflowValidateExpirationYear(format: "yy", error: SkyflowValidationErrorType.expirationYear.rawValue)
+        
+        XCTAssertFalse(yearValidation.validate("234"))
+        XCTAssertTrue(yearValidation.validate("23"))
+
+    }
+    
+    func testExpiryYearValidationYYYY() {
+        
+        let yearValidation = SkyflowValidateExpirationYear(format: "yyyy", error: SkyflowValidationErrorType.expirationYear.rawValue)
+        
+        XCTAssertFalse(yearValidation.validate("1234"))
+        XCTAssertFalse(yearValidation.validate("2132"))
+        XCTAssertFalse(yearValidation.validate("22"))
+        XCTAssertTrue(yearValidation.validate("2032"))
+
+    }
+    
+    func testExpiryMonthValidation() {
+        
+        let yearValidation = SkyflowValidateExpirationMonth(error: SkyflowValidationErrorType.expirationYear.rawValue)
+        
+        XCTAssertFalse(yearValidation.validate("24"))
+        XCTAssertTrue(yearValidation.validate("12"))
+        XCTAssertTrue(yearValidation.validate("01"))
+
+    }
 
 }

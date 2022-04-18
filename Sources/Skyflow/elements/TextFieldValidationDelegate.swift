@@ -17,6 +17,18 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         }
         
         func updateFormat(_ text: String, _ isEmpty: Bool = false) -> Bool{
+            
+            if collectField.fieldType == .EXPIRATION_MONTH {
+                if let month = Int(text) {
+                    if month == 0 {
+                        textField.text = ""
+                        self.collectField.updateActualValue()
+                        return false
+                    }
+                }
+                return formatMonth()
+            }
+            
             let formatResult = collectField.textField.formatText(text, range, isEmpty)
             var offset = 0
             
@@ -28,6 +40,19 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
                 updateCursorPosition(offset: offset)
                 collectField.textFieldDidChange(collectField.textField)
             }
+            return false
+        }
+        
+        func formatMonth() -> Bool{
+            if let month = Int(text) {
+                if month > 0 && month < 10 {
+                    textField.text = "0\(month)"
+                }
+                else if month <= 12 {
+                    textField.text = "\(month)"
+                }
+            }
+            self.collectField.updateActualValue()
             return false
         }
         
@@ -46,15 +71,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             }
             
             if collectField.fieldType == .EXPIRATION_MONTH {
-                if let month = Int(text) {
-                    if month > 0 && month < 10 {
-                        textField.text = "0\(month)"
-                    }
-                    else if month <= 12 {
-                        textField.text = "\(month)"
-                    }
-                }
-                return false
+                return formatMonth()
             } else if collectField.fieldType == .EXPIRATION_YEAR {
                 if count > collectField.options.format.count {
                     return false

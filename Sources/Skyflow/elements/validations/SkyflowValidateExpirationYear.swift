@@ -13,7 +13,7 @@ internal struct SkyflowValidateExpirationYear: ValidationRule {
 }
 
 extension SkyflowValidateExpirationYear: SkyflowInternalValidationProtocol {
-    /// Validation function for expire date.
+    /// Validation function for expiry year.
     public func validate(_ text: String?) -> Bool {
         
         guard let text = text else {
@@ -37,7 +37,7 @@ extension SkyflowValidateExpirationYear: SkyflowInternalValidationProtocol {
         
 
         
-        return (year >= presentYear && year <= presentYear + 20)
+        return (year >= presentYear && year <= presentYear + 50)
         
     }
 }
