@@ -280,6 +280,9 @@ Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the
 - `EXPIRATION_DATE`
 - `CVV`
 - `PIN`
+- `EXPIRATION_YEAR`
+- `EXPIRATION_MONTH`
+
 
 The `INPUT_FIELD` type is a custom UI element without any built-in validations. See the section on [validations](#validations) for more information on validations.
 
@@ -297,13 +300,19 @@ Skyflow.CollectElementOptions(
 
 `enableCardIcon` paramenter indicates whether the icon is visible for the `CARD_NUMBER` element, defaults to `true`
 
-`format` parameter takes string value and indicates the format pattern applicable to the element type, It's currently only applicable to `EXPIRATION_DATE` element type, the values that are accepted are
-  - mm/yy
+`format` parameter takes string value and indicates the format pattern applicable to the element type, It's currently only applicable to `EXPIRATION_DATE` and `EXPIRATION_YEAR` element types. 
+
+The values that are accepted for `EXPIRATION_DATE` are
+  - mm/yy (default)
   - mm/yyyy
   - yy/mm
   - yyyy/mm
 
-`NOTE`: If not specified or invalid value is passed to the `format` for `EXPIRATION_DATE` element, then it defaults to `mm/yy` format.
+The values that are accepted for `EXPIRATION_YEAR` are
+  - yy (default)
+  - yyyy
+
+`NOTE`:  If not specified or invalid value is passed to the format then it takes default value
 
 Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
 
