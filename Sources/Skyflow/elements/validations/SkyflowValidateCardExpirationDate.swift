@@ -91,7 +91,7 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
         }
         /// convert text year to long format if needed
         inputYear = yearChars == 2 ? (inputYear + 2000) : inputYear
-        if inputYear < presentYear || inputYear > (presentYear + 20) {
+        if inputYear < presentYear || inputYear > (presentYear + 50) {
             return false
         }
 

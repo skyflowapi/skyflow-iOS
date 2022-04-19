@@ -33,15 +33,24 @@ public enum ElementType: Int, CaseIterable {
     /// Field type that requires Credit Card Number input formatting and validation.
     case CARD_NUMBER
 
-    /// Field type that requires Card Expiration Date input formatting and validation.
+    /// Field type that requires Card Expiration Date input formatting and validation, format can be set through CollectElementOptions, defaul is MM/YY
     case EXPIRATION_DATE
 
     /// Field type that requires Card CVV input formatting and validation.
     case CVV
     
+    /// A generic field type without any validations
     case INPUT_FIELD
     
+    /// Field type that requires Card PIN input formatting and validatoin
     case PIN
+    
+    /// Field type that requires Card Expiration Month formatting and validation (format: MM)
+    case EXPIRATION_MONTH
+    
+    /// Field type that requires Card Expiration Year formatting and validation, format can be set through CollectElementOptions for YY, defaul is YYYY
+    case EXPIRATION_YEAR
+    
 
     var instance: Type? {
         var rules = ValidationSet()
@@ -81,6 +90,17 @@ public enum ElementType: Int, CaseIterable {
             rules.add(rule: SkyflowValidateLengthMatch(lengths: (4..<13).map({$0}), error: SkyflowValidationErrorType.lengthMatches.rawValue))
         return Type(formatPattern: "", regex: "\\d*$",
                     validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 12)
+        case .EXPIRATION_MONTH:
+            let monthRegex = "^(0[1-9]|1[0-2])$"
+            rules.add(rule: RegexMatchRule(regex: monthRegex,
+                      error: SkyflowValidationErrorType.regex.rawValue))
+            
+            return Type(formatPattern: "", regex: monthRegex, validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 2)
+        case .EXPIRATION_YEAR:
+            let yearRegex = "^([0-9]{4}|[0-9]{2})$"
+            rules.add(rule: RegexMatchRule(regex: yearRegex, error: SkyflowValidationErrorType.regex.rawValue))
+            
+            return Type(formatPattern: "", regex: yearRegex, validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 4)
         }
     }
     
@@ -92,6 +112,8 @@ public enum ElementType: Int, CaseIterable {
         case .CVV: return "CVV"
         case .INPUT_FIELD: return "INPUT_FIELD"
         case .PIN: return "PIN"
+        case .EXPIRATION_MONTH: return "EXPIRATION_MONTH"
+        case .EXPIRATION_YEAR: return "EXPIRATION_YEAR"
         }
     }
 }
