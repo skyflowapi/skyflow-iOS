@@ -10,6 +10,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     var expectation: XCTestExpectation! = nil
     var callback: DemoAPICallback! = nil
     
+    var client: Client = Client(Configuration(tokenProvider: DemoTokenProvider()))
+    var container: Container<RevealContainer>! = nil
+    
     override func setUp() {
         self.expectation = XCTestExpectation()
         self.callback = DemoAPICallback(expectation: self.expectation)
@@ -19,6 +22,16 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
                                                    records: [],
                                                    contextOptions: ContextOptions())
         self.revealValueCallback = RevealValueCallback(callback: self.callback, revealElements: [], contextOptions: ContextOptions())
+        self.container = client.container(type: ContainerType.REVEAL)
+    }
+    
+    func waitForUIUpdates() {
+        
+        let expectation = self.expectation(description: "Test")
+        DispatchQueue.main.async {
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testOnSuccessInvalidUrl() {
@@ -128,5 +141,78 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["error"] as! NSError, error)
     }
-
+    
+    func testGetTokensToErrors() {
+        let errors = [["token": "1234"], ["token": "4321"]]
+        
+        let result = self.revealValueCallback.getTokensToErrors(errors)
+        
+        XCTAssertEqual(result["1234"], "Invalid Token")
+        XCTAssertEqual(result["4321"], "Invalid Token")
+    }
+    
+    func testRevealValueOnFailure() {
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "John"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(formatRegex: "n$", replaceText: "nny"))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onFailure(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["records"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "Johnny")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+    }
+    
+    func testRevealValueOnSuccess() {
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "John"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(formatRegex: "n$", replaceText: "nny"))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "Johnny")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+    }
+    
 }

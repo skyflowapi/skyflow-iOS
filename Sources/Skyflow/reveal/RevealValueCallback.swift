@@ -58,7 +58,7 @@ internal class RevealValueCallback: Callback {
             response["success"] = successResponses
         }
         var errors =  [] as [[String: Any]]
-        if let responseErrors = response["errors"] as? [[String: Any]] {
+        if let responseErrors = responseJson["errors"] as? [[String: Any]] {
             errors = responseErrors
         }
         let tokensToErrors = getTokensToErrors(errors)
@@ -125,7 +125,7 @@ internal class RevealValueCallback: Callback {
                 response["success"] = successResponses
             }
             var errors =  [[:]] as [[String: Any]]
-            if let responseErrors = response["errors"] as? [[String: Any]] {
+            if let responseErrors = responseJson["errors"] as? [[String: Any]] {
                 errors = responseErrors
             }
             
