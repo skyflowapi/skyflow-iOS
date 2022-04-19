@@ -78,6 +78,16 @@ public class TextField: SkyflowElement, Element, BaseElement {
     }
     
     internal func addValidations() {
+        if self.fieldType == .EXPIRATION_DATE {
+            self.addDateValidations()
+        } else if self.fieldType == .EXPIRATION_YEAR {
+            self.addYearValidations()
+        } else if self.fieldType == .EXPIRATION_MONTH {
+            self.addMonthValidations()
+        }
+    }
+    
+    internal func addDateValidations() {
         let defaultFormat = "mm/yy"
         let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
         if !supportedFormats.contains(self.options.format) {
@@ -86,10 +96,23 @@ public class TextField: SkyflowElement, Element, BaseElement {
             Log.warn(message: .INVALID_EXPIRYDATE_FORMAT, values: [self.options.format], contextOptions: context!)
             self.options.format = defaultFormat
         }
-        if self.fieldType == .EXPIRATION_DATE {
-            let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
-            self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
+        let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
+        self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
+    }
+    
+    internal func addMonthValidations() {
+        let monthRule = SkyflowValidateExpirationMonth(error: SkyflowValidationErrorType.expirationMonth.rawValue)
+        self.validationRules.append(ValidationSet(rules: [monthRule]))
+    }
+    
+    internal func addYearValidations() {
+        var format = "yyyy"
+        if self.options.format.lowercased() == "yy" {
+            format = "yy"
         }
+        
+        let yearRule = SkyflowValidateExpirationYear(format: format, error: SkyflowValidationErrorType.expirationYear.rawValue)
+        self.validationRules.append(ValidationSet(rules: [yearRule]))
     }
     
     internal func setFormatPattern() {

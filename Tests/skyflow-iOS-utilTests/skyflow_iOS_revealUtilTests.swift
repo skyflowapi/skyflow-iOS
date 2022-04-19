@@ -5,100 +5,214 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class skyflow_iOS_revealUtilTests: XCTestCase {
     
-    var revealApiCallback: RevealByIDAPICallback! = nil
+    var revealApiCallback: RevealApiCallback! = nil
+    var revealValueCallback: RevealValueCallback! = nil
+    var expectation: XCTestExpectation! = nil
+    var callback: DemoAPICallback! = nil
+    
+    var client: Client = Client(Configuration(tokenProvider: DemoTokenProvider()))
+    var container: Container<RevealContainer>! = nil
     
     override func setUp() {
-        self.revealApiCallback = RevealByIDAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
-                                                       apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
-                                                       connectionUrl: "",
-                                                       records: [],
-                                                       contextOptions: ContextOptions())
+        self.expectation = XCTestExpectation()
+        self.callback = DemoAPICallback(expectation: self.expectation)
+        self.revealApiCallback = RevealApiCallback(callback: self.callback,
+                                                   apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
+                                                   connectionUrl: "",
+                                                   records: [],
+                                                   contextOptions: ContextOptions())
+        self.revealValueCallback = RevealValueCallback(callback: self.callback, revealElements: [], contextOptions: ContextOptions())
+        self.container = client.container(type: ContainerType.REVEAL)
     }
     
-    func testBuildFields() {
-        let input = ["key": "value", "nested": ["key": "value"]] as [String: Any]
+    func waitForUIUpdates() {
         
-        let output = self.revealApiCallback.buildFieldsDict(dict: input)
-        
-        XCTAssertEqual(input["key"] as! String, output["key"] as! String)
-        XCTAssertEqual(input["nested"] as! [String: String], output["nested"] as! [String: String])
+        let expectation = self.expectation(description: "Test")
+        DispatchQueue.main.async {
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 1, handler: nil)
     }
     
-    func testApiCallbackInvalidUrl() {
-        let expectation = XCTestExpectation(description: "expect invalid url failure")
-        let failureCallback = DemoAPICallback(expectation: expectation)
-        
+    func testOnSuccessInvalidUrl() {
         self.revealApiCallback.connectionUrl = "invalid url"
-        self.revealApiCallback.callback = failureCallback
-        self.revealApiCallback.onSuccess("dummy_token")
+        self.revealApiCallback.onSuccess("token")
         
-        wait(for: [expectation], timeout: 30.0)
-        let result = failureCallback.data["errors"] as! [[String: NSError]]
-        XCTAssertEqual(result[0]["error"], ErrorCodes.INVALID_URL().getErrorObject(contextOptions: ContextOptions()))
+        wait(for: [self.expectation], timeout: 20.0)
+        let errors = callback.data["errors"] as! [[String: NSError]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["error"], ErrorCodes.INVALID_URL().getErrorObject(contextOptions: ContextOptions()))
     }
     
     func testGetRequestSession() {
-        let urlComponents = URLComponents(string: "https://example.org")
-        let (request, session) = self.revealApiCallback.getRequestSession(urlComponents: urlComponents)
-        XCTAssertEqual(request.httpMethod, "GET")
+        self.revealApiCallback.connectionUrl = "https://www.example.org"
+        
+        let (request, session) = self.revealApiCallback.getRequestSession()
+        XCTAssertEqual(request.url?.absoluteString, "https://www.example.org/detokenize")
         XCTAssertEqual(request.allHTTPHeaderFields!["Content-Type"], "application/json; utf-8")
         XCTAssertEqual(request.allHTTPHeaderFields!["Accept"], "application/json")
+        XCTAssertEqual(request.allHTTPHeaderFields!["Authorization"], "Bearer ")
     }
     
-    func testGetUrlComponents() {
-        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
-        self.revealApiCallback.connectionUrl = "https://example.org"
-        let urlComponents = self.revealApiCallback.getUrlComponents(record: record)!
-        
-        XCTAssertEqual(urlComponents.queryItems?.count, 3)
-        XCTAssertEqual(urlComponents.queryItems![0], URLQueryItem(name: "skyflow_ids", value: "one"))
-        XCTAssertEqual(urlComponents.queryItems![1], URLQueryItem(name: "skyflow_ids", value: "two"))
-        XCTAssertEqual(urlComponents.queryItems![2], URLQueryItem(name: "redaction", value: record.redaction))
-        XCTAssertEqual(urlComponents.url?.path, "/table")
-    }
-    
-    func testConstructError() {
-        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
-        let httpResponse = HTTPURLResponse(url: URL(string: "http://example.org")!, statusCode: 500, httpVersion: nil, headerFields: ["x-request-id": "RID"])!
-        
-        let serverError = ["error": ["message": "Internal Server Error"]]
+    func testRevealRequestBody() {
+        let record = RevealRequestRecord(token: "token")
         do {
-            let data = try JSONSerialization.data(withJSONObject: serverError, options: .fragmentsAllowed)
-            let errorObj = try self.revealApiCallback.constructApiError(record: record, data, httpResponse)
-            
-            XCTAssertNotNil(errorObj["error"])
-            XCTAssertEqual(errorObj["error"] as! NSError,
-                           ErrorCodes.APIError(code: httpResponse.statusCode, message: "Internal Server Error - request-id: RID").getErrorObject(contextOptions: ContextOptions()))
+            let result = try self.revealApiCallback.getRevealRequestBody(record: record)
+            XCTAssertNotNil(result)
         } catch {
             XCTFail(error.localizedDescription)
         }
     }
     
-    func testProcessResponse() {
-        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
-        let apiResponse = ["records":[["table": "table", "skyflow_id": "SID"]]] as [String: Any]
+    func testProcessResponseError() {
+        let revealedResponse = ["key": "value"]
+        let serverError = NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "Internal Server Error"])
         do {
-            let data = try JSONSerialization.data(withJSONObject: apiResponse, options: .fragmentsAllowed)
-            let processedRespoonse = try self.revealApiCallback.processResponse(record: record, data)
-            
-            print(processedRespoonse)
-            XCTAssertEqual(processedRespoonse.count, 1)
-            XCTAssertEqual(processedRespoonse[0]["table"] as! String, "table")
-            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
-            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
+            let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
+            try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token"), data: responseData, response: nil, error: serverError)
+            XCTFail("Not throwing on http error")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, serverError.localizedDescription)
+        }
+    }
+    
+    func testProcessResponseBadCode() {
+        let revealedResponse = ["error": ["message": "Internal Server Error"]]
+        let httpResponse = HTTPURLResponse(url: URL(string: "https://www.example.org")!, statusCode: 500, httpVersion: "1.1", headerFields: ["x-request-id": "RID"])
+        do {
+            let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
+            let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token"), data: responseData, response: httpResponse, error: nil)
+            XCTAssertNil(success)
+            XCTAssertNotNil(failure)
+            XCTAssertEqual(failure?.error.localizedDescription, "Interface:  - Internal Server Error - request-id: RID")
         } catch {
             XCTFail(error.localizedDescription)
         }
     }
     
-    func testConstructRevealRecords() {
-        let records = [["table": "table", "id": "SID"]]
-        let errors = [["error": ErrorCodes.APIError(code: 500, message: "description").getErrorObject(contextOptions: ContextOptions())]] 
-        
-        let revealRecord = self.revealApiCallback.constructRevealRecords(records, errors)
-        XCTAssertEqual(records, revealRecord["records"] as! [[String: String]])
-        XCTAssertEqual(errors[0]["error"], (revealRecord["errors"] as! [[String: NSError]])[0]["error"])
+    func testProcessResponseSuccess() {
+        let revealedResponse = ["records": [["token": "token", "value": "value"]]]
+        let httpResponse = HTTPURLResponse(url: URL(string: "https://www.example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: ["x-request-id": "RID"])
+        do {
+            let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
+            let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token"), data: responseData, response: httpResponse, error: nil)
+            XCTAssertNil(failure)
+            XCTAssertNotNil(success)
+            XCTAssertEqual(success?.token_id, "token")
+            XCTAssertEqual(success?.value, "value")
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
-
-
+    
+    func testHandleCallbacksSuccess() {
+        let errorObject = NSError(domain: "", code: 200, userInfo: nil)
+        let success = [RevealSuccessRecord(token_id: "token", value: "value")]
+        
+        self.revealApiCallback.handleCallbacks(success: success, failure: [], isSuccess: true, errorObject: nil)
+        
+        wait(for: [self.expectation], timeout: 20.0)
+        let records = self.callback.data["records"] as! [[String: String]]
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["value"], "value")
+        XCTAssertEqual(records[0]["token"], "token")
+    }
+    
+    func testHandleCallbacksFailure() {
+        let failure = RevealErrorRecord(id: "token", error: NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid Token"]))
+        self.revealApiCallback.handleCallbacks(success: [], failure: [failure], isSuccess: true, errorObject: nil)
+        
+        wait(for: [self.expectation], timeout: 20.0)
+        let errors = self.callback.data["errors"] as! [[String: Any]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["error"] as! NSError, failure.error)
+        XCTAssertEqual(errors[0]["token"] as! String, "token")
+    }
+    
+    func testHandleCallbacksError() {
+        let error = NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid Token"])
+        self.revealApiCallback.handleCallbacks(success: [], failure: [], isSuccess: false, errorObject: error)
+        
+        wait(for: [self.expectation], timeout: 20.0)
+        print(self.callback.data)
+        print("===", self.callback.receivedResponse)
+        let errors = self.callback.data["errors"] as! [[String: Any]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["error"] as! NSError, error)
+    }
+    
+    func testGetTokensToErrors() {
+        let errors = [["token": "1234"], ["token": "4321"]]
+        
+        let result = self.revealValueCallback.getTokensToErrors(errors)
+        
+        XCTAssertEqual(result["1234"], "Invalid Token")
+        XCTAssertEqual(result["4321"], "Invalid Token")
+    }
+    
+    func testRevealValueOnFailure() {
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "John"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(formatRegex: "n$", replaceText: "nny"))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onFailure(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+                
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "Johnny")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+    }
+    
+    func testRevealValueOnSuccess() {
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "John"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(formatRegex: "n$", replaceText: "nny"))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "Johnny")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+    }
+    
 }

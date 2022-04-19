@@ -46,6 +46,22 @@ class InputFormattingTests: XCTestCase {
         return expiryDate
     }
     
+    func getExpiryMonthElement() -> TextField?{
+        
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let expiryDateInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_MONTH)
+        
+        let expiryDate = container?.create(input: expiryDateInput, options: options)
+        window.addSubview(expiryDate!)
+        
+        return expiryDate
+    }
+    
     func testCardNumberFormattingNewChar() {
         let cardNumber = getCardNumberElement()
 
@@ -109,4 +125,87 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual(expiryDate?.actualValue, "23")
         XCTAssertEqual(expiryDate?.textField.secureText, "23")
     }
+    
+    func testExpiryMonthFormattingSingleDigit() {
+        let expiryMonth = getExpiryMonthElement()
+        let currentText = ""
+        
+        expiryMonth?.textField.secureText = currentText
+        
+        let result = expiryMonth?.textField.delegate?.textField?(
+            expiryMonth!.textField,
+            shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText),
+            replacementString: "6")
+        
+        XCTAssertFalse(result!)
+        XCTAssertEqual(expiryMonth?.actualValue, "06")
+        XCTAssertEqual(expiryMonth?.textField.secureText, "06")
+    }
+    
+    func testExpiryMonthFormattingDoubleDigitValid() {
+        let expiryMonth = getExpiryMonthElement()
+        let currentText = "01"
+        
+        expiryMonth?.textField.secureText = currentText
+        
+        let result = expiryMonth?.textField.delegate?.textField?(
+            expiryMonth!.textField,
+            shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText),
+            replacementString: "2")
+        
+        XCTAssertFalse(result!)
+        XCTAssertEqual(expiryMonth?.actualValue, "12")
+        XCTAssertEqual(expiryMonth?.textField.secureText, "12")
+    }
+    
+    func testExpiryMonthFormattingDoubleDigitInvalid() {
+        let expiryMonth = getExpiryMonthElement()
+        let currentText = "01"
+        
+        expiryMonth?.textField.secureText = currentText
+        
+        let result = expiryMonth?.textField.delegate?.textField?(
+            expiryMonth!.textField,
+            shouldChangeCharactersIn: NSRange(currentText.endIndex..<currentText.endIndex, in: currentText),
+            replacementString: "6")
+        
+        XCTAssertFalse(result!)
+        XCTAssertEqual(expiryMonth?.actualValue, "01")
+        XCTAssertEqual(expiryMonth?.textField.secureText, "01")
+    }
+    
+    func testExpiryMonthFormattingBackspaceSingleDigit() {
+        let expiryMonth = getExpiryMonthElement()
+        let currentText = "01"
+        
+        expiryMonth?.textField.secureText = currentText
+        let lastIndex = currentText.index(before: currentText.endIndex)
+        
+        let result = expiryMonth?.textField.delegate?.textField?(
+            expiryMonth!.textField,
+            shouldChangeCharactersIn: NSRange(lastIndex..<currentText.endIndex, in: currentText),
+            replacementString: "")
+        
+        XCTAssertFalse(result!)
+        XCTAssertEqual(expiryMonth?.actualValue, "")
+        XCTAssertEqual(expiryMonth?.textField.secureText, "")
+    }
+    
+    func testExpiryMonthFormattingBackspaceDoubleDigit() {
+        let expiryMonth = getExpiryMonthElement()
+        let currentText = "12"
+        
+        expiryMonth?.textField.secureText = currentText
+        let lastIndex = currentText.index(before: currentText.endIndex)
+        
+        let result = expiryMonth?.textField.delegate?.textField?(
+            expiryMonth!.textField,
+            shouldChangeCharactersIn: NSRange(lastIndex..<currentText.endIndex, in: currentText),
+            replacementString: "")
+        
+        XCTAssertFalse(result!)
+        XCTAssertEqual(expiryMonth?.textField.secureText, "01")
+        XCTAssertEqual(expiryMonth?.actualValue, "01")
+    }
+
 }
