@@ -86,11 +86,12 @@ internal class RevealValueCallback: Callback {
     }
 
     func onFailure(_ error: Any) {
+        var response: [String: Any] = [:]
+
         if error is [String: Any] {
             var tokens: [String: String] = [:]
 
             let responseJson = error as! [String: Any]
-            var response: [String: Any] = [:]
             var tempSuccessResponses: [[String: String]] = []
 
             if let records = responseJson["records"] as? [Any] {
@@ -148,7 +149,7 @@ internal class RevealValueCallback: Callback {
                 }
             }
         }
-        self.clientCallback.onFailure(error)
+        self.clientCallback.onFailure(response)
     }
 
     func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String] {

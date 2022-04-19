@@ -167,9 +167,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         self.revealValueCallback.onFailure(response)
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
-        
+                
         let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["records"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
