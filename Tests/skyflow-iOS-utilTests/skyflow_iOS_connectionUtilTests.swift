@@ -7,12 +7,25 @@ final class skyflow_iOS_connectionUtilTests: XCTestCase {
     var soapApiClient: SoapConnectionAPIClient! = nil
     var connectionApiClient: ConnectionAPIClient! = nil
     
+    var detokenizeCallback: ConnectionDetokenizeCallback! = nil
+    var client: Client! = nil
+    
     override func setUp() {
+        self.client = Client(Configuration(tokenProvider: DemoTokenProvider()))
         self.soapApiClient = SoapConnectionAPIClient(callback: DemoAPICallback(expectation: XCTestExpectation()),
                                                      skyflow: Client(Configuration(tokenProvider: DemoTokenProvider())),
                                                      contextOptions: ContextOptions())
         self.connectionApiClient = ConnectionAPIClient(callback: DemoAPICallback(expectation: XCTestExpectation()),
                                                        contextOptions: ContextOptions())
+        
+        self.detokenizeCallback = ConnectionDetokenizeCallback(
+            skyflowClient: self.client,
+            labelIDsToTokens: [:],
+            apiClient: self.connectionApiClient,
+            connectionType: .REST,
+            config: ConnectionConfig(connectionURL: "", method: .POST),
+            clientCallback: DemoAPICallback(expectation: XCTestExpectation()),
+            contextOptions: ContextOptions())
     }
     
     func testSoapProcessResponse() {
@@ -168,4 +181,67 @@ final class skyflow_iOS_connectionUtilTests: XCTestCase {
         let result = callback.data
         XCTAssertEqual(result["errors"] as! [SkyflowError], [error])
     }
+    
+    func testDetokenizeCallbackMergeDicts() {
+        let dict1 = ["id": "token"]
+        let dict2 = ["token": "value"]
+        
+        let result = self.detokenizeCallback.mergeDicts(dict1, dict2)
+        
+        XCTAssertEqual(result["id"], "value")
+    }
+    
+    func testConvertDetokenizeOp() {
+        let detokenizeOutput = ["records": [["token": "given_token", "value": "value"]]]
+        let result = self.detokenizeCallback.convertDetokenizeOutput(detokenizeOutput)
+        
+        XCTAssertEqual(result, ["given_token": "value"])
+    }
+    
+    func testDetokenizeOnSuccessBadResponse() {
+        let badResponse = ["key": "value"]
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        let tokenCallback = ConnectionTokenCallback(client: self.client, connectionType: .REST, config: [:], clientCallback: callback)
+        
+        self.detokenizeCallback.tokenCallback = tokenCallback
+        self.detokenizeCallback.onSuccess(badResponse)
+        
+        wait(for: [expectation], timeout: 20.0)
+        XCTAssertEqual(callback.receivedResponse, "Invalid Response from detokenize")
+    }
+    
+    func testDetokenizeOnSuccessRest() {
+        let response = ["records": [["token": "token", "value": "value"]]]
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        let tokenCallback = ConnectionTokenCallback(client: self.client!, connectionType: .REST, config: [:], clientCallback: callback)
+        
+        self.detokenizeCallback.tokenCallback = tokenCallback
+        self.detokenizeCallback.onSuccess(response)
+        
+        wait(for: [expectation], timeout: 20.0)
+        print(callback.receivedResponse)
+        XCTAssertEqual(callback.receivedResponse, "Interface:  - Invalid Bearer token format")
+        
+    }
+    
+    func testDetokenizeOnSuccessSoap() {
+        let response = ["records": [["token": "token", "value": "value"]]]
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        let tokenCallback = ConnectionTokenCallback(client: self.client!, connectionType: .SOAP, config: [:], clientCallback: callback)
+        
+        self.detokenizeCallback.tokenCallback = tokenCallback
+        self.detokenizeCallback.connectionType = .SOAP
+        self.detokenizeCallback.config = SoapConnectionConfig(connectionURL: "", requestXML: "")
+        self.detokenizeCallback.onSuccess(response)
+        
+        wait(for: [expectation], timeout: 20.0)
+        print(callback.receivedResponse)
+        XCTAssertEqual(callback.receivedResponse, "Interface:  - Invalid Bearer token format")
+        
+    }
+    
+    
 }

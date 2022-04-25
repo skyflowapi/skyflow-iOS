@@ -39,7 +39,7 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
     
     func testGetRequestSession() {
         let urlComponents = URLComponents(string: "https://example.org")
-        let (request, session) = self.revealApiCallback.getRequestSession(urlComponents: urlComponents)
+        let (request, _) = self.revealApiCallback.getRequestSession(urlComponents: urlComponents)
         XCTAssertEqual(request.httpMethod, "GET")
         XCTAssertEqual(request.allHTTPHeaderFields!["Content-Type"], "application/json; utf-8")
         XCTAssertEqual(request.allHTTPHeaderFields!["Accept"], "application/json")
@@ -98,6 +98,84 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         let revealRecord = self.revealApiCallback.constructRevealRecords(records, errors)
         XCTAssertEqual(records, revealRecord["records"] as! [[String: String]])
         XCTAssertEqual(errors[0]["error"], (revealRecord["errors"] as! [[String: NSError]])[0]["error"])
+    }
+    
+    func testProcessUrlResponseFailure() {
+        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
+        let netError = NSError(domain: "", code: 1039, userInfo: [NSLocalizedDescriptionKey: "Network Error"])
+
+        do {
+            
+            let _ = try self.revealApiCallback.processURLResponse(record: record, data: nil, response: nil, error: netError)
+            
+            XCTFail("Not throwing on failure")
+        } catch {
+            XCTAssertEqual(error as NSError, netError)
+        }
+
+    }
+    
+    func testProcessUrlResponseNoData() {
+        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
+
+        do {
+            let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
+            
+            let (responseArray, errorResponse) = try self.revealApiCallback.processURLResponse(record: record, data: nil, response: response, error: nil)
+            
+            XCTAssertNil(responseArray)
+            XCTAssertNil(errorResponse)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+    }
+    
+    func testProcessUrlResponseError() {
+        let responseData = ["error": ["message": "Internal server error"]]
+        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
+
+        do {
+            let data = try JSONSerialization.data(withJSONObject: responseData, options: .fragmentsAllowed)
+            let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 500, httpVersion: "1.1", headerFields: nil)
+            
+            let (responseArray, errorObj) = try self.revealApiCallback.processURLResponse(record: record, data: data, response: response, error: nil)
+            
+            XCTAssertNil(responseArray)
+            
+            XCTAssertNotNil(errorObj!["error"])
+            XCTAssertEqual(errorObj!["error"] as! NSError,
+                           ErrorCodes.APIError(code: response!.statusCode, message: "Internal server error").getErrorObject(contextOptions: ContextOptions()))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+    }
+    
+    func testProcessUrlResponseSuccess() {
+        let responseData = ["records":[["table": "table", "skyflow_id": "SID"]]] as [String: Any]
+        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
+
+        do {
+            let data = try JSONSerialization.data(withJSONObject: responseData, options: .fragmentsAllowed)
+            let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
+            
+            let (responseArray, errorObj) = try self.revealApiCallback.processURLResponse(record: record, data: data, response: response, error: nil)
+            
+            XCTAssertNil(errorObj)
+            XCTAssertNotNil(responseArray)
+            
+            let processedRespoonse = responseArray!
+            
+            print(processedRespoonse)
+            XCTAssertEqual(processedRespoonse.count, 1)
+            XCTAssertEqual(processedRespoonse[0]["table"] as! String, "table")
+            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
+            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
     }
 
 

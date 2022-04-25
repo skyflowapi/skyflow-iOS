@@ -365,7 +365,7 @@ public class Client {
     }
 }
 
-private class ConnectionTokenCallback: Callback {
+internal class ConnectionTokenCallback: Callback {
     var client: Any
     public var config: Any
     var clientCallback: Callback
@@ -428,7 +428,7 @@ internal enum ConnectionType {
 
 
 
-fileprivate class ConnectionDetokenizeCallback: Callback {
+internal class ConnectionDetokenizeCallback: Callback {
     var skyflowClient: Client
     var apiClient: Any
     var config: Any
