@@ -177,6 +177,55 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         }
 
     }
+    
+    func testHandleCallbacksFailure() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        self.revealApiCallback.callback = callback
+        
+        let errorObject = NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Not found"])
+        self.revealApiCallback.handleCallbacks(outputArray: [[:]], errorArray: [[:]], isSuccess: false, errorObject: errorObject)
+        
+        wait(for: [expectation], timeout: 20.0)
+        let errors = callback.data["errors"] as! [[String: NSError]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["error"], errorObject)
+        
+    }
+    
+    func testHandleCallbacksError() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        self.revealApiCallback.callback = callback
+        
+        let errorObject = NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "Internal Server Error"])
+        let errors = [["error": errorObject]]
+        let output = [["skyflow_id": "SID", "value": "val"]]
+        self.revealApiCallback.handleCallbacks(outputArray: output, errorArray: errors, isSuccess: true, errorObject: nil)
+        
+        wait(for: [expectation], timeout: 20.0)
+        let outputError = callback.data["errors"] as! [[String: NSError]]
+        let records = callback.data["records"] as! [[String: String]]
+        XCTAssertEqual(outputError.count, 1)
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0], output[0])
+        XCTAssertEqual(outputError[0], errors[0])
+        
+    }
+    
+    func testHandleCallbacksSuccess() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        self.revealApiCallback.callback = callback
+        
+        let output = [["skyflow_id": "SID", "value": "val"]]
+        self.revealApiCallback.handleCallbacks(outputArray: output, errorArray: [], isSuccess: true, errorObject: nil)
+        
+        wait(for: [expectation], timeout: 20.0)
+        let records = callback.data["records"] as! [[String: String]]
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0], output[0])
+    }
 
 
 }

@@ -240,8 +240,24 @@ final class skyflow_iOS_connectionUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         print(callback.receivedResponse)
         XCTAssertEqual(callback.receivedResponse, "Interface:  - Invalid Bearer token format")
-        
     }
     
+    func testRestInvalidToken() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        self.client.invokeConnection(config: ConnectionConfig(connectionURL: "www.http.org", method: .POST), callback: callback)
+        
+        wait(for: [expectation], timeout: 20.0)
+        XCTAssertTrue(callback.receivedResponse.contains("Invalid Bearer token format"))
+    }
+    
+    func testSoapInvalidToken() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        self.client.invokeSoapConnection(config: SoapConnectionConfig(connectionURL: "www.http.org", requestXML: "<xml>request</xml>"), callback: callback)
+        
+        wait(for: [expectation], timeout: 20.0)
+        XCTAssertTrue(callback.receivedResponse.contains("Invalid Bearer token format"))
+    }
     
 }

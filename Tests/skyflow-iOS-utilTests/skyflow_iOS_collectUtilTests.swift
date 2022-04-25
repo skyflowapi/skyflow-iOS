@@ -133,5 +133,21 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             XCTAssertEqual(error.localizedDescription, "Interface:  - Internal Server Error - request-id: RID")
         }
     }
+    
+    func testCollectInvalidBearerToken() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        let client = Client(Configuration(vaultID: "id", vaultURL: "https://www.skyflow.com", tokenProvider: DemoTokenProvider()))
+        let container = client.container(type: ContainerType.COLLECT)
+        let input = CollectElementInput(table: "table", column: "column", type: .INPUT_FIELD)
+        let element = container?.create(input: input)
+        
+        UIWindow().addSubview(element!)
+        
+        container?.collect(callback: callback)
+        
+        wait(for: [expectation], timeout: 20.0)
+        XCTAssertTrue(callback.receivedResponse.contains("Invalid Bearer token format"))
+    }
 
 }
