@@ -31,4 +31,29 @@ final class skyflow_iOS_utilTests: XCTestCase {
         XCTAssertEqual("1".getFormattedText(with: "^([0-9])$", replacementString: "0$1", contextOptions: ContextOptions()), "01")
         XCTAssertEqual("12".getFormattedText(with: "^([0-9])$", replacementString: "0$1", contextOptions: ContextOptions()), "12")
     }
+    
+    func testFormatTextEmptyPattern() {
+        let textField = FormatTextField()
+        textField.leftViewRect(forBounds: CGRect(origin: CGPoint(x: 0.0, y: 0.0), size: CGSize(width: 10, height: 1.0)))
+        let str = "text to format"
+        let result = textField.formatText(str, NSRange(str.range(of: "text")!, in: str), true)
+        XCTAssertEqual(str, result.formattedText)
+    }
+    
+    func testFormatTextWithPattern() {
+        let textField = FormatTextField()
+        textField.formatPattern = "#### #### #### ####"
+        let str = "4111111111111111"
+        let result = textField.formatText(str, NSRange(str.range(of: str)!, in: str), true)
+        XCTAssertEqual(result.formattedText, "4111 1111 1111 1111")
+    }
+    
+    func testAddAndFormatRegex() {
+        
+        let textField = FormatTextField()
+        textField.formatPattern = "#### #### #### ####"
+        let str = "4111111111111111"
+        textField.addAndFormatText(str)
+        XCTAssertEqual(textField.secureText, "4111 1111 1111 1111")
+    }
 }

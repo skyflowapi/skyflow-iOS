@@ -554,7 +554,9 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_RECORDS_IN_ADDITIONAL_FIELDS().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse,
+                       ErrorCodes.MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
+                        .getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectEmptyRecordsAddionalFields() {
@@ -646,6 +648,15 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testUnmount() {
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        let date = container?.create(input: CollectElementInput(type: .EXPIRATION_DATE), options: CollectElementOptions(format: "test"))
+        UIWindow().addSubview(date!)
+        date?.actualValue = "12/23"
+        date?.unmount()
+        XCTAssertEqual(date?.actualValue, "")
     }
     
     
