@@ -56,4 +56,14 @@ final class skyflow_iOS_utilTests: XCTestCase {
         textField.addAndFormatText(str)
         XCTAssertEqual(textField.secureText, "4111 1111 1111 1111")
     }
+    
+    func testConstructRequestWithTokens() {
+        let apiClient = APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider())
+        let result = apiClient.constructBatchRequestBody(records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: ICOptions(tokens: true))
+        let record = result["records"] as! [[String: Any]]
+        let id = record[1]["ID"] as! String
+        let tokenization = record[1]["tokenization"] as! Bool
+        XCTAssertEqual(id, "$responses.0.records.0.skyflow_id")
+        XCTAssertTrue(tokenization)
+    }
 }
