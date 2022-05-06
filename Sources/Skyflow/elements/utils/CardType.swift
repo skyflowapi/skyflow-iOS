@@ -101,7 +101,7 @@ public enum  CardType: CaseIterable {
     }
         static func forCardNumber(cardNumber: String) -> CardType {
         let patternMatch = forCardPattern(cardNumber: cardNumber)
-            if patternMatch.instance.defaultName != "Empty" && patternMatch.instance.defaultName != "Unknown" {
+            if patternMatch.instance.defaultName != "Empty" {
                 return patternMatch
             } else {
                 return CardType.EMPTY
