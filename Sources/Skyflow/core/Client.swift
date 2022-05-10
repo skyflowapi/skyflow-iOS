@@ -253,7 +253,7 @@ public class Client {
     }
 
     // disable next: line_length
-    @available(*, deprecated, message: "This method is deprecated and support for it will be removed soon. Please use any of the Server Side SDKs to invoke a connection")
+    @available(*, deprecated, message: "Support for this method will be removed soon. Please use any of the Server Side SDKs to invoke a connection")
     public func invokeConnection(config: ConnectionConfig, callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INVOKE_CONNECTION
@@ -297,7 +297,7 @@ public class Client {
     }
     
     // disable next: line_length
-    @available(*, deprecated, message: "This method is deprecated and support for it will be removed soon. Please use any of the Server Side SDKs to invoke a connection")
+    @available(*, deprecated, message: "Support for this method will be removed soon. Please contact admin.")
     public func invokeSoapConnection(config: SoapConnectionConfig, callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INVOKE_CONNECTION
