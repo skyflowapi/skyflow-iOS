@@ -254,8 +254,10 @@ public class TextField: SkyflowElement, Element, BaseElement {
         
         if self.state.getState()["isEmpty"] as! Bool {
             if self.imageSet {
+                print("here")
                 self.imageSet = false
-                textField.padding.left -= 45
+                textField.padding.left = self.collectInput.inputStyles.base?.padding?.left ?? 0
+                textField.leftView = nil
             }
             return
         }
