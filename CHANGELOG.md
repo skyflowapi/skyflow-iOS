@@ -3,6 +3,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - 2022-05-10
+
+### Added
+- Support for generic card numbers
+
+### Changed
+- Deprecated `invokeConnection()`
+- Deprecated `invokeSoapConnection()`
+
 ## [1.14.0] - 2022-04-19
 
 ### Added
@@ -25,7 +34,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.12.0] - 2022-02-24
 
-## Added
+### Added
 - Request ID in error logs and error responses for API Errors
 
 ## [1.11.1] - 2022-02-08
