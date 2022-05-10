@@ -125,21 +125,6 @@
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "skyflow-iOS-gatewayTests"
-               BuildableName = "skyflow-iOS-gatewayTests"
-               BlueprintName = "skyflow-iOS-gatewayTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "skyflow_iOS_collectTests">
-               </Test>
-            </SkippedTests>
-         </TestableReference>
-         <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
@@ -206,16 +191,6 @@
                BlueprintIdentifier = "skyflow-iOS-utilTests"
                BuildableName = "skyflow-iOS-utilTests"
                BlueprintName = "skyflow-iOS-utilTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "skyflow-iOS-scenarioTests"
-               BuildableName = "skyflow-iOS-scenarioTests"
-               BlueprintName = "skyflow-iOS-scenarioTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
