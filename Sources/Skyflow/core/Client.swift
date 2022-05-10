@@ -296,6 +296,8 @@ public class Client {
         }
     }
     
+    // disable next: line_length
+    @available(*, deprecated, message: "This method is deprecated and support for it will be removed soon. Please use any of the Server Side SDKs to invoke a connection")
     public func invokeSoapConnection(config: SoapConnectionConfig, callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INVOKE_CONNECTION
