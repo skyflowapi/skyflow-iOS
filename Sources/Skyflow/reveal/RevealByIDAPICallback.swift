@@ -39,6 +39,7 @@ class RevealByIDAPICallback: Callback {
 
         for record in records {
             var urlComponents = getUrlComponents(record: record)
+            getByIdRequestGroup.enter()
 
             if urlComponents?.url?.absoluteURL == nil {
                 var errorEntryDict: [String: Any] = [
@@ -52,59 +53,30 @@ class RevealByIDAPICallback: Callback {
                 errorArray.append(errorEntryDict)
                 continue
             }
-            getByIdRequestGroup.enter()
             let (request, session) = getRequestSession(urlComponents: urlComponents)
             
             let task = session.dataTask(with: request) { data, response, error in
                 defer {
                     getByIdRequestGroup.leave()
                 }
-                if error != nil || response == nil {
+                
+                do {
+                    var (resultArray, errorResponse) = try self.processURLResponse(record: record, data: data, response: response, error: error)
+                    
+                    outputArray.append(contentsOf: resultArray ?? [])
+                    if errorResponse != nil {
+                        errorArray.append(errorResponse!)
+                    }
+                } catch {
                     isSuccess = false
-                    errorObject = error!
-                    return
-                }
-                if let httpResponse = response as? HTTPURLResponse {
-                    let range = 400...599
-                    if range ~= httpResponse.statusCode {
-
-                        if let safeData = data {
-                            do {
-                                let errorEntry = try self.constructApiError(record: record, safeData, httpResponse)
-                                errorArray.append(errorEntry)
-                            } catch let error {
-                                isSuccess = false
-                                errorObject = error
-                            }
-                        }
-                        return
-                    }
-                }
-
-                if let safeData = data {
-                    do {
-                        let resultArray = try self.processResponse(record: record, safeData)
-                        outputArray.append(contentsOf: resultArray)
-                    } catch let error {
-                        isSuccess = false
-                        errorObject = error
-                    }
+                    errorObject = error
                 }
             }
-
+                
             task.resume()
         }
         getByIdRequestGroup.notify(queue: .main) {
-            let records = self.constructRevealRecords(outputArray, errorArray)
-            if isSuccess ?? true {
-                if errorArray.isEmpty {
-                    self.callback.onSuccess(records)
-                } else {
-                    self.callback.onFailure(records)
-                }
-            } else {
-                self.callRevealOnFailure(callback: self.callback, errorObject: errorObject!)
-            }
+            self.handleCallbacks(outputArray: outputArray, errorArray: errorArray, isSuccess: isSuccess, errorObject: errorObject)
         }
     }
     internal func onFailure(_ error: Any) {
@@ -205,4 +177,40 @@ class RevealByIDAPICallback: Callback {
         return records
     }
     
+    func handleCallbacks(outputArray: [[String: Any]], errorArray: [[String: Any]], isSuccess: Bool?, errorObject: Error?) {
+        let records = self.constructRevealRecords(outputArray, errorArray)
+        if isSuccess ?? true {
+            if errorArray.isEmpty {
+                self.callback.onSuccess(records)
+            } else {
+                self.callback.onFailure(records)
+            }
+        } else {
+            self.callRevealOnFailure(callback: self.callback, errorObject: errorObject!)
+        }
+    }
+    
+    func processURLResponse(record: GetByIdRecord, data: Data?, response: URLResponse?, error: Error?) throws -> ([[String: Any]]?, [String: Any]?) {
+        if error != nil || response == nil {
+            throw error!
+        }
+        if let httpResponse = response as? HTTPURLResponse {
+            let range = 400...599
+            if range ~= httpResponse.statusCode {
+
+                if let safeData = data {
+                    let errorEntry = try self.constructApiError(record: record, safeData, httpResponse)
+                    return (nil, errorEntry)
+                }
+                return (nil, nil)
+            }
+        }
+
+        if let safeData = data {
+            let resultArray = try self.processResponse(record: record, safeData)
+            return (resultArray, nil)
+        }
+        
+        return (nil, nil)
+    }
 }

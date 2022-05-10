@@ -507,6 +507,159 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(cvvElement?.textField.secureText, "")
     }
     
+    func testCollectNoVaultID() {
+        skyflow.vaultID = ""
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback)
+        
+        wait(for: [expectation], timeout: 20.0)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_ID().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectNoVaultURL() {
+        skyflow.vaultURL = "/v1/vaults/"
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback)
+        
+        wait(for: [expectation], timeout: 20.0)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectBadTypeAddionalFields() {
+        let additionalFields = ["records": "records"]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectNoRecordsInAddionalFields() {
+        let additionalFields = ["typo": []]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse,
+                       ErrorCodes.MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
+                        .getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectEmptyRecordsAddionalFields() {
+        let additionalFields = ["records": []]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectNoTableKeyAddionalFields() {
+        let additionalFields = ["records": [[:]]]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_KEY_ERROR().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectBadTableKeyAddionalFields() {
+        let additionalFields = ["records": [["table": []]]]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectEmptyTableAddionalFields() {
+        let additionalFields = ["records": [["table": ""]]]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_TABLE_NAME().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectNoFieldsKeyAddionalFields() {
+        let additionalFields = ["records": [["table": "table"]]]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.FIELDS_KEY_ERROR().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectInvalidFieldsAddionalFields() {
+        let additionalFields = ["records": [["table": "table", "fields": "fields"]]]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_FIELDS_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testCollectEmptyFieldsAddionalFields() {
+        let additionalFields = ["records": [["table": "table", "fields": [:]]]]
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        
+        wait(for: [expectation], timeout: 20.0)
+        
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+    }
+    
+    func testUnmount() {
+        let container = skyflow.container(type: ContainerType.COLLECT)
+        let date = container?.create(input: CollectElementInput(type: .EXPIRATION_DATE), options: CollectElementOptions(format: "test"))
+        UIWindow().addSubview(date!)
+        date?.actualValue = "12/23"
+        date?.unmount()
+        XCTAssertEqual(date?.actualValue, "")
+    }
+    
+    
     
     static var allTests = [
         ("testCreateSkyflowElement", testCreateSkyflowElement),

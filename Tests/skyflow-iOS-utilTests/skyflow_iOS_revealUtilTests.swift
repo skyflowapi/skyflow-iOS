@@ -215,4 +215,24 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         XCTAssertEqual(successElement.errorMessage.text, nil)
     }
     
+    func testRevealInvalidBearerToken() {
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        
+        self.client.vaultID = "id"
+        self.client.vaultURL = "https://skyflow.com"
+        let container = self.client.container(type: ContainerType.REVEAL)
+        let input = RevealElementInput(token: "token", label: "test")
+        let element = container?.create(input: input)
+        
+        UIWindow().addSubview(element!)
+        
+        container?.reveal(callback: callback)
+        
+        wait(for: [expectation], timeout: 20.0)
+        print(callback.data)
+        let errors = callback.data["errors"] as! [[String: NSError]]
+        XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Invalid Bearer token format"))
+    }
+    
 }
