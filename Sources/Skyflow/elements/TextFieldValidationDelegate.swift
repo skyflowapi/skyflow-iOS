@@ -45,7 +45,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         
         func formatMonth() -> Bool{
             if let month = Int(text) {
-                if month > 0 && month < 10 {
+                if month > 1 && month < 10 {
                     textField.text = "0\(month)"
                 }
                 else if month <= 12 {
@@ -107,6 +107,15 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         collectField.hasFocus = false
+        if collectField.fieldType == .EXPIRATION_MONTH {
+            let text = (textField as! FormatTextField).secureText! as String
+            if let month = Int(text) {
+                if month == 1 {
+                    textField.text = "01"
+                }
+            }
+        }
+        
         collectField.updateActualValue()
         collectField.textFieldValueChanged()
 
