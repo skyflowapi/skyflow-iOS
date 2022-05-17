@@ -18,7 +18,6 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal var textFieldDelegate: UITextFieldDelegate? = nil
     
     internal var errorTriggered: Bool = false
-    internal var imageSet: Bool = false
     
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
@@ -217,7 +216,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
         self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
-        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon, !(self.state.getState()["isEmpty"] as! Bool) {
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             textField.leftViewMode = UITextField.ViewMode.always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
             #if SWIFT_PACKAGE
@@ -251,25 +250,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         if self.options.enableCardIcon == false {
             return
         }
-        
-        if self.state.getState()["isEmpty"] as! Bool {
-            if self.imageSet {
-                print("here")
-                self.imageSet = false
-                textField.padding.left = self.collectInput.inputStyles.base?.padding?.left ?? 0
-                textField.leftView = nil
-            }
-            return
-        }
-        
-        if self.fieldType == .CARD_NUMBER {
-            if !self.imageSet {
-                self.imageSet = true
-                textField.padding.left += 45
-            }
-        }
             
-        textField.leftViewMode = UITextField.ViewMode.always
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
         #if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
@@ -369,7 +350,7 @@ extension TextField {
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon, !(self.state.getState()["isEmpty"] as! Bool) {
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             p.left += 45
         }
         self.textField.padding = p
