@@ -204,8 +204,11 @@ class InputFormattingTests: XCTestCase {
             replacementString: "")
         
         XCTAssertFalse(result!)
+        XCTAssertEqual(expiryMonth?.textField.secureText, "1")
+        XCTAssertEqual(expiryMonth?.actualValue, "1")
+        
+        expiryMonth?.textField.delegate?.textFieldDidEndEditing!(expiryMonth!.textField)
         XCTAssertEqual(expiryMonth?.textField.secureText, "01")
-        XCTAssertEqual(expiryMonth?.actualValue, "01")
     }
 
 }
