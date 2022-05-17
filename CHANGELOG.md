@@ -12,6 +12,12 @@ All notable changes to this project will be documented in this file.
 - Deprecated `invokeConnection()`
 - Deprecated `invokeSoapConnection()`
 
+
+## [1.14.1] - 2022-04-19
+
+### Added
+- Add Card icon for empty `CARD_NUMBER` collect element
+
 ## [1.14.0] - 2022-04-19
 
 ### Added
