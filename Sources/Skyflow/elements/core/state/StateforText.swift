@@ -42,7 +42,6 @@ internal class StateforText: State
         inputLength = tf.textField.getSecureRawText?.count ?? 0
         elementType = tf.collectInput.type
         isFocused = tf.hasFocus
-        print("creating state")
         if tf.contextOptions.env == .DEV {
             value = tf.actualValue
         } else {
