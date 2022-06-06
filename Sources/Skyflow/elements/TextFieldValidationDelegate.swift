@@ -101,7 +101,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
 
         // label styles on focus
         collectField.updateLabelStyle(collectField.collectInput!.labelStyles.focus)
-        collectField.onFocusHandler?((collectField.state as! StateforText).getStateForListener())
+        collectField.onFocusHandler?((collectField.state as! StateforText).getStateForListener(type: collectField.fieldType))
     }
     
     /// Wrap native `UITextField` delegate method for `didEndEditing`.
@@ -122,7 +122,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         // Set label styles to base
         collectField.updateLabelStyle()
         collectField.updateErrorMessage()
-        collectField.onBlurHandler?((collectField.state as! StateforText).getStateForListener())
+        collectField.onBlurHandler?((collectField.state as! StateforText).getStateForListener(type: collectField.fieldType))
     }
     
     

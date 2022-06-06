@@ -1,4 +1,5 @@
 import XCTest
+import Foundation
 @testable import Skyflow
 
 // swiftlint:disable:next type_body_length
@@ -209,6 +210,16 @@ class InputFormattingTests: XCTestCase {
         
         expiryMonth?.textField.delegate?.textFieldDidEndEditing!(expiryMonth!.textField)
         XCTAssertEqual(expiryMonth?.textField.secureText, "01")
+    }
+    
+    func testCardBin() {
+        XCTAssertEqual(Card.getBIN("4111 1111"), "4111 1111")
+        XCTAssertEqual(Card.getBIN("4111 1111 1111 111"), "4111 1111 XXXX XXX")
+        XCTAssertEqual(Card.getBIN("411"), "411")
+    }
+    
+    func testGetStateForHandlers() {
+        
     }
 
 }

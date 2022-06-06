@@ -311,7 +311,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
 
     public override func didMoveToWindow() {
         if self.window != nil {
-            onReadyHandler?((self.state as! StateforText).getStateForListener())
+            onReadyHandler?((self.state as! StateforText).getStateForListener(type: self.fieldType))
         }
     }
     
@@ -378,7 +378,7 @@ extension TextField {
         isDirty = true
         updateActualValue()
         textFieldValueChanged()
-        onChangeHandler?((self.state as! StateforText).getStateForListener())
+        onChangeHandler?((self.state as! StateforText).getStateForListener(type: self.fieldType))
         
         if self.fieldType == .CARD_NUMBER {
             let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")

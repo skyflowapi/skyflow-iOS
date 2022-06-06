@@ -66,13 +66,18 @@ internal class StateforText: State
         return result
     }
 
-    public func getStateForListener() -> [String: Any] {
+    public func getStateForListener(type: ElementType) -> [String: Any] {
         var result = [String: Any]()
         result["isEmpty"] = isEmpty
         result["isValid"] = isValid && isCustomRuleFailed
         result["elementType"] = elementType
         result["isFocused"] = isFocused
-        result["value"] = value == nil ? "" : value
+        if (type == ElementType.CARD_NUMBER) {
+            result["value"] = value == nil ? "" : Card.getBIN(value!)
+        }
+        else {
+            result["value"] = value == nil ? "" : value
+        }
         result["isCustomRuleFailed"] = isCustomRuleFailed
         return result
     }
