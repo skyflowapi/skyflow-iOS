@@ -42,8 +42,17 @@ internal class StateforText: State
         inputLength = tf.textField.getSecureRawText?.count ?? 0
         elementType = tf.collectInput.type
         isFocused = tf.hasFocus
+        print("creating state")
         if tf.contextOptions.env == .DEV {
+            print("In Dev")
             value = tf.actualValue
+            print("value:", value)
+        } else {
+            print("In Prod")
+            if tf.fieldType == .CARD_NUMBER {
+                value = Card.getBIN(tf.actualValue)
+            }
+            print("value:", value)
         }
         
         if validationError.count == 0 {
@@ -66,18 +75,13 @@ internal class StateforText: State
         return result
     }
 
-    public func getStateForListener(type: ElementType) -> [String: Any] {
+    public func getStateForListener() -> [String: Any] {
         var result = [String: Any]()
         result["isEmpty"] = isEmpty
         result["isValid"] = isValid && isCustomRuleFailed
         result["elementType"] = elementType
         result["isFocused"] = isFocused
-        if (type == ElementType.CARD_NUMBER) {
-            result["value"] = value == nil ? "" : Card.getBIN(value!)
-        }
-        else {
-            result["value"] = value == nil ? "" : value
-        }
+        result["value"] = value == nil ? "" : value
         result["isCustomRuleFailed"] = isCustomRuleFailed
         return result
     }
