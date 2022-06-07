@@ -144,18 +144,6 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "should get token")
         
         XCTAssertEqual(false, apiClient.isTokenValid())
-        apiClient.getAccessToken(callback: DemoAPICallback(expectation: expectation), contextOptions: ContextOptions())
-        wait(for: [expectation], timeout: 60.0)
-        XCTAssertEqual(true, apiClient.isTokenValid())
-        
-        
-        let invalidClient = APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider())
-        let failExpectation = XCTestExpectation(description: "should get Invalid token")
-        XCTAssertEqual(false, invalidClient.isTokenValid())
-        invalidClient.getAccessToken(callback: DemoAPICallback(expectation: failExpectation), contextOptions: ContextOptions())
-        wait(for: [failExpectation], timeout: 10.0)
-        XCTAssertEqual(true, invalidClient.isTokenValid())
-        
     }
 }
 

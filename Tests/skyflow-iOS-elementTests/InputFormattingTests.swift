@@ -1,4 +1,5 @@
 import XCTest
+import Foundation
 @testable import Skyflow
 
 // swiftlint:disable:next type_body_length
@@ -209,6 +210,111 @@ class InputFormattingTests: XCTestCase {
         
         expiryMonth?.textField.delegate?.textFieldDidEndEditing!(expiryMonth!.textField)
         XCTAssertEqual(expiryMonth?.textField.secureText, "01")
+    }
+    
+    func testCardBin() {
+        XCTAssertEqual(Card.getBIN("4111 1111 "), "4111 1111 ")
+        XCTAssertEqual(Card.getBIN("4111 1111 1111 111"), "4111 1111 XXXX XXX")
+        XCTAssertEqual(Card.getBIN("411"), "411")
+    }
+    
+    func testStateWithBIN() {
+        let prodOptions = ContextOptions()
+        let devOptions = ContextOptions(env: .DEV)
+        let cardInput = CollectElementInput(type: .CARD_NUMBER)
+        
+        let prodField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        let devField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "4111 1111 1111 1111"
+        devField.actualValue = "4111 1111 1111 1111"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as? String, "4111 1111 XXXX XXXX")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "4111 1111 1111 1111")
+    }
+    
+    func testStateWithoutBIN() {
+        let cvvInput = CollectElementInput(type: .CVV)
+        let expirationDateInput = CollectElementInput(type: .EXPIRATION_DATE)
+        let expirationYearInput = CollectElementInput(type: .EXPIRATION_YEAR)
+        let expirationMonthInput = CollectElementInput(type: .EXPIRATION_MONTH)
+        let nameInput = CollectElementInput(type: .CARDHOLDER_NAME)
+        let genericInput = CollectElementInput(type: .INPUT_FIELD)
+        let pinInput = CollectElementInput(type: .PIN)
+
+        let prodOptions = ContextOptions()
+        let devOptions = ContextOptions(env: .DEV)
+        
+        // cvv
+        var prodField = TextField(input: cvvInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        var devField = TextField(input: cvvInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "572"
+        devField.actualValue = "572"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "572")
+        
+        // expiryDate
+        prodField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "12/24"
+        devField.actualValue = "12/24"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "12/24")
+        
+        // expiryYear
+        prodField = TextField(input: expirationYearInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        devField = TextField(input: expirationYearInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "2024"
+        devField.actualValue = "2024"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "2024")
+        
+        // expiryMonth
+        prodField = TextField(input: expirationMonthInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "12"
+        devField.actualValue = "12"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "12")
+        
+        // cardholderName
+        prodField = TextField(input: nameInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        devField = TextField(input: nameInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "John"
+        devField.actualValue = "John"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "John")
+        
+        // PIN
+        prodField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "1234"
+        devField.actualValue = "1234"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "1234")
+        
+        // generic
+        prodField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "1234"
+        devField.actualValue = "1234"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "1234")
+
     }
 
 }
