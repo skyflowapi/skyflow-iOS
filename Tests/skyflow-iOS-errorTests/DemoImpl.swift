@@ -15,7 +15,6 @@ public class DemoTokenProvider: TokenProvider {
                     do {
                         let x = try JSONSerialization.jsonObject(with: safeData, options: []) as? [String: String]
                         if let accessToken = x?["accessToken"] {
-                            print("token")
                             apiCallback.onSuccess(accessToken)
                         }
                     } catch {
