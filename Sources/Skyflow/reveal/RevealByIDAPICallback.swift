@@ -30,7 +30,6 @@ class RevealByIDAPICallback: Callback {
         var errorArray: [[String: Any]] = []
         var isSuccess: Bool?
         var errorObject: Error!
-        print("started")
 
         if URL(string: (connectionUrl + "/")) == nil {
             self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))

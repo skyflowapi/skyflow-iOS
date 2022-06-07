@@ -44,6 +44,10 @@ internal class StateforText: State
         isFocused = tf.hasFocus
         if tf.contextOptions.env == .DEV {
             value = tf.actualValue
+        } else {
+            if tf.fieldType == .CARD_NUMBER {
+                value = Card.getBIN(tf.actualValue)
+            }
         }
         
         if validationError.count == 0 {

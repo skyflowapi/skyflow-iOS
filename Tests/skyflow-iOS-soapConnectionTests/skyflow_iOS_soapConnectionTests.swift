@@ -96,34 +96,6 @@ final class skyflow_iOS_soapConnectionTests: XCTestCase {
         XCTAssertEqual(String(responseData), "Interface: invokeConnection - " + ErrorCodes.EMPTY_CONNECTION_URL().description)
     }
     
-    func testInvalidConnectionUrl() {
-        let responseXML = """
-            <s:Envelope>
-                <s:Header/>
-                <s:Body/>
-            </s:Envelope>
-        """
-        
-        let requestXML = """
-            <s:Envelope>
-                <s:Header/>
-                <s:Body/>
-            </s:Envelope>
-        """
-        
-        let config = SoapConnectionConfig(connectionURL: "^", requestXML: requestXML, responseXML: responseXML)
-        
-        let expectSOAP = XCTestExpectation(description: "Waiting for soap")
-        let callback = DemoAPICallback(expectation: expectSOAP)
-        
-        self.skyflow.invokeSoapConnection(config: config, callback: callback)
-
-        wait(for: [expectSOAP], timeout: 10.0)
-        
-        let responseData = callback.receivedResponse.utf8
-        
-        XCTAssertEqual(String(responseData), "Interface: invokeConnection - " + ErrorCodes.INVALID_CONNECTION_URL(value: "^").description)
-    }
     
     func testReplaceElementsInXmlInvalidId() {
         var contextOptions = ContextOptions()
