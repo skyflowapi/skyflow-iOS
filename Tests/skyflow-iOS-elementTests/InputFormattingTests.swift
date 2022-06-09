@@ -316,5 +316,21 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "1234")
 
     }
+    
+    testStateForAmex() {
+        let amexInput = CollectElementInput(type: .CARD_NUMBER)
+
+        let prodOptions = ContextOptions()
+        let devOptions = ContextOptions(env: .DEV)
+        
+        var prodField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: prodOptions)
+        var devField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: devOptions)
+        
+        prodField.actualValue = "378282246310005"
+        devField.actualValue = "378282246310005"
+        
+        XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
+        XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "37828XXXXXXXXXX")
+    }
 
 }
