@@ -216,6 +216,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual(Card.getBIN("4111 1111 "), "4111 1111 ")
         XCTAssertEqual(Card.getBIN("4111 1111 1111 111"), "4111 1111 XXXX XXX")
         XCTAssertEqual(Card.getBIN("411"), "411")
+        // AMEX case
+        XCTAssertEqual(Card.getBIN("4111 1111 1111 111", 6), "4111 11XX XXXX XXX")
     }
     
     func testStateWithBIN() {
