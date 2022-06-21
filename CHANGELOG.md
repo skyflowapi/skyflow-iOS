@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.1] - 2022-06-21
+
+### Fixed
+- Amex BIN value now returns first 6 digits instead of 8
+
 ## [1.16.0] - 2022-06-07
 
 ### Changed
