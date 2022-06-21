@@ -1,9 +1,9 @@
 import Foundation
 
 extension Card {
-    /// Get the BIN of a cardNumber
-    internal class func getBIN(_ cardNumber: String) -> String {
-        let binCount = 8 // Total number of characters to include in bin
+    /// Get the BIN of a cardNumber,
+    /// binCount is the number of characters that aren't masked
+    internal class func getBIN(_ cardNumber: String, _ binCount: Int = 8) -> String {
         var result = ""
         var numbers = 0
     
