@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 //
 //  SceneDelegate.swift
 //  PullFundsSample

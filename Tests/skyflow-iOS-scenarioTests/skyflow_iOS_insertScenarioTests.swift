@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 // swiftlint:disable file_length
 import XCTest
 @testable import Skyflow
