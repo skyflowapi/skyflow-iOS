@@ -3,6 +3,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.2] - 2022-06-28
+
+### Added
+- Copyright header to all files
+- Security email in README
+
 ## [1.16.1] - 2022-06-21
 
 ### Fixed
