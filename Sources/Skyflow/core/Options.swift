@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 public struct Options {
     var logLevel: LogLevel
     var env: Env

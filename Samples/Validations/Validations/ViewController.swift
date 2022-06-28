@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 // Reset Password - A simple example that illustrates custom validations.
 // The below code shows two input fields with custom validations,
 // one to enter a password and the second to confirm the same password.

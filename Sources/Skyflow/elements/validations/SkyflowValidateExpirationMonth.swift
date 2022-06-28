@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 import Foundation
 
 internal struct SkyflowValidateExpirationMonth: ValidationRule {
