@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 //
 //  Skyflow_iOS_revealErrorTests.swift
 //  skyflow-iOS-revealTests

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
 #if os(iOS)
 import UIKit
 #endif
