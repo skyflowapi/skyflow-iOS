@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.3] - 2022-07-20
+
+### Fixed
+- isValid returns false for valid element in listeners
+
 ## [1.16.2] - 2022-06-28
 
 ### Added
