@@ -83,7 +83,7 @@ internal class StateforText: State
     public func getStateForListener() -> [String: Any] {
         var result = [String: Any]()
         result["isEmpty"] = isEmpty
-        result["isValid"] = isValid && isCustomRuleFailed
+        result["isValid"] = isValid
         result["elementType"] = elementType
         result["isFocused"] = isFocused
         result["value"] = value == nil ? "" : value
