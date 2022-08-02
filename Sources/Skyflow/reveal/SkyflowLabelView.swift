@@ -125,6 +125,8 @@ public class SkyflowLabelView: UIView {
     }
 
     internal func buildLabel() {
+        self.label.isCopyingEnabled = true
+        self.label.shouldUseLongPressGestureRecognizer = true
         self.label.secureText = self.revealInput.altText.isEmpty ? self.revealInput.token : self.revealInput.altText
         self.translatesAutoresizingMaskIntoConstraints = false
         self.label.translatesAutoresizingMaskIntoConstraints = false
