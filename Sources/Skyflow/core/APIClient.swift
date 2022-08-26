@@ -92,7 +92,7 @@ internal class APIClient {
     }
 
     internal func get(records: [RevealRequestRecord], callback: Callback, contextOptions: ContextOptions) {
-        let revealApiCallback = RevealApiCallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
+        let revealApiCallback = RevealAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
         self.getAccessToken(callback: revealApiCallback, contextOptions: contextOptions)
     }
 

@@ -11,7 +11,7 @@
 
 import Foundation
 
-class RevealApiCallback: Callback {
+class RevealAPICallback: Callback {
     var apiClient: APIClient
     var callback: Callback
     var connectionUrl: String
