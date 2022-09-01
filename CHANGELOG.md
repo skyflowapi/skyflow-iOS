@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.4] - 2022-08-02
+
+### Fixed
+- long press on reveal elements now triggers copy dialog box
+
 ## [1.16.3] - 2022-07-20
 
 ### Fixed
