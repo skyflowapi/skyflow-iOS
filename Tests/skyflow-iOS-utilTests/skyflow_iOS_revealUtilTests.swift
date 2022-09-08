@@ -9,7 +9,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class skyflow_iOS_revealUtilTests: XCTestCase {
     
-    var revealApiCallback: RevealApiCallback! = nil
+    var revealApiCallback: RevealAPICallback! = nil
     var revealValueCallback: RevealValueCallback! = nil
     var expectation: XCTestExpectation! = nil
     var callback: DemoAPICallback! = nil
@@ -20,7 +20,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     override func setUp() {
         self.expectation = XCTestExpectation()
         self.callback = DemoAPICallback(expectation: self.expectation)
-        self.revealApiCallback = RevealApiCallback(callback: self.callback,
+        self.revealApiCallback = RevealAPICallback(callback: self.callback,
                                                    apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
                                                    connectionUrl: "",
                                                    records: [],
