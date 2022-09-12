@@ -11,7 +11,7 @@
 
 import Foundation
 
-public struct RevealElementOptions {
+internal struct RevealElementOptions {
     var formatRegex: String
     var replaceText: String?
     public init(formatRegex: String = "", replaceText: String? = nil) {

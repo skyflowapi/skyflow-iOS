@@ -15,7 +15,7 @@ public class RevealContainer: ContainerProtocol {
 }
 
 public extension Container {
-    func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
+    func create(input: RevealElementInput) -> Label where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
         let revealElement = Label(input: input, options: options!)

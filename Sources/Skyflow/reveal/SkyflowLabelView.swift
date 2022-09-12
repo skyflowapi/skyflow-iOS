@@ -15,7 +15,6 @@ import UIKit
 public class SkyflowLabelView: UIView {
     internal var label = FormatLabel(frame: .zero)
     internal var revealInput: RevealElementInput!
-    internal var options: RevealElementOptions!
 
     internal var horizontalConstraints = [NSLayoutConstraint]()
 
@@ -105,10 +104,9 @@ public class SkyflowLabelView: UIView {
         }
     }
 
-    internal init(input: RevealElementInput, options: RevealElementOptions) {
+    internal init(input: RevealElementInput) {
         super.init(frame: CGRect())
         self.revealInput = input
-        self.options = options
         buildLabel()
     }
 

@@ -63,7 +63,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testCreateSkyflowRevealContainer() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
 
         let labelView = revealElement!.skyflowLabelView
         let labelField = revealElement!.labelField
@@ -79,7 +79,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testCheckRevealElementsArray() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
-        _ = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        _ = revealContainer?.create(input: revealElementInput)
 
 
         XCTAssertEqual(revealContainer?.revealElements.count, 1)
@@ -90,7 +90,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testCreateRevealRequestBody() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
         
         let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: String]]]
         
@@ -132,7 +132,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testSetError() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         var revealElementInput = getRevealElementInput()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
         let errorMessage = "Triggered Error"
         
         revealElement!.setError(errorMessage)
@@ -147,7 +147,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         var revealElementInput = getRevealElementInput()
         revealElementInput.token = "invalidtoken"
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
         let errorMessage = "Triggered Error"
         
         revealElement!.setError(errorMessage)
@@ -169,7 +169,7 @@ class skyflow_iOS_revealTests: XCTestCase {
     func testResetError() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         var revealElementInput = getRevealElementInput()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
         let errorMessage = "Triggered Error"
         
         revealElement!.setError(errorMessage)

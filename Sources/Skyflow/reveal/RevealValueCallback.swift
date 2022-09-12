@@ -44,14 +44,6 @@ internal class RevealValueCallback: Callback {
         }
         
         var successResponses: [[String: String]] = []
-        for revealElement in self.revealElements {
-            if let v = tokens[revealElement.revealInput.token]{
-                if !revealElement.options.formatRegex.isEmpty {
-                    let formattedVal = v.getFormattedText(with: revealElement.options.formatRegex, replacementString: revealElement.options.replaceText, contextOptions: contextOptions)
-                    tokens[revealElement.revealInput.token] = formattedVal
-                }
-            }
-        }
         for entry in tempSuccessResponses {
             if let token = entry["token"] {
                 successResponses.append(entry)
@@ -112,14 +104,6 @@ internal class RevealValueCallback: Callback {
             }
             
             var successResponses: [[String: String]] = []
-            for revealElement in self.revealElements {
-                if let v = tokens[revealElement.revealInput.token]{
-                    if !revealElement.options.formatRegex.isEmpty {
-                        let formattedVal = v.getFormattedText(with: revealElement.options.formatRegex, replacementString: revealElement.options.replaceText, contextOptions: contextOptions)
-                        tokens[revealElement.revealInput.token] = formattedVal
-                    }
-                }
-            }
             for entry in tempSuccessResponses {
                 if let token = entry["token"] {
                     successResponses.append(entry)
