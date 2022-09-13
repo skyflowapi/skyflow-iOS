@@ -168,7 +168,7 @@ class ViewController: UIViewController {
             
             let revealCardNumberInput = Skyflow.RevealElementInput(token: tokens.cardNumber, inputStyles: revealStyles, label: "Card Number", redaction: .DEFAULT)
         
-            self.revealCardNumber = self.revealContainer?.create(input: revealCardNumberInput, options: Skyflow.RevealElementOptions())
+            self.revealCardNumber = self.revealContainer?.create(input: revealCardNumberInput)
         
             let revealCVVtInput = Skyflow.RevealElementInput(token : tokens.cvv, inputStyles: revealStyles, label: "CVV", redaction: Skyflow.RedactionType.PLAIN_TEXT)
         

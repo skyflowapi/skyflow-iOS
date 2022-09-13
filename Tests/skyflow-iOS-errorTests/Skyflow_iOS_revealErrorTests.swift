@@ -103,7 +103,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let styles = Styles(base: bstyle)
 
         let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement")
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
         revealContainer?.reveal(callback: callback)
@@ -121,7 +121,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let styles = Styles(base: bstyle)
 
         let revealElementInput = RevealElementInput(inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+        let revealElement = revealContainer?.create(input: revealElementInput)
 
         window.addSubview(revealElement!)
 

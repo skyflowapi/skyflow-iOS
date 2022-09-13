@@ -54,7 +54,7 @@ class ViewController: UIViewController {
             
             let revealCardNumberInput = Skyflow.RevealElementInput(token: "<TOKEN>", inputStyles: revealStyles, label: "Card Number", redaction: .DEFAULT)
             
-            self.revealCardNumber = self.revealContainer?.create(input: revealCardNumberInput, options: Skyflow.RevealElementOptions())
+            self.revealCardNumber = self.revealContainer?.create(input: revealCardNumberInput)
             
             let revealCVVInput = Skyflow.RevealElementInput(inputStyles: revealStyles, label: "cvv", redaction: Skyflow.RedactionType.PLAIN_TEXT, altText: "Cvv not yet generated")
             
@@ -114,10 +114,6 @@ class ViewController: UIViewController {
             "resource": [
                 "cvv2": self.revealCVV
             ]]
-        
-        let connectionConfig = ConnectionConfig(connectionURL: url, method: .POST, pathParams: pathParams as [String : Any], requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
-        
-        self.skyflowClient?.invokeConnection(config: connectionConfig, callback: ExampleAPICallback())
     }
     
 }

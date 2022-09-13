@@ -15,7 +15,6 @@ import UIKit
 public class Label: UIView, Element, BaseElement {
     internal var skyflowLabelView: SkyflowLabelView!
     internal var revealInput: RevealElementInput!
-    internal var options: RevealElementOptions!
     internal var stackView = UIStackView()
     internal var labelField = PaddingLabel(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
@@ -30,11 +29,10 @@ public class Label: UIView, Element, BaseElement {
 
     internal var verticalConstraint = [NSLayoutConstraint]()
 
-    internal init(input: RevealElementInput, options: RevealElementOptions) {
-        self.skyflowLabelView = SkyflowLabelView(input: input, options: options)
+    internal init(input: RevealElementInput) {
+        self.skyflowLabelView = SkyflowLabelView(input: input)
         super.init(frame: CGRect())
         self.revealInput = input
-        self.options = options
         buildLabel()
     }
 

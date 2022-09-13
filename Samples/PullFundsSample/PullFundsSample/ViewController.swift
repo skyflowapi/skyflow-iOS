@@ -166,10 +166,6 @@ class ViewController: UIViewController {
         let responseBody: [String: Any] = [
             "approvalCode": self.revealApprovalCode as Any
         ]
-        
-        let connectionConfig = ConnectionConfig(connectionURL: url, method: .POST, requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
-        
-        self.skyflowClient?.invokeConnection(config: connectioNConfig, callback: ConnectionCallback())
     }
     
     class ConnectionCallback: Callback {

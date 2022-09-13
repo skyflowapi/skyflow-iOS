@@ -163,7 +163,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             "errors": [["token": failureToken, "error": "Invalid Token"]]
         ]
         
-        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(formatRegex: "n$", replaceText: "nny"))
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"))
         let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
         
         self.revealValueCallback.revealElements = [successElement, failureElement]
@@ -183,7 +183,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records[0]["token"], successToken)
-        XCTAssertEqual(successElement.actualValue, "Johnny")
+        XCTAssertEqual(successElement.actualValue, "John")
         XCTAssertEqual(successElement.errorMessage.text, nil)
     }
     
@@ -195,7 +195,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             "errors": [["token": failureToken, "error": "Invalid Token"]]
         ]
         
-        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(formatRegex: "n$", replaceText: "nny"))
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"))
         let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
         
         self.revealValueCallback.revealElements = [successElement, failureElement]
@@ -215,7 +215,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records[0]["token"], successToken)
-        XCTAssertEqual(successElement.actualValue, "Johnny")
+        XCTAssertEqual(successElement.actualValue, "John")
         XCTAssertEqual(successElement.errorMessage.text, nil)
     }
     

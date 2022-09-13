@@ -100,18 +100,6 @@ class ViewController: UIViewController {
     
     
     @objc func resetPassword() {
-        let url = ""
-        let requestHeaders = ["Content-Type": "application/json ", "Authorization": ""]
-        let requestBody: [String: Any] = [
-            //Other fields...
-            "password": self.confirmPasswordElement!
-        ]
-
-        let responseBody: [String: Any] = [:]
-
-        let connectionConfig = ConnectionConfig(connectionURL: url, method: .POST, requestBody: requestBody, requestHeader: requestHeaders, responseBody: responseBody)
-
-        self.skyflowClient?.invokeConnection(config: connectionConfig, callback: ExampleAPICallback())
     }
 }
 

@@ -43,13 +43,6 @@ class ConversionHelpers {
             }
         } else if element is Label {
             let label = element as! Label
-
-            // Format regex: Will be deprecated in the future
-            if !label.options.formatRegex.isEmpty {
-                if detokenizedValues.keys.contains(label.getID()) {
-                    return detokenizedValues[label.getID()]!.getFormattedText(with: label.options.formatRegex, replacementString: label.options.replaceText, contextOptions: contextOptions)
-                }
-            }
             return label.getValueForConnections()
         } else if nested, element is [String: Any] {
             return try convertJSONValues(element as! [String: Any], nested, arraySupport, contextOptions: contextOptions, detokenizedValues: detokenizedValues)
@@ -265,28 +258,4 @@ class ConversionHelpers {
         }
     }
     
-    static func getElementTokensWithFormatRegex(_ json: [String: Any], contextOptions: ContextOptions) throws -> [String: String] {
-        
-        var result = [:] as [String: String]
-        
-        
-        for (key, value) in json {
-            if value is Label  && !((value as! Label).options.formatRegex.isEmpty) {
-                let valueAsLabel = (value as! Label)
-                let token = valueAsLabel.getToken()
-                
-                if token.isEmpty {
-                    throw ErrorCodes.EMPTY_TOKEN_INVOKE_CONNECTION(value: key).getErrorObject(contextOptions: contextOptions)
-                } else {
-                    result[valueAsLabel.getID()] = token
-                }
-            }
-            else if value is [String: Any] {
-                result.merge(try getElementTokensWithFormatRegex((value as! [String: Any]), contextOptions: contextOptions)) { (first, _) in first
-                }
-            }
-        }
-        
-        return result
-    }
 }
