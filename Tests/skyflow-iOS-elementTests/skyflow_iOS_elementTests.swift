@@ -27,7 +27,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
 
         let revealElementInput = RevealElementInput(token: "token", label: "RevealElement", redaction: .DEFAULT)
-        label = Label(input: revealElementInput, options: RevealElementOptions())
+        label = Label(input: revealElementInput)
     }
     
     override func tearDown() {
