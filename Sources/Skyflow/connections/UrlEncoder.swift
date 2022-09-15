@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -50,7 +50,7 @@ internal class UrlEncoder {
             }
         }
         
-                
+        
         return pairs
     }
     

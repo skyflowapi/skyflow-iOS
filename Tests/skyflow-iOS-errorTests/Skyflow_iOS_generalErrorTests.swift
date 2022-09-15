@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  Skyflow_iOS_generalErrorTests.swift
@@ -14,7 +14,7 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 class Skyflow_iOS_generalErrorTests: XCTestCase {
-
+    
     
     func testMessage() {
         let message = Message.CLIENT_CONNECTION
@@ -28,7 +28,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         XCTAssertEqual(lengthRule.error, SkyflowValidationErrorType.lengthMatches.rawValue)
         XCTAssertEqual(lengthRule.maxLength, 20)
         XCTAssertEqual(lengthRule.minLength, 10)
-
+        
         XCTAssertEqual(false, lengthRule.validate("abcde"))
         XCTAssertEqual(true, lengthRule.validate("abcdefghijklmno"))
         XCTAssertEqual(true, lengthRule.validate(""))

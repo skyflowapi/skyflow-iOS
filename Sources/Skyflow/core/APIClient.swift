@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -16,18 +16,18 @@ internal class APIClient {
     var vaultURL: String
     var tokenProvider: TokenProvider
     var token: String = ""
-
+    
     internal init(vaultID: String, vaultURL: String, tokenProvider: TokenProvider) {
         self.vaultID = vaultID
         self.vaultURL = vaultURL
         self.tokenProvider = tokenProvider
     }
-
+    
     internal func isTokenValid() -> Bool {
         if token == "" {
             return false
         }
-
+        
         let components = token.components(separatedBy: ".")
         
         if components.count < 2 {
@@ -35,25 +35,25 @@ internal class APIClient {
         }
         
         var payload64 = components[1]
-
+        
         while payload64.count % 4 != 0 {
             payload64 += "="
         }
-
+        
         let payloadData = Data(base64Encoded: payload64,
                                options: .ignoreUnknownCharacters)!
-
+        
         do {
             let json = try JSONSerialization.jsonObject(with: payloadData, options: []) as! [String: Any]
             let exp = json["exp"] as! Int
             let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
-
+            
             return expDate.compare(Date().addingTimeInterval(300)) == .orderedDescending
         } catch {
             return false
         }
     }
-
+    
     internal func getAccessToken(callback: Callback, contextOptions: ContextOptions) {
         if !isTokenValid() {
             let tokenApiCallback = TokenAPICallback(callback: callback, apiClient: self, contextOptions: contextOptions)
@@ -62,12 +62,12 @@ internal class APIClient {
             callback.onSuccess(token)
         }
     }
-
+    
     internal func post(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
         let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
         self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
     }
-
+    
     internal func constructBatchRequestBody(records: [String: Any], options: ICOptions) -> [String: Any] {
         var postPayload: [Any] = []
         var insertTokenPayload: [Any] = []
@@ -78,7 +78,7 @@ internal class APIClient {
             temp["method"] = "POST"
             temp["quorum"] = true
             postPayload.append(temp)
-
+            
             if options.tokens {
                 var temp2: [String: Any] = [:]
                 temp2["method"] = "GET"
@@ -90,12 +90,12 @@ internal class APIClient {
         }
         return ["records": postPayload + insertTokenPayload]
     }
-
+    
     internal func get(records: [RevealRequestRecord], callback: Callback, contextOptions: ContextOptions) {
         let revealApiCallback = RevealAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
         self.getAccessToken(callback: revealApiCallback, contextOptions: contextOptions)
     }
-
+    
     internal func getById(records: [GetByIdRecord], callback: Callback, contextOptions: ContextOptions) {
         let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
         self.getAccessToken(callback: revealByIdApiCallback, contextOptions: contextOptions)

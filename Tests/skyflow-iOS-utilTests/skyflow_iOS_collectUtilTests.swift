@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import XCTest
 @testable import Skyflow
@@ -153,5 +153,5 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         XCTAssertTrue(callback.receivedResponse.contains("Invalid Bearer token format"))
     }
-
+    
 }

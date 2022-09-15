@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -15,7 +15,7 @@ import UIKit
 public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
-     func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
+    func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
         let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions)
@@ -26,7 +26,7 @@ public extension Container {
         Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: tempContextOptions)
         return skyflowElement
     }
-
+    
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
@@ -41,15 +41,15 @@ public extension Container {
         var errors = ""
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
-
+        
         for element in self.elements {
             errorCode = checkElement(element: element)
             if errorCode != nil {
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             }
-
-
+            
+            
             let state = element.getState()
             let error = state["validationError"]
             if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
@@ -91,19 +91,19 @@ public extension Container {
         }
         let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
-
+        
         if records != nil {
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
-                onSuccessHandler: {
-                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
-                },
-                onFailureHandler: {
-                }
+                                          onSuccessHandler: {
+                                            Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
+                                          },
+                                          onFailureHandler: {
+                                          }
             )
             self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
     }
-
+    
     private func checkElement(element: TextField) -> ErrorCodes? {
         if element.collectInput.table.isEmpty {
             return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type.name)
@@ -114,10 +114,10 @@ public extension Container {
         if !element.isMounted() {
             return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
         }
-
+        
         return nil
     }
-
+    
     private func checkRecord(record: [String: Any]) -> ErrorCodes? {
         if record["table"] == nil {
             return .TABLE_KEY_ERROR()
@@ -138,7 +138,7 @@ public extension Container {
         if (fields.isEmpty){
             return .EMPTY_FIELDS_KEY()
         }
-
+        
         return nil
     }
 }

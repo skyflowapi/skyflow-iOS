@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 
 import XCTest
@@ -8,7 +8,7 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 class skyflow_iOS_elementTests: XCTestCase {
-
+    
     var collectOptions: CollectElementOptions!
     var collectInput: CollectElementInput!
     var skyflowElement: SkyflowElement!
@@ -25,7 +25,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         skyflowElement = SkyflowElement(input: collectInput!, options: collectOptions!, contextOptions: ContextOptions())
         
         textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
-
+        
         let revealElementInput = RevealElementInput(token: "token", label: "RevealElement", redaction: .DEFAULT)
         label = Label(input: revealElementInput)
     }
@@ -125,7 +125,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
-
+        
         textField.textField.secureText = "invalid"
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
@@ -140,7 +140,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "tablename", column: "column", placeholder: "John Doe", type: .INPUT_FIELD, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
-
+        
         // Default UI error
         textField.textField.secureText = "John"
         textField.textFieldDidEndEditing(textField.textField)
@@ -162,7 +162,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
-
+        
         textField.textField.secureText = "4111111111111111"
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 0.0)
@@ -173,7 +173,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let inputStyle = Styles(invalid: errorStyle)
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
-
+        
         textField.textField.secureText = "invalid"
         textField.setError("triggered error")
         textField.textFieldDidEndEditing(textField.textField)
@@ -188,7 +188,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let inputStyle = Styles(invalid: errorStyle)
         let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions())
-
+        
         textField.textField.secureText = "invalid"
         textField.setError("triggered error")
         textField.textFieldDidEndEditing(textField.textField)
@@ -262,7 +262,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         XCTAssertFalse(yearValidation.validate("234"))
         XCTAssertTrue(yearValidation.validate("23"))
-
+        
     }
     
     func testExpiryYearValidationYYYY() {
@@ -273,7 +273,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertFalse(yearValidation.validate("2132"))
         XCTAssertFalse(yearValidation.validate("22"))
         XCTAssertTrue(yearValidation.validate("2032"))
-
+        
     }
     
     func testExpiryMonthValidation() {
@@ -283,7 +283,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertFalse(yearValidation.validate("24"))
         XCTAssertTrue(yearValidation.validate("12"))
         XCTAssertTrue(yearValidation.validate("01"))
-
+        
     }
-
+    
 }

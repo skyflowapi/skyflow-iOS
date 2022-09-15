@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -15,13 +15,13 @@ internal class TokenAPICallback: Callback {
     var callback: Callback
     var apiClient: APIClient
     var contextOptions: ContextOptions
-
+    
     internal init(callback: Callback, apiClient: APIClient, contextOptions: ContextOptions) {
         self.callback = callback
         self.apiClient = apiClient
         self.contextOptions = contextOptions
     }
-
+    
     internal func onSuccess(_ responseBody: Any) {
         if responseBody is String {
             Log.info(message: .BEARER_TOKEN_RECEIVED, contextOptions: self.contextOptions)
@@ -38,7 +38,7 @@ internal class TokenAPICallback: Callback {
             self.callback.onFailure(ErrorCodes.INVALID_BEARER_TOKEN_FORMAT().getErrorObject(contextOptions: contextOptions))
         }
     }
-
+    
     internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }

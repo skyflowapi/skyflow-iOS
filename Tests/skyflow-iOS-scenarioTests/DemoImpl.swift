@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 import XCTest
@@ -37,16 +37,16 @@ public class DemoAPICallback: Callback {
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
     var error: NSError? = nil
-
+    
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
-
+    
     public func onSuccess(_ responseBody: Any) {
         self.receivedResponse = responseBody as! String
         expectation.fulfill()
     }
-
+    
     public func onFailure(_ error: Any) {
         print(error)
         if error is NSError {

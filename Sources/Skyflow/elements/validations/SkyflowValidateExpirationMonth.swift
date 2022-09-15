@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
 internal struct SkyflowValidateExpirationMonth: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
-
+    
     /// Initialzation
     public init(error: SkyflowValidationError) {
         self.error = error

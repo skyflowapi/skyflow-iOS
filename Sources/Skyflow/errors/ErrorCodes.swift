@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -44,7 +44,7 @@ internal enum ErrorCodes: CustomStringConvertible {
     case AMBIGUOUS_ELEMENT_FOUND_IN_RESPONSE_XML(code: Int = 400, message: String = "Ambiguous element found in responseXML")
     case DUPLICATE_ELEMENT_FOUND_IN_RESPONSE_XML(code: Int = 400, message: String = "Duplicate element found in responseXML")
     case APIError(code: Int, message: String)
-
+    
     // Single message value
     case EMPTY_VAULT(code: Int = 400, message: String = "Vault ID <VAULT_ID> is invalid", value: String)
     case INVALID_REDACTION_TYPE(code: Int = 400, message: String = "Redacton type <REDACTION> is invalid", value: String)
@@ -75,7 +75,7 @@ internal enum ErrorCodes: CustomStringConvertible {
     case DUPLICATE_ELEMENT_FOUND(code: Int = 400, message: String = "Duplicate element with <TABLE_NAME> and <COLUMN_NAME> found in container", values: [String])
     // new
     case DUPLICATE_ADDITIONAL_FIELD_FOUND(code: Int = 400, message: String = "Duplicate field with <TABLE_NAME> and <COLUMN_NAME> found in additional fields", values: [String])
-
+    
     var code: Int {
         switch self {
         // No Formatting required
@@ -91,7 +91,7 @@ internal enum ErrorCodes: CustomStringConvertible {
             return code
         }
     }
-
+    
     internal var description: String {
         switch self {
         // No Formatting required
@@ -110,12 +110,12 @@ internal enum ErrorCodes: CustomStringConvertible {
     internal var errorObject: NSError {
         NSError(domain: "", code: self.code, userInfo: [NSLocalizedDescriptionKey: self.description])
     }
-
+    
     internal func getErrorObject(contextOptions: ContextOptions) -> NSError {
         Log.error(message: self.description, contextOptions: contextOptions)
         return SkyflowError(domain: "", code: self.code, userInfo: [NSLocalizedDescriptionKey: "Interface: \(contextOptions.interface.description) - \(self.description)" ])
     }
-
+    
     internal func formatMessage(_ message: String, _ values: [String]) -> String {
         let words = message.split(separator: " ")
         var valuesIndex = 0

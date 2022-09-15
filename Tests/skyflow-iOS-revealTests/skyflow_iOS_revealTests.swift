@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 import XCTest
@@ -11,7 +11,7 @@ import AEXML
 class skyflow_iOS_revealTests: XCTestCase {
     var skyflow: Client!
     var revealTestId: String!
-
+    
     override func setUp() {
         self.skyflow = Client(Configuration(
                                 vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
@@ -19,7 +19,7 @@ class skyflow_iOS_revealTests: XCTestCase {
                                 tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG)))
         self.revealTestId = ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!
     }
-
+    
     override func tearDown() {
         skyflow = nil
     }
@@ -32,42 +32,42 @@ class skyflow_iOS_revealTests: XCTestCase {
         }
         self.waitForExpectations(timeout: 1, handler: nil)
     }
-
+    
     func getRevealElementInput() -> RevealElementInput {
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
         let istyle = Style(textColor: .red)
         let styles = Styles(base: bstyle, invalid: istyle)
-
+        
         let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
-
+        
         return revealElementInput
     }
-
+    
     func getDataFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> Data {
         let expectRecords = XCTestExpectation(description: description)
         let callback = DemoAPICallback(expectation: expectRecords)
         skyflow.detokenize(records: records, callback: callback)
-
+        
         wait(for: [expectRecords], timeout: 10.0)
         return Data(callback.receivedResponse.utf8)
     }
-
+    
     func testRevealElementInput() {
         let revealElementInput = getRevealElementInput()
-
+        
         XCTAssertEqual(revealElementInput.token, revealTestId)
         XCTAssertEqual(revealElementInput.redaction, .DEFAULT)
         XCTAssertEqual(revealElementInput.label, "RevealElement")
     }
-
+    
     func testCreateSkyflowRevealContainer() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput)
-
+        
         let labelView = revealElement!.skyflowLabelView
         let labelField = revealElement!.labelField
-
+        
         XCTAssertEqual(labelView!.borderColor, .blue)
         XCTAssertEqual(labelView!.cornerRadius, 20)
         XCTAssertEqual(labelView!.padding, UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5))
@@ -75,17 +75,17 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(labelView!.label.secureText, revealTestId)
         XCTAssertEqual(labelField.text, revealElementInput.label)
     }
-
+    
     func testCheckRevealElementsArray() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
         _ = revealContainer?.create(input: revealElementInput)
-
-
+        
+        
         XCTAssertEqual(revealContainer?.revealElements.count, 1)
         XCTAssertNotNil(revealContainer?.revealElements[0].labelField)
     }
-
+    
     
     func testCreateRevealRequestBody() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
@@ -117,15 +117,15 @@ class skyflow_iOS_revealTests: XCTestCase {
         let expectRecords = XCTestExpectation(description: description)
         let callback = DemoAPICallback(expectation: expectRecords)
         skyflow.detokenize(records: defaultRecords, callback: callback)
-
+        
         wait(for: [expectRecords], timeout: 10.0)
         
         let errorEntry = (callback.data["errors"] as? [Any])?[0]
         
         let errorMessage = ((errorEntry as? [String: Any])?["error"] as? Error)?.localizedDescription
-
+        
         XCTAssertEqual(errorMessage, "TokenProvider error")
-
+        
     }
     
     
@@ -188,7 +188,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         let collectID = collectElement?.getID()
         let revealID = revealElement?.getID()
-
+        
         XCTAssertNotEqual(collectID, "")
         XCTAssertNotEqual(revealID, "")
     }

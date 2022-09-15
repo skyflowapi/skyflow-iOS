@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -16,7 +16,7 @@ class RequestHelpers {
     static var paths: [String] = []
     static var recursiveFailed = false
     
-
+    
     static func createRequestURL(baseURL: String, pathParams: [String: Any]?, queryParams: [String: Any]?, contextOptions: ContextOptions) throws -> URL {
         var errorCode: ErrorCodes?
         guard ConversionHelpers.checkIfValuesArePrimitive(pathParams) else {
@@ -27,7 +27,7 @@ class RequestHelpers {
             errorCode = .INVALID_QUERY_PARAMS()
             throw errorCode!.getErrorObject(contextOptions: contextOptions)
         }
-
+        
         do {
             let URLWithPathParams = try addPathParams(baseURL, pathParams, contextOptions: contextOptions)
             if URL(string: URLWithPathParams) != nil {
@@ -39,7 +39,7 @@ class RequestHelpers {
             }
         }
     }
-
+    
     static func addPathParams(_ rawURL: String, _ pathParams: [String: Any]?, contextOptions: ContextOptions) throws -> String {
         var URL = rawURL
         if pathParams != nil {
@@ -53,14 +53,14 @@ class RequestHelpers {
         }
         return URL
     }
-
+    
     static func addQueryParams(_ url: String, _ params: [String: Any]?, contextOptions: ContextOptions) throws -> URL {
         var urlComponents = URLComponents(string: removeTrailingSlash(url))
-
-
+        
+        
         if let queryParams = params {
             urlComponents?.queryItems = []
-
+            
             for (param, value) in queryParams {
                 if value is [Any] {
                     let stringedValues: [String] = (value as! [Any]).compactMap { String(describing: $0) }
@@ -80,7 +80,7 @@ class RequestHelpers {
             throw ErrorCodes.INVALID_URL().getErrorObject(contextOptions: contextOptions)
         }
     }
-
+    
     static func createRequest(url: URL, method: RequestMethod, body: [String: Any]?, headers: [String: String]?, contextOptions: ContextOptions) throws -> URLRequest {
         var request = URLRequest(url: url)
         
@@ -93,7 +93,7 @@ class RequestHelpers {
         if !(getLowerCasedHeaders(headers: request.allHTTPHeaderFields).keys.contains("content-type")){
             request.setValue("application/json", forHTTPHeaderField: "content-type")
         }
-
+        
         do {
             if let requestBody = body {
                 request = try getRequestByContentType(request, requestBody)
@@ -106,7 +106,7 @@ class RequestHelpers {
         
         return request
     }
-
+    
     static func removeTrailingSlash(_ url: String) -> String {
         var result = url
         if url.hasSuffix("/") {
@@ -114,15 +114,15 @@ class RequestHelpers {
         }
         return result
     }
-
-
+    
+    
     static func parseActualResponseAndUpdateElements(response: [String: Any], responseBody: [String: Any], contextOptions: ContextOptions) throws -> [String: Any] {
         var result: [String: Any] = [:]
         for (key, _) in responseBody {
             if response[key] == nil {
                 continue
             }
-
+            
             do {
                 let converted = try traverseAndConvert(response: response, responseBody: responseBody, key: key, contextOptions: contextOptions)
                 if converted != nil {
@@ -130,17 +130,17 @@ class RequestHelpers {
                 }
             }
         }
-
+        
         for (key, value) in response {
             if result[key] == nil, responseBody[key] == nil {
                 result[key] = value
             }
         }
-
-
+        
+        
         return result
     }
-
+    
     static func getInvalidResponseKeys(_ dict: [String: Any], _ response: [String: Any], contextOptions: ContextOptions) -> [NSError] {
         var result: [NSError] = []
         func goThroughDict(path: String, _ dict: [String: Any], _ response: [String: Any]) {
@@ -152,13 +152,13 @@ class RequestHelpers {
                 }
             }
         }
-
+        
         func goThroughValues(path: String, _ value: Any, _ response: Any) {
             if value is [String: Any], response is [String: Any] {
                 goThroughDict(path: path, value as! [String: Any], response as! [String: Any])
             }
         }
-
+        
         func getPath(_ path: String, _ key: String) -> String {
             if path.isEmpty {
                 return key
@@ -166,11 +166,11 @@ class RequestHelpers {
                 return path + "." + key
             }
         }
-
+        
         goThroughDict(path: "", dict, response)
         return result
     }
-
+    
     static func traverseAndConvert(response: [String: Any], responseBody: [String: Any], key: String, contextOptions: ContextOptions) throws -> Any? {
         if let value = response[key] {
             if let responseBodyValue = responseBody[key] {
@@ -198,7 +198,7 @@ class RequestHelpers {
                 return value
             }
         }
-
+        
         return nil
     }
     

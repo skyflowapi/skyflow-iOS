@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -8,7 +8,7 @@ internal struct SkyflowValidateExpirationYear: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
     public let format: String
-
+    
     /// Initialzation
     public init(format: String, error: SkyflowValidationError) {
         self.error = error
@@ -39,7 +39,7 @@ extension SkyflowValidateExpirationYear: SkyflowInternalValidationProtocol {
         let presentYear = Calendar(identifier: .gregorian).component(.year, from: Date())
         year = format.count == 2 ? (year + 2000) : year
         
-
+        
         
         return (year >= presentYear && year <= presentYear + 50)
         

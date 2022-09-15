@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -17,7 +17,7 @@ internal class CollectAPICallback: Callback {
     var callback: Callback
     var options: ICOptions
     var contextOptions: ContextOptions
-
+    
     internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions, contextOptions: ContextOptions) {
         self.records = records
         self.apiClient = apiClient
@@ -25,7 +25,7 @@ internal class CollectAPICallback: Callback {
         self.options = options
         self.contextOptions = contextOptions
     }
-
+    
     internal func onSuccess(_ responseBody: Any) {
         guard let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) else {
             self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
@@ -34,8 +34,8 @@ internal class CollectAPICallback: Callback {
         
         do {
             let (request, session) = try self.getRequestSession(url: url)
-        
-        
+            
+            
             let task = session.dataTask(with: request) { data, response, error in
                 do {
                     let response = try self.processResponse(data: data, response: response, error: error)
@@ -50,11 +50,11 @@ internal class CollectAPICallback: Callback {
             return
         }
     }
-
+    
     internal func onFailure(_ error: Any) {
         self.callback.onFailure(error)
     }
-
+    
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
         var temp: [String: Any] = [:]
         for (key, val) in dict {
@@ -70,29 +70,29 @@ internal class CollectAPICallback: Callback {
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: self.apiClient.constructBatchRequestBody(records: self.records, options: options))
             request.httpBody = data
         }
         
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
-
+        
         return (request, URLSession(configuration: .default))
-
+        
     }
     
     func processResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any] {
         if error != nil || response == nil {
             throw error!
         }
-
+        
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
                 var description = "Insert call failed with the following status code" + String(httpResponse.statusCode)
                 var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
-
+                
                 if let safeData = data {
                     do {
                         let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
@@ -109,13 +109,13 @@ internal class CollectAPICallback: Callback {
                 throw errorObject
             }
         }
-
+        
         guard let safeData = data else {
             return [:]
         }
         
         return try getCollectResponseBody(data: safeData)
-                
+        
     }
     
     func getCollectResponseBody(data: Data) throws -> [String: Any]{
@@ -123,11 +123,11 @@ internal class CollectAPICallback: Callback {
         let changedData = Data(originalString.utf8)
         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
         var responseEntries: [Any] = []
-
+        
         let receivedResponseArray = (jsonData[keyPath: "responses"] as! [Any])
-
+        
         let inputRecords = self.records["records"] as! [Any]
-
+        
         let length = inputRecords.count
         for (index, _) in inputRecords.enumerated() {
             var tempEntry: [String: Any] = [:]
@@ -145,8 +145,8 @@ internal class CollectAPICallback: Callback {
             }
             responseEntries.append(tempEntry)
         }
-
+        
         return ["records": responseEntries]
-
+        
     }
 }

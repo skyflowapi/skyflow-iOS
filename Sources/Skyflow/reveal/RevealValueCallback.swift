@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -15,21 +15,21 @@ internal class RevealValueCallback: Callback {
     var clientCallback: Callback
     var revealElements: [Label]
     var contextOptions: ContextOptions
-
+    
     internal init(callback: Callback, revealElements: [Label], contextOptions: ContextOptions) {
         self.clientCallback = callback
         self.revealElements = revealElements
         self.contextOptions = contextOptions
     }
-
+    
     func onSuccess(_ responseBody: Any) {
         var tokens: [String: String] = [:]
-
-
+        
+        
         let responseJson = responseBody as! [String: Any]
         var response: [String: Any] = [:]
         var tempSuccessResponses: [[String: String]] = []
-
+        
         if let records = responseJson["records"] as? [Any] {
             for record in records {
                 let dict = record as! [String: Any]
@@ -60,13 +60,13 @@ internal class RevealValueCallback: Callback {
         if errors.count != 0 {
             response["errors"] = errors
         }
-
+        
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
                 if let v = tokens[revealElement.revealInput.token]{
                     revealElement.updateVal(value: v)
                 }
-            
+                
                 let inputToken = revealElement.revealInput.token
                 revealElement.hideError()
                 
@@ -79,16 +79,16 @@ internal class RevealValueCallback: Callback {
         }
         self.clientCallback.onSuccess(response)
     }
-
+    
     func onFailure(_ error: Any) {
         var response: [String: Any] = [:]
-
+        
         if error is [String: Any] {
             var tokens: [String: String] = [:]
-
+            
             let responseJson = error as! [String: Any]
             var tempSuccessResponses: [[String: String]] = []
-
+            
             if let records = responseJson["records"] as? [Any] {
                 for record in records {
                     let dict = record as! [String: Any]
@@ -108,7 +108,7 @@ internal class RevealValueCallback: Callback {
                     successResponses.append(entry)
                 }
             }
-
+            
             if successResponses.count != 0 {
                 response["success"] = successResponses
             }
@@ -138,7 +138,7 @@ internal class RevealValueCallback: Callback {
         }
         self.clientCallback.onFailure(response)
     }
-
+    
     func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String] {
         var result = [String: String]()
         if let errorsObj = errors {

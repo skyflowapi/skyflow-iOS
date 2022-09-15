@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import UIKit
 
 
 internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
-        
+    
     var collectField: TextField
     internal init(collectField: TextField) {
         self.collectField = collectField
@@ -61,7 +61,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         }
         
         let text = ((textField as! FormatTextField).secureText! as NSString).replacingCharacters(in: range, with: string)
-
+        
         let count = text.count
         
         if string.isEmpty {
@@ -92,17 +92,17 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             
             
         }
-
+        
         return true
     }
-
+    
     /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         collectField.hasFocus = true
         collectField.textFieldValueChanged()
         // element styles on focus
         collectField.updateInputStyle(collectField.collectInput.inputStyles.focus)
-
+        
         // label styles on focus
         collectField.updateLabelStyle(collectField.collectInput!.labelStyles.focus)
         collectField.onFocusHandler?((collectField.state as! StateforText).getStateForListener())
@@ -122,7 +122,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         
         collectField.updateActualValue()
         collectField.textFieldValueChanged()
-
+        
         // Set label styles to base
         collectField.updateLabelStyle()
         collectField.updateErrorMessage()

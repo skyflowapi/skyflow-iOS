@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 // swiftlint:disable file_length
 import XCTest
@@ -171,7 +171,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         self.revealValueCallback.onFailure(response)
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
-                
+        
         let errors = self.callback.data["errors"] as! [[String: String]]
         let records = self.callback.data["success"] as! [[String: String]]
         

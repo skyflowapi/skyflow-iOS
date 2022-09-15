@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -33,11 +33,11 @@ internal enum Message {
     case DETOKENIZE_TRIGGERED
     case GET_BY_ID_TRIGGERED
     case INVOKE_CONNECTION_TRIGGERED
-
+    
     //Used in tests
     case CLIENT_CONNECTION
     case CANNOT_CHANGE_ELEMENT
-
+    
     
     //Warnings
     case INVALID_EXPIRYDATE_FORMAT
@@ -46,9 +46,9 @@ internal enum Message {
     case SET_VALUE_WARNING
     case CLEAR_VALUE_WARNING
     case NO_REGEX_MATCH_FOUND
-
-
-
+    
+    
+    
     var description: String {
         switch self {
         case .CLIENT_INITIALIZED: return "Initialized skyflow client successfully" // U
@@ -76,8 +76,8 @@ internal enum Message {
         //Used in tests
         case .CLIENT_CONNECTION: return "client connection not established" // A
         case .CANNOT_CHANGE_ELEMENT: return "Element can't be changed" // A
-
-            
+        
+        
         //Warnings
         case .INVALID_EXPIRYDATE_FORMAT: return "<FORMAT> is not a valid date format"
         case .VAULT_ID_EMPTY_WARNING: return "Invalid client credentials. VaultID is required."
@@ -87,11 +87,11 @@ internal enum Message {
         case .NO_REGEX_MATCH_FOUND: return "No match found for regex - <REGEX>"
         }
     }
-
+    
     internal func getDescription(values: [String]) -> String {
         return formatMessage(self.description, values)
     }
-
+    
     internal func formatMessage(_ message: String, _ values: [String]) -> String {
         let words = message.split(separator: " ")
         var valuesIndex = 0

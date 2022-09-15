@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import XCTest
 @testable import Skyflow
@@ -120,7 +120,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertTrue(onReadyCalled)
     }
     
-        
+    
     func testContainerInsertInvalidInput() {
         let window = UIWindow()
         
@@ -274,7 +274,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
                  "cardexpiration": "1221",
                  "cardnumber": "1232132132311231",
                  "name": ["first_name": "Bob"]
-                 ]
+                ]
             ],
             ["table": "persons",
              "fields":
@@ -282,7 +282,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
                  "cardexpiration": "1221",
                  "cardnumber": "1232132132311231",
                  "name": ["first_name": "Bob"]
-                 ]
+                ]
             ]
         ]
         let expectation = XCTestExpectation(description: "Pure insert with invalid token")
@@ -336,7 +336,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let window = UIWindow()
         window.addSubview(textField!)
         
-
+        
         textField?.textField.secureText = "invalid"
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
@@ -359,7 +359,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let window = UIWindow()
         window.addSubview(textField!)
         
-
+        
         textField?.textField.secureText = "4111-1111-1111-1111"
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
@@ -370,7 +370,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber Regex match failed\n")
     }
     
-
+    
     func testPinElement() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
@@ -408,7 +408,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let window = UIWindow()
         window.addSubview(textField!)
         
-
+        
         textField?.textField.secureText = "invalid"
         textField?.setError("triggered error")
         textField?.textFieldDidEndEditing(textField!.textField)
@@ -673,6 +673,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testContainerInsertInvalidInput", testContainerInsertInvalidInput),
         ("testContainerInsertMixedInvalidInput", testContainerInsertMixedInvalidInput),
         ("testContainerInsertIsRequiredAndEmpty", testContainerInsertIsRequiredAndEmpty),
-//        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
+        //        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
     ]
 }

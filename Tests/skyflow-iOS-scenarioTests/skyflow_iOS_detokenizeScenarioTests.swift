@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 // swiftlint:disable file_length
 import XCTest
@@ -21,7 +21,7 @@ final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {
     override func tearDown() {
         skyflow = nil
     }
-
     
-
+    
+    
 }

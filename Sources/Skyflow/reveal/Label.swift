@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -24,33 +24,33 @@ public class Label: UIView, Element, BaseElement {
     internal var uuid: String = ""
     
     internal var actualValue: String? = nil
-
+    
     internal var horizontalConstraints = [NSLayoutConstraint]()
-
+    
     internal var verticalConstraint = [NSLayoutConstraint]()
-
+    
     internal init(input: RevealElementInput) {
         self.skyflowLabelView = SkyflowLabelView(input: input)
         super.init(frame: CGRect())
         self.revealInput = input
         buildLabel()
     }
-
-
+    
+    
     override internal init(frame: CGRect) {
         super.init(frame: frame)
     }
-
+    
     required internal init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-
+    
     
     internal func updateVal(value: String) {
         self.skyflowLabelView.updateVal(value: value)
         self.actualValue = value
     }
-
+    
     internal func isMounted() -> Bool {
         var flag = false
         if Thread.isMainThread {
@@ -62,49 +62,49 @@ public class Label: UIView, Element, BaseElement {
         }
         return flag
     }
-
+    
     internal func buildLabel() {
         self.translatesAutoresizingMaskIntoConstraints = false
-
+        
         // Set label base styles
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
         self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
         self.labelField.font = self.revealInput.labelStyles?.base?.font ?? .none
         self.labelField.insets = self.revealInput.labelStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
+        
         // Set errorText base styles
         self.errorMessage.alpha = 0.0
         self.errorMessage.textColor = self.revealInput.errorTextStyles?.base?.textColor ?? .none
         self.errorMessage.textAlignment = self.revealInput.errorTextStyles?.base?.textAlignment ?? .natural
         self.errorMessage.font = self.revealInput.errorTextStyles?.base?.font ?? .none
         self.errorMessage.insets = self.revealInput.errorTextStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
+        
         self.stackView.axis = .vertical
-//        stackView.distribution = .equalSpacing
+        //        stackView.distribution = .equalSpacing
         self.stackView.spacing = 0
         self.stackView.alignment = .fill
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
-
-
+        
+        
         self.stackView.addArrangedSubview(self.labelField)
         self.stackView.addArrangedSubview(self.skyflowLabelView)
         self.stackView.addArrangedSubview(self.errorMessage)
-
+        
         addSubview(self.stackView)
-
+        
         setMainPaddings()
     }
-
+    
     func setMainPaddings() {
         let views = ["view": self, "stackView": stackView]
-
+        
         verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
                                                             options: .alignAllCenterX,
                                                             metrics: nil,
                                                             views: views)
-
-
+        
+        
         horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
                                                                options: .alignAllCenterY,
                                                                metrics: nil,
@@ -112,19 +112,19 @@ public class Label: UIView, Element, BaseElement {
         NSLayoutConstraint.activate(horizontalConstraints)
         NSLayoutConstraint.activate(verticalConstraint)
     }
-
+    
     func showError(message: String) {
         self.errorMessage.text = message
         self.skyflowLabelView.updateStyle()
         self.errorMessage.alpha = 1.0
     }
-
+    
     func hideError() {
         if !self.errorTriggered {
             self.errorMessage.alpha = 0.0
         }
     }
-
+    
     internal func getValue() -> String {
         return self.actualValue ?? ""
     }

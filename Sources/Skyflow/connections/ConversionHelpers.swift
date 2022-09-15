@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -22,7 +22,7 @@ class ConversionHelpers {
         }
         return convertedRequest
     }
-
+    
     private static func convertValue(_ element: Any, _ nested: Bool, _ arraySupport: Bool, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> Any {
         var errorCode: ErrorCodes?
         if checkIfPrimitive(element) {
@@ -33,7 +33,7 @@ class ConversionHelpers {
             }
         } else if element is TextField {
             let textField = element as! TextField
-
+            
             if textField.isValid() {
                 return textField.getValue()
             } else {
@@ -51,7 +51,7 @@ class ConversionHelpers {
             throw errorCode!.getErrorObject(contextOptions: contextOptions)
         }
     }
-
+    
     static func convertOrFail(_ value: [String: Any]?, _ nested: Bool = true, _ arraySupport: Bool = true, contextOptions: ContextOptions, detokenizedValues: [String: String] = [:]) throws -> [String: Any]? {
         if let unwrappedValue = value {
             do {
@@ -59,22 +59,22 @@ class ConversionHelpers {
                 return convertedValue
             }
         }
-
+        
         return nil
     }
-
+    
     static func checkIfPrimitive(_ element: Any) -> Bool {
         let supportedPrimitives: [Any.Type] = [String.self, Int.self, Double.self, Bool.self]
-
+        
         for primitive in supportedPrimitives {
             if type(of: element) == primitive {
                 return true
             }
         }
-
+        
         return false
     }
-
+    
     static func checkIfValuesArePrimitive(_ dict: [String: Any]?, _ arraySupport: Bool = false) -> Bool {
         if let unwrappedDict = dict {
             for (_, value) in unwrappedDict {
@@ -87,10 +87,10 @@ class ConversionHelpers {
                 }
             }
         }
-
+        
         return true
     }
-
+    
     static func convertParamArrays(params: [String: Any]) -> [String: Any] {
         var result: [String: Any] = [:]
         for (key, value) in params {
@@ -101,10 +101,10 @@ class ConversionHelpers {
                 result[key] = value
             }
         }
-
+        
         return result
     }
-
+    
     static func checkElementsAreMounted(elements: [Any]) -> Any? {
         for element in elements {
             if let label = element as? Label, !label.isMounted() {
@@ -115,11 +115,11 @@ class ConversionHelpers {
         }
         return nil
     }
-
+    
     static func checkElements(_ elements: [String: Any], _ duplicatesAllowed: Bool = false, emptyTokenAllowed: Bool = false, contextOptions: ContextOptions) throws {
         var traversedElements: [Any] = []
         var errorCode: ErrorCodes?
-
+        
         func checkElement(_ key: String, _ element: Any) throws {
             if checkIfPrimitive(element) {
                 return
@@ -160,18 +160,18 @@ class ConversionHelpers {
                 throw errorCode!.getErrorObject(contextOptions: contextOptions)
             }
         }
-
+        
         func checkDict(_ dict: [String: Any]) throws {
             for (key, value) in dict {
                 try checkElement(key, value)
             }
         }
-
-
+        
+        
         try checkDict(elements)
     }
     
-
+    
     static func presentIn(_ array: [Any], value: Any) -> Bool {
         for element in array {
             if element is TextField, value is TextField {
@@ -187,12 +187,12 @@ class ConversionHelpers {
         }
         return false
     }
-
+    
     static func removeEmptyValuesFrom(response: [String: Any], contextOptions: ContextOptions) throws -> [String: Any] {
-
+        
         func recurseDict(_ dict: [String: Any]) throws -> [String: Any] {
             var errorCode = ErrorCodes.INVALID_DATA_TYPE_PASSED(value: "")
-
+            
             var result: [String: Any] = [:]
             for (key, value) in dict {
                 do {
@@ -207,12 +207,12 @@ class ConversionHelpers {
                     throw error
                 }
             }
-
+            
             return result
         }
-
+        
         func getValue(_ value: Any) throws -> Any? {
-
+            
             if value is String || value is Int || value is Double || value is Bool {
                 return value
             } else if value is [Any] {
@@ -231,10 +231,10 @@ class ConversionHelpers {
             }
             return nil
         }
-
+        
         return try recurseDict(response)
     }
-
+    
     public static func stringifyDict(_ dict: [String: Any]?) -> [String: Any]? {
         if let values = dict {
             var result: [String: Any] = [:]
@@ -251,7 +251,7 @@ class ConversionHelpers {
                     result[key] = value as! [Any]
                 }
             }
-
+            
             return result
         } else {
             return nil

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -19,7 +19,7 @@ internal class RevealRequestBody {
             entry["token"] = element.revealInput.token
             payload.append(entry)
         }
-
+        
         return ["records": payload]
     }
 }

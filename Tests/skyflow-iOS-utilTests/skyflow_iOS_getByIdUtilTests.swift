@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 // swiftlint:disable file_length
 import XCTest
@@ -107,7 +107,7 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
     func testProcessUrlResponseFailure() {
         let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
         let netError = NSError(domain: "", code: 1039, userInfo: [NSLocalizedDescriptionKey: "Network Error"])
-
+        
         do {
             
             let _ = try self.revealApiCallback.processURLResponse(record: record, data: nil, response: nil, error: netError)
@@ -116,12 +116,12 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as NSError, netError)
         }
-
+        
     }
     
     func testProcessUrlResponseNoData() {
         let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
-
+        
         do {
             let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
             
@@ -132,13 +132,13 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
-
+        
     }
     
     func testProcessUrlResponseError() {
         let responseData = ["error": ["message": "Internal server error"]]
         let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: responseData, options: .fragmentsAllowed)
             let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 500, httpVersion: "1.1", headerFields: nil)
@@ -153,13 +153,13 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
-
+        
     }
     
     func testProcessUrlResponseSuccess() {
         let responseData = ["records":[["table": "table", "skyflow_id": "SID"]]] as [String: Any]
         let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: responseData, options: .fragmentsAllowed)
             let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
@@ -179,7 +179,7 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
-
+        
     }
     
     func testHandleCallbacksFailure() {
@@ -230,6 +230,6 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records[0], output[0])
     }
-
-
+    
+    
 }

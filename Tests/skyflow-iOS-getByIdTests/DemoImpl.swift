@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 import XCTest
@@ -35,11 +35,11 @@ public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
-
+    
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
-
+    
     public func onSuccess(_ responseBody: Any) {
         do {
             let dataString = String(data: try JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
@@ -51,7 +51,7 @@ public class DemoAPICallback: Callback {
         }
         expectation.fulfill()
     }
-
+    
     public func onFailure(_ error: Any) {
         if let data = error as? [String: Any] {
             self.data = data

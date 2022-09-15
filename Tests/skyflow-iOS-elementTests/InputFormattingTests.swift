@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import XCTest
 import Foundation
@@ -10,7 +10,7 @@ import Foundation
 class InputFormattingTests: XCTestCase {
     
     var skyflow: Client!
-
+    
     override func setUp() {
         self.skyflow = Skyflow.initialize(
             Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
@@ -69,7 +69,7 @@ class InputFormattingTests: XCTestCase {
     
     func testCardNumberFormattingNewChar() {
         let cardNumber = getCardNumberElement()
-
+        
         let currentText = "4111 1111 1111 111"
         cardNumber?.textField.secureText = currentText
         let result = cardNumber?.textField.delegate?.textField?(
@@ -84,7 +84,7 @@ class InputFormattingTests: XCTestCase {
     
     func testCardNumberFormattingBackspace() {
         let cardNumber = getCardNumberElement()
-
+        
         let currentText = "4111 1111 1111 1"
         cardNumber?.textField.secureText = currentText
         let lastIndex = currentText.index(before: currentText.endIndex)
@@ -101,7 +101,7 @@ class InputFormattingTests: XCTestCase {
     
     func testExpiryDateFormattingNewChar() {
         let expiryDate = getexpiryDateElement()
-
+        
         let currentText = "23"
         expiryDate?.textField.secureText = currentText
         let result = expiryDate?.textField.delegate?.textField?(
@@ -116,7 +116,7 @@ class InputFormattingTests: XCTestCase {
     
     func testExpiryDateFormattingBackspace() {
         let expiryDate = getexpiryDateElement()
-
+        
         let currentText = "23/1"
         expiryDate?.textField.secureText = currentText
         let lastIndex = currentText.index(before: currentText.endIndex)
@@ -247,7 +247,7 @@ class InputFormattingTests: XCTestCase {
         let nameInput = CollectElementInput(type: .CARDHOLDER_NAME)
         let genericInput = CollectElementInput(type: .INPUT_FIELD)
         let pinInput = CollectElementInput(type: .PIN)
-
+        
         let prodOptions = ContextOptions()
         let devOptions = ContextOptions(env: .DEV)
         
@@ -320,12 +320,12 @@ class InputFormattingTests: XCTestCase {
         
         XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "")
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "1234")
-
+        
     }
     
     func testStateForAmex() {
         let amexInput = CollectElementInput(type: .CARD_NUMBER)
-
+        
         let prodOptions = ContextOptions()
         let devOptions = ContextOptions(env: .DEV)
         
@@ -338,5 +338,5 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "378282XXXXXXXXX")
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "378282246310005")
     }
-
+    
 }

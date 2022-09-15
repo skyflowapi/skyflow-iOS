@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import XCTest
 @testable import Skyflow
@@ -16,7 +16,7 @@ final class skyflow_iOS_urlEncoderTests: XCTestCase {
         XCTAssertEqual(encodedKey, "card[numbers][0]")
     }
     
-        
+    
     func testEncodeSimpleJson() {
         let json = [
             "key1": "value1",

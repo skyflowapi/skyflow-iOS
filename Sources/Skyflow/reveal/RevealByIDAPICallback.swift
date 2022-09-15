@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -17,8 +17,8 @@ class RevealByIDAPICallback: Callback {
     var connectionUrl: String
     var records: [GetByIdRecord]
     var contextOptions: ContextOptions
-
-
+    
+    
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
                   records: [GetByIdRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
@@ -27,23 +27,23 @@ class RevealByIDAPICallback: Callback {
         self.records = records
         self.contextOptions = contextOptions
     }
-
+    
     internal func onSuccess(_ token: Any) {
         let getByIdRequestGroup = DispatchGroup()
         var outputArray: [[String: Any]] = []
         var errorArray: [[String: Any]] = []
         var isSuccess: Bool?
         var errorObject: Error!
-
+        
         if URL(string: (connectionUrl + "/")) == nil {
             self.callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
-
+        
         for record in records {
             var urlComponents = getUrlComponents(record: record)
             getByIdRequestGroup.enter()
-
+            
             if urlComponents?.url?.absoluteURL == nil {
                 var errorEntryDict: [String: Any] = [
                     "ids": record.ids
@@ -75,7 +75,7 @@ class RevealByIDAPICallback: Callback {
                     errorObject = error
                 }
             }
-                
+            
             task.resume()
         }
         getByIdRequestGroup.notify(queue: .main) {
@@ -89,7 +89,7 @@ class RevealByIDAPICallback: Callback {
             self.callback.onFailure(error)
         }
     }
-
+    
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
         var temp: [String: Any] = [:]
         for (key, val) in dict {
@@ -101,7 +101,7 @@ class RevealByIDAPICallback: Callback {
         }
         return temp
     }
-
+    
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
         let result = ["errors": [["error" : errorObject]]]
         callback.onFailure(result)
@@ -118,22 +118,22 @@ class RevealByIDAPICallback: Callback {
     
     internal func getUrlComponents(record: GetByIdRecord) -> URLComponents? {
         var urlComponents = URLComponents(string: (connectionUrl + "/" + record.table))
-
+        
         urlComponents?.queryItems = []
-
+        
         for id in record.ids {
             urlComponents?.queryItems?.append(URLQueryItem(name: "skyflow_ids", value: id))
         }
-
+        
         urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
         
         return urlComponents
     }
-
+    
     func constructApiError(record: GetByIdRecord, _ safeData: Data, _ httpResponse: HTTPURLResponse) throws -> [String: Any] {
         let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
         var description = "getById call failed with the following status code" + String(httpResponse.statusCode)
-
+        
         var errorEntryDict: [String: Any] = [
             "ids": record.ids
         ]
@@ -200,7 +200,7 @@ class RevealByIDAPICallback: Callback {
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
-
+                
                 if let safeData = data {
                     let errorEntry = try self.constructApiError(record: record, safeData, httpResponse)
                     return (nil, errorEntry)
@@ -208,7 +208,7 @@ class RevealByIDAPICallback: Callback {
                 return (nil, nil)
             }
         }
-
+        
         if let safeData = data {
             let resultArray = try self.processResponse(record: record, safeData)
             return (resultArray, nil)

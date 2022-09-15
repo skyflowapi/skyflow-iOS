@@ -23,9 +23,9 @@ let package = Package(
             name: "Skyflow",
             dependencies: ["AEXML"],
             resources: [
-                   .process("Resources")
-                 ]
-            ),
+                .process("Resources")
+            ]
+        ),
         .testTarget(
             name: "skyflow-iOS-collectTests",
             dependencies: ["Skyflow"]),
@@ -34,12 +34,12 @@ let package = Package(
         .testTarget(name: "skyflow-iOS-errorTests",
                     dependencies: ["Skyflow"]),
         .testTarget(name: "skyflow-iOS-getByIdTests",
-                        dependencies: ["Skyflow"]),
+                    dependencies: ["Skyflow"]),
         .testTarget(name: "skyflow-iOS-elementTests",
                     dependencies: ["Skyflow"]),
-            .testTarget(name: "skyflow-iOS-utilTests",
-                        dependencies: ["Skyflow"]),
-                .testTarget(name: "skyflow-iOS-scenarioTests",
-                            dependencies: ["Skyflow"])
+        .testTarget(name: "skyflow-iOS-utilTests",
+                    dependencies: ["Skyflow"]),
+        .testTarget(name: "skyflow-iOS-scenarioTests",
+                    dependencies: ["Skyflow"])
     ]
 )

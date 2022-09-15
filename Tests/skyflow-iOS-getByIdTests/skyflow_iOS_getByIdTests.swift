@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -16,19 +16,19 @@ import XCTest
 // swiftlint:disable:next type_body_length
 class skyflow_iOS_getByIdTests: XCTestCase {
     var skyflow: Client!
-
+    
     override func setUp() {
         self.skyflow = Client(Configuration(
-            vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
-            vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
-            tokenProvider: DemoTokenProvider(),
-            options: Options(logLevel: .DEBUG)))
+                                vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                                vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                                tokenProvider: DemoTokenProvider(),
+                                options: Options(logLevel: .DEBUG)))
     }
-
+    
     override func tearDown() {
         skyflow = nil
     }
-
+    
     
     func testGetByIdInvalidToken(){
         
@@ -63,11 +63,11 @@ class skyflow_iOS_getByIdTests: XCTestCase {
         let expectation = XCTestExpectation(description: "getById call")
         
         let callback = DemoAPICallback(expectation: expectation)
-
+        
         skyflow.getById(records: records, callback: callback)
         
         wait(for: [expectation], timeout: 30.0)
-
+        
         let errorEntry = (callback.data["errors"] as? [Any])?[0]
         
         let errorMessage = ((errorEntry as? [String: Any])?["error"] as? Error)?.localizedDescription

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 
 import XCTest
@@ -15,7 +15,7 @@ class skyflow_iOS_containerTests: XCTestCase {
         self.collectContainer = Container<CollectContainer>(skyflow: Client(Configuration(tokenProvider: DemoTokenProvider())))
         self.revealContainer = Container<RevealContainer>(skyflow: Client(Configuration(tokenProvider: DemoTokenProvider())))
     }
-
+    
     func testCreate() {
         let element = self.collectContainer.create(input: CollectElementInput(type: .INPUT_FIELD))
         

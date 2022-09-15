@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -26,7 +26,7 @@ public extension Container {
         Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "reveal" : input.label], contextOptions: tempContextOptions)
         return revealElement
     }
-
+    
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
@@ -59,7 +59,7 @@ public extension Container {
         }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: tempContextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
-
+        
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
             for token in tokens {
@@ -68,11 +68,11 @@ public extension Container {
                 }
             }
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: tempContextOptions,
-                onSuccessHandler: {
-                    Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
-                },
-                onFailureHandler: {
-                }
+                                          onSuccessHandler: {
+                                            Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
+                                          },
+                                          onFailureHandler: {
+                                          }
             )
             self.skyflow.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
         }

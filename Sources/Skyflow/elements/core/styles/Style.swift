@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 #if os(iOS)
@@ -15,7 +15,7 @@ public struct Style {
     var font: UIFont?
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
-
+    
     public init(borderColor: UIColor? = nil,
                 cornerRadius: CGFloat? = nil,
                 padding: UIEdgeInsets? = nil,

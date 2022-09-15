@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
 internal struct SkyflowValidateCardNumber: ValidationRule {
     var error: String
     internal let regex: String
-
+    
     public init(error: SkyflowValidationError, regex: String) {
         self.error = error
         self.regex = regex
     }
-
+    
 }
 
 extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
@@ -21,16 +21,16 @@ extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
         if text!.isEmpty {
             return true
         }
-
+        
         let charactersArray = text?.components(separatedBy: [" ", "-"])
         let trimmedText = charactersArray?.joined(separator: "")
         if let cardNumber = trimmedText {
-
+            
             let number = Int(cardNumber)
             if number == nil {
                 return false
             }
-
+            
             if !NSPredicate(format: "SELF MATCHES %@", self.regex).evaluate(with: text!) {
                 return false
             }
@@ -40,21 +40,21 @@ extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
                 return false
             }
             
-
+            
             return isLuhnValid(cardNumber: trimmedText!)
         }
         return false
     }
-
+    
     /// Luhn Algorithm to validate card number
     private func isLuhnValid(cardNumber: String?) -> Bool {
         var sum = 0
         let digitStrings = cardNumber!.reversed().map { String($0) }
-
+        
         for tuple in digitStrings.enumerated() {
             if let digit = Int(tuple.element) {
                 let odd = tuple.offset % 2 == 1
-
+                
                 switch (odd, digit) {
                 case (true, 9):
                     sum += 9

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -8,10 +8,10 @@ import Foundation
 internal enum SkyflowCardExpirationDateFormat {
     /// Exp.Date in format mm/yy: 01/22
     case shortYear
-
+    
     /// Exp.Date in format mm/yyyy: 01/2022
     case longYear
-
+    
     var yearCharacters: Int {
         switch self {
         case .shortYear:
@@ -20,11 +20,11 @@ internal enum SkyflowCardExpirationDateFormat {
             return 4
         }
     }
-
+    
     var monthCharacters: Int {
         return 2
     }
-
+    
     internal var dateYearFormat: String {
         switch self {
         case .shortYear:
@@ -39,7 +39,7 @@ internal struct SkyflowValidateCardExpirationDate: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
     public let format: String
-
+    
     /// Initialzation
     public init(format: String, error: SkyflowValidationError) {
         self.error = error
@@ -62,9 +62,9 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
         if text.count != format.count {
             return false
         }
-
+        
         var dateFormat: SkyflowCardExpirationDateFormat
-
+        
         if text.count == 7 {
             dateFormat = SkyflowCardExpirationDateFormat.longYear
         } else if text.count == 5 {
@@ -72,11 +72,11 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
         } else {
             return false
         }
-
+        
         let monthChars = dateFormat.monthCharacters
         let yearChars = dateFormat.yearCharacters
         guard text.count == (monthChars + yearChars + 1) else { return false }
-
+        
         var month: String
         var year: String
         if format.starts(with: "mm") {
@@ -86,10 +86,10 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
             month = String(text.suffix(monthChars))
             year = String(text.prefix(yearChars))
         }
-
+        
         let presentYear = Calendar(identifier: .gregorian).component(.year, from: Date())
         let presentMonth = Calendar(identifier: .gregorian).component(.month, from: Date())
-
+        
         guard let inputMonth = Int(month), (1...12).contains(inputMonth), var inputYear = Int(year) else {
             return false
         }
@@ -98,7 +98,7 @@ extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
         if inputYear < presentYear || inputYear > (presentYear + 50) {
             return false
         }
-
+        
         if inputYear == presentYear && inputMonth < presentMonth {
             return false
         }

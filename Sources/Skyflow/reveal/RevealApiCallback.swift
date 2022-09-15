@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  File.swift
@@ -17,8 +17,8 @@ class RevealAPICallback: Callback {
     var connectionUrl: String
     var records: [RevealRequestRecord]
     var contextOptions: ContextOptions
-
-
+    
+    
     internal init(callback: Callback, apiClient: APIClient, connectionUrl: String,
                   records: [RevealRequestRecord], contextOptions: ContextOptions) {
         self.apiClient = apiClient
@@ -27,34 +27,34 @@ class RevealAPICallback: Callback {
         self.records = records
         self.contextOptions = contextOptions
     }
-
+    
     internal func onSuccess(_ token: Any) {
         var list_success: [RevealSuccessRecord] = []
         var list_error: [RevealErrorRecord] = []
         let revealRequestGroup = DispatchGroup()
-
+        
         var isSuccess = true
         var errorObject: Error!
         var errorCode: ErrorCodes?
-
+        
         if URL(string: (connectionUrl + "/detokenize")) == nil {
             errorCode = .INVALID_URL()
             self.callRevealOnFailure(callback: self.callback, errorObject: errorCode!.getErrorObject(contextOptions: self.contextOptions))
             return
         }
-
+        
         for record in records {
             var (request, session) = getRequestSession()
             revealRequestGroup.enter()
-
-
+            
+            
             do {
                 request.httpBody = try getRevealRequestBody(record: record)
             } catch let error {
                 self.callback.onFailure(error)
                 return
             }
-
+            
             let task = session.dataTask(with: request) { data, response, error in
                 defer {
                     revealRequestGroup.leave()
@@ -74,10 +74,10 @@ class RevealAPICallback: Callback {
                     errorObject = error
                 }
             }
-
+            
             task.resume()
         }
-
+        
         revealRequestGroup.notify(queue: .main) {
             self.handleCallbacks(success: list_success, failure: list_error, isSuccess: isSuccess, errorObject: errorObject)
         }
@@ -89,7 +89,7 @@ class RevealAPICallback: Callback {
             self.callback.onFailure(error)
         }
     }
-
+    
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
         let result = ["errors": [["error": errorObject]]]
         callback.onFailure(result)
@@ -128,7 +128,7 @@ class RevealAPICallback: Callback {
             let range = 400...599
             if range ~= httpResponse.statusCode {
                 var description = "Reveal call failed with the following status code" + String(httpResponse.statusCode)
-
+                
                 if let safeData = data {
                     let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                     let error = desc["error"] as! [String: Any]
@@ -142,7 +142,7 @@ class RevealAPICallback: Callback {
                 return (nil, errorRecord)
             }
         }
-
+        
         if let safeData = data {
             let jsonData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
             let receivedResponseArray: [Any] = (jsonData[keyPath: "records"] as! [Any])
@@ -172,10 +172,10 @@ class RevealAPICallback: Callback {
         }
         var modifiedResponse: [String: Any] = [:]
         if records.count != 0 {
-        modifiedResponse["records"] = records
+            modifiedResponse["records"] = records
         }
         if errors.count != 0 {
-        modifiedResponse["errors"] = errors
+            modifiedResponse["errors"] = errors
         }
         
         if isSuccess {

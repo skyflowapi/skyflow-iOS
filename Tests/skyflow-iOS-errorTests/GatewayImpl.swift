@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 import XCTest
@@ -35,17 +35,17 @@ public class ConnectionAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
-
+    
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
-
+    
     public func onSuccess(_ responseBody: Any) {
         let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
         self.receivedResponse = dataString!
         expectation.fulfill()
     }
-
+    
     public func onFailure(_ error: Any) {
         print(error)
         if error is NSError {

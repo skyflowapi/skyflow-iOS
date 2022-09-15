@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 #if os(iOS)
@@ -11,29 +11,29 @@ internal class StateforText: State
 {
     /// true if `SkyflowTextField` input in valid
     internal(set) open var isValid = false
-
+    
     /// true  if `SkyflowTextField` input is empty
     internal(set) open var isEmpty = false
-
+    
     /// true if `SkyflowTextField` was edited
     internal(set) open var isDirty = false
-
+    
     /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
-
-//    internal(set) open var isComplete = false
-
+    
+    //    internal(set) open var isComplete = false
+    
     internal(set) open var isFocused = false
-
+    
     internal(set) open var elementType: ElementType!
-
+    
     internal(set) open var value: String?
     /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
     internal(set) open var validationError = SkyflowValidationError()
     
     internal(set) open var isCustomRuleFailed = false
     internal(set) open var isDefaultRuleFailed = false
-
+    
     init(tf: TextField) {
         super.init(columnName: tf.columnName, isRequired: tf.isRequired)
         validationError = tf.validate()
@@ -64,7 +64,7 @@ internal class StateforText: State
             validationError = customError
         }
     }
-
+    
     public override func getState() -> [String: Any] {
         var result = [String: Any]()
         result["isRequired"] = isRequired
@@ -76,10 +76,10 @@ internal class StateforText: State
         result["validationError"] = validationError
         result["isCustomRuleFailed"] = isCustomRuleFailed
         result["isDefaultRuleFailed"] = isDefaultRuleFailed
-
+        
         return result
     }
-
+    
     public func getStateForListener() -> [String: Any] {
         var result = [String: Any]()
         result["isEmpty"] = isEmpty

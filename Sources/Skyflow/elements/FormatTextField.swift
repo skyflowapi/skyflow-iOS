@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 #if os(iOS)
 import UIKit
@@ -15,18 +15,18 @@ internal class FormatTextField: UITextField {
         case upperCaseLetter = "A"
         case digits = "#"
     }
-
+    
     /**
      formatPattern: "#### #### #### ####"
      If the pattern is set to "" no mask would be applied and
      the textfield would remain same
      */
     var formatPattern: String = ""
-
+    
     /** used for text with format pattern*/
     var textwithFormatPattern = ""
-
-
+    
+    
     /**
      Var that have the maximum length, based on the mask set
      */
@@ -36,11 +36,11 @@ internal class FormatTextField: UITextField {
         }
         set { }
     }
-
+    
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-      var textRect = super.leftViewRect(forBounds: bounds)
+        var textRect = super.leftViewRect(forBounds: bounds)
         textRect.origin.x += padding.left - 35
-      return textRect
+        return textRect
     }
     
     
@@ -55,7 +55,7 @@ internal class FormatTextField: UITextField {
         }
         get { return nil }
     }
-
+    
     /// text just for internal using
     internal var secureText: String? {
         set {
@@ -66,78 +66,78 @@ internal class FormatTextField: UITextField {
             return super.text
         }
     }
-
+    
     /** returns textfield text without mask (format pattern) */
     internal var getSecureRawText: String? {
         return getRawText()
     }
-
+    
     /** returns text with format pattern*/
     internal var getTextwithFormatPattern: String? {
         return formatPattern.isEmpty ? secureText : textwithFormatPattern
     }
-
+    
     internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
+    
     override open func textRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: padding)
     }
-
+    
     override open func placeholderRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: padding)
     }
-
+    
     override open func editingRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.inset(by: padding)
     }
-
+    
     func updateTextFormat() {
         self.undoManager?.removeAllActions()
         //self.formatText()
     }
-//
-//    private func getOnlyDigitsString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.SkyflowAsciiDecimalDigits.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-//
-//    private func getOnlyLettersString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.letters.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-
-//    private func getUppercaseLettersString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.uppercaseLetters.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-//
-//    private func getLowercaseLettersString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.lowercaseLetters.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-
+    //
+    //    private func getOnlyDigitsString(_ string: String) -> String {
+    //        let charactersArray = string.components(separatedBy: CharacterSet.SkyflowAsciiDecimalDigits.inverted)
+    //        return charactersArray.joined(separator: "")
+    //    }
+    //
+    //    private func getOnlyLettersString(_ string: String) -> String {
+    //        let charactersArray = string.components(separatedBy: CharacterSet.letters.inverted)
+    //        return charactersArray.joined(separator: "")
+    //    }
+    
+    //    private func getUppercaseLettersString(_ string: String) -> String {
+    //        let charactersArray = string.components(separatedBy: CharacterSet.uppercaseLetters.inverted)
+    //        return charactersArray.joined(separator: "")
+    //    }
+    //
+    //    private func getLowercaseLettersString(_ string: String) -> String {
+    //        let charactersArray = string.components(separatedBy: CharacterSet.lowercaseLetters.inverted)
+    //        return charactersArray.joined(separator: "")
+    //    }
+    
     private func getFilteredString(_ string: String) -> String {
         let charactersArray = string.components(separatedBy: CharacterSet.alphanumerics.inverted)
         return charactersArray.joined(separator: "")
     }
-
+    
     private func getRawText() -> String? {
         guard let text = secureText else {
             return nil
         }
         return formatPattern.isEmpty ? secureText : getFilteredString(text)
     }
-
-
+    
+    
     private func getText(_ string: String) -> String {
-            return string
+        return string
     }
-
+    
     /**
      Func that formats the text based on formatPattern
      */
     func formatText(_ text: String, _ range: NSRange, _ isEmpty: Bool) -> FormatResult {
-
+        
         
         var formattedText = ""
         var offset = 0
@@ -147,7 +147,7 @@ internal class FormatTextField: UITextField {
         if self.formatPattern.isEmpty {
             return FormatResult(formattedText: text, numOfSeperatorsAdded: seperatorsCount)
         }
-    
+        
         if text.count > formatPattern.count {
             return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount, isSuccess: false)
         }
@@ -205,15 +205,15 @@ extension FormatTextField {
 }
 
 extension FormatTextField {
-      /// event for textField
+    /// event for textField
     override public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {}
-
-      ///  Replace native textfield delgate with custom one.
-//    override public var delegate: UITextFieldDelegate? {
-//        get { return self }
-//        set {}
-//    }
-
+    
+    ///  Replace native textfield delgate with custom one.
+    //    override public var delegate: UITextFieldDelegate? {
+    //        get { return self }
+    //        set {}
+    //    }
+    
     func addSomeTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         super.addTarget(target, action: action, for: controlEvents)
     }
