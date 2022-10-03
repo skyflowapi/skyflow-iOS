@@ -28,6 +28,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
         }
     }
     
+    
     func testGetFormattedText() {
         XCTAssertEqual("2022".getFormattedText(with: "..$", contextOptions: ContextOptions(logLevel: .WARN)), "22")
         XCTAssertEqual("abcdef".getFormattedText(with: "9$", contextOptions: ContextOptions()), "abcdef")
