@@ -12,10 +12,7 @@
 import Foundation
 
 public struct RevealElementOptions {
-    var formatRegex: String
-    var replaceText: String?
-    public init(formatRegex: String = "", replaceText: String? = nil) {
-        self.formatRegex = formatRegex
-        self.replaceText = replaceText
+    public init(){
+        
     }
 }
