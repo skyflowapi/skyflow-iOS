@@ -163,7 +163,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             "errors": [["token": failureToken, "error": "Invalid Token"]]
         ]
         
-        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: nil)
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions())
         let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
         
         self.revealValueCallback.revealElements = [successElement, failureElement]
@@ -195,7 +195,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             "errors": [["token": failureToken, "error": "Invalid Token"]]
         ]
         
-        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: nil)
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions())
         let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
         
         self.revealValueCallback.revealElements = [successElement, failureElement]

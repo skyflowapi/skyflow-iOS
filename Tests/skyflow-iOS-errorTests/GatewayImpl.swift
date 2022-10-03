@@ -30,29 +30,3 @@ public class ConnectionTokenProvider: TokenProvider {
         }
     }
 }
-
-public class ConnectionAPICallback: Callback {
-    var receivedResponse: String = ""
-    var expectation: XCTestExpectation
-    var data: [String: Any] = [:]
-
-    public init(expectation: XCTestExpectation) {
-        self.expectation = expectation
-    }
-
-    public func onSuccess(_ responseBody: Any) {
-        let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
-        self.receivedResponse = dataString!
-        expectation.fulfill()
-    }
-
-    public func onFailure(_ error: Any) {
-        print(error)
-        if error is NSError {
-            self.receivedResponse = String((error as! Error).localizedDescription)
-        } else if error is [String: Any] {
-            self.data = (error as! [String: Any])
-        }
-        expectation.fulfill()
-    }
-}
