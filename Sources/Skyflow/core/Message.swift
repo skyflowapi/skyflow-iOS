@@ -18,7 +18,6 @@ internal enum Message {
     case VALIDATE_RECORDS
     case VALIDATE_DETOKENIZE_INPUT
     case VALIDATE_GET_BY_ID_INPUT
-    case VALIDATE_CONNECTION_CONFIG
     case VALIDATE_COLLECT_RECORDS
     case VALIDATE_REVEAL_RECORDS
     case CREATED_ELEMENT
@@ -32,7 +31,6 @@ internal enum Message {
     case INSERT_TRIGGERED
     case DETOKENIZE_TRIGGERED
     case GET_BY_ID_TRIGGERED
-    case INVOKE_CONNECTION_TRIGGERED
 
     //Used in tests
     case CLIENT_CONNECTION
@@ -57,7 +55,6 @@ internal enum Message {
         case .VALIDATE_RECORDS: return "Validating insert records" // U
         case .VALIDATE_DETOKENIZE_INPUT: return "Validating detokenize input" // U
         case .VALIDATE_GET_BY_ID_INPUT: return "Validating getByID input" // U
-        case .VALIDATE_CONNECTION_CONFIG: return "Validating connection config" // A
         case .VALIDATE_COLLECT_RECORDS: return "Validating collect element input" // U
         case .VALIDATE_REVEAL_RECORDS: return "Validating reveal element input" // U
         case .CREATED_ELEMENT: return "Created <> element" // U
@@ -71,7 +68,6 @@ internal enum Message {
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
         case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
-        case .INVOKE_CONNECTION_TRIGGERED: return "Invoke connection triggered."
             
         //Used in tests
         case .CLIENT_CONNECTION: return "client connection not established" // A
