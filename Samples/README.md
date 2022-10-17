@@ -1,13 +1,136 @@
-Please follow these below steps to run samples
+# skyflow-ios sdk sample templates
+Use this folder to test the functionalities of iOS-SDK just by adding `VAULT-ID` `VAULT-URL` and `SERVICE-ACCOUNT` details at the required place.
 
-- Navigate to the desired sample
-- In CMD, run the command, pod install
-- Open the .xcworkspace file using xcode
-- Click on Build and run
+### Prerequisites
+- iOS 13.0.0 and above
+- cocoapods
+- Xcode
+- [Node.js](https://nodejs.org/en/) version 10 or above
+- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) version 6.x.x
 
-`Note`:
-In every sample, in Skyflow.Config(), replace with the following fields:
-1. Replace the placeholder "<VAULT_ID>" with the correct vaultId you want to connect
-2. Replace the placeholder "<VAULT_URL>" with the correct vaultURL
-3. Implement the bearer token endpoint using server side auth SDK and service account file.
-   Replace the placeholder "<TOKEN_END_POINT_URL>" with the  bearer token endpoint which gives the bearerToken, implemented at your backend. 
+- [express.js](http://expressjs.com/en/starter/hello-world.html)
+## Configure
+- Before you can run the sample app, create a vault.
+- `TOKEN_END_POINT_URL` for generating bearer token.
+
+
+### Create the vault
+1. In a browser, navigate to Skyflow Studio and log in.
+2. Create a vault by clicking **Create Vault** > **Start With a Template** > **PIIData**.
+3. Once the vault is created, click the gear icon and select **Edit Vault** Details.
+4. Note your Vault URL and Vault ID values, then click Cancel. You'll need these later.
+
+### Create a service account
+1. In the side navigation click, **IAM** > **Service Accounts** > **New Service Account**.
+2. For Name, enter **Test-Js-Sdk-Sample**. For Roles, choose the required roles for specific action.
+3. Click **Create**. Your browser downloads a **credentials.json** file. Keep this file secure, as you'll need it in the next steps.
+
+### Create TOKEN_END_POINT_URL
+- Create a new directory named `bearer-token-generator`.
+
+        mkdir bearer-token-generator
+- Navigate to `bearer-token-generator` directory.
+
+        cd bearer-token-generator
+- Initialize npm
+
+        npm init
+- Install `skyflow-node`
+
+        npm i skyflow-node
+- Create `index.js` file
+- Open `index.js` file
+- populate `index.js` file with below code snippet
+```javascript
+const express = require('express')
+const app = express()
+var cors = require('cors')
+const port = 3000
+const {
+    generateBearerToken,
+    isExpired
+} = require('skyflow-node');
+
+app.use(cors())
+
+let filepath = 'cred.json';
+let bearerToken = "";
+
+function getSkyflowBearerToken() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!isExpired(bearerToken)) resolve(bearerToken)
+            else {
+                let response = await generateBearerToken(filepath);
+                bearerToken = response.accessToken;
+                resolve(bearerToken);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+app.get('/', async (req, res) => {
+  let bearerToken = await getSkyflowBearerToken();
+  res.json({"accessToken" : bearerToken});
+})
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`)
+})
+
+```
+- Start the server
+
+        node index.js
+    server will start at `localhost:3000`
+- Your **<TOKEN_END_POINT_URL>** with `http://localhost:3000/`
+
+Running sample templates
+- [`CollectAndRevealSample`](CollectAndRevealSample)
+   - This sample illustrates how to use secure Skyflow elements to collect sensitive user information and reveal it to the user via tokens.
+   - Configure
+      - In `Skyflow.Configuration()` of [ViewController.swift](CollectAndRevealSample/CollectAndRevealSample/ViewController.swift), replace with the following fields:
+         - Replace the placeholder "<VAULT_ID>" with the correct vaultId you want to connect
+         - Replace the placeholder "<VAULT_URL>" with the correct vaultURL
+      - Update `Fields` struct in [ResponseStructs.swift](CollectAndRevealSample/CollectAndRevealSample/ResponseStructs.swift) with field name of used vault.
+         - For ex: 
+            ```swift
+
+            struct Fields: Codable {
+               let name: NameField
+               let cvv: String
+               let cardExpiration: String
+               let cardNumber: String
+               let skyflow_id: String
+            }
+            
+            ```
+            The fields can be different depending upon the vault.
+      - Update 
+      - Replace the placeholder "<TOKEN_END_POINT_URL>" of [ExampleTokenProvider.swift](CollectAndRevealSample/CollectAndRevealSample/ExampleTokenProvider.swift) with the  bearer token endpoint which gives the bearerToken, implemented at your backend or `http://localhost:3000/`.
+   - Running the sample
+      - Open CMD
+      - Navigate to `CollectAndRevealSample`
+      - Run 
+
+            pod install
+      - Open the [`CollectAndRevealSample.xcworkspace](`CollectAndRevealSample/`CollectAndRevealSample.xcworkspace) file using xcode
+      - click on build and run
+
+- [`Validations`](Validations)
+   - This sample illustrates how to apply custom validation rules on secure Skyflow Collect elements to restrict the type of input a user can provide.
+   - Configure
+      - In `Skyflow.Configuration()` of [ViewController.swift](Validations/Validations/ViewController.swift), replace with the following fields:
+         - Replace the placeholder "<VAULT_ID>" in the configuration with the correct vaultId you want to connect
+         - Replace the placeholder "<VAULT_URL>" with the correct vaultURL
+      - Replace the placeholder "<TOKEN_END_POINT_URL>" in [ExampleTokenProvider.swift](Validations/Validations/ExampleTokenProvider.swift) with the  bearer token endpoint which gives the bearerToken, implemented at your backend or `http://localhost:3000/`.
+   - Running the sample
+      - Open CMD
+      - Navigate to `Validations`
+      - Run 
+
+            pod install
+      - Open the [Validations.xcworkspace](Validations/Validations.xcworkspace) file using xcode
+      - click on build and run
