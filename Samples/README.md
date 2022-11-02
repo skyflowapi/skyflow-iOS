@@ -105,13 +105,14 @@ This sample illustrates how to use secure Skyflow elements to collect sensitive 
     The fields can be different depending upon the vault.
 3. Update 
 4. Replace the placeholder "<TOKEN_END_POINT_URL>" of [ExampleTokenProvider.swift](CollectAndRevealSample/CollectAndRevealSample/ExampleTokenProvider.swift) with the  bearer token endpoint which gives the bearerToken, implemented at your backend or `http://localhost:3000/`.
- 5. Running the sample
+ 
+#### Running the sample
     1. Open CMD
     2. Navigate to `CollectAndRevealSample`
     3. Run 
 
             pod install
-    4. Open the [`CollectAndRevealSample.xcworkspace](`CollectAndRevealSample/`CollectAndRevealSample.xcworkspace) file using xcode
+    4. Open the `CollectAndRevealSample.xcworkspace` file using xcode
     5. click on build and run
 
 ### Validations
@@ -121,11 +122,11 @@ This sample illustrates how to apply custom validation rules on secure Skyflow C
 2. Replace the placeholder "<VAULT_ID>" in the configuration with the correct vaultId you want to connect
 3. Replace the placeholder "<VAULT_URL>" with the correct vaultURL
 4. Replace the placeholder "<TOKEN_END_POINT_URL>" in [ExampleTokenProvider.swift](Validations/Validations/ExampleTokenProvider.swift) with the  bearer token endpoint which gives the bearerToken, implemented at your backend or `http://localhost:3000/`.
-5. Running the sample
+#### Running the sample
       1. Open CMD
       2. Navigate to `Validations`
       3. Run 
             
              pod install
-      4. Open the [Validations.xcworkspace](Validations/Validations.xcworkspace) file using xcode
+      4. Open the `Validations.xcworkspace` file using xcode
       5. click on build and run
