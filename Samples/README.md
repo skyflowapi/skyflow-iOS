@@ -35,98 +35,86 @@ Test the SDK by adding `VAULT-ID`, `VAULT-URL`, and `SERVICE-ACCOUNT` details in
 4. Install `skyflow-node`
 
         npm i skyflow-node
-5. Create `index.js` file
-6. Open `index.js` file
-7. populate `index.js` file with below code snippet
+5. Move the downloaded “credentials.json” file #Create a service account account into the bearer-token-generator directory.        
+6. Create `index.js` file
+7. Open `index.js` file
+8. populate `index.js` file with below code snippet
 ```javascript
-const express = require('express')
-const app = express()
-var cors = require('cors')
-const port = 3000
+const express = require("express");
+const app = express();
+const cors = require("cors");
+const port = 3000;
 const {
-    generateBearerToken,
-    isExpired
-} = require('skyflow-node');
+   generateBearerToken,
+   isExpired
+} = require("skyflow-node");
 
-app.use(cors())
+app.use(cors());
 
-let filepath = 'cred.json';
+let filepath = "credentials.json";
 let bearerToken = "";
 
-function getSkyflowBearerToken() {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!isExpired(bearerToken)) resolve(bearerToken)
-            else {
-                let response = await generateBearerToken(filepath);
-                bearerToken = response.accessToken;
-                resolve(bearerToken);
-            }
-        } catch (e) {
-            reject(e);
-        }
-    });
+const getSkyflowBearerToken = () => {
+   return new Promise(async (resolve, reject) => {
+       try {
+           if (!isExpired(bearerToken)) {
+               resolve(bearerToken);
+           }
+           else {
+               let response = await generateBearerToken(filepath);
+               bearerToken = response.accessToken;
+               resolve(bearerToken);
+           }
+       } catch (e) {
+           reject(e);
+       }
+   });
 }
-
-app.get('/', async (req, res) => {
-  let bearerToken = await getSkyflowBearerToken();
-  res.json({"accessToken" : bearerToken});
-})
+app.get("/", async (req, res) => {
+ let bearerToken = await getSkyflowBearerToken();
+ res.json({"accessToken" : bearerToken});
+});
 
 app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`)
+ console.log(`Server is listening on port ${port}`);
 })
 ```
-8. Start the server
+9. Start the server
 
         node index.js
     server will start at `localhost:3000`
-9. Your **<TOKEN_END_POINT_URL>** with `http://localhost:3000/`
+10. Your **<TOKEN_END_POINT_URL>** with `http://localhost:3000/`
 
 ## The samples
 ### Collect and reveal
-This sample illustrates how to use secure Skyflow elements to collect sensitive user information and reveal it to the user via tokens.
+This sample demonstrates how to use Skyflow Elements to collect sensitive user information and reveal it to a user.
 #### Configure
 1. In `Skyflow.Configuration()` of [ViewController.swift](CollectAndRevealSample/CollectAndRevealSample/ViewController.swift), replace with the following fields:
-         - Replace the placeholder "<VAULT_ID>" with the correct vaultId you want to connect
-         - Replace the placeholder "<VAULT_URL>" with the correct vaultURL
-2. Update `Fields` struct in [ResponseStructs.swift](CollectAndRevealSample/CollectAndRevealSample/ResponseStructs.swift) with field name of used vault. For ex: 
-        
-        ```swift
-            struct Fields: Codable {
-               let name: NameField
-               let cvv: String
-               let cardExpiration: String
-               let cardNumber: String
-               let skyflow_id: String
-            }
-        ```
-        
-    The fields can be different depending upon the vault.
-3. Update 
-4. Replace the placeholder "<TOKEN_END_POINT_URL>" of [ExampleTokenProvider.swift](CollectAndRevealSample/CollectAndRevealSample/ExampleTokenProvider.swift) with the  bearer token endpoint which gives the bearerToken, implemented at your backend or `http://localhost:3000/`.
+         - The placeholder "<VAULT_ID>" with the vault ID you noted previously.
+         - The placeholder "<VAULT_URL>" with the vault URL you noted previously.
+2. Replace the placeholder "<TOKEN_END_POINT_URL>" in [ExampleTokenProvider.swift](https://github.com/skyflowapi/skyflow-iOS/blob/SDK-753-update-sample-app-readme/Samples/CollectAndRevealSample/CollectAndRevealSample/ExampleTokenProvider.swift) with the service account bearer token endpoint. 
  
 #### Running the sample
     1. Open CMD
-    2. Navigate to `CollectAndRevealSample`
+    2. Navigate to CollectAndRevealSample
     3. Run 
 
             pod install
-    4. Open the `CollectAndRevealSample.xcworkspace` file using xcode
-    5. click on build and run
-
-### Validations
-This sample illustrates how to apply custom validation rules on secure Skyflow Collect elements to restrict the type of input a user can provide.
+    4. Open the CollectAndRevealSample.xcworkspace file using xcode.
+    5. Build and run using command + R.
+    
+### Custom validation
+This sample demonstrates how to apply custom validation rules to Skyflow elements to restrict the type of input a user can provide.
 #### Configure
-1. In `Skyflow.Configuration()` of [ViewController.swift](Validations/Validations/ViewController.swift), replace with the following fields:
-2. Replace the placeholder "<VAULT_ID>" in the configuration with the correct vaultId you want to connect
-3. Replace the placeholder "<VAULT_URL>" with the correct vaultURL
-4. Replace the placeholder "<TOKEN_END_POINT_URL>" in [ExampleTokenProvider.swift](Validations/Validations/ExampleTokenProvider.swift) with the  bearer token endpoint which gives the bearerToken, implemented at your backend or `http://localhost:3000/`.
+In `Skyflow.Configuration()` of [ViewController.swift](Validations/Validations/ViewController.swift), replace with the following fields:
+1. Replace the placeholder "<VAULT_ID>" in the configuration with the vault ID previously noted. Replace the placeholder "<VAULT_URL>" with the vault URL previously noted.
+2. Replace the placeholder "<TOKEN_END_POINT_URL>" in [ExampleTokenProvider.swift](https://github.com/skyflowapi/skyflow-iOS/blob/SDK-753-update-sample-app-readme/Samples/Validations/Validations/ExampleTokenProvider.swift) with the service account bearer token endpoint.
+
 #### Running the sample
       1. Open CMD
-      2. Navigate to `Validations`
+      2. Navigate to Validations
       3. Run 
             
              pod install
-      4. Open the `Validations.xcworkspace` file using xcode
-      5. click on build and run
+      4. Open the Validations.xcworkspace file using xcode
+      5. Build and run using command + R.
