@@ -403,11 +403,10 @@ extension TextField {
     func updateErrorMessage() {
         
         var isRequiredCheckFailed = false
-        
-        let currentState = state.getState()
+        var currentState = state.getState()
         if self.errorTriggered == false {
             // Error styles
-            if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
+            if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty || self.hasFocus) {
                 if currentState["isRequired"] as! Bool {
                     isRequiredCheckFailed = true
                     updateInputStyle(collectInput!.inputStyles.invalid)

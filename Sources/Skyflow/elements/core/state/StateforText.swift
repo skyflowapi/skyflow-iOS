@@ -76,7 +76,6 @@ internal class StateforText: State
         result["validationError"] = validationError
         result["isCustomRuleFailed"] = isCustomRuleFailed
         result["isDefaultRuleFailed"] = isDefaultRuleFailed
-
         return result
     }
 
