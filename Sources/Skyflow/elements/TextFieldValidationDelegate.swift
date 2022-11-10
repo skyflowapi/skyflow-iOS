@@ -96,19 +96,16 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         return true
     }
 
-    /// Wrap native `UITextField` delegate method for `textFieldDidBeginEditing`.
     public func textFieldDidBeginEditing(_ textField: UITextField) {
         collectField.hasFocus = true
         collectField.textFieldValueChanged()
-        // element styles on focus
         collectField.updateInputStyle(collectField.collectInput.inputStyles.focus)
 
-        // label styles on focus
         collectField.updateLabelStyle(collectField.collectInput!.labelStyles.focus)
+        collectField.resetError()
         collectField.onFocusHandler?((collectField.state as! StateforText).getStateForListener())
     }
     
-    /// Wrap native `UITextField` delegate method for `didEndEditing`.
     public func textFieldDidEndEditing(_ textField: UITextField) {
         collectField.hasFocus = false
         if collectField.fieldType == .EXPIRATION_MONTH {
@@ -122,8 +119,6 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         
         collectField.updateActualValue()
         collectField.textFieldValueChanged()
-
-        // Set label styles to base
         collectField.updateLabelStyle()
         collectField.updateErrorMessage()
         collectField.onBlurHandler?((collectField.state as! StateforText).getStateForListener())
