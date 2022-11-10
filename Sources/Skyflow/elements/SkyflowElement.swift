@@ -75,7 +75,6 @@ public class SkyflowElement: UIView {
 }
 
 public extension SkyflowElement {
-    /// `SkyflowElement` layer corner radius
       internal var cornerRadius: CGFloat {
         get {
             return layer.cornerRadius
@@ -86,7 +85,6 @@ public extension SkyflowElement {
         }
     }
 
-    /// `SkyflowElement` layer borderWidth
     internal var borderWidth: CGFloat {
         get {
             return layer.borderWidth
@@ -96,7 +94,6 @@ public extension SkyflowElement {
         }
     }
 
-    /// `SkyflowElement` layer borderColor
     internal var borderColor: UIColor? {
         get {
             guard let cgcolor = layer.borderColor else {
@@ -109,7 +106,6 @@ public extension SkyflowElement {
         }
     }
 
-      ///  Prepare `SkyflowElement` for IB with custom styles.
      override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
     }
@@ -118,7 +114,6 @@ public extension SkyflowElement {
 internal extension SkyflowElement {
     @objc
      func initialization() {
-        /// set main style for view
         mainStyle()
     }
 

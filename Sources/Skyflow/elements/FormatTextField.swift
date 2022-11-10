@@ -93,28 +93,7 @@ internal class FormatTextField: UITextField {
 
     func updateTextFormat() {
         self.undoManager?.removeAllActions()
-        //self.formatText()
     }
-//
-//    private func getOnlyDigitsString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.SkyflowAsciiDecimalDigits.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-//
-//    private func getOnlyLettersString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.letters.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-
-//    private func getUppercaseLettersString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.uppercaseLetters.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
-//
-//    private func getLowercaseLettersString(_ string: String) -> String {
-//        let charactersArray = string.components(separatedBy: CharacterSet.lowercaseLetters.inverted)
-//        return charactersArray.joined(separator: "")
-//    }
 
     private func getFilteredString(_ string: String) -> String {
         let charactersArray = string.components(separatedBy: CharacterSet.alphanumerics.inverted)
@@ -207,12 +186,6 @@ extension FormatTextField {
 extension FormatTextField {
       /// event for textField
     override public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {}
-
-      ///  Replace native textfield delgate with custom one.
-//    override public var delegate: UITextFieldDelegate? {
-//        get { return self }
-//        set {}
-//    }
 
     func addSomeTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         super.addTarget(target, action: action, for: controlEvents)
