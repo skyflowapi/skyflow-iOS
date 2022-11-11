@@ -68,7 +68,7 @@ internal class CollectRequestBody {
         
         if additionalFields != nil {
             inputPayload = additionalFields?["records"] as! [[String: Any]]
-            for entry in inputPayload {
+                        for entry in inputPayload {
                 let entryDict = entry
                 let tableName = entryDict["table"] as! String
                 let fields = entryDict["fields"] as! [String: Any]
@@ -131,7 +131,15 @@ internal class CollectRequestBody {
                 payload.append(temp)
             }
         }
-        
         return ["records": payload]
+    }
+    internal static func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String{
+        var uniqueColumn = "";
+        for currUpsertOption in upsert{
+            if(currUpsertOption["table"] as! String == tableName){
+                uniqueColumn = currUpsertOption["column"] as! String;
+            }
+        }
+        return uniqueColumn;
     }
 }

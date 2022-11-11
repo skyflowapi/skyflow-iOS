@@ -13,8 +13,9 @@ import Foundation
 
 public struct InsertOptions {
     var tokens: Bool
-
-    public init(tokens: Bool = true) {
+    var upsert: [[String: Any]]?
+    public init(tokens: Bool = true, upsert: [[String:  Any]]? = nil) {
         self.tokens = tokens
+        self.upsert = upsert
     }
 }

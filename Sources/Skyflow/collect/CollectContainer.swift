@@ -90,8 +90,12 @@ public extension Container {
             }
         }
         let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
-        let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields)
-
+        let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
+        if options?.upsert != nil {
+            if icOptions.validateUpsert() {
+                return;
+            }
+        }
         if records != nil {
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
                 onSuccessHandler: {
