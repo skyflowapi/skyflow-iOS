@@ -64,16 +64,13 @@ public class TextField: SkyflowElement, Element, BaseElement {
         didSet { setMainPaddings() }
     }
 
-    /// Describes `SkyflowTextField` input   State`
     internal override var state: State {
         return StateforText(tf: self)
     }
 
     override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(input: input, options: options, contextOptions: contextOptions)
-        //        self.contextOptions = contextOptions
         self.userValidationRules.append(input.validations)
-        // add delegate
         self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
         self.textField.delegate = self.textFieldDelegate!
         
@@ -195,26 +192,21 @@ public class TextField: SkyflowElement, Element, BaseElement {
         }
     }
 
-    /// Field Configuration
     override func setupField() {
         super.setupField()
         textField.placeholder = collectInput.placeholder
         updateInputStyle()
-        // textField.formatPattern = fieldType.instance.formatPattern
         if let instance = fieldType.instance {
             validationRules = instance.validation
             textField.keyboardType = instance.keyboardType
         }
         addValidations()
 
-
-        // Base label styles
         self.textFieldLabel.textColor = collectInput.labelStyles.base?.textColor ?? .none
         self.textFieldLabel.font = collectInput.labelStyles.base?.font ?? .none
         self.textFieldLabel.textAlignment = collectInput.labelStyles.base?.textAlignment ?? .left
         self.textFieldLabel.insets = collectInput.labelStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
-        // Base errorText styles
+        
         self.errorMessage.textColor = collectInput.errorTextStyles.base?.textColor ?? .none
         self.errorMessage.font = collectInput.errorTextStyles.base?.font ?? .none
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
@@ -325,28 +317,22 @@ public class TextField: SkyflowElement, Element, BaseElement {
         self.setupField()
     }
 }
-/// UIResponder methods
 extension TextField {
-    /// Make `SkyflowTextField` focused.
     @discardableResult override public func becomeFirstResponder() -> Bool {
         self.hasBecomeResponder = true
         return textField.becomeFirstResponder()
     }
 
-    /// Remove  focus from `SkyflowTextField`.
     @discardableResult override public func resignFirstResponder() -> Bool {
         self.hasBecomeResponder = false
         return textField.resignFirstResponder()
     }
-
-    /// Check if `SkyflowTextField` is focused.
     override public var isFirstResponder: Bool {
         return textField.isFirstResponder
     }
     
 }
 
-/// Textfield updates
 extension TextField {
     internal func updateInputStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput.inputStyles.base
@@ -371,13 +357,10 @@ extension TextField {
         self.textFieldLabel.insets = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
-    // For tests compatibility
     internal func textFieldDidEndEditing(_ textField: UITextField) {
         self.textField.delegate?.textFieldDidEndEditing?(textField)
     }
 
-
-    /// Wrap native `UITextField` delegate method for `didChange`.
     @objc func  textFieldDidChange(_ textField: UITextField) {
         isDirty = true
         updateActualValue()
@@ -406,22 +389,25 @@ extension TextField {
         
         let currentState = state.getState()
         if self.errorTriggered == false {
-            // Error styles
-            if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
-                if currentState["isRequired"] as! Bool {
+            if self.hasFocus {
+                updateInputStyle(collectInput!.inputStyles.empty)
+                errorMessage.alpha = 0.0
+            }
+            else if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
+                if currentState["isRequired"] as! Bool{
                     isRequiredCheckFailed = true
                     updateInputStyle(collectInput!.inputStyles.invalid)
                     errorMessage.alpha = 1.0
-                } else {
-                    updateInputStyle(collectInput!.inputStyles.empty)
-                    errorMessage.alpha = 0.0 // Hide error message
+                }else {
+                    updateInputStyle(collectInput!.inputStyles.complete)
+                    errorMessage.alpha = 0.0
                 }
             } else if !(currentState["isValid"] as! Bool) {
                 updateInputStyle(collectInput!.inputStyles.invalid)
-                errorMessage.alpha = 1.0 // Show error message
+                errorMessage.alpha = 1.0
             } else {
                 updateInputStyle(collectInput!.inputStyles.complete)
-                errorMessage.alpha = 0.0 // Hide error message
+                errorMessage.alpha = 0.0
             }
             let label = self.collectInput.label
 
@@ -442,33 +428,21 @@ extension TextField {
             }
         } else {
             updateInputStyle(collectInput!.inputStyles.invalid)
-            errorMessage.alpha = 1.0 // Always show error message
+            errorMessage.alpha = 1.0
         }
     }
 }
 
 internal extension TextField {
-//
-//    func leftImage(_ image: UIImage?, imageWidth: CGFloat, padding: CGFloat) {
-//        let imageView = UIImageView(image: image)
-//        imageView.frame = CGRect(x: padding, y: 0, width: imageWidth, height: frame.height)
-//        imageView.contentMode = .center
-//
-//        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: imageWidth + 2 * padding, height: frame.height))
-//        containerView.addSubview(imageView)
-//        leftView = containerView
-//        leftViewMode = .always
-//    }
     
     @objc
     override func initialization() {
         super.initialization()
-        /// add UI elements
         buildTextFieldUI()
-        /// add textfield observers and delegates
         addTextFieldObservers()
     }
 
+    
     @objc
     func buildTextFieldUI() {
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -476,9 +450,14 @@ internal extension TextField {
 
         errorMessage.alpha = 0.0
         errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
-
-        textFieldLabel.text = collectInput.label
-
+        let text = collectInput.label + (self.isRequired ? " *": "")
+        let attributedString = NSMutableAttributedString(string:text)
+        if(self.isRequired){
+            let range = (text as NSString).range(of: " *")
+            attributedString.addAttribute(NSAttributedString.Key.strokeColor, value: UIColor.red , range: range)
+            attributedString.addAttribute(NSAttributedString.Key.strokeWidth , value: -2 , range: range)
+        }
+        textFieldLabel.attributedText = attributedString;
         stackView.addArrangedSubview(textFieldLabel)
         stackView.addArrangedSubview(textField)
         stackView.addArrangedSubview(errorMessage)
@@ -494,13 +473,7 @@ internal extension TextField {
 
     @objc
     func addTextFieldObservers() {
-        /// delegates
-//        textField.addSomeTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
-//        /// Note: .allEditingEvents doesn't work proparly when set text programatically. Use setText instead!
-//        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditing), for: .editingDidEnd)
-//        textField.addSomeTarget(self, action: #selector(textFieldDidEndEditingOnExit), for: .editingDidEndOnExit)
         NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange), name: UITextField.textDidChangeNotification, object: textField)
-        /// tap gesture for update focus state
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(focusOn))
         textField.addGestureRecognizer(tapGesture)
     }
@@ -527,22 +500,10 @@ internal extension TextField {
 
     @objc
     func textFieldValueChanged() {
-        /// update format pattern after field input changed
-        //        if self.fieldType == .cardNumber {
-        //            let card = CardType.forCardNumber(cardNumber: getOutput()!).instance
-        //            if card.defaultName != "Empty"  {
-        //                self.textField.formatPattern = card.formatPattern
-        //              } else {
-        //                self.textField.formatPattern = CardType.UNKNOWN.instance.formatPattern
-        //              }
-        //        }
-        //        textField.updateTextFormat()
     }
 
-    /// change focus here
     @objc
     func focusOn() {
-        // change status
         textField.becomeFirstResponder()
         textFieldValueChanged()
     }
