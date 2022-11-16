@@ -216,17 +216,17 @@ public class TextField: SkyflowElement, Element, BaseElement {
             textField.leftViewMode = UITextField.ViewMode.always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
             #if SWIFT_PACKAGE
-            let image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
+            var image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
             #else
             let frameworkBundle = Bundle(for: TextField.self)
             var bundleURL = frameworkBundle.resourceURL
             bundleURL!.appendPathComponent("Skyflow.bundle")
             let resourceBundle = Bundle(url: bundleURL!)
-            let image = UIImage(named: "Unknown-Card", in: resourceBundle, compatibleWith: nil)
+            var image = UIImage(named: "Unknown-Card", in: resourceBundle, compatibleWith: nil)
             #endif
             imageView.image = image
             imageView.contentMode = .center
-            let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 20))
+            let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 24))
             containerView.addSubview(imageView)
             textField.leftView = containerView
         }
@@ -240,14 +240,14 @@ public class TextField: SkyflowElement, Element, BaseElement {
         setFormatPattern()
         
     }
-
+    
     internal func updateImage(name: String){
                 
         if self.options.enableCardIcon == false {
             return
         }
             
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40 + (0), height: 24))
         #if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
         #else
@@ -258,10 +258,17 @@ public class TextField: SkyflowElement, Element, BaseElement {
         let image = UIImage(named: name, in: resourceBundle, compatibleWith: nil)
         #endif
         imageView.image = image
-        imageView.contentMode = .center
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
+        imageView.layer.cornerRadius = self.collectInput!.iconStyles.base?.cornerRadius ?? 0
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 40))
         containerView.addSubview(imageView)
+        imageView.center = containerView.center
+        imageView.bounds = imageView.frame.inset(by: self.collectInput!.iconStyles.base?.padding ?? UIEdgeInsets(top: .zero, left: .zero, bottom: .zero, right: .zero))
+        imageView.layer.borderColor = self.collectInput!.iconStyles.base?.borderColor?.cgColor
+        imageView.layer.borderWidth = self.collectInput!.iconStyles.base?.borderWidth ?? 0
+        imageView.layer.cornerRadius = self.collectInput!.iconStyles.base?.cornerRadius ?? 0
+        textField.leftViewMode = .always
         textField.leftView = containerView
+        
     }
     
     override func validate() -> SkyflowValidationError {
@@ -334,6 +341,7 @@ extension TextField {
 }
 
 extension TextField {
+    
     internal func updateInputStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput.inputStyles.base
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
@@ -341,7 +349,7 @@ extension TextField {
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
-            p.left += 45
+            p.left = 60
         }
         self.textField.padding = p
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
@@ -526,3 +534,4 @@ extension TextField {
         return uuid;
     }
 }
+
