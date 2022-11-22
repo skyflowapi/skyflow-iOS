@@ -145,7 +145,7 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
  
 ## Inserting data into the vault
  
-To insert data into the vault from the integrated application, use the ```insert(records: [String: Any], options: InsertOptions?= InsertOptions() , callback: Skyflow.Callback)``` method of the Skyflow client. The records parameter takes an array of records to be inserted into the vault. The options parameter takes a Skyflow.InsertOptions object. See below:
+To insert data into the vault from the integrated application, use the ```insert(records: [String: Any], options: InsertOptions?= InsertOptions() , callback: Skyflow.Callback)``` method of the Skyflow client. The records parameter takes an array of records to be inserted into the vault. The options parameter takes a Skyflow.InsertOptions object. InsertOptions also supports upsert feature. See below:
  
 ```swift
 let records = [
@@ -158,7 +158,9 @@ let records = [
   ]]
   //...additional records here
 ]
-let insertOptions = Skyflow.InsertOptions(tokens: false) //indicates whether or not tokens should be returned for the inserted data. Defaults to 'true'
+//Upsert options allows only unique column for a table, and the column should be set as unquie, for example here cardNumber is used for upsert so cardNumber column in vault should be unique
+let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions) //indicates whether or not tokens should be returned for the inserted data. Defaults to 'true'
 let insertCallback = InsertCallback()                   //Custom callback - implementation of Skyflow.Callback
 skyflowClient.insert(records: records, options: insertOptions, callback: insertCallback)
 ```
@@ -366,9 +368,11 @@ When the form is ready to be submitted, call the `collect(options: Skyflow.Colle
 ```swift
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
- 
-// Send the Non-PCI records as additionalFields of InsertOptions (optional)
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
+// Upsert
+let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+// Send the Non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+
+let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions)
  
 //Custom callback - implementation of Skyflow.callback
 let insertCallback = InsertCallback() 
@@ -419,8 +423,11 @@ let skyflowElement = container?.create(input: input, options: requiredOption)
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
  
-// Send the Non-PCI records as additionalFields of CollectOptions (optional)
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords) 
+ //Upsert options
+ let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+ 
+// Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions
+let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
 //Implement a custom Skyflow.Callback to be called on Insertion success/failure

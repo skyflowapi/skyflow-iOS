@@ -77,8 +77,7 @@ internal class APIClient {
             temp["tableName"] = record["table"]
             temp["method"] = "POST"
             temp["quorum"] = true
-            postPayload.append(temp)
-
+            
             if options.tokens {
                 var temp2: [String: Any] = [:]
                 temp2["method"] = "GET"
@@ -87,10 +86,27 @@ internal class APIClient {
                 temp2["tokenization"] = true
                 insertTokenPayload.append(temp2)
             }
+            if options.upsert != nil {
+                let columnName = getUniqueColumn(tableName : temp["tableName"] as! String, upsert: options.upsert!);
+                if columnName != "" {
+                    temp["upsert"] = columnName;
+                }
+            }
+            postPayload.append(temp)
         }
         return ["records": postPayload + insertTokenPayload]
     }
 
+    internal func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String{
+        var uniqueColumn = "";
+        for currUpsertOption in upsert{
+            if(currUpsertOption["table"] as! String == tableName){
+                uniqueColumn = currUpsertOption["column"] as! String;
+            }
+        }
+        return uniqueColumn;
+    }
+    
     internal func get(records: [RevealRequestRecord], callback: Callback, contextOptions: ContextOptions) {
         let revealApiCallback = RevealAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
         self.getAccessToken(callback: revealApiCallback, contextOptions: contextOptions)

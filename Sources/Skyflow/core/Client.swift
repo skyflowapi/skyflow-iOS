@@ -38,7 +38,7 @@ public class Client {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        let icOptions = ICOptions(tokens: options.tokens)
+        let icOptions = ICOptions(tokens: options.tokens, upsert: options.upsert, callback: callback, contextOptions: tempContextOptions)
         var errorCode: ErrorCodes?
 
         if records["records"] == nil {
@@ -79,6 +79,11 @@ public class Client {
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
             } else {
+                if options.upsert != nil {
+                    if icOptions.validateUpsert() {
+                        return;
+                    }
+                }
                 let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions,
                     onSuccessHandler: {
                         Log.info(message: .INSERT_DATA_SUCCESS, contextOptions: tempContextOptions)
