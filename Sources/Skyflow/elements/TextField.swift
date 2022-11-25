@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -26,7 +26,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
     }
-
+    
     internal var uuid: String = ""
     
     internal var textFieldCornerRadius: CGFloat {
@@ -38,7 +38,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             textField.layer.masksToBounds = newValue > 0
         }
     }
-
+    
     internal var textFieldBorderWidth: CGFloat {
         get {
             return textField.layer.borderWidth
@@ -47,7 +47,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             textField.layer.borderWidth = newValue
         }
     }
-
+    
     internal var textFieldBorderColor: UIColor? {
         get {
             guard let cgcolor = textField.layer.borderColor else {
@@ -59,15 +59,15 @@ public class TextField: SkyflowElement, Element, BaseElement {
             textField.layer.borderColor = newValue?.cgColor
         }
     }
-
+    
     internal var textFieldPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) {
         didSet { setMainPaddings() }
     }
-
+    
     internal override var state: State {
         return StateforText(tf: self)
     }
-
+    
     override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(input: input, options: options, contextOptions: contextOptions)
         self.userValidationRules.append(input.validations)
@@ -129,12 +129,12 @@ public class TextField: SkyflowElement, Element, BaseElement {
             }
         }
     }
-
+    
     required internal init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-
-
+    
+    
     internal func isMounted() -> Bool {
         var flag = false
         if Thread.isMainThread {
@@ -147,24 +147,24 @@ public class TextField: SkyflowElement, Element, BaseElement {
         return flag
     }
     
-
+    
     internal var hasFocus = false
-
+    
     internal var onChangeHandler: (([String: Any]) -> Void)?
     internal var onBlurHandler: (([String: Any]) -> Void)?
     internal var onReadyHandler: (([String: Any]) -> Void)?
     internal var onFocusHandler: (([String: Any]) -> Void)?
-
+    
     override func getOutput() -> String? {
         return textField.getTextwithFormatPattern
     }
-
+    
     internal var actualValue: String = ""
-
+    
     internal func getValue() -> String {
         return actualValue
     }
-
+    
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }
@@ -191,7 +191,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
         }
     }
-
+    
     override func setupField() {
         super.setupField()
         textField.placeholder = collectInput.placeholder
@@ -201,7 +201,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             textField.keyboardType = instance.keyboardType
         }
         addValidations()
-
+        
         self.textFieldLabel.textColor = collectInput.labelStyles.base?.textColor ?? .none
         self.textFieldLabel.font = collectInput.labelStyles.base?.font ?? .none
         self.textFieldLabel.textAlignment = collectInput.labelStyles.base?.textAlignment ?? .left
@@ -211,19 +211,19 @@ public class TextField: SkyflowElement, Element, BaseElement {
         self.errorMessage.font = collectInput.errorTextStyles.base?.font ?? .none
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
         self.errorMessage.insets = collectInput.errorTextStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
+        
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             textField.leftViewMode = UITextField.ViewMode.always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-            #if SWIFT_PACKAGE
+#if SWIFT_PACKAGE
             let image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
-            #else
+#else
             let frameworkBundle = Bundle(for: TextField.self)
             var bundleURL = frameworkBundle.resourceURL
             bundleURL!.appendPathComponent("Skyflow.bundle")
             let resourceBundle = Bundle(url: bundleURL!)
             let image = UIImage(named: "Unknown-Card", in: resourceBundle, compatibleWith: nil)
-            #endif
+#endif
             imageView.image = image
             imageView.contentMode = .center
             let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 20))
@@ -240,23 +240,23 @@ public class TextField: SkyflowElement, Element, BaseElement {
         setFormatPattern()
         
     }
-
+    
     internal func updateImage(name: String){
-                
+        
         if self.options.enableCardIcon == false {
             return
         }
-            
+        
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
-        #if SWIFT_PACKAGE
+#if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
-        #else
+#else
         let frameworkBundle = Bundle(for: TextField.self)
         var bundleURL = frameworkBundle.resourceURL
         bundleURL!.appendPathComponent("Skyflow.bundle")
         let resourceBundle = Bundle(url: bundleURL!)
         let image = UIImage(named: name, in: resourceBundle, compatibleWith: nil)
-        #endif
+#endif
         imageView.image = image
         imageView.contentMode = .center
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
@@ -272,14 +272,14 @@ public class TextField: SkyflowElement, Element, BaseElement {
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
     
-     func validateCustomRules() -> SkyflowValidationError {
+    func validateCustomRules() -> SkyflowValidationError {
         let str = actualValue
         if self.errorTriggered {
             return ""
         }
         return SkyflowValidator.validate(input: str, rules: userValidationRules)
     }
-
+    
     internal func isValid() -> Bool {
         let state = self.state.getState()
         if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool || self.actualValue.isEmpty) {
@@ -291,7 +291,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         
         return true
     }
-
+    
     public func on(eventName: EventName, handler: @escaping ([String: Any]) -> Void) {
         switch eventName {
         case .CHANGE:
@@ -304,7 +304,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             onFocusHandler = handler
         }
     }
-
+    
     public override func didMoveToWindow() {
         if self.window != nil {
             onReadyHandler?((self.state as! StateforText).getStateForListener())
@@ -322,7 +322,7 @@ extension TextField {
         self.hasBecomeResponder = true
         return textField.becomeFirstResponder()
     }
-
+    
     @discardableResult override public func resignFirstResponder() -> Bool {
         self.hasBecomeResponder = false
         return textField.resignFirstResponder()
@@ -348,7 +348,7 @@ extension TextField {
         self.textFieldBorderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
         self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
     }
-
+    
     internal func updateLabelStyle(_ style: Style? = nil) {
         let fallbackStyle = self.collectInput!.labelStyles.base
         self.textFieldLabel.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
@@ -360,7 +360,7 @@ extension TextField {
     internal func textFieldDidEndEditing(_ textField: UITextField) {
         self.textField.delegate?.textFieldDidEndEditing?(textField)
     }
-
+    
     @objc func  textFieldDidChange(_ textField: UITextField) {
         isDirty = true
         updateActualValue()
@@ -374,7 +374,7 @@ extension TextField {
         }
         setFormatPattern()
     }
-
+    
     func updateActualValue() {
         if self.fieldType == .CARD_NUMBER {
             self.actualValue = textField.getSecureRawText ?? ""
@@ -410,7 +410,7 @@ extension TextField {
                 errorMessage.alpha = 0.0
             }
             let label = self.collectInput.label
-
+            
             // Error message
             if isRequiredCheckFailed {
                 errorMessage.text =  "Value is required"
@@ -420,10 +420,10 @@ extension TextField {
             }
             else if currentState["isCustomRuleFailed"] as! Bool{
                 if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
-                  errorMessage.text = "Validation failed"
+                    errorMessage.text = "Validation failed"
                 }
                 else {
-                  errorMessage.text = currentState["validationError"] as? String
+                    errorMessage.text = currentState["validationError"] as? String
                 }
             }
         } else {
@@ -441,67 +441,98 @@ internal extension TextField {
         buildTextFieldUI()
         addTextFieldObservers()
     }
-
+    
     
     @objc
     func buildTextFieldUI() {
         textField.translatesAutoresizingMaskIntoConstraints = false
         errorMessage.translatesAutoresizingMaskIntoConstraints = false
-
+        textFieldLabel.translatesAutoresizingMaskIntoConstraints = false
+        
         errorMessage.alpha = 0.0
         errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
-        let text = collectInput.label + (self.isRequired ? " *": "")
-        let attributedString = NSMutableAttributedString(string:text)
-        if(self.isRequired){
-            let range = (text as NSString).range(of: " *")
-            attributedString.addAttribute(NSAttributedString.Key.strokeColor, value: UIColor.red , range: range)
-            attributedString.addAttribute(NSAttributedString.Key.strokeWidth , value: -2 , range: range)
+        let text = collectInput.label
+        
+        var verticalAstrisk = -(collectInput.labelStyles.requiredAstrisk?.padding?.top ?? 0.0 ) + (collectInput.labelStyles.requiredAstrisk?.padding?.bottom ?? 0.0 )
+        
+        let astriskAttributes: [NSAttributedString.Key: Any]  = [
+            .strokeWidth:  -3.0,
+            .strokeColor: collectInput.labelStyles.requiredAstrisk?.textColor ?? UIColor.red,
+            NSAttributedString.Key.font: collectInput.labelStyles.requiredAstrisk?.font ?? UIFont.boldSystemFont(ofSize: 18.0),
+            .baselineOffset:  verticalAstrisk > 0.0 ? verticalAstrisk : 2.0
+        ]
+        
+        var leftAstriskPadding = Double(collectInput.labelStyles.requiredAstrisk?.padding?.left ?? 0.0)
+        
+        
+        leftAstriskPadding = leftAstriskPadding / 2
+        
+        
+        DispatchQueue.main.async {
+            let attributedString = NSMutableAttributedString(string:text)
+            let asterisk = NSAttributedString(string: " *", attributes: astriskAttributes)
+            let space = NSAttributedString(string: " ")
+            
+            
+            while leftAstriskPadding > 0 {
+                attributedString.append(space)
+                leftAstriskPadding-=1
+            }
+            
+            if(self.isRequired)
+            {
+                
+                attributedString.append(asterisk)
+            }
+            self.textFieldLabel.attributedText = attributedString;
         }
-        textFieldLabel.attributedText = attributedString;
+        
+        
+        
         stackView.addArrangedSubview(textFieldLabel)
         stackView.addArrangedSubview(textField)
         stackView.addArrangedSubview(errorMessage)
-
+        
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-
+        
         setMainPaddings()
     }
-
+    
     @objc
     func addTextFieldObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange), name: UITextField.textDidChangeNotification, object: textField)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(focusOn))
         textField.addGestureRecognizer(tapGesture)
     }
-
-
+    
+    
     @objc
     override func setMainPaddings() {
         super.setMainPaddings()
-
+        
         let views = ["view": self, "stackView": stackView]
-
+        
         horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
                                                                options: .alignAllCenterY,
                                                                metrics: nil,
                                                                views: views)
         NSLayoutConstraint.activate(horizontalConstraints)
-
+        
         verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
                                                             options: .alignAllCenterX,
                                                             metrics: nil,
                                                             views: views)
         NSLayoutConstraint.activate(verticalConstraint)
     }
-
+    
     @objc
     func textFieldValueChanged() {
     }
-
+    
     @objc
     func focusOn() {
         textField.becomeFirstResponder()
