@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9881785D29234CDF00934F0E /* Skyflow in Frameworks */ = {isa = PBXBuildFile; productRef = 9881785C29234CDF00934F0E /* Skyflow */; };
+		98F29BBB29277F45005C1C25 /* Skyflow in Frameworks */ = {isa = PBXBuildFile; productRef = 98F29BBA29277F45005C1C25 /* Skyflow */; };
 		F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E4F272565CF0042C130 /* AppDelegate.swift */; };
 		F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E51272565CF0042C130 /* SceneDelegate.swift */; };
 		F1613E54272565CF0042C130 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E53272565CF0042C130 /* ViewController.swift */; };
@@ -38,7 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9881785D29234CDF00934F0E /* Skyflow in Frameworks */,
+				98F29BBB29277F45005C1C25 /* Skyflow in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,7 +103,7 @@
 			);
 			name = CollectAndRevealSample;
 			packageProductDependencies = (
-				9881785C29234CDF00934F0E /* Skyflow */,
+				98F29BBA29277F45005C1C25 /* Skyflow */,
 			);
 			productName = CollectAndRevealSample;
 			productReference = F1613E4C272565CF0042C130 /* CollectAndRevealSample.app */;
@@ -133,7 +133,7 @@
 			);
 			mainGroup = F1613E43272565CF0042C130;
 			packageReferences = (
-				9881785B29234CDF00934F0E /* XCRemoteSwiftPackageReference "skyflow-ios-final" */,
+				98F29BB929277F45005C1C25 /* XCRemoteSwiftPackageReference "skyflow-ios-final" */,
 			);
 			productRefGroup = F1613E4D272565CF0042C130 /* Products */;
 			projectDirPath = "";
@@ -369,20 +369,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9881785B29234CDF00934F0E /* XCRemoteSwiftPackageReference "skyflow-ios-final" */ = {
+		98F29BB929277F45005C1C25 /* XCRemoteSwiftPackageReference "skyflow-ios-final" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "file:///Users/puneetv/Documents/work/skyflow-ios-final";
 			requirement = {
-				branch = "SK-45-upsert-support-for-i-os-sdk";
+				branch = "SK-64-custom-card-type-icon-styles-for-card-number-element-in-client-side-sd-ks";
 				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9881785C29234CDF00934F0E /* Skyflow */ = {
+		98F29BBA29277F45005C1C25 /* Skyflow */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9881785B29234CDF00934F0E /* XCRemoteSwiftPackageReference "skyflow-ios-final" */;
+			package = 98F29BB929277F45005C1C25 /* XCRemoteSwiftPackageReference "skyflow-ios-final" */;
 			productName = Skyflow;
 		};
 /* End XCSwiftPackageProductDependency section */
