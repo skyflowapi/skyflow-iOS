@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 05/08/21.
-//
+ */
 
 import Foundation
 
@@ -34,7 +27,7 @@ public extension Container {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.skyflow.vaultURL == "/v1/vaults/"  {
+        if self.skyflow.vaultURL == "/v1/vaults/" {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
@@ -57,7 +50,11 @@ public extension Container {
                 return
             }
         }
-        let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: tempContextOptions)
+        let revealValueCallback = RevealValueCallback(
+            callback: callback,
+            revealElements: self.revealElements,
+            contextOptions: tempContextOptions
+        )
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
 
         if let tokens = records["records"] as? [[String: Any]] {
@@ -67,14 +64,23 @@ public extension Container {
                     list.append(RevealRequestRecord(token: id))
                 }
             }
-            let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: tempContextOptions,
+            let logCallback = LogCallback(
+                clientCallback: revealValueCallback,
+                contextOptions: tempContextOptions,
                 onSuccessHandler: {
-                    Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
+                    Log.info(
+                        message: .REVEAL_SUBMIT_SUCCESS,
+                        contextOptions: tempContextOptions
+                    )
                 },
                 onFailureHandler: {
                 }
             )
-            self.skyflow.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
+            self.skyflow.apiClient.get(
+                records: list,
+                callback: logCallback,
+                contextOptions: tempContextOptions
+            )
         }
     }
 }

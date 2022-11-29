@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 12/08/21.
-//
+ */
 
 import Foundation
 import UIKit
@@ -19,12 +12,12 @@ public class Label: UIView, Element, BaseElement {
     internal var stackView = UIStackView()
     internal var labelField = PaddingLabel(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
-    
-    internal var errorTriggered: Bool = false
+
+    internal var errorTriggered = false
     internal var triggeredErrorMessage: String = ""
     internal var uuid: String = ""
-    
-    internal var actualValue: String? = nil
+
+    internal var actualValue: String?
 
     internal var horizontalConstraints = [NSLayoutConstraint]()
 
@@ -47,7 +40,7 @@ public class Label: UIView, Element, BaseElement {
         super.init(coder: aDecoder)
     }
 
-    
+
     internal func updateVal(value: String) {
         self.skyflowLabelView.updateVal(value: value)
         self.actualValue = value
@@ -83,7 +76,7 @@ public class Label: UIView, Element, BaseElement {
         self.errorMessage.insets = self.revealInput.errorTextStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
         self.stackView.axis = .vertical
-//        stackView.distribution = .equalSpacing
+        // stackView.distribution = .equalSpacing
         self.stackView.spacing = 0
         self.stackView.alignment = .fill
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -101,16 +94,18 @@ public class Label: UIView, Element, BaseElement {
     func setMainPaddings() {
         let views = ["view": self, "stackView": stackView]
 
-        verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
-                                                            options: .alignAllCenterX,
-                                                            metrics: nil,
-                                                            views: views)
-
-
-        horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
-                                                               options: .alignAllCenterY,
-                                                               metrics: nil,
-                                                               views: views)
+        verticalConstraint = NSLayoutConstraint.constraints(
+            withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
+            options: .alignAllCenterX,
+            metrics: nil,
+            views: views
+        )
+        horizontalConstraints = NSLayoutConstraint.constraints(
+            withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
+            options: .alignAllCenterY,
+            metrics: nil,
+            views: views
+        )
         NSLayoutConstraint.activate(horizontalConstraints)
         NSLayoutConstraint.activate(verticalConstraint)
     }
@@ -130,43 +125,43 @@ public class Label: UIView, Element, BaseElement {
     internal func getValue() -> String {
         return self.actualValue ?? ""
     }
-    
+
     public func setError(_ error: String) {
         self.errorTriggered = true
         self.triggeredErrorMessage = error
         showError(message: error)
     }
-    
+
     public func resetError() {
         self.errorTriggered = false
         hideError()
     }
-    
+
     public func getID() -> String {
-        return uuid;
+        return uuid
     }
-    
+
     public func setToken(_ token: String) {
         self.revealInput.token = token
         if self.revealInput.altText.isEmpty {
             self.skyflowLabelView.updateVal(value: token)
         }
     }
-    
+
     public func setAltText(_ altText: String) {
         self.revealInput.altText = altText
         self.skyflowLabelView.updateVal(value: altText)
     }
-    
+
     public func clearAltText() {
         self.revealInput.altText = ""
         self.skyflowLabelView.updateVal(value: actualValue == nil ? revealInput.token : actualValue!)
     }
-    
-    internal func getToken() -> String{
+
+    internal func getToken() -> String {
         return self.revealInput.token
     }
-    
+
     internal func getValueForConnections() -> String {
         if actualValue != nil {
             return getValue()

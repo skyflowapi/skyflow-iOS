@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -12,7 +12,6 @@ internal struct SkyflowValidateCardNumber: ValidationRule {
         self.error = error
         self.regex = regex
     }
-
 }
 
 extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
@@ -25,7 +24,6 @@ extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
         let charactersArray = text?.components(separatedBy: [" ", "-"])
         let trimmedText = charactersArray?.joined(separator: "")
         if let cardNumber = trimmedText {
-
             let number = Int(cardNumber)
             if number == nil {
                 return false
@@ -34,12 +32,12 @@ extension SkyflowValidateCardNumber: SkyflowInternalValidationProtocol {
             if !NSPredicate(format: "SELF MATCHES %@", self.regex).evaluate(with: text!) {
                 return false
             }
-            
+
             let cardType = CardType.forCardNumber(cardNumber: cardNumber)
             if cardType == .EMPTY || !cardType.instance.cardLengths.contains(cardNumber.count) {
                 return false
             }
-            
+
 
             return isLuhnValid(cardNumber: trimmedText!)
         }

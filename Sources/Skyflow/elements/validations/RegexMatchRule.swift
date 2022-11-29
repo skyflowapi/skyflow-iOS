@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
 /**
-Validate input in scope of matching the regex.
-*/
+ Validate input in scope of matching the regex.
+ */
 public struct RegexMatchRule: ValidationRule {
     ///  regex to validate input
     public let regex: String
@@ -22,13 +22,12 @@ public struct RegexMatchRule: ValidationRule {
             self.error = SkyflowValidationErrorType.regex.rawValue
         }
     }
-
 }
 extension RegexMatchRule: SkyflowInternalValidationProtocol {
     /// validate the text with specified regex
     public func validate(_ text: String?) -> Bool {
         if text!.isEmpty {
-        return true
+            return true
         }
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: text)
     }

@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 27/07/21.
-//
+ */
 
 import Foundation
 
@@ -16,12 +9,17 @@ internal class CollectRequestBody {
     static var callback: Callback?
     static var breakFlag = false
     static var mergedDict: [String: Any] = [:]
-    
+
     internal static func addFieldsToTableSet(tableName: String, prefix: String, fields: [String: Any], contextOptions: ContextOptions) {
         if !self.breakFlag {
             for (key, val) in fields {
                 if val is [String: Any] {
-                    addFieldsToTableSet(tableName: tableName, prefix: prefix == "" ? key : prefix + "." + key, fields: val as! [String: Any], contextOptions: contextOptions)
+                    addFieldsToTableSet(
+                        tableName: tableName,
+                        prefix: prefix == "" ? key : prefix + "." + key,
+                        fields: val as! [String: Any],
+                        contextOptions: contextOptions
+                    )
                 } else {
                     let tableSetEntry = tableName + "-" + (prefix == "" ? key : prefix + "." + key)
                     if tableSet.contains(tableSetEntry) {
@@ -37,12 +35,17 @@ internal class CollectRequestBody {
             }
         }
     }
-    
+
     internal static func mergeFields(tableName: String, prefix: String, dict: [String: Any], contextOptions: ContextOptions) {
         for(key, val) in dict {
             let keypath = prefix == "" ? key : prefix + "." + key
             if val is [String: Any] {
-                mergeFields(tableName: tableName, prefix: keypath, dict: val as! [String: Any], contextOptions: contextOptions)
+                mergeFields(
+                    tableName: tableName,
+                    prefix: keypath,
+                    dict: val as! [String: Any],
+                    contextOptions: contextOptions
+                )
             } else {
                 if mergedDict[keyPath: keypath] == nil {
                     mergedDict[keyPath: keypath] = val
@@ -56,7 +59,7 @@ internal class CollectRequestBody {
             }
         }
     }
-    
+
     internal static func createRequestBody(elements: [TextField], additionalFields: [String: Any]? = nil, callback: Callback, contextOptions: ContextOptions) -> [String: Any]? {
         var tableMap: [String: Int] = [:]
         var payload: [[String: Any]] = []
@@ -65,17 +68,22 @@ internal class CollectRequestBody {
         self.tableSet = Set<String>()
         var index: Int = 0
         var inputPayload: [[String: Any]] = []
-        
+
         if additionalFields != nil {
             inputPayload = additionalFields?["records"] as! [[String: Any]]
-                        for entry in inputPayload {
+            for entry in inputPayload {
                 let entryDict = entry
                 let tableName = entryDict["table"] as! String
                 let fields = entryDict["fields"] as! [String: Any]
                 if tableMap[tableName] != nil {
                     let inputEntry = payload[tableMap[tableName]!]
                     mergedDict = inputEntry["fields"] as! [String: Any]
-                    self.mergeFields(tableName: tableName, prefix: "", dict: fields, contextOptions: contextOptions)
+                    self.mergeFields(
+                        tableName: tableName,
+                        prefix: "",
+                        dict: fields,
+                        contextOptions: contextOptions
+                    )
                     if self.breakFlag {
                         return nil
                     }
@@ -87,7 +95,12 @@ internal class CollectRequestBody {
                         "table": tableName,
                         "fields": fields
                     ]
-                    self.addFieldsToTableSet(tableName: tableName, prefix: "", fields: fields, contextOptions: contextOptions)
+                    self.addFieldsToTableSet(
+                        tableName: tableName,
+                        prefix: "",
+                        fields: fields,
+                        contextOptions: contextOptions
+                    )
                     if self.breakFlag {
                         return nil
                     }
@@ -96,26 +109,25 @@ internal class CollectRequestBody {
                 }
             }
         }
-        
+
         for element in elements {
             if tableMap[(element.tableName)!] != nil {
                 var temp = payload[tableMap[(element.tableName)!]!]
                 temp[keyPath: "fields." + (element.columnName)!] = element.getValue()
                 let tableSetEntry = element.tableName! + "-" + element.columnName
                 if tableSet.contains(tableSetEntry) {
-                    var hasElementValueMatchRule: Bool = false
+                    var hasElementValueMatchRule = false
                     for validation in element.userValidationRules.rules {
                         if validation is ElementValueMatchRule {
                             hasElementValueMatchRule = true
-                            break;
+                            break
                         }
                     }
-                    if(!hasElementValueMatchRule)
-                    {
+                    if !hasElementValueMatchRule {
                         self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [element.tableName!, element.columnName]).getErrorObject(contextOptions: contextOptions))
                         return nil
                     }
-                    continue;
+                    continue
                 }
                 self.tableSet.insert(tableSetEntry)
                 payload[tableMap[(element.tableName)!]!] = temp
@@ -133,13 +145,13 @@ internal class CollectRequestBody {
         }
         return ["records": payload]
     }
-    internal static func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String{
-        var uniqueColumn = "";
-        for currUpsertOption in upsert{
-            if(currUpsertOption["table"] as! String == tableName){
-                uniqueColumn = currUpsertOption["column"] as! String;
+    internal static func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String {
+        var uniqueColumn = ""
+        for currUpsertOption in upsert {
+            if currUpsertOption["table"] as! String == tableName {
+                uniqueColumn = currUpsertOption["column"] as! String
             }
         }
-        return uniqueColumn;
+        return uniqueColumn
     }
 }

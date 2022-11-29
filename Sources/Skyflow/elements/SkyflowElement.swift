@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -20,7 +20,7 @@ public class SkyflowElement: UIView {
     internal var options: CollectElementOptions!
     internal var contextOptions: ContextOptions!
 
-    /// Describes `SkyflowElement` input   State`
+    // Describes `SkyflowElement` input   State`
     internal var state: State {
         return State(columnName: self.columnName, isRequired: self.isRequired)
     }
@@ -53,29 +53,29 @@ public class SkyflowElement: UIView {
         NotificationCenter.default.removeObserver(self)
     }
 
-  /// Field Configuration
+    // Field Configuration
     internal func setupField() {
-            tableName = collectInput.table
-            columnName = collectInput.column
-            fieldType = collectInput.type
-            isRequired = options.required
-      }
-
-    internal func getOutput() -> String? {
-            return ""
+        tableName = collectInput.table
+        columnName = collectInput.column
+        fieldType = collectInput.type
+        isRequired = options.required
     }
 
+    internal func getOutput() -> String? {
+        return ""
+    }
 
-   internal func validate() -> SkyflowValidationError {
+    internal func validate() -> SkyflowValidationError {
         return SkyflowValidationError()
-      }
-   internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) {
+    }
+
+    internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) {
         didSet { setMainPaddings() }
     }
 }
 
 public extension SkyflowElement {
-      internal var cornerRadius: CGFloat {
+    internal var cornerRadius: CGFloat {
         get {
             return layer.cornerRadius
         }
@@ -106,21 +106,21 @@ public extension SkyflowElement {
         }
     }
 
-     override func prepareForInterfaceBuilder() {
+    override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
     }
 }
 
 internal extension SkyflowElement {
     @objc
-     func initialization() {
+    func initialization() {
         mainStyle()
     }
 
     @objc
     func setMainPaddings() {
-      NSLayoutConstraint.deactivate(verticalConstraint)
-      NSLayoutConstraint.deactivate(horizontalConstraints)
+        NSLayoutConstraint.deactivate(verticalConstraint)
+        NSLayoutConstraint.deactivate(horizontalConstraints)
     }
 }
 

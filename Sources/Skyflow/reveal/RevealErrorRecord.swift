@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Santhosh Kamal Murthy Yennam on 13/08/21.
-//
+ */
 
 import Foundation
 

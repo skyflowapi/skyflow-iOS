@@ -1,36 +1,21 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 #if os(iOS)
 import UIKit
 #endif
 
-internal class StateforText: State
-{
-    /// true if `SkyflowTextField` input in valid
+internal class StateforText: State {
     internal(set) open var isValid = false
-
-    /// true  if `SkyflowTextField` input is empty
     internal(set) open var isEmpty = false
-
-    /// true if `SkyflowTextField` was edited
     internal(set) open var isDirty = false
-
-    /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
-
-//    internal(set) open var isComplete = false
-
     internal(set) open var isFocused = false
-
     internal(set) open var elementType: ElementType!
-
     internal(set) open var value: String?
-    /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
     internal(set) open var validationError = SkyflowValidationError()
-    
     internal(set) open var isCustomRuleFailed = false
     internal(set) open var isDefaultRuleFailed = false
 
@@ -50,16 +35,13 @@ internal class StateforText: State
             value = tf.actualValue
         } else {
             if tf.fieldType == .CARD_NUMBER {
-                // AMEX supports only first 6 characters as BIN
                 if CardType.forCardNumber(cardNumber: tf.actualValue) == .AMEX {
                     value = Card.getBIN(tf.actualValue, 6)
                 } else {
-                    // Default 8 char BIN for all other card types
                     value = Card.getBIN(tf.actualValue)
                 }
             }
         }
-        
         if validationError.count == 0 {
             validationError = customError
         }
@@ -76,7 +58,6 @@ internal class StateforText: State
         result["validationError"] = validationError
         result["isCustomRuleFailed"] = isCustomRuleFailed
         result["isDefaultRuleFailed"] = isDefaultRuleFailed
-
         return result
     }
 

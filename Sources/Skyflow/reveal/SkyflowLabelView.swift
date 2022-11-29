@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Tejesh Reddy Allampati on 25/08/21.
-//
+ */
 
 import Foundation
 import UIKit
@@ -27,16 +20,20 @@ public class SkyflowLabelView: UIView {
 
         let views = ["view": self, "label": label]
 
-        horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(padding.left)-[label]-\(padding.right)-|",
-                                                               options: .alignAllCenterY,
-                                                               metrics: nil,
-                                                               views: views)
+        horizontalConstraints = NSLayoutConstraint.constraints(
+            withVisualFormat: "H:|-\(padding.left)-[label]-\(padding.right)-|",
+            options: .alignAllCenterY,
+            metrics: nil,
+            views: views
+        )
         NSLayoutConstraint.activate(horizontalConstraints)
 
-        verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(padding.top)-[label]-\(padding.bottom)-|",
-                                                            options: .alignAllCenterX,
-                                                            metrics: nil,
-                                                            views: views)
+        verticalConstraint = NSLayoutConstraint.constraints(
+            withVisualFormat: "V:|-\(padding.top)-[label]-\(padding.bottom)-|",
+            options: .alignAllCenterX,
+            metrics: nil,
+            views: views
+        )
         NSLayoutConstraint.activate(verticalConstraint)
         self.layoutIfNeeded()
     }
@@ -153,5 +150,4 @@ public class SkyflowLabelView: UIView {
     internal func getValue() -> String {
         return self.revealInput.token
     }
-    
 }

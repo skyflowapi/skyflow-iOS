@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Santhosh Kamal Murthy Yennam on 10/08/21.
-//
+ */
 
 import Foundation
 
@@ -59,10 +52,10 @@ class RevealAPICallback: Callback {
                 defer {
                     revealRequestGroup.leave()
                 }
-                
+
                 do {
                     let (success, failure) = try self.processResponse(record: record, data: data, response: response, error: error)
-                    
+
                     if success != nil {
                         list_success.append(success!)
                     }
@@ -94,18 +87,18 @@ class RevealAPICallback: Callback {
         let result = ["errors": [["error": errorObject]]]
         callback.onFailure(result)
     }
-    
-    internal func getRequestSession() -> (URLRequest, URLSession){
+
+    internal func getRequestSession() -> (URLRequest, URLSession) {
         let url = URL(string: (connectionUrl + "/detokenize"))
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
-        
+
         return (request, URLSession(configuration: .default))
     }
-    
+
     internal func getRevealRequestBody(record: RevealRequestRecord) throws -> Data {
         let bodyObject: [String: Any] =
             [
@@ -117,13 +110,12 @@ class RevealAPICallback: Callback {
             ]
         return try JSONSerialization.data(withJSONObject: bodyObject)
     }
-    
-    internal func processResponse(record: RevealRequestRecord, data: Data?, response: URLResponse?, error: Error?) throws -> (RevealSuccessRecord?, RevealErrorRecord?){
-        
+
+    internal func processResponse(record: RevealRequestRecord, data: Data?, response: URLResponse?, error: Error?) throws -> (RevealSuccessRecord?, RevealErrorRecord?) {
         if error != nil || response == nil {
             throw error!
         }
-        
+
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
@@ -148,13 +140,13 @@ class RevealAPICallback: Callback {
             let receivedResponseArray: [Any] = (jsonData[keyPath: "records"] as! [Any])
             let records: [String: Any] = receivedResponseArray[0] as! [String: Any]
             let successRecord = RevealSuccessRecord(token_id: records["token"] as! String, value: records["value"] as! String)
-            
+
             return (successRecord, nil)
         }
-        
+
         return (nil, nil)
     }
-    
+
     func handleCallbacks(success: [RevealSuccessRecord], failure: [RevealErrorRecord], isSuccess: Bool, errorObject: Error!) {
         var records: [Any] = []
         for record in success {
@@ -172,12 +164,12 @@ class RevealAPICallback: Callback {
         }
         var modifiedResponse: [String: Any] = [:]
         if records.count != 0 {
-        modifiedResponse["records"] = records
+            modifiedResponse["records"] = records
         }
         if errors.count != 0 {
-        modifiedResponse["errors"] = errors
+            modifiedResponse["errors"] = errors
         }
-        
+
         if isSuccess {
             if errors.isEmpty {
                 self.callback.onSuccess(modifiedResponse)

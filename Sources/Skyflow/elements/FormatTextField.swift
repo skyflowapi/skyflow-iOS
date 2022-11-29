@@ -1,12 +1,11 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 #if os(iOS)
 import UIKit
 #endif
 
-///  textfield used in SkyflowTextField
 internal class FormatTextField: UITextField {
     enum FormatPatternChar: String, CaseIterable {
         case lettersAndDigit = "*"
@@ -26,7 +25,6 @@ internal class FormatTextField: UITextField {
     /** used for text with format pattern*/
     var textwithFormatPattern = ""
 
-
     /**
      Var that have the maximum length, based on the mask set
      */
@@ -38,12 +36,10 @@ internal class FormatTextField: UITextField {
     }
 
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-      var textRect = super.leftViewRect(forBounds: bounds)
+        var textRect = super.leftViewRect(forBounds: bounds)
         textRect.origin.x += padding.left - 35
-      return textRect
+        return textRect
     }
-    
-    
     /**
      Overriding the var text from UITextField so if any text
      is applied programmatically by calling formatText
@@ -109,30 +105,35 @@ internal class FormatTextField: UITextField {
 
 
     private func getText(_ string: String) -> String {
-            return string
+        return string
     }
 
     /**
      Func that formats the text based on formatPattern
      */
     func formatText(_ text: String, _ range: NSRange, _ isEmpty: Bool) -> FormatResult {
-
-        
         var formattedText = ""
         var offset = 0
         var seperatorsCount = 0
-        
-        
+
+
         if self.formatPattern.isEmpty {
-            return FormatResult(formattedText: text, numOfSeperatorsAdded: seperatorsCount)
+            return FormatResult(
+                formattedText: text,
+                numOfSeperatorsAdded: seperatorsCount
+            )
         }
-    
+
         if text.count > formatPattern.count {
-            return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount, isSuccess: false)
+            return FormatResult(
+                formattedText: formattedText,
+                numOfSeperatorsAdded: seperatorsCount,
+                isSuccess: false
+            )
         }
-        
+
         if text.count > 0 {
-            let  filteredText  = self.getFilteredString(text)
+            let  filteredText = self.getFilteredString(text)
             for (id, char) in formatPattern.enumerated() {
                 if filteredText.count <= offset {
                     break
@@ -149,11 +150,11 @@ internal class FormatTextField: UITextField {
                 }
             }
         }
-        
+
         return FormatResult(formattedText: formattedText, numOfSeperatorsAdded: seperatorsCount)
     }
-    
-    func addAndFormatText(_ text: String){
+
+    func addAndFormatText(_ text: String) {
         var formattedText = ""
         var offset = 0
         if self.formatPattern.isEmpty {
@@ -172,7 +173,7 @@ internal class FormatTextField: UITextField {
                 offset += 1
             }
         }
-        
+
         self.secureText = formattedText
     }
 }
@@ -184,7 +185,7 @@ extension FormatTextField {
 }
 
 extension FormatTextField {
-      /// event for textField
+    // event for textField
     override public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {}
 
     func addSomeTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
@@ -197,7 +198,7 @@ internal struct FormatResult {
     internal var formattedText: String
     internal var isSuccess: Bool
     internal var numOfSeperatorsAdded: Int
-    
+
     public init(formattedText: String, numOfSeperatorsAdded: Int, isSuccess: Bool = true) {
         self.formattedText = formattedText
         self.numOfSeperatorsAdded = numOfSeperatorsAdded

@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 23/07/21.
-//
+ */
 
 import Foundation
 
@@ -18,7 +11,13 @@ internal class CollectAPICallback: Callback {
     var options: ICOptions
     var contextOptions: ContextOptions
 
-    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], options: ICOptions, contextOptions: ContextOptions) {
+    internal init(
+        callback: Callback,
+        apiClient: APIClient,
+        records: [String: Any],
+        options: ICOptions,
+        contextOptions: ContextOptions
+    ) {
         self.records = records
         self.apiClient = apiClient
         self.callback = callback
@@ -31,11 +30,9 @@ internal class CollectAPICallback: Callback {
             self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
-        
+
         do {
             let (request, session) = try self.getRequestSession(url: url)
-        
-        
             let task = session.dataTask(with: request) { data, response, error in
                 do {
                     let response = try self.processResponse(data: data, response: response, error: error)
@@ -66,44 +63,54 @@ internal class CollectAPICallback: Callback {
         }
         return temp
     }
-    
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-
         do {
-            let data = try JSONSerialization.data(withJSONObject: self.apiClient.constructBatchRequestBody(records: self.records, options: options))
+            let data = try JSONSerialization.data(
+                withJSONObject: self.apiClient.constructBatchRequestBody(
+                    records: self.records,
+                    options: options
+                )
+            )
             request.httpBody = data
         }
-        
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
-
         return (request, URLSession(configuration: .default))
-
     }
-    
+
     func processResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any] {
         if error != nil || response == nil {
             throw error!
         }
-
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
                 var description = "Insert call failed with the following status code" + String(httpResponse.statusCode)
-                var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
+                var errorObject: Error = ErrorCodes
+                    .APIError(code: httpResponse.statusCode, message: description)
+                    .getErrorObject(contextOptions: self.contextOptions)
 
                 if let safeData = data {
                     do {
-                        let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
+                        let desc = try JSONSerialization
+                            .jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
                         let error = desc["error"] as! [String: Any]
                         description = error["message"] as! String
                         if let requestId = httpResponse.allHeaderFields["x-request-id"] {
                             description += " - request-id: \(requestId)"
                         }
-                        errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
+                        errorObject = ErrorCodes.APIError(
+                            code: httpResponse.statusCode,
+                            message: description
+                        )
+                        .getErrorObject(contextOptions: self.contextOptions)
                     } catch {
-                        errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8)!).getErrorObject(contextOptions: self.contextOptions)
+                        errorObject = ErrorCodes.APIError(
+                            code: httpResponse.statusCode,
+                            message: String(data: safeData, encoding: .utf8)!
+                        )
+                        .getErrorObject(contextOptions: self.contextOptions)
                     }
                 }
                 throw errorObject
@@ -113,21 +120,17 @@ internal class CollectAPICallback: Callback {
         guard let safeData = data else {
             return [:]
         }
-        
+
         return try getCollectResponseBody(data: safeData)
-                
     }
-    
-    func getCollectResponseBody(data: Data) throws -> [String: Any]{
+
+    func getCollectResponseBody(data: Data) throws -> [String: Any] {
         let originalString = String(decoding: data, as: UTF8.self)
         let changedData = Data(originalString.utf8)
         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
         var responseEntries: [Any] = []
-
         let receivedResponseArray = (jsonData[keyPath: "responses"] as! [Any])
-
         let inputRecords = self.records["records"] as! [Any]
-
         let length = inputRecords.count
         for (index, _) in inputRecords.enumerated() {
             var tempEntry: [String: Any] = [:]
@@ -145,8 +148,6 @@ internal class CollectAPICallback: Callback {
             }
             responseEntries.append(tempEntry)
         }
-
         return ["records": responseEntries]
-
     }
 }

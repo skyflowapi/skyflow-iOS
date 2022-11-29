@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 07/10/21.
-//
+ */
 
 import Foundation
 
@@ -32,12 +25,11 @@ internal enum Message {
     case DETOKENIZE_TRIGGERED
     case GET_BY_ID_TRIGGERED
 
-    //Used in tests
+    // Used in tests
     case CLIENT_CONNECTION
     case CANNOT_CHANGE_ELEMENT
 
-    
-    //Warnings
+    // Warnings
     case INVALID_EXPIRYDATE_FORMAT
     case VAULT_ID_EMPTY_WARNING
     case VAULT_URL_EMPTY_WARNING
@@ -45,36 +37,33 @@ internal enum Message {
     case CLEAR_VALUE_WARNING
     case NO_REGEX_MATCH_FOUND
 
-
-
     var description: String {
         switch self {
-        case .CLIENT_INITIALIZED: return "Initialized skyflow client successfully" // U
-        case .COLLECT_CONTAINER_CREATED: return "Created Collect container successfully" // U
-        case .REVEAL_CONTAINER_CREATED: return "Created Reveal container successfully" // U
-        case .VALIDATE_RECORDS: return "Validating insert records" // U
-        case .VALIDATE_DETOKENIZE_INPUT: return "Validating detokenize input" // U
-        case .VALIDATE_GET_BY_ID_INPUT: return "Validating getByID input" // U
-        case .VALIDATE_COLLECT_RECORDS: return "Validating collect element input" // U
-        case .VALIDATE_REVEAL_RECORDS: return "Validating reveal element input" // U
-        case .CREATED_ELEMENT: return "Created <> element" // U
-        case .ELEMENT_REVEALED: return "<> Element revealed" // U?
-        case .COLLECT_SUBMIT_SUCCESS: return "Data has been collected successfully." // U
-        case .REVEAL_SUBMIT_SUCCESS: return "Data has been revealed successfully." // U
-        case .INSERT_DATA_SUCCESS: return "Data has been inserted successfully." // U
-        case .DETOKENIZE_SUCCESS: return "Data has been revealed successfully." // U
-        case .GET_BY_ID_SUCCESS: return "Data has been revealed successfully." // U
-        case .BEARER_TOKEN_RECEIVED: return "GetBearerToken promise received successfully." // U
+        case .CLIENT_INITIALIZED: return "Initialized skyflow client successfully"
+        case .COLLECT_CONTAINER_CREATED: return "Created Collect container successfully"
+        case .REVEAL_CONTAINER_CREATED: return "Created Reveal container successfully"
+        case .VALIDATE_RECORDS: return "Validating insert records"
+        case .VALIDATE_DETOKENIZE_INPUT: return "Validating detokenize input"
+        case .VALIDATE_GET_BY_ID_INPUT: return "Validating getByID input"
+        case .VALIDATE_COLLECT_RECORDS: return "Validating collect element input"
+        case .VALIDATE_REVEAL_RECORDS: return "Validating reveal element input"
+        case .CREATED_ELEMENT: return "Created <> element"
+        case .ELEMENT_REVEALED: return "<> Element revealed"
+        case .COLLECT_SUBMIT_SUCCESS: return "Data has been collected successfully."
+        case .REVEAL_SUBMIT_SUCCESS: return "Data has been revealed successfully."
+        case .INSERT_DATA_SUCCESS: return "Data has been inserted successfully."
+        case .DETOKENIZE_SUCCESS: return "Data has been revealed successfully."
+        case .GET_BY_ID_SUCCESS: return "Data has been revealed successfully."
+        case .BEARER_TOKEN_RECEIVED: return "GetBearerToken promise received successfully."
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
         case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
-            
-        //Used in tests
-        case .CLIENT_CONNECTION: return "client connection not established" // A
-        case .CANNOT_CHANGE_ELEMENT: return "Element can't be changed" // A
 
-            
-        //Warnings
+        // Used in tests
+        case .CLIENT_CONNECTION: return "client connection not established"
+        case .CANNOT_CHANGE_ELEMENT: return "Element can't be changed"
+
+        // Warnings
         case .INVALID_EXPIRYDATE_FORMAT: return "<FORMAT> is not a valid date format"
         case .VAULT_ID_EMPTY_WARNING: return "Invalid client credentials. VaultID is required."
         case .VAULT_URL_EMPTY_WARNING: return "Invalid client credentials. VaultURL cannot be empty."

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 #if os(iOS)
@@ -16,14 +16,15 @@ public struct Style {
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
 
-    public init(borderColor: UIColor? = nil,
-                cornerRadius: CGFloat? = nil,
-                padding: UIEdgeInsets? = nil,
-                borderWidth: CGFloat? = nil,
-                font: UIFont? = nil,
-                textAlignment: NSTextAlignment? = nil,
-                textColor: UIColor? = nil) {
-        // Assign parametric values to struct members
+    public init(
+        borderColor: UIColor? = nil,
+        cornerRadius: CGFloat? = nil,
+        padding: UIEdgeInsets? = nil,
+        borderWidth: CGFloat? = nil,
+        font: UIFont? = nil,
+        textAlignment: NSTextAlignment? = nil,
+        textColor: UIColor? = nil
+    ) {
         self.borderColor = borderColor
         self.cornerRadius = cornerRadius
         self.padding = padding

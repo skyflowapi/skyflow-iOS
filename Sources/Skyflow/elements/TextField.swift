@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -17,18 +17,18 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal var userValidationRules = ValidationSet()
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
-    internal var hasBecomeResponder: Bool = false
-    
-    internal var textFieldDelegate: UITextFieldDelegate? = nil
-    
-    internal var errorTriggered: Bool = false
-    
+    internal var hasBecomeResponder = false
+
+    internal weak var textFieldDelegate: UITextFieldDelegate?
+
+    internal var errorTriggered = false
+
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
     }
 
     internal var uuid: String = ""
-    
+
     internal var textFieldCornerRadius: CGFloat {
         get {
             return textField.layer.cornerRadius
@@ -73,11 +73,11 @@ public class TextField: SkyflowElement, Element, BaseElement {
         self.userValidationRules.append(input.validations)
         self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
         self.textField.delegate = self.textFieldDelegate!
-        
+
         setFormatPattern()
         setupField()
     }
-    
+
     internal func addValidations() {
         if self.fieldType == .EXPIRATION_DATE {
             self.addDateValidations()
@@ -87,7 +87,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             self.addMonthValidations()
         }
     }
-    
+
     internal func addDateValidations() {
         let defaultFormat = "mm/yy"
         let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
@@ -100,22 +100,22 @@ public class TextField: SkyflowElement, Element, BaseElement {
         let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
         self.validationRules.append(ValidationSet(rules: [expiryDateRule]))
     }
-    
+
     internal func addMonthValidations() {
         let monthRule = SkyflowValidateExpirationMonth(error: SkyflowValidationErrorType.expirationMonth.rawValue)
         self.validationRules.append(ValidationSet(rules: [monthRule]))
     }
-    
+
     internal func addYearValidations() {
         var format = "yyyy"
         if self.options.format.lowercased() == "yy" {
             format = "yy"
         }
-        
+
         let yearRule = SkyflowValidateExpirationYear(format: format, error: SkyflowValidationErrorType.expirationYear.rawValue)
         self.validationRules.append(ValidationSet(rules: [yearRule]))
     }
-    
+
     internal func setFormatPattern() {
         switch fieldType {
         case .CARD_NUMBER:
@@ -146,7 +146,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         }
         return flag
     }
-    
+
 
     internal var hasFocus = false
 
@@ -168,27 +168,27 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }
-    
+
     public func setValue(value: String) {
-        if(contextOptions.env == .DEV){
+        if contextOptions.env == .DEV {
             actualValue = value
             self.textField.addAndFormatText(value)
             textFieldDidChange(self.textField)
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
+            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name], contextOptions: context!)
         }
     }
-    
-    public func clearValue(){
-        if(contextOptions.env == .DEV){
+
+    public func clearValue() {
+        if contextOptions.env == .DEV {
             actualValue = ""
             textField.secureText = ""
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
+            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name], contextOptions: context!)
         }
     }
 
@@ -206,7 +206,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         self.textFieldLabel.font = collectInput.labelStyles.base?.font ?? .none
         self.textFieldLabel.textAlignment = collectInput.labelStyles.base?.textAlignment ?? .left
         self.textFieldLabel.insets = collectInput.labelStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        
+
         self.errorMessage.textColor = collectInput.errorTextStyles.base?.textColor ?? .none
         self.errorMessage.font = collectInput.errorTextStyles.base?.font ?? .none
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
@@ -226,27 +226,25 @@ public class TextField: SkyflowElement, Element, BaseElement {
             #endif
             imageView.image = image
             imageView.contentMode = .center
-            let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 20))
+            let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
             containerView.addSubview(imageView)
             textField.leftView = containerView
         }
-        
+
         if self.fieldType == .CARD_NUMBER {
             let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
             updateImage(name: card.imageName)
         }
-        
+
         setFormatPattern()
-        
     }
 
-    internal func updateImage(name: String){
-                
+    internal func updateImage(name: String) {
         if self.options.enableCardIcon == false {
             return
         }
-            
+
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20 + (0), height: 20))
         #if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
@@ -263,7 +261,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         containerView.addSubview(imageView)
         textField.leftView = containerView
     }
-    
+
     override func validate() -> SkyflowValidationError {
         let str = actualValue
         if self.errorTriggered {
@@ -271,8 +269,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
         }
         return SkyflowValidator.validate(input: str, rules: validationRules)
     }
-    
-     func validateCustomRules() -> SkyflowValidationError {
+
+    func validateCustomRules() -> SkyflowValidationError {
         let str = actualValue
         if self.errorTriggered {
             return ""
@@ -288,7 +286,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         if !(state["isValid"] as! Bool) {
             return false
         }
-        
+
         return true
     }
 
@@ -310,7 +308,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             onReadyHandler?((self.state as! StateforText).getStateForListener())
         }
     }
-    
+
     public func unmount() {
         self.actualValue = ""
         self.textField.secureText = ""
@@ -330,7 +328,6 @@ extension TextField {
     override public var isFirstResponder: Bool {
         return textField.isFirstResponder
     }
-    
 }
 
 extension TextField {
@@ -356,7 +353,7 @@ extension TextField {
         self.textFieldLabel.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .left
         self.textFieldLabel.insets = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
-    
+
     internal func textFieldDidEndEditing(_ textField: UITextField) {
         self.textField.delegate?.textFieldDidEndEditing?(textField)
     }
@@ -366,7 +363,7 @@ extension TextField {
         updateActualValue()
         textFieldValueChanged()
         onChangeHandler?((self.state as! StateforText).getStateForListener())
-        
+
         if self.fieldType == .CARD_NUMBER {
             let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
@@ -382,23 +379,21 @@ extension TextField {
             self.actualValue = textField.secureText ?? ""
         }
     }
-    
+
     func updateErrorMessage() {
-        
         var isRequiredCheckFailed = false
-        
+
         let currentState = state.getState()
         if self.errorTriggered == false {
             if self.hasFocus {
                 updateInputStyle(collectInput!.inputStyles.empty)
                 errorMessage.alpha = 0.0
-            }
-            else if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
-                if currentState["isRequired"] as! Bool{
+            } else if currentState["isEmpty"] as! Bool || self.actualValue.isEmpty {
+                if currentState["isRequired"] as! Bool {
                     isRequiredCheckFailed = true
                     updateInputStyle(collectInput!.inputStyles.invalid)
                     errorMessage.alpha = 1.0
-                }else {
+                } else {
                     updateInputStyle(collectInput!.inputStyles.complete)
                     errorMessage.alpha = 0.0
                 }
@@ -413,17 +408,14 @@ extension TextField {
 
             // Error message
             if isRequiredCheckFailed {
-                errorMessage.text =  "Value is required"
-            }
-            else if  currentState["isDefaultRuleFailed"] as! Bool{
+                errorMessage.text = "Value is required"
+            } else if  currentState["isDefaultRuleFailed"] as! Bool {
                 errorMessage.text = "Invalid " + (label != "" ? label : "element")
-            }
-            else if currentState["isCustomRuleFailed"] as! Bool{
+            } else if currentState["isCustomRuleFailed"] as! Bool {
                 if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
-                  errorMessage.text = "Validation failed"
-                }
-                else {
-                  errorMessage.text = currentState["validationError"] as? String
+                    errorMessage.text = "Validation failed"
+                } else {
+                    errorMessage.text = currentState["validationError"] as? String
                 }
             }
         } else {
@@ -434,7 +426,6 @@ extension TextField {
 }
 
 internal extension TextField {
-    
     @objc
     override func initialization() {
         super.initialization()
@@ -442,7 +433,7 @@ internal extension TextField {
         addTextFieldObservers()
     }
 
-    
+
     @objc
     func buildTextFieldUI() {
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -451,13 +442,13 @@ internal extension TextField {
         errorMessage.alpha = 0.0
         errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
         let text = collectInput.label + (self.isRequired ? " *": "")
-        let attributedString = NSMutableAttributedString(string:text)
-        if(self.isRequired){
+        let attributedString = NSMutableAttributedString(string: text)
+        if self.isRequired {
             let range = (text as NSString).range(of: " *")
-            attributedString.addAttribute(NSAttributedString.Key.strokeColor, value: UIColor.red , range: range)
-            attributedString.addAttribute(NSAttributedString.Key.strokeWidth , value: -2 , range: range)
+            attributedString.addAttribute(NSAttributedString.Key.strokeColor, value: UIColor.red, range: range)
+            attributedString.addAttribute(NSAttributedString.Key.strokeWidth, value: -2, range: range)
         }
-        textFieldLabel.attributedText = attributedString;
+        textFieldLabel.attributedText = attributedString
         stackView.addArrangedSubview(textFieldLabel)
         stackView.addArrangedSubview(textField)
         stackView.addArrangedSubview(errorMessage)
@@ -515,14 +506,14 @@ extension TextField {
         self.errorMessage.text = error
         updateErrorMessage()
     }
-    
+
     public func resetError() {
         self.errorMessage.text = ""
         self.errorTriggered = false
         updateErrorMessage()
     }
-    
+
     public func getID() -> String {
-        return uuid;
+        return uuid
     }
 }

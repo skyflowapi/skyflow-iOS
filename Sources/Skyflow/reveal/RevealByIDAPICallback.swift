@@ -1,13 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 21/09/21.
-//
+ */
 
 import Foundation
 
@@ -57,15 +50,15 @@ class RevealByIDAPICallback: Callback {
                 continue
             }
             let (request, session) = getRequestSession(urlComponents: urlComponents)
-            
+
             let task = session.dataTask(with: request) { data, response, error in
                 defer {
                     getByIdRequestGroup.leave()
                 }
-                
+
                 do {
                     var (resultArray, errorResponse) = try self.processURLResponse(record: record, data: data, response: response, error: error)
-                    
+
                     outputArray.append(contentsOf: resultArray ?? [])
                     if errorResponse != nil {
                         errorArray.append(errorResponse!)
@@ -75,7 +68,7 @@ class RevealByIDAPICallback: Callback {
                     errorObject = error
                 }
             }
-                
+
             task.resume()
         }
         getByIdRequestGroup.notify(queue: .main) {
@@ -103,10 +96,10 @@ class RevealByIDAPICallback: Callback {
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
-        let result = ["errors": [["error" : errorObject]]]
+        let result = ["errors": [["error": errorObject]]]
         callback.onFailure(result)
     }
-    
+
     internal func getRequestSession(urlComponents: URLComponents?) -> (URLRequest, URLSession) {
         var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
         request.httpMethod = "GET"
@@ -115,7 +108,7 @@ class RevealByIDAPICallback: Callback {
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
         return (request, URLSession(configuration: .default))
     }
-    
+
     internal func getUrlComponents(record: GetByIdRecord) -> URLComponents? {
         var urlComponents = URLComponents(string: (connectionUrl + "/" + record.table))
 
@@ -126,7 +119,7 @@ class RevealByIDAPICallback: Callback {
         }
 
         urlComponents?.queryItems?.append(URLQueryItem(name: "redaction", value: record.redaction))
-        
+
         return urlComponents
     }
 
@@ -137,20 +130,20 @@ class RevealByIDAPICallback: Callback {
         var errorEntryDict: [String: Any] = [
             "ids": record.ids
         ]
-        
+
         if let error = desc["error"] as? [String: Any], let message = error["message"] as? String {
             description = message
-            
+
             if let requestId = httpResponse.allHeaderFields["x-request-id"] {
                 description += " - request-id: \(requestId)"
             }
             let errorDict: NSError = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
             errorEntryDict["error"] = errorDict
         }
-        
+
         return errorEntryDict
     }
-    
+
     func processResponse(record: GetByIdRecord, _ safeData: Data) throws -> [[String: Any]] {
         var outputArray = [[String: Any]]()
         let originalString = String(decoding: safeData, as: UTF8.self)
@@ -164,11 +157,11 @@ class RevealByIDAPICallback: Callback {
                 outputArray.append(entryDict)
             }
         }
-        
+
         return outputArray
     }
-    
-    func constructRevealRecords(_ outputArray: [[String: Any]], _ errorArray: [[String: Any]]) -> [String: Any]{
+
+    func constructRevealRecords(_ outputArray: [[String: Any]], _ errorArray: [[String: Any]]) -> [String: Any] {
         var records: [String: Any] = [:]
         if outputArray.count != 0 {
             records["records"] = outputArray
@@ -176,10 +169,10 @@ class RevealByIDAPICallback: Callback {
         if errorArray.count != 0 {
             records["errors"] = errorArray
         }
-        
+
         return records
     }
-    
+
     func handleCallbacks(outputArray: [[String: Any]], errorArray: [[String: Any]], isSuccess: Bool?, errorObject: Error?) {
         let records = self.constructRevealRecords(outputArray, errorArray)
         if isSuccess ?? true {
@@ -192,7 +185,7 @@ class RevealByIDAPICallback: Callback {
             self.callRevealOnFailure(callback: self.callback, errorObject: errorObject!)
         }
     }
-    
+
     func processURLResponse(record: GetByIdRecord, data: Data?, response: URLResponse?, error: Error?) throws -> ([[String: Any]]?, [String: Any]?) {
         if error != nil || response == nil {
             throw error!
@@ -200,7 +193,6 @@ class RevealByIDAPICallback: Callback {
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
-
                 if let safeData = data {
                     let errorEntry = try self.constructApiError(record: record, safeData, httpResponse)
                     return (nil, errorEntry)
@@ -213,7 +205,7 @@ class RevealByIDAPICallback: Callback {
             let resultArray = try self.processResponse(record: record, safeData)
             return (resultArray, nil)
         }
-        
+
         return (nil, nil)
     }
 }
