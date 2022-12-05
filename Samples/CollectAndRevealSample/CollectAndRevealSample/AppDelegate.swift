@@ -2,13 +2,6 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  AppDelegate.swift
-//  CollectAndRevealSample
-//
-//  Created by Akhil Anil Mangala on 24/10/21.
-//
-
 import UIKit
 
 @main

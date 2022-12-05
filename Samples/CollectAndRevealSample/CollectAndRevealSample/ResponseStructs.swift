@@ -16,14 +16,11 @@ struct Records: Codable {
 }
 
 struct Fields: Codable {
-    let name: NameField
+    let cardholder_name: String
+    let card_number: String
+    let expiry_month: String
+    let expiry_year: String
     let cvv: String
-    let cardExpiration: String
-    let cardNumber: String
     let skyflow_id: String
 }
 
-struct NameField: Codable {
-    let skyflow_id: String
-    let first_name: String
-}
