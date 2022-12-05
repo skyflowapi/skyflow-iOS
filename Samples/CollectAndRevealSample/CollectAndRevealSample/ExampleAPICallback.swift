@@ -27,7 +27,6 @@ public class ExampleAPICallback: Skyflow.Callback {
             return
         }
         do {
-            
             let dataString = String(data: try! JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
             let responseData = Data(dataString!.utf8)
             let jsonResponse = try decoder!.decode(SuccessResponse.self, from: responseData)

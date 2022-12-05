@@ -2,13 +2,6 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  SceneDelegate.swift
-//  CollectAndRevealSample
-//
-//  Created by Akhil Anil Mangala on 24/10/21.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
