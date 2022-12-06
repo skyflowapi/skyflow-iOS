@@ -1,14 +1,12 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
-
 
 struct SuccessResponse: Codable {
     let records: [Records]
 }
-
 
 struct Records: Codable {
     let fields: Fields
@@ -20,5 +18,3 @@ struct Fields: Codable {
     let cvv: String
     let skyflow_id: String
 }
-
-import Foundation
