@@ -10,19 +10,20 @@ public struct CollectElementInput {
     var inputStyles: Styles
     var labelStyles: Styles
     var errorTextStyles: Styles
+    var iconStyles: Styles
     var label: String
     var placeholder: String
     var type: ElementType
     var validations: ValidationSet
-
     public init(table: String = "", column: String = "",
-                inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
+                inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
                 placeholder: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {
         self.table = table
         self.column = column
         self.inputStyles = inputStyles!
         self.labelStyles = labelStyles!
         self.errorTextStyles = errorTextStyles!
+        self.iconStyles = iconStyles!
         self.label = label!
         self.placeholder = placeholder!
         self.type = type
@@ -31,16 +32,17 @@ public struct CollectElementInput {
 
     @available(*, deprecated, message: "altText param is deprecated")
     public init(table: String = "", column: String = "",
-            inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), label: String? = "",
+            inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
             placeholder: String? = "", altText: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {
-    self.table = table
-    self.column = column
-    self.inputStyles = inputStyles!
-    self.labelStyles = labelStyles!
-    self.errorTextStyles = errorTextStyles!
-    self.label = label!
-    self.placeholder = placeholder!
-    self.type = type
-    self.validations = validations
+        self.table = table
+        self.column = column
+        self.inputStyles = inputStyles!
+        self.labelStyles = labelStyles!
+        self.errorTextStyles = errorTextStyles!
+        self.iconStyles = iconStyles!
+        self.label = label!
+        self.placeholder = placeholder!
+        self.type = type
+        self.validations = validations
     }
 }
