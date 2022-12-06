@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 //
 //  ExampleAPICallback.swift
@@ -12,21 +12,15 @@
 import Foundation
 import Skyflow
 
-
 public class ExampleAPICallback: Skyflow.Callback {
-    
     internal init() {
     }
-    
+
     public func onSuccess(_ responseBody: Any) {
-        
         print("success:", responseBody)
-        
     }
-    
+
     public func onFailure(_ error: Any) {
         print("failure:", error)
     }
-    
 }
-

@@ -70,23 +70,22 @@ For example, if the response of the consumer tokenAPI is in the below format
 then, your Skyflow.TokenProvider Implementation should be as below
  
 ```swift
-public class DemoTokenProvider : Skyflow.TokenProvider {
+public class DemoTokenProvider: Skyflow.TokenProvider {
     public func getBearerToken(_ apiCallback: Skyflow.Callback) {
         if let url = URL(string: <YOUR_TOKEN_ENDPOINT>) {
             let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url){ data, response, error in
-                if(error != nil){
+            let task = session.dataTask(with: url) {data, _, error in
+                if error != nil {
                     print(error!)
                     return
                 }
                 if let safeData = data {
                     do {
-                        let x = try JSONSerialization.jsonObject(with: safeData, options:[]) as? [String: String]
+                        let x = try JSONSerialization.jsonObject(with: safeData, options: []) as? [String: String]
                         if let accessToken = x?["accessToken"] {
                             apiCallback.onSuccess(accessToken)
                         }
-                    }
-                    catch {
+                    } catch {
                         apiCallback.onFailure(error)
                     }
                 }
@@ -149,47 +148,54 @@ To insert data into the vault from the integrated application, use the ```insert
  
 ```swift
 let records = [
-  "records" : [[
-    "table": "string",        //table into which record should be inserted
-    "fields": [                         
-      "column1" : "value",    //column names should match vault column names
-      //...additional fields here
+    "records": [
+        [
+            "table": "string",        // table into which record should be inserted
+            "fields": [
+                "column1": "value"    // column names should match vault column names
+                // ...additional fields here
+            ]
+        ]
     ]
-  ]]
-  //...additional records here
+    // ...additional records here
 ]
-let insertOptions = Skyflow.InsertOptions(tokens: false) //indicates whether or not tokens should be returned for the inserted data. Defaults to 'true'
-let insertCallback = InsertCallback()                   //Custom callback - implementation of Skyflow.Callback
+let insertOptions = Skyflow.InsertOptions(
+    tokens: false
+) // indicates whether or not tokens should be returned for the inserted data. Defaults to 'true'
+let insertCallback = InsertCallback()                   // Custom callback - implementation of Skyflow.Callback
 skyflowClient.insert(records: records, options: insertOptions, callback: insertCallback)
 ```
  
 An example of an insert call is given below: 
  
 ```swift
-let insertCallback = InsertCallback()     //Custom callback - implementation of Skyflow.Callback
-skyflowClient.insert(records: [
-  "records": [[
-    "table": "cards",
-    "fields": [
-        "cardNumber": "41111111111",
-        "cvv": "123",
-    ]
-  ]]],
-  callback: insertCallback);
+let insertCallback = InsertCallback()     // Custom callback - implementation of Skyflow.Callback
+skyflowClient.insert(
+    records: [
+        "records": [
+            [
+                "table": "cards",
+                "fields": [
+                    "cardNumber": "41111111111",
+                    "cvv": "123"
+                ]
+            ]
+        ]
+    ],
+    callback: insertCallback
+)
 ```
  
 **Response :**
 ```json
 {
-  "records": [
-    {
-     "table": "cards",
-     "fields":{
-        "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-        "cvv": "1989cb56-63da-4482-a2df-1f74cd0dd1a5"
-      }
-    }
-  ]
+    "records": [ {
+        "table": "cards",
+        "fields": {
+            "cardNumber": "f37186-e7e2-466f-91e5-48e12c2bcbc1",
+            "cvv": "1989cb56-63da-4482-a2df-1f74cd0dd1a5"
+        }
+    }]
 }
 ```
  
@@ -209,17 +215,17 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
 To create a collect Element, we must first construct a Skyflow.CollectElementInput object defined as shown below:
  
 ```swift
-let collectElementInput =  Skyflow.CollectElementInput(
-   table : String,                  //optional, the table this data belongs to
-   column : String,                 //optional, the column into which this data should be inserted
-   inputStyles: Skyflow.Styles,     //optional styles that should be applied to the form element
-   labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
-   errorTextStyles: Skyflow.Styles, //optional styles that will be applied to the errorText of the collect element
-   label: String,                   //optional label for the form element
-   placeholder: String,             //optional placeholder for the form element
-   altText: String,                 //(DEPRECATED) optional string that acts as an initial value for the collect element
-   validations: ValidationSet,       // optional set of validations for the input element
-   type: Skyflow.ElementType,       //Skyflow.ElementType enum
+let collectElementInput = Skyflow.CollectElementInput(
+    table: String,                  // optional, the table this data belongs to
+    column: String,                 // optional, the column into which this data should be inserted
+    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
+    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
+    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    label: String,                   // optional label for the form element
+    placeholder: String,             // optional placeholder for the form element
+    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
+    validations: ValidationSet,      // optional set of validations for the input element
+    type: Skyflow.ElementType,       // Skyflow.ElementType enum
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. **Note**: 
@@ -238,24 +244,24 @@ Each Style object accepts the following properties, please note that each proper
  
 ```swift
 let style = Skyflow.Style(
-    borderColor: UIColor,            //optional
-    cornerRadius: CGFloat,           //optional
-    padding: UIEdgeInsets,           //optional
-    borderWidth: CGFloat,            //optional
-    font:  UIFont,                   //optional
-    textAlignment: NSTextAlignment,  //optional
-    textColor: UIColor               //optional
+    borderColor: UIColor,            // optional
+    cornerRadius: CGFloat,           // optional
+    padding: UIEdgeInsets,           // optional
+    borderWidth: CGFloat,            // optional
+    font: UIFont,                   // optional
+    textAlignment: NSTextAlignment,  // optional
+    textColor: UIColor               // optional
 )
 ```
  
 An example Skyflow.Styles object
 ```swift
 let styles = Skyflow.Styles(
-    base: style,                    //optional
-    complete: style,                //optional
-    empty: style,                   //optional
-    focus: style,                   //optional
-    invalid: style                  //optional
+    base: style,                    // optional
+    complete: style,                // optional
+    empty: style,                   // optional
+    focus: style,                   // optional
+    invalid: style                  // optional
 )
 ```
  
@@ -317,25 +323,25 @@ The values that are accepted for `EXPIRATION_YEAR` are
 Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
  
 ```swift
-let collectElementInput =  Skyflow.CollectElementInput(
-    table : String,                  //the table this data belongs to
-    column : String,                 //the column into which this data should be inserted
-    inputStyles: Skyflow.Styles,     //optional styles that should be applied to the form element
-    labelStyles: Skyflow.Styles,     //optional styles that will be applied to the label of the collect element
-    errorTextStyles: Skyflow.Styles, //optional styles that will be applied to the errorText of the collect element
-    label: String,                   //optional label for the form element
-    placeholder: String,             //optional placeholder for the form element
-    altText: String,                 //(DEPRECATED) optional string that acts as an initial value for the collect element
-    validations: ValidationSet,       // optional set of validations for the input element
-    type: Skyflow.ElementType,       //Skyflow.ElementType enum
+let collectElementInput = Skyflow.CollectElementInput(
+    table: String,                  // the table this data belongs to
+    column: String,                 // the column into which this data should be inserted
+    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
+    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
+    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    label: String,                   // optional label for the form element
+    placeholder: String,             // optional placeholder for the form element
+    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
+    validations: ValidationSet,      // optional set of validations for the input element
+    type: Skyflow.ElementType,       // Skyflow.ElementType enum
 )
- 
+
 let collectElementOptions = Skyflow.CollectElementOptions(
-  required: false,  //indicates whether the field is marked as required. Defaults to 'false',
-  enableCardIcon: true, // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
-  format: "mm/yy" //Format for the element (only applies currently for EXPIRATION_DATE element type)
+    required: false,  // indicates whether the field is marked as required. Defaults to 'false',
+    enableCardIcon: true, // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
+    format: "mm/yy" // Format for the element (only applies currently for EXPIRATION_DATE element type)
 )
- 
+
 let element = container?.create(input: collectElementInput, options: collectElementOptions)
 ```
  
@@ -377,16 +383,16 @@ container?.collect(callback: insertCallback, options: options)
  
 #### Sample Code:
 ```swift
-//Initialize skyflow configuration
+// Initialize skyflow configuration
 let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider)
- 
-//Initialize skyflow client
+
+// Initialize skyflow client
 let skyflowClient = Skyflow.initialize(config)
- 
-//Create a CollectContainer
+
+// Create a CollectContainer
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
- 
-//Create Skyflow.Styles with individual Skyflow.Style variants
+
+// Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
 let completeStyle = Skyflow.Style(borderColor: UIColor.green)
@@ -394,7 +400,7 @@ val focusTextStyle = Skyflow.Style(textColor: UIColor.red)
 let inputStyles = Skyflow.Styles(base: baseStyle, complete: completeStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle, focus: focusTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
- 
+
 // Create a CollectElementInput
 let input = Skyflow.CollectElementInput(
     table: "cards",
@@ -406,58 +412,53 @@ let input = Skyflow.CollectElementInput(
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER
 )
- 
+
 // Create option to make the element required
-let requiredOption = Skyflow.CollectElementOptions(required: true) 
- 
+let requiredOption = Skyflow.CollectElementOptions(required: true)
+
 // Create a Collect Element from the Collect Container
 let skyflowElement = container?.create(input: input, options: requiredOption)
- 
+
 // Can interact with this object as a normal UIView Object and add to View
- 
+
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
- 
+
 // Send the Non-PCI records as additionalFields of CollectOptions (optional)
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords) 
- 
- 
-//Implement a custom Skyflow.Callback to be called on Insertion success/failure
+let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
+
+
+// Implement a custom Skyflow.Callback to be called on Insertion success/failure
 public class InsertCallback: Skyflow.Callback {
-  public func onSuccess(_ responseBody: Any) {
-      print(responseBody)
-  }
-   public func onFailure(_ error: Any) {
-      print(error)
-  }
+    public func onSuccess(_ responseBody: Any) {
+        print(responseBody)
+    }
+    public func onFailure(_ error: Any) {
+        print(error)
+    }
 }
- 
+
 // Initialize custom Skyflow.Callback
 let insertCallback = InsertCallback()
- 
+
 // Call collect method on CollectContainer
 container?.collect(callback: insertCallback, options: collectOptions)
- 
 ```
 #### Sample Response :
 ```
 {
-  "records": [
-    {
-      "table": "cards",
-      "fields": {
-        "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1"
-      }
-    },
-    {
-      "table": "persons",
-      "fields": {
-        "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
-      }
-    }
-  ]
+    "records": [ {
+        "table": "cards",
+        "fields": {
+            "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1"
+        }
+    }, {
+        "table": "persons",
+        "fields": {
+            "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
+        }
+    }]
 }
- 
 ```
  
 ### Validations
@@ -482,33 +483,49 @@ The Sample code below illustrates the usage of custom validations:
  
 ```swift
 /*
-  Reset Password - A simple example that illustrates custom validations.
-  The below code shows two input fields with custom validations, 
-  one to enter a password and the second to confirm the same password.
-*/
- 
+ Reset Password - A simple example that illustrates custom validations.
+ The below code shows two input fields with custom validations,
+ one to enter a password and the second to confirm the same password.
+ */
+
 var myRuleset = ValidationSet()
-let strongPasswordRule = RegexMatchRule(regex: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]*$", error: "At least one letter and one number") // This rule enforces a strong password
-let lengthRule = LengthMatchRule(minLength: 8, maxLength: 16, error: "Must be between 8 and 16 digits") // this rule allows input length between 8 and 16 characters
- 
+let strongPasswordRule = RegexMatchRule(
+    regex: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]*$",
+    error: "At least one letter and one number"
+) // This rule enforces a strong password
+
+let lengthRule = LengthMatchRule(
+    minLength: 8,
+    maxLength: 16,
+    error: "Must be between 8 and 16 digits"
+) // this rule allows input length between 8 and 16 characters
+
 // for the Password element
 myRuleset.add(rule: strongPasswordRule)
 myRuleset.add(rule: lengthRule)
- 
+
 let collectElementOptions = CollectElementOptions(required: true)
- 
-let passwordInput = CollectElementInput(inputStyles: styles, label: "password", placeholder: "********",
-                                        type: .INPUT_FIELD, validations: myRuleset)
+
+let passwordInput = CollectElementInput(
+    inputStyles: styles,
+    label: "password",
+    placeholder: "********",
+    type: .INPUT_FIELD,
+    validations: myRuleset
+)
 let password = container?.create(input: passwordInput, options: collectElementOptions)
- 
- 
+
 // For confirm password element - shows error when the passwords don't match
 let elementValueMatchRule = ElementValueMatchRule(element: password!, error: "passwords don't match")
-let confirmPasswordInput = CollectElementInput(inputStyles: styles,
-                                                label: "Confirm password", placeholder: "********", type: .INPUT_FIELD,
-                                                validations: ValidationSet(rules: [strongPasswordRule, lengthRule, elementValueMatchRule]))
+let confirmPasswordInput = CollectElementInput(
+    inputStyles: styles,
+    label: "Confirm password",
+    placeholder: "********",
+    type: .INPUT_FIELD,
+    validations: ValidationSet(rules: [strongPasswordRule, lengthRule, elementValueMatchRule])
+)
 let confirmPassword = container?.create(input: confirmPasswordInput, options: collectElementOptions)
- 
+
 // mount elements on screen - errors will be shown if any of the validaitons fail
 stackView.addArrangedSubview(password!)
 stackView.addArrangedSubview(confirmPassword!)
@@ -520,8 +537,8 @@ stackView.addArrangedSubview(confirmPassword!)
 Helps to communicate with skyflow elements / iframes by listening to an event
  
 ```swift
-element!.on(eventName: Skyflow.EventName) { state in
-  //handle function
+element!.on(eventName: Skyflow.EventName) { _ in
+    // handle function
 }
 ```
  
@@ -538,11 +555,11 @@ The handler ```(state: [String: Any]) -> Void``` is a callback function you prov
  
 ```swift
 let state = [
-  "elementType": Skyflow.ElementType,
-  "isEmpty": Bool ,
-  "isFocused": Bool,
-  "isValid": Bool,
-  "value": String 
+    "elementType": Skyflow.ElementType,
+    "isEmpty": Bool ,
+    "isFocused": Bool,
+    "isValid": Bool,
+    "value": String
 ]
 ```
 `Note:`
@@ -550,46 +567,51 @@ values of SkyflowElements will be returned in elementstate object only when `env
  
 ##### Sample code snippet for using listeners
 ```swift
-//create skyflow client with loglevel:"DEBUG"
-let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG))
- 
+// create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(
+    vaultID: VAULT_ID,
+    vaultURL: VAULT_URL,
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG)
+)
+
 let skyflowClient = Skyflow.initialize(config)
- 
+
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
- 
+
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
     table: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER,
-)
- 
+    )
+
 let cardNumber = container?.create(input: cardNumberInput)
- 
-//subscribing to CHANGE event, which gets triggered when element changes
+
+// subscribing to CHANGE event, which gets triggered when element changes
 cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
-  // Your implementation when Change event occurs
-  print(state)
+    // Your implementation when Change event occurs
+    print(state)
 }
 ```
 ##### Sample Element state object when `env` is `DEV`
 ```swift
 [
-   "elementType": Skyflow.ElementType.CARD_NUMBER,
-   "isEmpty": false,
-   "isFocused": true,
-   "isValid": false,
-   "value": "411"
+    "elementType": Skyflow.ElementType.CARD_NUMBER,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": false,
+    "value": "411"
 ]
 ```
 ##### Sample Element state object when `env` is `PROD`
 ```swift
 [
-   "elementType": Skyflow.ElementType.CARD_NUMBER,
-   "isEmpty": false,
-   "isFocused": true,
-   "isValid": false,
-   "value": ""
+    "elementType": Skyflow.ElementType.CARD_NUMBER,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": false,
+    "value": ""
 ]
 ```
 ### UI Error for Collect Elements
@@ -603,28 +625,32 @@ Helps to display custom error messages on the Skyflow Elements through the metho
 ##### Sample code snippet for setError and resetError
  
 ```swift
-//create skyflow client with loglevel:"DEBUG"
-let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG))
- 
+// Create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(
+    vaultID: VAULT_ID,
+    vaultURL: VAULT_URL,
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG)
+)
+
 let skyflowClient = Skyflow.initialize(config)
- 
+
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
- 
+
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
     table: "cards",
     column: "cardNumber",
-    type: Skyflow.ElementType.CARD_NUMBER,
+    type: Skyflow.ElementType.CARD_NUMBER
 )
- 
+
 let cardNumber = container.create(input: cardNumberInput)
- 
-//Set custom error
+
+// Set custom error
 cardNumber.setError("custom error")
- 
-//reset custom error
+
+// Reset custom error
 cardNumber.resetError()
-}
 ```
  
 ### Set and Clear value for Collect Elements (DEV ENV ONLY)
@@ -638,28 +664,32 @@ cardNumber.resetError()
 ##### Sample code snippet for setValue and clearValue
  
 ```swift
-//create skyflow client with env DEV 
-let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider, options: Skyflow.Options(env: Skyflow.Env.DEV))
- 
+// Create skyflow client with env DEV
+let config = Skyflow.Configuration(
+    vaultID: VAULT_ID,
+    vaultURL: VAULT_URL,
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(env: Skyflow.Env.DEV)
+)
+
 let skyflowClient = Skyflow.initialize(config)
- 
+
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
- 
+
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
     table: "cards",
     column: "cardNumber",
-    type: Skyflow.ElementType.CARD_NUMBER,
+    type: Skyflow.ElementType.CARD_NUMBER
 )
- 
+
 let cardNumber = container.create(input: cardNumberInput)
- 
-//Set a value programatically
+
+// Set a value programatically
 cardNumber.setValue("4111111111111111")
- 
-//Clear the value
+
+// Clear the value
 cardNumber.clearValue()
-}
 ```
  
 ---
@@ -677,9 +707,9 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     For retrieving using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
     ```swift
     [
-      "records":[
+      "records": [
         [
-          "token": String     // token for the record to be fetched
+          "token": String     
         ]
       ]
     ]
@@ -687,7 +717,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
    
   An example of a detokenize call:
   ```swift
-  let getCallback = GetCallback()   //Custom callback - implementation of Skyflow.Callback
+  let getCallback = GetCallback()   // Custom callback - implementation of Skyflow.Callback
  
   let records = ["records": [["token": "45012507-f72b-4f5c-9bf9-86b133bae719"]]] as [String: Any]
  
@@ -709,7 +739,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
     For retrieving using SkyflowID's, use the `getById(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
     ```swift
     [
-      "records":[
+      "records": [
         [
           "ids": ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
           "table": String,                    // name of table holding the above skyflow_id's
@@ -727,7 +757,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
   
   An example of getById call:
   ```swift
-  let getCallback = GetCallback() //Custom callback - implementation of Skyflow.Callback
+  let getCallback = GetCallback() // Custom callback - implementation of Skyflow.Callback
  
   let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
   let record = ["ids": skyflowIDs, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
@@ -742,39 +772,34 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
  
   The sample response:
   ```json
-  {
-    "records": [
-        {
-            "fields": {
-                "card_number": "4111111111111111",
-                "cvv": "127",
-                "expiry_date": "11/35",
-                "fullname": "myname",
-                "skyflow_id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
-            },
-            "table": "cards"
-        },
-        {
-            "fields": {
-                "card_number": "4111111111111111",
-                "cvv": "317",
-                "expiry_date": "10/23",
-                "fullname": "sam",
-                "skyflow_id": "da26de53-95d5-4bdb-99db-8d8c66a35ff9"
-            },
-            "table": "cards"
-        }
-    ],
-    "errors": [
-        {
-            "error": {
-                "code": "404",
-                "description": "No Records Found"
-            },
-            "skyflow_ids": ["invalid skyflow id"]
-        }
-    ]
-  }
+    {
+      "records": [ {
+          "fields": {
+              "card_number": "4111111111111111",
+              "cvv": "127",
+              "expiry_date": "11/35",
+              "fullname": "myname",
+              "skyflow_id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
+          },
+          "table": "cards"
+      }, {
+          "fields": {
+              "card_number": "4111111111111111",
+              "cvv": "317",
+              "expiry_date": "10/23",
+              "fullname": "sam",
+              "skyflow_id": "da26de53-95d5-4bdb-99db-8d8c66a35ff9"
+          },
+          "table": "cards"
+      }],
+      "errors": [ {
+          "error": {
+              "code": "404",
+              "description": "No Records Found"
+          },
+          "skyflow_ids": ["invalid skyflow id"]
+      }]
+    }
   ```
  
  
@@ -791,12 +816,12 @@ To create a reveal Element, we must first construct a Skyflow.RevealElementInput
  
 ```swift
 let revealElementInput = Skyflow.RevealElementInput(
-    token: String,                     //optional, token of the data being revealed 
-    inputStyles: Skyflow.Styles(),       //optional, styles to be applied to the element
-    labelStyles: Skyflow.Styles(),       //optional, styles to be applied to the label of the reveal element
-    errorTextStyles: Skyflow.Styles(),   //optional styles that will be applied to the errorText of the reveal element
-    label: "cardNumber",                  //optional, label for the element,
-    altText: "XXXX XXXX XXXX XXXX"       //optional, string that is shown before reveal, will show token if altText is not provided
+    token: String,                     // optional, token of the data being revealed
+    inputStyles: Skyflow.Styles(),       // optional, styles to be applied to the element
+    labelStyles: Skyflow.Styles(),       // optional, styles to be applied to the label of the reveal element
+    errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
+    label: "cardNumber",                  // optional, label for the element,
+    altText: "XXXX XXXX XXXX XXXX"       // optional, string that is shown before reveal, will show token if it is not provided
 )
 ```
 `Note`: 
@@ -864,23 +889,23 @@ The `setAltText(value: String)` method can be used to set the altText of the Rev
 ### End to end example of revealing data with Skyflow Elements
 #### Sample Code:
 ```swift
-//Initialize skyflow configuration
+// Initialize skyflow configuration
 let config = Skyflow.Configuration(vaultID: <VAULT_ID>, vaultURL: <VAULT_URL>, tokenProvider: demoTokenProvider)
- 
-//Initialize skyflow client
+
+// Initialize skyflow client
 let skyflowClient = Skyflow.initialize(config)
- 
-//Create a Reveal Container
+
+// Create a Reveal Container
 let container = skyflowClient.container(type: Skyflow.ContainerType.REVEAL)
- 
-//Create Skyflow.Styles with individual Skyflow.Style variants
+
+// Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.BLACK)
 let inputStyles = Skyflow.Styles(base: baseStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
- 
-//Create Reveal Elements
+
+// Create Reveal Elements
 let cardNumberInput = Skyflow.RevealElementInput(
     token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
     inputStyles: inputStyles,
@@ -889,9 +914,9 @@ let cardNumberInput = Skyflow.RevealElementInput(
     label: "cardnumber",
     altText: "XXXX XXXX XXXX XXXX"
 )
- 
+
 let cardNumberElement = container?.create(input: cardNumberInput)
- 
+
 let cvvInput = Skyflow.RevealElementInput(
     token: "89024714-6a26-4256-b9d4-55ad69aa4047",
     inputStyles: inputStyles,
@@ -901,30 +926,30 @@ let cvvInput = Skyflow.RevealElementInput(
     altText: "XXX"
 )
 let cvvElement = container?.create(input: cvvInput)
- 
-//Can interact with these objects as a normal UIView Object and add to View
- 
-//set error to the element
+
+// Can interact with these objects as a normal UIView Object and add to View
+
+// set error to the element
 cvvElement!.setError("custom error")
-//reset error to the element
+// reset error to the element
 cvvElement!.resetError()
- 
-//Implement a custom Skyflow.Callback to be called on Reveal success/failure
+
+// Implement a custom Skyflow.Callback to be called on Reveal success/failure
 public class RevealCallback: Skyflow.Callback {
-  public func onSuccess(_ responseBody: Any) {
-      print(responseBody)
-  }
-   public func onFailure(_ error: Any) {
-      print(error)
-  }
+    public func onSuccess(_ responseBody: Any) {
+        print(responseBody)
+    }
+    public func onFailure(_ error: Any) {
+        print(error)
+    }
 }
- 
-//Initialize custom Skyflow.Callback
+
+// Initialize custom Skyflow.Callback
 let revealCallback = RevealCallback()
- 
-//Call reveal method on RevealContainer
+
+// Call reveal method on RevealContainer
 container?.reveal(callback: revealCallback)
- 
+
 ```
  
 The response below shows that some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed.
@@ -932,20 +957,16 @@ The response below shows that some tokens assigned to the reveal elements get re
 #### Sample Response:
 ```json
 {
-  "success": [
-    {
-      "id": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75"
-    }
-  ],
- "errors": [
-    {
-       "id": "89024714-6a26-4256-b9d4-55ad69aa4047",
-       "error": {
-         "code": 404,
-         "description": "Tokens not found for 89024714-6a26-4256-b9d4-55ad69aa4047"
-       }
-   }
-  ]
+    "success": [ {
+        "id": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75"
+    }],
+    "errors": [ {
+        "id": "89024714-6a26-4256-b9d4-55ad69aa4047",
+        "error": {
+            "code": 404,
+            "description": "Tokens not found for 89024714-6a26-4256-b9d4-55ad69aa4047"
+        }
+    }]
 }
 ```
  
