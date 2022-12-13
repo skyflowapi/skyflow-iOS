@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// An Object that describes states of SkyflowTextField for Style
+
 import Foundation
 
 public struct Styles {

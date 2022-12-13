@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Santhosh Kamal Murthy Yennam on 13/08/21.
-//
+// Object that signifies error for reveal element
 
 import Foundation
 

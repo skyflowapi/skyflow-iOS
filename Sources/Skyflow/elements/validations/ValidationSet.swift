@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// Implementation of validation class
+
 import Foundation
 
 

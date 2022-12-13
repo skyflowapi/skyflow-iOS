@@ -2,6 +2,10 @@
  * Copyright (c) 2022 Skyflow
 */
 
+/**
+ Validate input in scope of Card Expiration Year, e.x.: [2018, 2029].
+ */
+
 import Foundation
 
 internal struct SkyflowValidateExpirationYear: ValidationRule {

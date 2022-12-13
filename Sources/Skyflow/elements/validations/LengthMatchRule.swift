@@ -4,9 +4,8 @@
 
 import Foundation
 
-/**
-Validate input in scope of length.
-*/
+// Validate input in scope of length.
+
 public struct LengthMatchRule: ValidationRule {
     /// input string minimum length
     public let minLength: Int

@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 21/09/21.
-//
+// Implementation of Callback used in API for revealing redacted data using id
 
 import Foundation
 

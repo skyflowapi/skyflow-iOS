@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Santhosh Kamal Murthy Yennam on 10/08/21.
-//
+// Implementation of callback for Reveal api
 
 import Foundation
 

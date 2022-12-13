@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 23/07/21.
-//
+// Callback used while API callback for Collect the elements
 
 import Foundation
 

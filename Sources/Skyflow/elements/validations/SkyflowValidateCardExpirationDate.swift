@@ -4,6 +4,9 @@
 
 import Foundation
 
+/**
+ Validate input in scope of Card Expiration Month/Year, e.x.: [01/22, 12/29].
+ */
 
 internal enum SkyflowCardExpirationDateFormat {
     /// Exp.Date in format mm/yy: 01/22

@@ -1,3 +1,6 @@
+
+// Class for adding feature of copy textfield of UILabel on longpressgesture for reveal element
+
 import UIKit
  
 public extension UILabel {

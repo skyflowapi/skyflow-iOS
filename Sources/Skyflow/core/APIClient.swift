@@ -2,12 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 20/07/21.
-//
+
+// Class used for generating different type of requests, req body etc for API making an API call
 
 import Foundation
 

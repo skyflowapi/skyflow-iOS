@@ -2,12 +2,6 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  ElementValueMatchRule.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 22/11/21.
-//
 
 import Foundation
 

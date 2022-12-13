@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Santhosh Kamal Murthy Yennam on 12/08/21.
-//
+// Object that describes the response of reveal record
 
 import Foundation
 

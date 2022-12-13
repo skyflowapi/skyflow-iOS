@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 07/10/21.
-//
+// Object that describes the the different states of LOG
 
 import Foundation
 

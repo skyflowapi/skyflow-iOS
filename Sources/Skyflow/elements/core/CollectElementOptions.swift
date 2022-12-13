@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// An Object that describes Options parameter for SkyflowInputField
+
 import Foundation
 #if os(iOS)
 import UIKit

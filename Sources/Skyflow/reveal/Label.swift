@@ -2,12 +2,10 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 12/08/21.
-//
+/*
+ * Implementation of complete Skyflow reveal element,
+ * which consists of three units [heading or label, validation error message, actual text field]
+ */
 
 import Foundation
 import UIKit

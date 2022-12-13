@@ -2,6 +2,10 @@
  * Copyright (c) 2022 Skyflow
 */
 
+/**
+ Validate input in scope of Card Expiration Month, e.x.: [01, 12].
+ */
+
 import Foundation
 
 internal struct SkyflowValidateExpirationMonth: ValidationRule {

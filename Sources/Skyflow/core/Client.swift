@@ -2,12 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 19/07/21.
-//
+// Implementation of Skyflow Client class
+
 import Foundation
 import AEXML
 

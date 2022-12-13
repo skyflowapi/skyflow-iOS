@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 13/08/21.
-//
+// Used for generating request body for reveal api call
 
 import Foundation
 
