@@ -2,6 +2,10 @@
  * Copyright (c) 2022 Skyflow
 */
 
+/**
+ Validate input in scope of Card Number, e.x.: [4111111111111111].
+ */
+
 import Foundation
 
 internal struct SkyflowValidateCardNumber: ValidationRule {

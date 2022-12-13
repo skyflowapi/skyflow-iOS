@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 26/07/21.
-//
+// Implementation of Container Interface for Collect the records
 
 import Foundation
 import UIKit

@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 08/09/21.
-//
+// Object that describes the option of Collect
 
 import Foundation
 

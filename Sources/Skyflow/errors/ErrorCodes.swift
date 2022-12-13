@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// List of all error code
+
 import Foundation
 
 

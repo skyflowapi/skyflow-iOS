@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Tejesh Reddy Allampati on 25/08/21.
-//
+// Implementation of sub part of `SkyflowRevealElement` which contains secure Text
 
 import Foundation
 import UIKit

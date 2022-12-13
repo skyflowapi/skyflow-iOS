@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// Object that describes the options parameter
+
 public struct Options {
     var logLevel: LogLevel
     var env: Env

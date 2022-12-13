@@ -5,8 +5,9 @@
 import Foundation
 
 /**
-Validate input in scope of multiple lengths, e.x.: [10, 15].
-*/
+ Validate input in scope of multiple lengths, e.x.: [10, 15].
+ */
+
 internal struct SkyflowValidateLengthMatch: ValidationRule {
     /// Array of valid length ranges
     public let lengths: [Int]

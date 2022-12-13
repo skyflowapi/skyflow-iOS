@@ -2,12 +2,10 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 05/08/21.
-//
+/*
+ * Implementation of Reveal container which helps in creating
+ * the reveal element, revealing the tokenized or redacted text
+ */
 
 import Foundation
 

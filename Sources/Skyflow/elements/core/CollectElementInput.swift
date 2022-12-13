@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// An Object that describes SkyflowInputField
+
 import Foundation
 
 public struct CollectElementInput {

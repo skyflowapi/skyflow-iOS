@@ -2,6 +2,8 @@
  * Copyright (c) 2022 Skyflow
 */
 
+// An Object that describes Style of SkyflowTextField
+
 import Foundation
 #if os(iOS)
 import UIKit
