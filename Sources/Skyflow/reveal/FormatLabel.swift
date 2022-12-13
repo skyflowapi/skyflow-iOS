@@ -1,13 +1,8 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 12/08/21.
-//
+// class for RevealElement TextField
 
 import Foundation
 import UIKit

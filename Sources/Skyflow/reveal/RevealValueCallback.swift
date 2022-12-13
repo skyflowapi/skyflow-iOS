@@ -1,13 +1,7 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 13/08/21.
-//
 
 import Foundation
 
@@ -36,13 +30,13 @@ internal class RevealValueCallback: Callback {
                 let token = dict["token"] as! String
                 let value = dict["value"] as? String
                 tokens[token] = value ?? token
-                
+
                 var successEntry: [String: String] = [:]
                 successEntry["token"] = token
                 tempSuccessResponses.append(successEntry)
             }
         }
-        
+
         var successResponses: [[String: String]] = []
         for entry in tempSuccessResponses {
             if let token = entry["token"] {
@@ -53,7 +47,7 @@ internal class RevealValueCallback: Callback {
         if successResponses.count != 0 {
             response["success"] = successResponses
         }
-        var errors =  [] as [[String: Any]]
+        var errors = [] as [[String: Any]]
         if let responseErrors = responseJson["errors"] as? [[String: Any]] {
             errors = responseErrors
         }
@@ -64,13 +58,13 @@ internal class RevealValueCallback: Callback {
 
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
-                if let v = tokens[revealElement.revealInput.token]{
+                if let v = tokens[revealElement.revealInput.token] {
                     revealElement.updateVal(value: v)
                 }
-            
+
                 let inputToken = revealElement.revealInput.token
                 revealElement.hideError()
-                
+
                 if let errorMessage = tokensToErrors[inputToken] {
                     revealElement.showError(message: errorMessage)
                 } else {
@@ -96,13 +90,13 @@ internal class RevealValueCallback: Callback {
                     let token = dict["token"] as! String
                     let value = dict["value"] as? String
                     tokens[token] = value ?? token
-                    
+
                     var successEntry: [String: String] = [:]
                     successEntry["token"] = token
                     tempSuccessResponses.append(successEntry)
                 }
             }
-            
+
             var successResponses: [[String: String]] = []
             for entry in tempSuccessResponses {
                 if let token = entry["token"] {
@@ -113,22 +107,22 @@ internal class RevealValueCallback: Callback {
             if successResponses.count != 0 {
                 response["success"] = successResponses
             }
-            var errors =  [[:]] as [[String: Any]]
+            var errors = [[:]] as [[String: Any]]
             if let responseErrors = responseJson["errors"] as? [[String: Any]] {
                 errors = responseErrors
             }
-            
+
             let tokensToErrors = getTokensToErrors(errors)
             if errors.count != 0 {
                 response["errors"] = errors
             }
-            
+
             DispatchQueue.main.async {
                 for revealElement in self.revealElements {
-                    if let v = tokens[revealElement.revealInput.token]{
+                    if let v = tokens[revealElement.revealInput.token] {
                         revealElement.updateVal(value: v)
                     }
-                    
+
                     let inputToken = revealElement.revealInput.token
                     revealElement.hideError()
                     if let errorMessage = tokensToErrors[inputToken] {

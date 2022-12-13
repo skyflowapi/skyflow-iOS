@@ -1,13 +1,7 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 23/07/21.
-//
 
 import Foundation
 
@@ -27,7 +21,7 @@ internal class TokenAPICallback: Callback {
             Log.info(message: .BEARER_TOKEN_RECEIVED, contextOptions: self.contextOptions)
             let previousToken = self.apiClient.token
             self.apiClient.token = responseBody as! String
-            
+
             if !self.apiClient.isTokenValid() {
                 self.apiClient.token = previousToken
                 callback.onFailure(ErrorCodes.INVALID_BEARER_TOKEN_FORMAT().getErrorObject(contextOptions: contextOptions))

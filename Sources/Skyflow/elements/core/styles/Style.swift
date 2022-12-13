@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
+
+// An Object that describes Style of SkyflowTextField
 
 import Foundation
 #if os(iOS)
@@ -16,13 +18,15 @@ public struct Style {
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
 
-    public init(borderColor: UIColor? = nil,
-                cornerRadius: CGFloat? = nil,
-                padding: UIEdgeInsets? = nil,
-                borderWidth: CGFloat? = nil,
-                font: UIFont? = nil,
-                textAlignment: NSTextAlignment? = nil,
-                textColor: UIColor? = nil) {
+    public init(
+        borderColor: UIColor? = nil,
+        cornerRadius: CGFloat? = nil,
+        padding: UIEdgeInsets? = nil,
+        borderWidth: CGFloat? = nil,
+        font: UIFont? = nil,
+        textAlignment: NSTextAlignment? = nil,
+        textColor: UIColor? = nil
+    ) {
         // Assign parametric values to struct members
         self.borderColor = borderColor
         self.cornerRadius = cornerRadius

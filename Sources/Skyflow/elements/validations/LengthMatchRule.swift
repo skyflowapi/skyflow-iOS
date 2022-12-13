@@ -1,12 +1,11 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
-/**
-Validate input in scope of length.
-*/
+// Validate input in scope of length.
+
 public struct LengthMatchRule: ValidationRule {
     /// input string minimum length
     public let minLength: Int
@@ -31,7 +30,6 @@ public struct LengthMatchRule: ValidationRule {
 extension LengthMatchRule: SkyflowInternalValidationProtocol {
     /// validate length of text
     public func validate(_ text: String?) -> Bool {
-        
         guard text != nil else {
             return false
         }

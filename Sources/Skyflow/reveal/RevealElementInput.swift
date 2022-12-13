@@ -1,15 +1,10 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 11/08/21.
-//
+ */
 
 import Foundation
+
+// Object for reveal element
 
 public struct RevealElementInput {
     internal var token: String

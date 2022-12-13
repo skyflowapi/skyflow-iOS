@@ -1,13 +1,8 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 25/10/21.
-//
+// An Object that describes SkyflowInputField of CARD Type
 
 import Foundation
 
@@ -68,7 +63,7 @@ public enum  CardType: CaseIterable {
 
         case .DINERS_CLUB: return Card(
             defaultName: "Diners Club", regex: "^(36|38|30[0-5])\\d*",
-            cardLengths: [14,15,16, 17, 18, 19],
+            cardLengths: [14, 15, 16, 17, 18, 19],
             formatPattern: "#### ###### #########", securityCodeLength: 3,
             securityCodeName: SecurityCode.cvv.rawValue, imageName: "Diners-Card")
 
@@ -103,24 +98,24 @@ public enum  CardType: CaseIterable {
             securityCodeLength: 3, securityCodeName: SecurityCode.cvv.rawValue, imageName: "Unknown-Card")
         }
     }
-        static func forCardNumber(cardNumber: String) -> CardType {
+    static func forCardNumber(cardNumber: String) -> CardType {
         let patternMatch = forCardPattern(cardNumber: cardNumber)
-            if patternMatch.instance.defaultName != "Empty" {
-                return patternMatch
-            } else {
-                return CardType.EMPTY
-            }
-        }
-
-
-        private static func forCardPattern(cardNumber: String) -> CardType {
-            for card in CardType.allCases {
-                if NSPredicate(format: "SELF MATCHES %@", card.instance.regex).evaluate(with: cardNumber){
-                    return card
-                }
-            }
+        if patternMatch.instance.defaultName != "Empty" {
+            return patternMatch
+        } else {
             return CardType.EMPTY
         }
+    }
+
+
+    private static func forCardPattern(cardNumber: String) -> CardType {
+        for card in CardType.allCases {
+            if NSPredicate(format: "SELF MATCHES %@", card.instance.regex).evaluate(with: cardNumber) {
+                return card
+            }
+        }
+        return CardType.EMPTY
+    }
 }
 
 

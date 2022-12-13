@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 #if os(iOS)
@@ -10,6 +10,7 @@ import UIKit
 
 /// An object that describes `SkyflowTextField` state.
 /// State attributes are read-only.
+
 internal class State {
     /// `CollectElementOptions.columnName` associated  with `SkyflowTextField`
     internal(set) open var columnName: String!
@@ -40,8 +41,8 @@ internal class State {
 
     public func getState() -> [String: Any] {
         var result = [String: Any]()
-            result["isRequired"] = isRequired
-            result["columnName"] = columnName
+        result["isRequired"] = isRequired
+        result["columnName"] = columnName
 
         return result
     }

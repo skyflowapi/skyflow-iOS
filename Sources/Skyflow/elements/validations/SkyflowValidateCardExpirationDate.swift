@@ -1,9 +1,12 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
+/**
+ Validate input in scope of Card Expiration Month/Year, e.x.: [01/22, 12/29].
+ */
 
 internal enum SkyflowCardExpirationDateFormat {
     /// Exp.Date in format mm/yy: 01/22
@@ -50,15 +53,14 @@ internal struct SkyflowValidateCardExpirationDate: ValidationRule {
 extension SkyflowValidateCardExpirationDate: SkyflowInternalValidationProtocol {
     /// Validation function for expire date.
     public func validate(_ text: String?) -> Bool {
-        
         guard let text = text else {
             return false
         }
-        
+
         if text.isEmpty {
             return true
         }
-        
+
         if text.count != format.count {
             return false
         }

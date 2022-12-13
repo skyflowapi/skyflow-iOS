@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
+
+// An Object that describes SkyflowInputField
 
 import Foundation
 
@@ -15,9 +17,19 @@ public struct CollectElementInput {
     var placeholder: String
     var type: ElementType
     var validations: ValidationSet
-    public init(table: String = "", column: String = "",
-                inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
-                placeholder: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {
+
+    public init(
+        table: String = "",
+        column: String = "",
+        inputStyles: Styles? = Styles(),
+        labelStyles: Styles? = Styles(),
+        errorTextStyles: Styles? = Styles(),
+        iconStyles: Styles? = Styles(),
+        label: String? = "",
+        placeholder: String? = "",
+        type: ElementType,
+        validations: ValidationSet = ValidationSet()
+    ) {
         self.table = table
         self.column = column
         self.inputStyles = inputStyles!
@@ -31,9 +43,19 @@ public struct CollectElementInput {
     }
 
     @available(*, deprecated, message: "altText param is deprecated")
-    public init(table: String = "", column: String = "",
-            inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
-            placeholder: String? = "", altText: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {
+    public init(
+        table: String = "",
+        column: String = "",
+        inputStyles: Styles? = Styles(),
+        labelStyles: Styles? = Styles(),
+        errorTextStyles: Styles? = Styles(),
+        iconStyles: Styles? = Styles(),
+        label: String? = "",
+        placeholder: String? = "",
+        altText: String? = "",
+        type: ElementType,
+        validations: ValidationSet = ValidationSet()
+    ) {
         self.table = table
         self.column = column
         self.inputStyles = inputStyles!

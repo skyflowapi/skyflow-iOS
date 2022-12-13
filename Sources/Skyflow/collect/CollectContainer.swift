@@ -1,13 +1,8 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 26/07/21.
-//
+// Implementation of Container Interface for Collect the records
 
 import Foundation
 import UIKit
@@ -15,7 +10,7 @@ import UIKit
 public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
-     func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
+    func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
         let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions)
@@ -34,7 +29,7 @@ public extension Container {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.skyflow.vaultURL == "/v1/vaults/"  {
+        if self.skyflow.vaultURL == "/v1/vaults/" {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
@@ -93,16 +88,16 @@ public extension Container {
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
         if options?.upsert != nil {
             if icOptions.validateUpsert() {
-                return;
+                return
             }
         }
         if records != nil {
             let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
-                onSuccessHandler: {
-                    Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
-                },
-                onFailureHandler: {
-                }
+                                          onSuccessHandler: {
+                                            Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
+                                          },
+                                          onFailureHandler: {
+                                          }
             )
             self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
@@ -129,7 +124,7 @@ public extension Container {
         if !(record["table"] is String) {
             return .INVALID_TABLE_NAME_TYPE()
         }
-        if (record["table"] as? String == "") {
+        if record["table"] as? String == "" {
             return .EMPTY_TABLE_NAME()
         }
         if record["fields"] == nil {
@@ -139,7 +134,7 @@ public extension Container {
             return .INVALID_FIELDS_TYPE()
         }
         let fields = record["fields"] as! [String: Any]
-        if (fields.isEmpty){
+        if fields.isEmpty {
             return .EMPTY_FIELDS_KEY()
         }
 

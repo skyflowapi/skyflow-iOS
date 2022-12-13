@@ -1,15 +1,10 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Santhosh Kamal Murthy Yennam on 12/08/21.
-//
+ */
 
 import Foundation
+
+// Object that describes the reveal record in request body
 
 struct RevealRequestRecord {
     var token: String

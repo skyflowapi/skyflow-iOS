@@ -1,15 +1,10 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 20/07/21.
-//
+ */
 
 import Foundation
+
+// Class used for generating different type of requests, req body etc for API making an API call
 
 internal class APIClient {
     var vaultID: String
@@ -29,19 +24,21 @@ internal class APIClient {
         }
 
         let components = token.components(separatedBy: ".")
-        
+
         if components.count < 2 {
             return false
         }
-        
+
         var payload64 = components[1]
 
         while payload64.count % 4 != 0 {
             payload64 += "="
         }
 
-        let payloadData = Data(base64Encoded: payload64,
-                               options: .ignoreUnknownCharacters)!
+        let payloadData = Data(
+            base64Encoded: payload64,
+            options: .ignoreUnknownCharacters
+        )!
 
         do {
             let json = try JSONSerialization.jsonObject(with: payloadData, options: []) as! [String: Any]
@@ -64,7 +61,13 @@ internal class APIClient {
     }
 
     internal func post(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
-        let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
+        let collectApiCallback = CollectAPICallback(
+            callback: callback,
+            apiClient: self,
+            records: records,
+            options: options,
+            contextOptions: contextOptions
+        )
         self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
     }
 
@@ -77,7 +80,7 @@ internal class APIClient {
             temp["tableName"] = record["table"]
             temp["method"] = "POST"
             temp["quorum"] = true
-            
+
             if options.tokens {
                 var temp2: [String: Any] = [:]
                 temp2["method"] = "GET"
@@ -87,9 +90,9 @@ internal class APIClient {
                 insertTokenPayload.append(temp2)
             }
             if options.upsert != nil {
-                let columnName = getUniqueColumn(tableName : temp["tableName"] as! String, upsert: options.upsert!);
+                let columnName = getUniqueColumn(tableName: temp["tableName"] as! String, upsert: options.upsert!)
                 if columnName != "" {
-                    temp["upsert"] = columnName;
+                    temp["upsert"] = columnName
                 }
             }
             postPayload.append(temp)
@@ -97,23 +100,35 @@ internal class APIClient {
         return ["records": postPayload + insertTokenPayload]
     }
 
-    internal func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String{
-        var uniqueColumn = "";
-        for currUpsertOption in upsert{
-            if(currUpsertOption["table"] as! String == tableName){
-                uniqueColumn = currUpsertOption["column"] as! String;
+    internal func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String {
+        var uniqueColumn = ""
+        for currUpsertOption in upsert {
+            if currUpsertOption["table"] as! String == tableName {
+                uniqueColumn = currUpsertOption["column"] as! String
             }
         }
-        return uniqueColumn;
+        return uniqueColumn
     }
-    
+
     internal func get(records: [RevealRequestRecord], callback: Callback, contextOptions: ContextOptions) {
-        let revealApiCallback = RevealAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
+        let revealApiCallback = RevealAPICallback(
+            callback: callback,
+            apiClient: self,
+            connectionUrl: (vaultURL + vaultID),
+            records: records,
+            contextOptions: contextOptions
+        )
         self.getAccessToken(callback: revealApiCallback, contextOptions: contextOptions)
     }
 
     internal func getById(records: [GetByIdRecord], callback: Callback, contextOptions: ContextOptions) {
-        let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
+        let revealByIdApiCallback = RevealByIDAPICallback(
+            callback: callback,
+            apiClient: self,
+            connectionUrl: (vaultURL + vaultID),
+            records: records,
+            contextOptions: contextOptions
+        )
         self.getAccessToken(callback: revealByIdApiCallback, contextOptions: contextOptions)
     }
 }

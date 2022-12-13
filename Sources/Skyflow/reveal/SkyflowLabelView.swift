@@ -1,16 +1,12 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
-//
-//  File.swift
-//  
-//
-//  Created by Tejesh Reddy Allampati on 25/08/21.
-//
 
 import Foundation
 import UIKit
+
+// Implementation of sub part of `SkyflowRevealElement` which contains secure Text
 
 public class SkyflowLabelView: UIView {
     internal var label = FormatLabel(frame: .zero)
@@ -153,5 +149,4 @@ public class SkyflowLabelView: UIView {
     internal func getValue() -> String {
         return self.revealInput.token
     }
-    
 }

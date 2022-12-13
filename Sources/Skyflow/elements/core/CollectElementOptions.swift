@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
+
+// An Object that describes Options parameter for SkyflowInputField
 
 import Foundation
 #if os(iOS)
@@ -11,13 +13,11 @@ public struct CollectElementOptions {
     var required: Bool
     var enableCardIcon: Bool
     var format: String
-    
-    
+
     public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy") {
         self.required = required!
         self.enableCardIcon = enableCardIcon
-        
+
         self.format = format.lowercased()
     }
 }
-

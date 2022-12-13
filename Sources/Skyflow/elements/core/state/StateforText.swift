@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 #if os(iOS)
@@ -21,7 +21,7 @@ internal class StateforText: State
     /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
 
-//    internal(set) open var isComplete = false
+    //    internal(set) open var isComplete = false
 
     internal(set) open var isFocused = false
 
@@ -30,7 +30,7 @@ internal class StateforText: State
     internal(set) open var value: String?
     /// Array of `SkyflowValidationError`. Should be empty when textfield input is valid.
     internal(set) open var validationError = SkyflowValidationError()
-    
+
     internal(set) open var isCustomRuleFailed = false
     internal(set) open var isDefaultRuleFailed = false
 
@@ -59,7 +59,7 @@ internal class StateforText: State
                 }
             }
         }
-        
+
         if validationError.count == 0 {
             validationError = customError
         }

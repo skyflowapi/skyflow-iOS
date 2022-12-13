@@ -1,9 +1,10 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
+// List of all error code
 
 internal enum ErrorCodes: CustomStringConvertible {
     // No message values
@@ -84,7 +85,7 @@ internal enum ErrorCodes: CustomStringConvertible {
         switch self {
         // No Formatting required
         // swiftlint:disable:next line_length
-        case .EMPTY_TABLE_NAME(let code, _), .EMPTY_VAULT_ID(let code, _),  .EMPTY_VAULT_URL(let code, _), .EMPTY_CONNECTION_URL(let code, _), .EMPTY_REQUEST_XML(let code, _), .EMPTY_IDS(let code, _), .EMPTY_ID_VALUE(let code, _), .RECORDS_KEY_ERROR( let code, _), .TABLE_KEY_ERROR(let code, _), .FIELDS_KEY_ERROR(let code, _), .EMPTY_FIELDS_KEY(let code, _),.EMPTY_TOKEN_ID(let code, _), .ID_KEY_ERROR(let code, _), .REDACTION_KEY_ERROR(let code, _), .MISSING_KEY_IDS(let code, _), .INVALID_TABLE_NAME_TYPE(let code, _), .INVALID_FIELDS_TYPE(let code, _), .INVALID_RECORDS_TYPE(let code, _), .EMPTY_COLUMN_NAME(let code, _), .INVALID_BEARER_TOKEN_FORMAT(let code, _), .MISSING_RECORDS_ARRAY(let code, _), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS(let code, _), .EMPTY_RECORDS_OBJECT(let code, _), .MISSING_RECORDS_IN_GETBYID(let code, _), .INVALID_TOKEN_TYPE(let code, _), .INVALID_URL(let code, _), .VALIDATIONS_FAILED(let code, _), .INVALID_PATH_PARAMS(let code, _), .INVALID_QUERY_PARAMS(let code, _), .INVALID_REQUEST_BODY(let code, _), .INVALID_RESPONSE_BODY(let code, _), .INVALID_IDS_TYPE(let code, _), .EMPTY_ELEMENT_ID_REQUEST_XML(let code, _), .AMBIGUOUS_ELEMENT_FOUND_IN_RESPONSE_XML(let code, _), .DUPLICATE_ELEMENT_FOUND_IN_RESPONSE_XML(let code, _), .MISSING_TABLE_NAME_IN_USERT_OPTION(let code, _),.MISSING_COLUMN_NAME_IN_USERT_OPTION(let code, _), .UPSERT_OPTION_CANNOT_BE_EMPTY(let code, _), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code,  _), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _), .APIError(let code, _):
+        case .EMPTY_TABLE_NAME(let code, _), .EMPTY_VAULT_ID(let code, _), .EMPTY_VAULT_URL(let code, _), .EMPTY_CONNECTION_URL(let code, _), .EMPTY_REQUEST_XML(let code, _), .EMPTY_IDS(let code, _), .EMPTY_ID_VALUE(let code, _), .RECORDS_KEY_ERROR( let code, _), .TABLE_KEY_ERROR(let code, _), .FIELDS_KEY_ERROR(let code, _), .EMPTY_FIELDS_KEY(let code, _), .EMPTY_TOKEN_ID(let code, _), .ID_KEY_ERROR(let code, _), .REDACTION_KEY_ERROR(let code, _), .MISSING_KEY_IDS(let code, _), .INVALID_TABLE_NAME_TYPE(let code, _), .INVALID_FIELDS_TYPE(let code, _), .INVALID_RECORDS_TYPE(let code, _), .EMPTY_COLUMN_NAME(let code, _), .INVALID_BEARER_TOKEN_FORMAT(let code, _), .MISSING_RECORDS_ARRAY(let code, _), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS(let code, _), .EMPTY_RECORDS_OBJECT(let code, _), .MISSING_RECORDS_IN_GETBYID(let code, _), .INVALID_TOKEN_TYPE(let code, _), .INVALID_URL(let code, _), .VALIDATIONS_FAILED(let code, _), .INVALID_PATH_PARAMS(let code, _), .INVALID_QUERY_PARAMS(let code, _), .INVALID_REQUEST_BODY(let code, _), .INVALID_RESPONSE_BODY(let code, _), .INVALID_IDS_TYPE(let code, _), .EMPTY_ELEMENT_ID_REQUEST_XML(let code, _), .AMBIGUOUS_ELEMENT_FOUND_IN_RESPONSE_XML(let code, _), .DUPLICATE_ELEMENT_FOUND_IN_RESPONSE_XML(let code, _), .MISSING_TABLE_NAME_IN_USERT_OPTION(let code, _), .MISSING_COLUMN_NAME_IN_USERT_OPTION(let code, _), .UPSERT_OPTION_CANNOT_BE_EMPTY(let code, _), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _), .APIError(let code, _):
             return code
         // Single value formatting
         // swiftlint:disable:next line_length
@@ -100,7 +101,7 @@ internal enum ErrorCodes: CustomStringConvertible {
         switch self {
         // No Formatting required
         // swiftlint:disable:next line_length
-        case .EMPTY_TABLE_NAME( _, let message), .EMPTY_VAULT_ID( _, let message), .EMPTY_VAULT_URL( _, let message), .EMPTY_CONNECTION_URL( _, let message), .EMPTY_REQUEST_XML( _, let message), .EMPTY_IDS( _, let message), .EMPTY_ID_VALUE( _, let message), .RECORDS_KEY_ERROR( _, let message), .TABLE_KEY_ERROR(_, let message), .FIELDS_KEY_ERROR(_, let message), .EMPTY_FIELDS_KEY(_, let message),.EMPTY_TOKEN_ID( _, let message), .ID_KEY_ERROR( _, let message), .REDACTION_KEY_ERROR( _, let message), .MISSING_KEY_IDS(_, let message), .INVALID_TABLE_NAME_TYPE( _, let message), .INVALID_FIELDS_TYPE( _, let message), .INVALID_RECORDS_TYPE( _, let message), .EMPTY_COLUMN_NAME( _, let message), .INVALID_BEARER_TOKEN_FORMAT( _, let message), .MISSING_RECORDS_ARRAY( _, let message), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS( _, let message), .EMPTY_RECORDS_OBJECT( _, let message), .MISSING_RECORDS_IN_GETBYID( _, let message), .INVALID_TOKEN_TYPE( _, let message), .INVALID_URL( _, let message), .VALIDATIONS_FAILED( _, let message), .INVALID_PATH_PARAMS( _, let message), .INVALID_QUERY_PARAMS( _, let message), .INVALID_REQUEST_BODY( _, let message), .INVALID_RESPONSE_BODY( _, let message), .INVALID_IDS_TYPE( _, let message), .EMPTY_ELEMENT_ID_REQUEST_XML( _, let message), .AMBIGUOUS_ELEMENT_FOUND_IN_RESPONSE_XML( _, let message), .DUPLICATE_ELEMENT_FOUND_IN_RESPONSE_XML( _, let message), .MISSING_TABLE_NAME_IN_USERT_OPTION( _, let message), .MISSING_COLUMN_NAME_IN_USERT_OPTION( _, let message), .UPSERT_OPTION_CANNOT_BE_EMPTY( _, let message), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_,  let message), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_, let message), .APIError( _, let message):
+        case .EMPTY_TABLE_NAME( _, let message), .EMPTY_VAULT_ID( _, let message), .EMPTY_VAULT_URL( _, let message), .EMPTY_CONNECTION_URL( _, let message), .EMPTY_REQUEST_XML( _, let message), .EMPTY_IDS( _, let message), .EMPTY_ID_VALUE( _, let message), .RECORDS_KEY_ERROR( _, let message), .TABLE_KEY_ERROR(_, let message), .FIELDS_KEY_ERROR(_, let message), .EMPTY_FIELDS_KEY(_, let message), .EMPTY_TOKEN_ID( _, let message), .ID_KEY_ERROR( _, let message), .REDACTION_KEY_ERROR( _, let message), .MISSING_KEY_IDS(_, let message), .INVALID_TABLE_NAME_TYPE( _, let message), .INVALID_FIELDS_TYPE( _, let message), .INVALID_RECORDS_TYPE( _, let message), .EMPTY_COLUMN_NAME( _, let message), .INVALID_BEARER_TOKEN_FORMAT( _, let message), .MISSING_RECORDS_ARRAY( _, let message), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS( _, let message), .EMPTY_RECORDS_OBJECT( _, let message), .MISSING_RECORDS_IN_GETBYID( _, let message), .INVALID_TOKEN_TYPE( _, let message), .INVALID_URL( _, let message), .VALIDATIONS_FAILED( _, let message), .INVALID_PATH_PARAMS( _, let message), .INVALID_QUERY_PARAMS( _, let message), .INVALID_REQUEST_BODY( _, let message), .INVALID_RESPONSE_BODY( _, let message), .INVALID_IDS_TYPE( _, let message), .EMPTY_ELEMENT_ID_REQUEST_XML( _, let message), .AMBIGUOUS_ELEMENT_FOUND_IN_RESPONSE_XML( _, let message), .DUPLICATE_ELEMENT_FOUND_IN_RESPONSE_XML( _, let message), .MISSING_TABLE_NAME_IN_USERT_OPTION( _, let message), .MISSING_COLUMN_NAME_IN_USERT_OPTION( _, let message), .UPSERT_OPTION_CANNOT_BE_EMPTY( _, let message), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_, let message), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_, let message), .APIError( _, let message):
             return message
         // Single value formatting
         // swiftlint:disable:next line_length
@@ -140,11 +141,11 @@ internal enum ErrorCodes: CustomStringConvertible {
 
 public class SkyflowError: NSError {
     var xml: String = ""
-    
+
     func setXML(xml: String) {
         self.xml = xml
     }
-    
+
     public func getXML() -> String {
         return self.xml
     }

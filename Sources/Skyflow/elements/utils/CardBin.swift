@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
+ */
 
 import Foundation
 
@@ -10,7 +10,7 @@ extension Card {
     internal class func getBIN(_ cardNumber: String, _ binCount: Int = 8) -> String {
         var result = ""
         var numbers = 0
-    
+
         for char in cardNumber {
             if numbers >= binCount, char.isNumber {
                 result += "X"
@@ -21,7 +21,7 @@ extension Card {
                 result += String(char)
             }
         }
-    
+
         return result
     }
 }

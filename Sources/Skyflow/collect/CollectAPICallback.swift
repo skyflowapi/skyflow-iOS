@@ -1,15 +1,10 @@
 /*
  * Copyright (c) 2022 Skyflow
-*/
-
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 23/07/21.
-//
+ */
 
 import Foundation
+
+// Callback used while API callback for Collect the elements
 
 internal class CollectAPICallback: Callback {
     var apiClient: APIClient
@@ -31,11 +26,10 @@ internal class CollectAPICallback: Callback {
             self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
-        
+
         do {
             let (request, session) = try self.getRequestSession(url: url)
-        
-        
+
             let task = session.dataTask(with: request) { data, response, error in
                 do {
                     let response = try self.processResponse(data: data, response: response, error: error)
@@ -66,7 +60,7 @@ internal class CollectAPICallback: Callback {
         }
         return temp
     }
-    
+
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -75,13 +69,12 @@ internal class CollectAPICallback: Callback {
             let data = try JSONSerialization.data(withJSONObject: self.apiClient.constructBatchRequestBody(records: self.records, options: options))
             request.httpBody = data
         }
-        
+
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
 
         return (request, URLSession(configuration: .default))
-
     }
-    
+
     func processResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any] {
         if error != nil || response == nil {
             throw error!
@@ -113,12 +106,11 @@ internal class CollectAPICallback: Callback {
         guard let safeData = data else {
             return [:]
         }
-        
+
         return try getCollectResponseBody(data: safeData)
-                
     }
-    
-    func getCollectResponseBody(data: Data) throws -> [String: Any]{
+
+    func getCollectResponseBody(data: Data) throws -> [String: Any] {
         let originalString = String(decoding: data, as: UTF8.self)
         let changedData = Data(originalString.utf8)
         let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
@@ -147,6 +139,5 @@ internal class CollectAPICallback: Callback {
         }
 
         return ["records": responseEntries]
-
     }
 }
