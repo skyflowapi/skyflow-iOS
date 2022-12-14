@@ -195,7 +195,7 @@ For example, if you specify the ‘customer_id’ column to use for upsert, and 
 let records = [
     "records" : [
         [
-            "table": "customers",        //The table where you are inserting the record.
+            "table": "customers",  //The table where you are inserting the record.
             "fields": [                         
                 "name" : "Francis",
                 "customer_id" : "12345"
