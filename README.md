@@ -142,42 +142,26 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 -  [**UI Error for Collect Elements**](#ui-error-for-collect-elements)
 - [**Set and Clear value for Collect Elements (DEV ENV ONLY)**](#set-and-clear-value-for-collect-elements-dev-env-only)
  
-## Inserting data into the vault
+## Insert data into the vault
  
-To insert data into the vault from the integrated application, use the ```insert(records: [String: Any], options: InsertOptions?= InsertOptions() , callback: Skyflow.Callback)``` method of the Skyflow client. The records parameter takes an array of records to be inserted into the vault. The options parameter takes a Skyflow.InsertOptions object. See below:
+ To insert data into your vault, use the `skyflowClient.insert()` method. 
+ ```swift
+ insert(records: [String: Any], options: InsertOptions?= InsertOptions() , callback: Skyflow.Callback) 
+ ```
+ The `insert()` method requires a records parameter. 
+ The `records` parameter takes an array of records to insert into the vault.
  
-```swift
-let records = [
-    "records": [
-        [
-            "table": "string",        // table into which record should be inserted
-            "fields": [
-                "column1": "value"    // column names should match vault column names
-                // ...additional fields here
-            ]
-        ]
-    ]
-    // ...additional records here
-]
-let insertOptions = Skyflow.InsertOptions(
-    tokens: false
-) // indicates whether or not tokens should be returned for the inserted data. Defaults to 'true'
-let insertCallback = InsertCallback()                   // Custom callback - implementation of Skyflow.Callback
-skyflowClient.insert(records: records, options: insertOptions, callback: insertCallback)
-```
- 
-An example of an insert call is given below: 
- 
-```swift
-let insertCallback = InsertCallback()     // Custom callback - implementation of Skyflow.Callback
-skyflowClient.insert(
+#### Insert call example
+ ```swift
+ let insertCallback = InsertCallback()     //A Custom callback using Skyflow.Callback
+ skyflowClient.insert(
     records: [
         "records": [
             [
                 "table": "cards",
                 "fields": [
                     "cardNumber": "41111111111",
-                    "cvv": "123"
+                    "cvv": "123",
                 ]
             ]
         ]
@@ -185,8 +169,7 @@ skyflowClient.insert(
     callback: insertCallback
 )
 ```
- 
-**Response :**
+Skyflow returns tokens for the record you just inserted.
 ```json
 {
     "records": [ {
@@ -199,6 +182,35 @@ skyflowClient.insert(
 }
 ```
  
+ The `options` parameter takes a Skyflow.InsertOptions object.
+ 
+ InsertOptions includes a `tokens` boolean that controls whether you receive tokens after inserting a record into the vault.
+
+InsertOptions also supports the **upsert** feature, that lets you conditionally insert or update an existing record by specifying the unique column to use as the unique value.
+
+For example, if you specify the ‘customer_id’ column to use for upsert, and the same customer_id  already exists, the existing record will update. If the customer_id doesn't exist, the vault creates a new record.
+
+#### Insert call example
+```swift
+let records = [
+    "records" : [
+        [
+            "table": "customers",  //The table where you are inserting the record.
+            "fields": [                         
+                "name" : "Francis",
+                "customer_id" : "12345"
+            ]
+        ]
+    ]
+]
+
+let upsertOptions = [["table": "customers", "column": "customer_id"]] as [[String : Any]]
+let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+let insertCallback = InsertCallback()  //Custom callback - implementation of Skyflow.Callback
+
+skyflowClient.insert(records: records, options: insertOptions, callback: insertCallback)
+```
+
 ## Using Skyflow Elements to collect data
  
 **Skyflow Elements** provide developers with pre-built form elements to securely collect sensitive data client-side.  This reduces your PCI compliance scope by not exposing your front-end application to sensitive data. Follow the steps below to securely collect data with Skyflow Elements in your application.
@@ -368,31 +380,35 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 ```
  
 #### Step 4 :  Collect data from Elements
-When the form is ready to be submitted, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
+When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 ```swift
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
-// Send the Non-PCI records as additionalFields of InsertOptions (optional)
+// Upsert
+let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+
 let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
  
 //Custom callback - implementation of Skyflow.callback
 let insertCallback = InsertCallback() 
 container?.collect(callback: insertCallback, options: options)
 ```
-### End to end example of collecting data with Skyflow Elements
+### Collect data with Skyflow Elements
  
-#### Sample Code:
+#### Collect call example:
 ```swift
-// Initialize skyflow configuration
+
+//Initialize skyflow configuration.
 let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider)
-
-// Initialize skyflow client
+ 
+//Initialize skyflow client.
 let skyflowClient = Skyflow.initialize(config)
-
-// Create a CollectContainer
+ 
+//Create a CollectContainer.
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
-
-// Create Skyflow.Styles with individual Skyflow.Style variants
+ 
+//Create Skyflow.Styles with individual Skyflow.Style variants.
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
 let completeStyle = Skyflow.Style(borderColor: UIColor.green)
@@ -400,8 +416,8 @@ val focusTextStyle = Skyflow.Style(textColor: UIColor.red)
 let inputStyles = Skyflow.Styles(base: baseStyle, complete: completeStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle, focus: focusTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
-
-// Create a CollectElementInput
+ 
+// Create a CollectElementInput.
 let input = Skyflow.CollectElementInput(
     table: "cards",
     column: "cardNumber",
@@ -412,39 +428,43 @@ let input = Skyflow.CollectElementInput(
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER
 )
-
-// Create option to make the element required
-let requiredOption = Skyflow.CollectElementOptions(required: true)
-
-// Create a Collect Element from the Collect Container
+ 
+// Create an option to require the element.
+let requiredOption = Skyflow.CollectElementOptions(required: true) 
+ 
+// Create a Collect Element from the Collect Container.
 let skyflowElement = container?.create(input: input, options: requiredOption)
-
+ 
 // Can interact with this object as a normal UIView Object and add to View
-
+ 
 // Non-PCI records
 let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
-
-// Send the Non-PCI records as additionalFields of CollectOptions (optional)
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
-
-
-// Implement a custom Skyflow.Callback to be called on Insertion success/failure
+ 
+ //Upsert options
+ let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+ 
+// Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
+let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+ 
+ 
+//Implement a custom Skyflow.Callback to call on Insertion success/failure.
 public class InsertCallback: Skyflow.Callback {
-    public func onSuccess(_ responseBody: Any) {
-        print(responseBody)
-    }
-    public func onFailure(_ error: Any) {
-        print(error)
-    }
+  public func onSuccess(_ responseBody: Any) {
+      print(responseBody)
+  }
+   public func onFailure(_ error: Any) {
+      print(error)
+  }
 }
+ 
 
-// Initialize custom Skyflow.Callback
+// Initialize custom Skyflow.Callback.
 let insertCallback = InsertCallback()
-
-// Call collect method on CollectContainer
+ 
+// Call collect method on CollectContainer.
 container?.collect(callback: insertCallback, options: collectOptions)
 ```
-#### Sample Response :
+#### Skyflow returns tokens for the record you just inserted:
 ```
 {
     "records": [ {
@@ -886,8 +906,8 @@ The `setAltText(value: String)` method can be used to set the altText of the Rev
  
 `clearAltText()` method can be used to clear the altText, this will cause the element to display the token or actual value of the element. If the element has no token, the element will be empty.
  
-### End to end example of revealing data with Skyflow Elements
-#### Sample Code:
+### Reveal data with Skyflow Elements
+#### Reveal call example:
 ```swift
 // Initialize skyflow configuration
 let config = Skyflow.Configuration(vaultID: <VAULT_ID>, vaultURL: <VAULT_URL>, tokenProvider: demoTokenProvider)
