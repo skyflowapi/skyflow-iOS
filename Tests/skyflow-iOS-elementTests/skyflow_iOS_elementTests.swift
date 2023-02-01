@@ -4,6 +4,7 @@
 
 
 import XCTest
+import UIKit
 @testable import Skyflow
 
 // swiftlint:disable:next type_body_length
@@ -61,6 +62,14 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(skyflowElement.borderColor, .blue)
         
         XCTAssertEqual(skyflowElement.validate().count, 0)
+    }
+    func testStyleOnFocusElement(){
+        skyflowElement.collectInput.inputStyles.focus?.borderColor = .red
+        skyflowElement.collectInput.inputStyles.empty?.borderColor = .blue
+        skyflowElement.collectInput.inputStyles.focus?.textColor = .red
+        XCTAssertEqual(skyflowElement.collectInput.inputStyles.focus?.borderColor, .red)
+        XCTAssertEqual(skyflowElement.collectInput.inputStyles.focus?.textColor, .red)
+        XCTAssertEqual(skyflowElement.collectInput.inputStyles.empty?.borderColor, .blue)
     }
     
     func testTextFieldDefaults() {
