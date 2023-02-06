@@ -58,6 +58,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
                     textField.text = "\(month)"
                 }
             }
+            self.collectField.onChangeHandler?((collectField.state as! StateforText).getStateForListener())
             self.collectField.updateActualValue()
             return false
         }
