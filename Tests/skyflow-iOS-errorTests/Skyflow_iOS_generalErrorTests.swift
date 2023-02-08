@@ -47,7 +47,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     func testSkyflowValidateCardExpirationDate() {
         let expiryDaterRule = SkyflowValidateCardExpirationDate(format: "mm/yy", error: SkyflowValidationErrorType.expirationDate.rawValue)
         
-        XCTAssertEqual(expiryDaterRule.validate("12/22"), true)
+        XCTAssertEqual(expiryDaterRule.validate("12/30"), true)
         
         XCTAssertEqual(expiryDaterRule.validate("12"), false)
         XCTAssertEqual(expiryDaterRule.validate("abc"), false)
