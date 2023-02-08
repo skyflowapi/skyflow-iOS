@@ -402,13 +402,13 @@ extension TextField {
         let currentState = state.getState()
         if self.errorTriggered == false {
             if self.hasFocus {
-                updateInputStyle(collectInput!.inputStyles.empty)
+                updateInputStyle(collectInput!.inputStyles.focus)
                 errorMessage.alpha = 0.0
             }
             else if (currentState["isEmpty"] as! Bool || self.actualValue.isEmpty) {
                 if currentState["isRequired"] as! Bool{
                     isRequiredCheckFailed = true
-                    updateInputStyle(collectInput!.inputStyles.invalid)
+                    updateInputStyle(collectInput!.inputStyles.empty)
                     errorMessage.alpha = 1.0
                 }else {
                     updateInputStyle(collectInput!.inputStyles.complete)
