@@ -223,7 +223,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             #if SWIFT_PACKAGE
             var image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
             #else
-            let frameworkBundle = Bundle(for: TextField.self)
+            let frameworkBundle = Bundle(for: UITextfield.self)
             var bundleURL = frameworkBundle.resourceURL
             bundleURL!.appendPathComponent("Skyflow.bundle")
             let resourceBundle = Bundle(url: bundleURL!)
