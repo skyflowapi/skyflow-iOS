@@ -30,7 +30,7 @@ extension SkyflowValidateExpirationMonth: SkyflowInternalValidationProtocol {
             return true
         }
         
-        if text.count != 2 {
+        if text.count > 2 || text.count < 1 {
             return false
         }
         
