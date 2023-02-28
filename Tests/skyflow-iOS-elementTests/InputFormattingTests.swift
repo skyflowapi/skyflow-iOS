@@ -149,7 +149,7 @@ class InputFormattingTests: XCTestCase {
     
     func testExpiryMonthFormattingDoubleDigitValid() {
         let expiryMonth = getExpiryMonthElement()
-        let currentText = "01"
+        let currentText = "1"
         
         expiryMonth?.textField.secureText = currentText
         
@@ -165,7 +165,7 @@ class InputFormattingTests: XCTestCase {
     
     func testExpiryMonthFormattingDoubleDigitInvalid() {
         let expiryMonth = getExpiryMonthElement()
-        let currentText = "01"
+        let currentText = "1"
         
         expiryMonth?.textField.secureText = currentText
         
@@ -175,8 +175,8 @@ class InputFormattingTests: XCTestCase {
             replacementString: "6")
         
         XCTAssertFalse(result!)
-        XCTAssertEqual(expiryMonth?.actualValue, "01")
-        XCTAssertEqual(expiryMonth?.textField.secureText, "01")
+        XCTAssertEqual(expiryMonth?.actualValue, "1")
+        XCTAssertEqual(expiryMonth?.textField.secureText, "1")
     }
     
     func testExpiryMonthFormattingBackspaceSingleDigit() {
