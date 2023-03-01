@@ -95,7 +95,7 @@ public enum ElementType: Int, CaseIterable {
         return Type(formatPattern: "", regex: "\\d*$",
                     validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits, maxLength: 12)
         case .EXPIRATION_MONTH:
-            let monthRegex = "^(0[1-9]|1[0-2])$"
+            let monthRegex = "^(0[1-9]|1[0-2]|1)$"
             rules.add(rule: RegexMatchRule(regex: monthRegex,
                       error: SkyflowValidationErrorType.regex.rawValue))
             

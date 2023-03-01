@@ -58,8 +58,10 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
                     textField.text = "\(month)"
                 }
             }
-            self.collectField.onChangeHandler?((collectField.state as! StateforText).getStateForListener())
             self.collectField.updateActualValue()
+            if(text.count <= 2){
+                collectField.onChangeHandler?((collectField.state as! StateforText).getStateForListener())
+            }
             return false
         }
         
@@ -68,6 +70,9 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         let count = text.count
         
         if string.isEmpty {
+            if (collectField.fieldType == .EXPIRATION_MONTH){
+                (textField as! FormatTextField).secureText = ""
+            }
             return updateFormat(text, true)
         }
         
@@ -77,7 +82,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
                 return false
             }
             
-            if collectField.fieldType == .EXPIRATION_MONTH {
+            if collectField.fieldType == .EXPIRATION_MONTH && text.count <= 2 {
                 return formatMonth()
             } else if collectField.fieldType == .EXPIRATION_YEAR {
                 if count > collectField.options.format.count {
