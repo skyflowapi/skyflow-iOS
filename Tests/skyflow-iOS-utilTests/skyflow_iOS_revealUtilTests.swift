@@ -236,7 +236,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         print(callback.data)
         let errors = callback.data["errors"] as! [[String: NSError]]
-        XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Invalid Bearer token format"))
+        XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Invalid Bearer token"))
     }
     
 }

@@ -29,7 +29,7 @@ internal enum ErrorCodes: CustomStringConvertible {
     case INVALID_TABLE_NAME_TYPE(code: Int = 400, message: String = "Key 'table' is of invalid type")
     case INVALID_FIELDS_TYPE(code: Int = 400, message: String = "Key 'fields' is of invalid type")
     case INVALID_RECORDS_TYPE(code: Int = 400, message: String = "Key 'records' is of invalid type")
-    case INVALID_BEARER_TOKEN_FORMAT(code: Int = 400, message: String = "Invalid Bearer token format")
+    case INVALID_BEARER_TOKEN_FORMAT(code: Int = 400, message: String = "Invalid Bearer token")
     case MISSING_RECORDS_ARRAY(code: Int = 404, message: String = "Missing records array in additional fields")
     case MISSING_RECORDS_IN_ADDITIONAL_FIELDS(code: Int = 404, message: String = "records object key value not found inside additional Fields")
     case EMPTY_RECORDS_OBJECT(code: Int = 404, message: String = "records object cannot be empty")
