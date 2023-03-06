@@ -12,7 +12,6 @@ internal class APIClient {
     var vaultURL: String
     var tokenProvider: TokenProvider
     var token: String = ""
-    
 
     internal init(vaultID: String, vaultURL: String, tokenProvider: TokenProvider) {
         self.vaultID = vaultID
@@ -52,21 +51,15 @@ internal class APIClient {
     }
 
     internal func getAccessToken(callback: Callback, contextOptions: ContextOptions) {
-        print("token called")
         if !isTokenValid() {
             let tokenApiCallback = TokenAPICallback(callback: callback, apiClient: self, contextOptions: contextOptions)
-            print("token false")
             tokenProvider.getBearerToken(tokenApiCallback)
         } else {
-            print("token true")
             callback.onSuccess(token)
         }
     }
 
     internal func post(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
-        var tempContextOptions = contextOptions
-        tempContextOptions.interface = .INSERT
-        Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
         let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
         self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
     }
