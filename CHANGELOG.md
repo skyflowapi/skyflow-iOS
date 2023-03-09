@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.6] - 2023-03-09
+
+### Fixed
+- Removed grace period logic for bearer token generation.
+
+## [1.17.5] - 2023-03-06
+
+### Fixed
+- Change listener for expiry month elements
+
 ## [1.17.0] - 2022-11-22
 
 ### Added
