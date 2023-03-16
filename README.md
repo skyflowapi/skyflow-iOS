@@ -583,7 +583,7 @@ let state = [
 ]
 ```
 `Note:`
-values of SkyflowElements will be returned in elementstate object only when `env` is  `DEV`,  else it is an empty string.
+values of SkyflowElements will be returned in element state object only when `env` is `DEV`, else it is empty string i.e, '', but in case of CARD_NUMBER type element when the `env` is `PROD` for all the card types except AMEX, it will return first eight digits, for AMEX it will return first six digits and rest all digits in masked format.
  
 ##### Sample code snippet for using listeners
 ```swift
@@ -605,14 +605,27 @@ let cardNumberInput = Skyflow.CollectElementInput(
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER,
     )
+let cardHolderNameInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardHolderName",
+    type: Skyflow.ElementType.CARDHOLDER_NAME,
+    )    
 
 let cardNumber = container?.create(input: cardNumberInput)
+let cardHolderName = container?.create(input: cardHolderNameInput)
+
 
 // subscribing to CHANGE event, which gets triggered when element changes
 cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
     // Your implementation when Change event occurs
     print(state)
 }
+
+cardHolderName.on(eventName: Skyflow.EventName.CHANGE) { state in
+    // Your implementation when Change event occurs
+    print(state)
+}
+
 ```
 ##### Sample Element state object when `env` is `DEV`
 ```swift
@@ -620,9 +633,17 @@ cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
     "elementType": Skyflow.ElementType.CARD_NUMBER,
     "isEmpty": false,
     "isFocused": true,
-    "isValid": false,
-    "value": "411"
+    "isValid": true,
+    "value": "4111111111111111"
 ]
+[
+    "elementType": Skyflow.ElementType.CARDHOLDER_NAME,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": true,
+    "value": "John"
+]
+
 ```
 ##### Sample Element state object when `env` is `PROD`
 ```swift
@@ -630,7 +651,14 @@ cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
     "elementType": Skyflow.ElementType.CARD_NUMBER,
     "isEmpty": false,
     "isFocused": true,
-    "isValid": false,
+    "isValid": true,
+    "value": "41111111XXXXXXXX"
+]
+[
+    "elementType": Skyflow.ElementType.CARDHOLDER_NAME,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": true,
     "value": ""
 ]
 ```
