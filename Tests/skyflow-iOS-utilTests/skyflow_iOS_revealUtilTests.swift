@@ -139,8 +139,6 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         self.revealApiCallback.handleCallbacks(success: [], failure: [], isSuccess: false, errorObject: error)
         
         wait(for: [self.expectation], timeout: 20.0)
-        print(self.callback.data)
-        print("===", self.callback.receivedResponse)
         let errors = self.callback.data["errors"] as! [[String: Any]]
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["error"] as! NSError, error)
