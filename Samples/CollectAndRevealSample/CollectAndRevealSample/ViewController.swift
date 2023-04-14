@@ -6,6 +6,7 @@ import UIKit
 import Skyflow
 
 class ViewController: UIViewController {
+    var retryCount = 0
     private var skyflow: Skyflow.Client?
     private var container: Skyflow.Container<Skyflow.CollectContainer>?
     private var revealContainer: Skyflow.Container<Skyflow.RevealContainer>?
@@ -174,11 +175,16 @@ class ViewController: UIViewController {
     }
     internal func updateSuccess(_ response: SuccessResponse) {
         print(response)
+        retryCount = 0
         updateRevealInputs(tokens: response.records[0].fields)
         print("Successfully got response:", response)
     }
-    internal func updateFailure() {
-        print("Failed Operation")
+    internal func updateFailure(error: Any) {
+        if((error as AnyObject).contains("Invalid Bearer token") && retryCount <= 2){ // To do, it will be replaced with error code in the future
+            retryCount += 1
+            submitForm()
+        }
+        print("Failed Operation", error)
     }
     internal func updateRevealInputs(tokens: Fields) {
         let revealBaseStyle = Skyflow.Style(
