@@ -7,10 +7,10 @@ import Skyflow
 
 public class ExampleAPICallback: Skyflow.Callback {
     private var updateSuccess: ((SuccessResponse) -> Void)?
-    private var updateFailure: (() -> Void)?
+    private var updateFailure: ((Any) -> Void)?
     private var decoder: JSONDecoder?
 
-    internal init(updateSuccess: @escaping (SuccessResponse) -> Void, updateFailure: @escaping () -> Void) {
+    internal init(updateSuccess: @escaping (SuccessResponse) -> Void, updateFailure: @escaping (Any) -> Void) {
         self.updateSuccess = updateSuccess
         self.updateFailure = updateFailure
         self.decoder = JSONDecoder()
