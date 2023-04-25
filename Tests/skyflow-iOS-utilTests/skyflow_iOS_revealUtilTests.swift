@@ -216,7 +216,205 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         XCTAssertEqual(successElement.actualValue, "John")
         XCTAssertEqual(successElement.errorMessage.text, nil)
     }
+    func testRevealValueOnSuccessFormat() { // reveal data value is equal to format length
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "4567890"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "XXX-XXX-X", translation: ["X": "[0-9]"]))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "4567890")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+        XCTAssertEqual(successElement.skyflowLabelView.label.secureText!, "456-789-0")
+
+    }
+    func testRevealValueOnSuccessFormatCase2() { //format length is greater than revealed data length
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "12345678"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "XXX-XXX-XXX", translation: ["X": "[0-9]"]))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "12345678")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+        XCTAssertEqual(successElement.skyflowLabelView.label.secureText!, "123-456-78")
+
+    }
+    func testRevealValueOnSuccessFormatCase3() { //format length is less than revealed data length
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "12345678"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "XXX-XXX", translation: ["X": "[0-9]"]))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "12345678")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+        XCTAssertEqual(successElement.skyflowLabelView.label.secureText!, "123-456")
+
+    }
     
+    func testRevealValueOnSuccessFormatCase4() { //format with some prefix
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "12345678"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "+91 XXX-XXX", translation: ["X": "[0-9]"]))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "12345678")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+        XCTAssertEqual(successElement.skyflowLabelView.label.secureText!, "+91 123-456")
+
+    }
+    func testRevealValueOnSuccessFormatCase5() { //translation and reveal data type is different
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "name"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "+91 XXX-XXX", translation: ["X": "[0-9]"]))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "name")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+        XCTAssertEqual(successElement.skyflowLabelView.label.secureText!, "+91 ") //not able to add another type of data
+
+    }
+    func testRevealValueOnSuccessFormatCase6() { // literal character if translation is not provided
+        let successToken = "123"
+        let failureToken = "1234"
+        let response = [
+            "records": [["token": successToken, "value": "name"]],
+            "errors": [["token": failureToken, "error": "Invalid Token"]]
+        ]
+        
+        let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "+91 XXX-XXX", translation: ["Y": "[0-9]"]))
+        let failureElement = self.container.create(input: RevealElementInput(token: failureToken, label: "failed"))
+        
+        self.revealValueCallback.revealElements = [successElement, failureElement]
+        
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+        
+        let errors = self.callback.data["errors"] as! [[String: String]]
+        let records = self.callback.data["success"] as! [[String: String]]
+        
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0]["token"], failureToken)
+        XCTAssertEqual(errors[0]["error"], "Invalid Token")
+        XCTAssertEqual(failureElement.actualValue, nil)
+        XCTAssertEqual(failureElement.errorMessage.text, "Invalid Token")
+        
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"], successToken)
+        XCTAssertEqual(successElement.actualValue, "name")
+        XCTAssertEqual(successElement.errorMessage.text, nil)
+        XCTAssertEqual(successElement.skyflowLabelView.label.secureText!, "+91 XXX-XXX") //not able to add another type of data
+
+    }
     func testRevealInvalidBearerToken() {
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
