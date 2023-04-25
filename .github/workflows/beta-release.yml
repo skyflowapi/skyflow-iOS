@@ -1,0 +1,43 @@
+name: Public Beta Release
+
+on:
+  push:
+    tags: '*.*.*-beta.*'
+
+
+jobs:
+  deploy_private_pod:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: main
+        token: ${{ secrets.PAT_ACTIONS }}
+      
+    - name: Get Previous tag
+      id: previoustag
+      uses: WyriHaximus/github-action-get-previous-tag@v1
+      with:
+        fallback: 1.0.0
+
+    - name: Bump Version
+      run: |
+           chmod +x ./scripts/bump_version.sh
+           ./scripts/bump_version.sh "${{ steps.previoustag.outputs.tag }}"
+    
+    - name: Commit changes
+      run: |
+           git config user.name ${{ github.actor }}
+           git config user.email ${{ github.actor }}@users.noreply.github.com
+           git add Skyflow.podspec
+           git commit -m "[AUTOMATED] Beta Release ${{ steps.previoustag.outputs.tag }}"
+           git push origin
+    
+    - name: Deploy to Cocoapods
+      run: |
+           set -eo pipefail
+           pod lib lint --allow-warnings
+           pod trunk push --allow-warnings
+      env:
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
