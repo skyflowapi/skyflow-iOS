@@ -21,6 +21,7 @@ public struct CollectElementOptions {
         self.enableCardIcon = enableCardIcon
         self.format = format
         self.translation = translation
+        
         if (self.translation != nil){
             for (key, value) in self.translation! {
                 if value == "" {
