@@ -1,0 +1,1607 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		027D414E9FA85556C8E575743B0B2271 /* Skyflow-Skyflow in Resources */ = {isa = PBXBuildFile; fileRef = 1F131D556D062654AA9726D469FA4893 /* Skyflow-Skyflow */; };
+		0292C8F1ED87AB54D617383CA60E0441 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78BD680D486946E2B0301ACC5D204818 /* Options.swift */; };
+		060587ECEA62B85F1D18BF88B794A61F /* ValidationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDB34FEF8F0D1ADDA1AD677DF9802F6 /* ValidationSet.swift */; };
+		084B0C35E539C16B3A7CBBA337852470 /* RegexMatchRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619826614523EBC868B88E1A159DBBAB /* RegexMatchRule.swift */; };
+		0F2B6B39EBAAFC85CE852E88F9C33039 /* SkyflowValidateLengthMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F79929D565F8EABAF2BC67BC081FA3 /* SkyflowValidateLengthMatch.swift */; };
+		1AC82960A57AD9B4379E944B50269230 /* ContainerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20249AE16CBECDDE4EF2A7B633814004 /* ContainerType.swift */; };
+		1BF785F86ADE4D74084A429C1BAFA188 /* FormatLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDC7174B29675BC43A2D22B76D91ADF /* FormatLabel.swift */; };
+		1CCDCDE10E0082070492937AB16DDCBB /* Pods-InputFormattingTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 412CDB158BC92F28F6516B70AFAFF6F9 /* Pods-InputFormattingTests-dummy.m */; };
+		20D10A8815351675B59FDA1FEAC0639D /* SkyflowElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22846E4E0BD1CE34E4051DCC9B61C03D /* SkyflowElement.swift */; };
+		212F6DBC32731482F1C29DDDCC5912C0 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56986B1C9234DFD30978A9CF799A70E /* Client.swift */; };
+		26D28015F0CFADBB401AD674D8B73785 /* skyflow_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E89221D3E2634E1458AB5993532CFAC /* skyflow_iOS.swift */; };
+		2806196B2816A832F8CEA817D9574843 /* ErrorCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292947795D08A6E3307C727235A7BF4D /* ErrorCodes.swift */; };
+		311231E227A6FB64C062C88CFC15A091 /* TextFieldValidationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31ED08D333A7488AC2D60F1B416304B /* TextFieldValidationDelegate.swift */; };
+		33C42E4606F46C988F99750773FA0785 /* Pods-InputFormatting-InputFormattingUITests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7306EC7637349293F998975F8CDD9F9C /* Pods-InputFormatting-InputFormattingUITests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		36BC9B081DB857FD82B9D4452DBE9BD9 /* Pods-InputFormatting-InputFormattingUITests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F23EDC36F12794D6E146F56C921DCB6C /* Pods-InputFormatting-InputFormattingUITests-dummy.m */; };
+		36FE0017B54A08080DF82D9F316BB560 /* CollectElementInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F947D345E1BCDFD5CAC3F8C8B629AEB7 /* CollectElementInput.swift */; };
+		3C0A85B21DC1B081B06614F5C683D741 /* RevealOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A52639F1E9E73EEBE8B6827CD58501 /* RevealOptions.swift */; };
+		3E061CFB646FD299F1A142DC8DE161C3 /* CollectContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FB864D2469A99EE63FADD652B4C414 /* CollectContainer.swift */; };
+		412AB6937928BC8EEADDC8AD0F96F842 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		45E985BB839F896CDF989F500CB3A0B2 /* CollectOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245D331A5D1BF2E7961A7A13490E342A /* CollectOptions.swift */; };
+		4871619A28F1D8EA1B712314DEFE02B0 /* Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CD76C759420F5567825D4CCADC547 /* Init.swift */; };
+		48C155B86574EE596D156A9A29C3E5FD /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E507A427267A7533DCF0D2379B1ACD6 /* Configuration.swift */; };
+		49FE20AD4311B9B4EEFD839353736EAA /* RevealRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB26A1953DC407A838317576C0A55D /* RevealRequestBody.swift */; };
+		4ACA3329F84020C3405E4A31328E86EF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C703F28BBD1B7BED3DC5B1B7365F947 /* Style.swift */; };
+		4D2B298D73BD362885D0DE01D789B702 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA32DE9E57977DE0696E6FA521ABF8 /* Error.swift */; };
+		4D3EF0C108986845D6CA9A8344F57445 /* ConversionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D029C4C6E7F1CFC0265F9E841A5AB93 /* ConversionHelpers.swift */; };
+		54DBA21BF09261C6C571316AA258D876 /* CollectRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214995CC69362684AD86D1FFAF1A9781 /* CollectRequestBody.swift */; };
+		57A3492F1643321415D1DFF9FA4349AE /* Callback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC71B003FEEDB9C8A269DA2790BEE83 /* Callback.swift */; };
+		5D2CEBEC60BE750C7FF2E5647DE2C8F1 /* CollectElementOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80B9BDAF44325B6281430860983FD06 /* CollectElementOptions.swift */; };
+		5E6A63214D96ED145412EC3D34FA9B98 /* RevealRequestRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DB5A403AC4D6D075B1FD52801C7050 /* RevealRequestRecord.swift */; };
+		600A3F7251C1557F09F888981913C2D7 /* RevealValueCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41219141319AD27758E542AEC1AAECD5 /* RevealValueCallback.swift */; };
+		617308966F74EFAB6657BB97EBE55E0B /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786B6BB41D755C528469BE2DD69B4FC3 /* Parser.swift */; };
+		624D1E8832C5CCA10E35EAB9EDD66765 /* ContainerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6986F42BEE279EBDCB51C6D364E2B7 /* ContainerProtocol.swift */; };
+		626888BF0B43B994A34F5AA71A859213 /* UILabel+Copyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D4FD16EB25014D59194374DFC530E5 /* UILabel+Copyable.swift */; };
+		67A3DFCE8E8ECBF86C187D70DCF19817 /* RevealErrorRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D3DF78C72D0B73E58C178A0E6B951B /* RevealErrorRecord.swift */; };
+		67EB8F815C7B6448376510516A8F7629 /* SkyflowValidateExpirationYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EED71E6ED44350390BD157126F742A /* SkyflowValidateExpirationYear.swift */; };
+		6D662D31AE6A497965EACA33E8BA7839 /* GetByIdRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA90AE738AC778F19C34B084137E7A6 /* GetByIdRecord.swift */; };
+		6E7A539D6D2EAD8EBBA8EF9F1702710E /* RedactionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D771C631F6122BD93564AB041BB21B56 /* RedactionType.swift */; };
+		7658EAE53BC3CAB9CFB29E88CF008E78 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD53B8E0EDD677A54EB4575CAC055099 /* Styles.swift */; };
+		76C04D13EBE21B95E0F6DD395BDBBA82 /* CollectAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55ACADB388EF4BE0B0D9A8B264F0A472 /* CollectAPICallback.swift */; };
+		77FB2D46B74A31CED74228E9DAA96255 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491EA3AF83A3D2BC27BDE38A3A8EAD07 /* Document.swift */; };
+		78A2C29E1E07AE3D0658FBC92CC17D7E /* SkyflowValidateCardExpirationDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BA911CC11C034307A3258B6A3A951F /* SkyflowValidateCardExpirationDate.swift */; };
+		78AAC8FFDCD06B2B5262713DE6CC8E92 /* CharacterSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C837F6D1019BB5B8BD2B760B31A4114 /* CharacterSet.swift */; };
+		7937425B49C01A9C4D87922C750B86FF /* SkyflowLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A082C308FD570D4958F235187C26CE5 /* SkyflowLabelView.swift */; };
+		79848C09FC3EAA92BE9FA62901EB68DC /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603CF8E859D109322F440E9AF737C3BA /* LogLevel.swift */; };
+		7A0A33677B22AFA32D7122492F1BB683 /* DictionaryExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1059291C8C3B28DAC4C59CB741CC43D1 /* DictionaryExtension.swift */; };
+		7A682FC64C423760D29323D3F118FF46 /* AEXML-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 80487778CC68AD8B26E323F13FB62C73 /* AEXML-dummy.m */; };
+		7B28E3090642676E37130CBBD712E025 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C79D412ABA825679CE5439CD59DED6 /* Element.swift */; };
+		7B2ECCA7BFCDDF0C2F5AF1610AEAB48D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A94DD7D1F4DA3B36F252767102ABF25 /* Assets.xcassets */; };
+		7F2C13D000DC1B3FA61041340EC07CCF /* ValidationRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D25D6A1A90479B08C9A60169AB32D87 /* ValidationRule.swift */; };
+		8225407B8EFE29340F4156C683809412 /* Pods-InputFormatting-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C429A9270F4CA93A90FE24A22EEE2254 /* Pods-InputFormatting-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		85EAD61AA0C55FC102EEB49BE0578C0A /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B6AC6D553DD6541B6386A10B09E312 /* Options.swift */; };
+		89ABBAB8FC22B9B7CFEC85C7127D62BF /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3346E2BA5C2ACC98C3E5BB349A1AC21F /* Log.swift */; };
+		8CE2964E1830BE4CC17F5F6C67698639 /* RevealElementOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B457CCA79C519D8D9C0C313C5EA2EF7 /* RevealElementOptions.swift */; };
+		9124B8BE11FB7B88050F33E17FE9C98A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		91CCBF7A650643EE403D921DA513136B /* BaseElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659A7AEE227280C6427C40920E665653 /* BaseElement.swift */; };
+		929488875FF303671B028DF77C8BB788 /* ICOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3093F644E69D6E118AE26AEA63234C99 /* ICOptions.swift */; };
+		94C8C7CB60E3C725A300F7DB2FAFDCE8 /* InsertOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EF9B0A1B7A203E9AD13F07116C54372 /* InsertOptions.swift */; };
+		95A72DB81EF766A475A44BAC247A1A40 /* TokenAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F909E519D7FC703856855910CA2409 /* TokenAPICallback.swift */; };
+		970D20736B2C5BCB83BA9C5F02B2AB07 /* ElementValueMatchRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BAB6355A75301D792F40411E79F26 /* ElementValueMatchRule.swift */; };
+		97F4C7F94BDAE6707BEDE0ADEB2231FC /* SkyflowInternalValidatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F41EE5BFF08E248C7D463923E4CF11 /* SkyflowInternalValidatorProtocol.swift */; };
+		990BBBE12ABD540839528407A3D68B03 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		9937BCD97D289651DF555018C7CB6F9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		9990B8E4F160C4B718726964E52F8231 /* Pods-InputFormatting-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7841CE35186C6C0BD6F74343BFABD617 /* Pods-InputFormatting-dummy.m */; };
+		9FACEFA056974D87E3B790D85490226B /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4005F0B0E70C157D518E6FC18055A8 /* State.swift */; };
+		A360F86A319990D8EFF93E4CA149AD4A /* RevealByIDAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302BD500857AE96D4ACC5533CCE4F9FD /* RevealByIDAPICallback.swift */; };
+		A44E22B30AD2C51435FBC79FC23DAB37 /* InterfaceName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BB35E62B98F2B04AA0585A61E8592E /* InterfaceName.swift */; };
+		A600437581D9FCCCC4BD7DCE7936DC9F /* Skyflow-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 66D49D3F87164BFE7F09ADCA12222118 /* Skyflow-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6E53DFF95C0BF6BF9B92C53ED3D5C9F /* SkyflowValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A4EC19C36A7B50313A5050C1A6C271 /* SkyflowValidator.swift */; };
+		A7043C9DCACEA65E39071AEBF3272F40 /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31056BA715FA724895D0222569596CEB /* PaddingLabel.swift */; };
+		A9B24BB339A619FCC78212613CEA2FC7 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2761E1F1EFF6AA503A092DEC6B1C7598 /* APIClient.swift */; };
+		AA86E139C312A9417AC45DAEA01114B3 /* SkyflowValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FAA27A9DED8F2380491DBB4276D305F /* SkyflowValidationError.swift */; };
+		AAC996A37881C234BD276E22A41B39C0 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA963365AEFC01B3BBCFF2E5D1DDAD9 /* TextField.swift */; };
+		AE552B25912AECCAD72BE57E2F4F4453 /* CardBin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672F841D6548EFB21615C8BA781B5837 /* CardBin.swift */; };
+		B6447666DBC84673C90EFBB7FAEDFA75 /* LengthMatchRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994336F6422CCC406558B3446A32EF5 /* LengthMatchRule.swift */; };
+		B669B15EFF1B26265488717FB66F5838 /* FormatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329D7EB6E49E91C62911DB41421661CD /* FormatTextField.swift */; };
+		B7DC7D8788B6AECD901B1AF7CCF53E2B /* CardType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54A832841E64DA85466FCCD5A50BEE8 /* CardType.swift */; };
+		C11ABC4764015509FF1D6D9AFAF4608C /* StateforText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F310518836E111B97C51062E5F134B /* StateforText.swift */; };
+		C408CB4FEF6A26D885BD15300A556BC0 /* AEXML-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 80BFCF43F180C219B135FDABA3C66BA0 /* AEXML-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C995BE78EA96811129A91FB8C973EC78 /* ElementType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D899AEB951B1607E20E4BAF4B7FDB39 /* ElementType.swift */; };
+		C9D341DE5DA99546E8AB0BCCCA7A8A83 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ACC803CC78E70C8D36AEF5D9306B73 /* Element.swift */; };
+		CA780B5643D4FC25609494DE80F580C9 /* Skyflow-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0797E66685EBD6673738C5CBACA8E09D /* Skyflow-dummy.m */; };
+		CD1F8AB4C9464EDB472E0C43ECBCE46F /* SkyflowValidateCardNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2A4611BE2D31F1F66BBD02B36BE88E /* SkyflowValidateCardNumber.swift */; };
+		CE138581B99116FB649E3666DD82A0AA /* EventName.swift in Sources */ = {isa = PBXBuildFile; fileRef = A619D6743D0F73B7272DA0997BA1F9EF /* EventName.swift */; };
+		CEAA3A3CAA50400FAD749E249E8E0E71 /* RevealApiCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5F2049C925913795DF4EC95E6ECA00 /* RevealApiCallback.swift */; };
+		D1E260DBFB442BF7CB4E46C998F20B81 /* Pods-InputFormattingTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BA140F7FEC55BA100307B060EC645A /* Pods-InputFormattingTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D4B148DDA6762B87BE181757B6283DB8 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1B8D3336355BC4D04183226046DFD5 /* Message.swift */; };
+		D7657256DEE0FCBCF45FB191F823E8E6 /* RevealElementInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32460F5268A6C882DE0A17F593E789FA /* RevealElementInput.swift */; };
+		D768E1132ED092B444A5CA0E54D24F90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		D9A478E49EAEE2FD7768F36E41308111 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF718055A5C66E3543E699756DCBB56C /* Label.swift */; };
+		DA2B1C72D05DC9A06CDA5D83AC55BED0 /* SkyflowValidateExpirationMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251D33E308DB47CEE8537F70D1AA4C41 /* SkyflowValidateExpirationMonth.swift */; };
+		DBDC05CD2DA9252E780B3EB3F7FED680 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5318499695B837E7A7351072FF0427 /* TokenProvider.swift */; };
+		DEF731CDA126C8B8520CB271AB0D1B92 /* RevealSuccessRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220F31E1A4AE1867FB4B642CD80D6CD3 /* RevealSuccessRecord.swift */; };
+		E76C3BF4E71366A923BE7D35993C5FBA /* RevealContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51C6AA5BDE52CC4351A9085476FD4B /* RevealContainer.swift */; };
+		E8FB15D988A328CA3BEA9FE4E76DD81F /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0769754965638516CC145A7522CD412 /* Env.swift */; };
+		E95F343E6AEF01BDB82CB53FA7994F40 /* ContainerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE72CAC284D187C273B0C2531D750F4 /* ContainerOptions.swift */; };
+		ED79A9021BFAD4C023183BF2EC84D774 /* ContextOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD115FBAAE6072558DF5325052C2778 /* ContextOptions.swift */; };
+		EFAF4DA354442307C1CD60FC0CD23BD2 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BB37996AE4463C03E1125AC0FED61A /* Container.swift */; };
+		F160631EFCFF033CB938370D6362A3B1 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D029369A74AB6B68C6499329A7D80163 /* StringExtension.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		125C5D86AD8D596163C5F0D8FE942249 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0C3B2890BA25B4203C768E55BB4D4FA;
+			remoteInfo = AEXML;
+		};
+		1A9C51D5AEC453C92F87264056F1E326 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B04C54C6BF0E9BD40F6E943816DEE8B;
+			remoteInfo = Skyflow;
+		};
+		79EF6262900AE789FB33DF64AD2F105A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CFCD76F75EC3DF719C5185029771683;
+			remoteInfo = "Skyflow-Skyflow";
+		};
+		9AEE7F68CE8B135DF650F17F09095B92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0C3B2890BA25B4203C768E55BB4D4FA;
+			remoteInfo = AEXML;
+		};
+		D7E74FCF5EE5C748A99E68402B4865BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0C3B2890BA25B4203C768E55BB4D4FA;
+			remoteInfo = AEXML;
+		};
+		D80CAF4AA1AD5A52CB634377CB6FA407 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8684801AD3062ED34D683ABBD95C2F32;
+			remoteInfo = "Pods-InputFormatting";
+		};
+		E265B7D532983230AEE1D6924BFC6797 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B04C54C6BF0E9BD40F6E943816DEE8B;
+			remoteInfo = Skyflow;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03ACC803CC78E70C8D36AEF5D9306B73 /* Element.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Element.swift; path = Sources/Skyflow/core/Element.swift; sourceTree = "<group>"; };
+		04A4EC19C36A7B50313A5050C1A6C271 /* SkyflowValidator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidator.swift; path = Sources/Skyflow/elements/validations/SkyflowValidator.swift; sourceTree = "<group>"; };
+		0797E66685EBD6673738C5CBACA8E09D /* Skyflow-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Skyflow-dummy.m"; sourceTree = "<group>"; };
+		07C79D412ABA825679CE5439CD59DED6 /* Element.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Element.swift; path = Sources/AEXML/Element.swift; sourceTree = "<group>"; };
+		0994336F6422CCC406558B3446A32EF5 /* LengthMatchRule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LengthMatchRule.swift; path = Sources/Skyflow/elements/validations/LengthMatchRule.swift; sourceTree = "<group>"; };
+		09F1F6CD68284FC143ED5C6B359610FE /* Skyflow-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Skyflow-prefix.pch"; sourceTree = "<group>"; };
+		0A94DD7D1F4DA3B36F252767102ABF25 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Sources/Skyflow/Resources/Assets.xcassets; sourceTree = "<group>"; };
+		0EDB34FEF8F0D1ADDA1AD677DF9802F6 /* ValidationSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ValidationSet.swift; path = Sources/Skyflow/elements/validations/ValidationSet.swift; sourceTree = "<group>"; };
+		0EF9B0A1B7A203E9AD13F07116C54372 /* InsertOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InsertOptions.swift; path = Sources/Skyflow/collect/InsertOptions.swift; sourceTree = "<group>"; };
+		1059291C8C3B28DAC4C59CB741CC43D1 /* DictionaryExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DictionaryExtension.swift; path = Sources/Skyflow/utils/DictionaryExtension.swift; sourceTree = "<group>"; };
+		11F310518836E111B97C51062E5F134B /* StateforText.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StateforText.swift; path = Sources/Skyflow/elements/core/state/StateforText.swift; sourceTree = "<group>"; };
+		12F300AC02BF0AE962765F7BCC3C1E71 /* Pods-InputFormattingTests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-InputFormattingTests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		16BF22C36826885B449AC0F705CBCD73 /* Pods-InputFormattingTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-InputFormattingTests-acknowledgements.plist"; sourceTree = "<group>"; };
+		17A52639F1E9E73EEBE8B6827CD58501 /* RevealOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealOptions.swift; path = Sources/Skyflow/reveal/RevealOptions.swift; sourceTree = "<group>"; };
+		1D029C4C6E7F1CFC0265F9E841A5AB93 /* ConversionHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConversionHelpers.swift; path = Sources/Skyflow/reveal/ConversionHelpers.swift; sourceTree = "<group>"; };
+		1D25D6A1A90479B08C9A60169AB32D87 /* ValidationRule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ValidationRule.swift; path = Sources/Skyflow/elements/validations/ValidationRule.swift; sourceTree = "<group>"; };
+		1F131D556D062654AA9726D469FA4893 /* Skyflow-Skyflow */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "Skyflow-Skyflow"; path = Skyflow.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		20249AE16CBECDDE4EF2A7B633814004 /* ContainerType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContainerType.swift; path = Sources/Skyflow/core/container/ContainerType.swift; sourceTree = "<group>"; };
+		214995CC69362684AD86D1FFAF1A9781 /* CollectRequestBody.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectRequestBody.swift; path = Sources/Skyflow/collect/CollectRequestBody.swift; sourceTree = "<group>"; };
+		220F31E1A4AE1867FB4B642CD80D6CD3 /* RevealSuccessRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealSuccessRecord.swift; path = Sources/Skyflow/reveal/RevealSuccessRecord.swift; sourceTree = "<group>"; };
+		22846E4E0BD1CE34E4051DCC9B61C03D /* SkyflowElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowElement.swift; path = Sources/Skyflow/elements/SkyflowElement.swift; sourceTree = "<group>"; };
+		245D331A5D1BF2E7961A7A13490E342A /* CollectOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectOptions.swift; path = Sources/Skyflow/collect/CollectOptions.swift; sourceTree = "<group>"; };
+		251D33E308DB47CEE8537F70D1AA4C41 /* SkyflowValidateExpirationMonth.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidateExpirationMonth.swift; path = Sources/Skyflow/elements/validations/SkyflowValidateExpirationMonth.swift; sourceTree = "<group>"; };
+		2761E1F1EFF6AA503A092DEC6B1C7598 /* APIClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = APIClient.swift; path = Sources/Skyflow/core/APIClient.swift; sourceTree = "<group>"; };
+		292947795D08A6E3307C727235A7BF4D /* ErrorCodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ErrorCodes.swift; path = Sources/Skyflow/errors/ErrorCodes.swift; sourceTree = "<group>"; };
+		2B457CCA79C519D8D9C0C313C5EA2EF7 /* RevealElementOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealElementOptions.swift; path = Sources/Skyflow/reveal/RevealElementOptions.swift; sourceTree = "<group>"; };
+		302BD500857AE96D4ACC5533CCE4F9FD /* RevealByIDAPICallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealByIDAPICallback.swift; path = Sources/Skyflow/reveal/RevealByIDAPICallback.swift; sourceTree = "<group>"; };
+		3093F644E69D6E118AE26AEA63234C99 /* ICOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ICOptions.swift; path = Sources/Skyflow/collect/ICOptions.swift; sourceTree = "<group>"; };
+		31056BA715FA724895D0222569596CEB /* PaddingLabel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PaddingLabel.swift; path = Sources/Skyflow/elements/PaddingLabel.swift; sourceTree = "<group>"; };
+		31DB5A403AC4D6D075B1FD52801C7050 /* RevealRequestRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealRequestRecord.swift; path = Sources/Skyflow/reveal/RevealRequestRecord.swift; sourceTree = "<group>"; };
+		32460F5268A6C882DE0A17F593E789FA /* RevealElementInput.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealElementInput.swift; path = Sources/Skyflow/reveal/RevealElementInput.swift; sourceTree = "<group>"; };
+		329D7EB6E49E91C62911DB41421661CD /* FormatTextField.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FormatTextField.swift; path = Sources/Skyflow/elements/FormatTextField.swift; sourceTree = "<group>"; };
+		3346E2BA5C2ACC98C3E5BB349A1AC21F /* Log.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Log.swift; path = Sources/Skyflow/core/Log.swift; sourceTree = "<group>"; };
+		37F41EE5BFF08E248C7D463923E4CF11 /* SkyflowInternalValidatorProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowInternalValidatorProtocol.swift; path = Sources/Skyflow/elements/validations/SkyflowInternalValidatorProtocol.swift; sourceTree = "<group>"; };
+		38BB35E62B98F2B04AA0585A61E8592E /* InterfaceName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InterfaceName.swift; path = Sources/Skyflow/core/InterfaceName.swift; sourceTree = "<group>"; };
+		393CD764D73983D63D4817DE46323AA7 /* Pods-InputFormatting-InputFormattingUITests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-InputFormatting-InputFormattingUITests-Info.plist"; sourceTree = "<group>"; };
+		3EA963365AEFC01B3BBCFF2E5D1DDAD9 /* TextField.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextField.swift; path = Sources/Skyflow/elements/TextField.swift; sourceTree = "<group>"; };
+		41219141319AD27758E542AEC1AAECD5 /* RevealValueCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealValueCallback.swift; path = Sources/Skyflow/reveal/RevealValueCallback.swift; sourceTree = "<group>"; };
+		412CDB158BC92F28F6516B70AFAFF6F9 /* Pods-InputFormattingTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-InputFormattingTests-dummy.m"; sourceTree = "<group>"; };
+		491EA3AF83A3D2BC27BDE38A3A8EAD07 /* Document.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Document.swift; path = Sources/AEXML/Document.swift; sourceTree = "<group>"; };
+		4C1B8D3336355BC4D04183226046DFD5 /* Message.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Message.swift; path = Sources/Skyflow/core/Message.swift; sourceTree = "<group>"; };
+		4C703F28BBD1B7BED3DC5B1B7365F947 /* Style.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Style.swift; path = Sources/Skyflow/elements/core/styles/Style.swift; sourceTree = "<group>"; };
+		4DDC7174B29675BC43A2D22B76D91ADF /* FormatLabel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FormatLabel.swift; path = Sources/Skyflow/reveal/FormatLabel.swift; sourceTree = "<group>"; };
+		4E7D886A8D5469CFB21935139998F4CE /* Pods-InputFormatting-InputFormattingUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-InputFormatting-InputFormattingUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		4FFB26A1953DC407A838317576C0A55D /* RevealRequestBody.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealRequestBody.swift; path = Sources/Skyflow/reveal/RevealRequestBody.swift; sourceTree = "<group>"; };
+		51B6AC6D553DD6541B6386A10B09E312 /* Options.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Options.swift; path = Sources/Skyflow/core/Options.swift; sourceTree = "<group>"; };
+		55ACADB388EF4BE0B0D9A8B264F0A472 /* CollectAPICallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectAPICallback.swift; path = Sources/Skyflow/collect/CollectAPICallback.swift; sourceTree = "<group>"; };
+		56BA911CC11C034307A3258B6A3A951F /* SkyflowValidateCardExpirationDate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidateCardExpirationDate.swift; path = Sources/Skyflow/elements/validations/SkyflowValidateCardExpirationDate.swift; sourceTree = "<group>"; };
+		572F85B91F979E07BA64F4BD4651AE1B /* Pods-InputFormatting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-InputFormatting.release.xcconfig"; sourceTree = "<group>"; };
+		5830D01A6FBE4D1B56505ABADC61CC84 /* Pods-InputFormattingTests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-InputFormattingTests"; path = Pods_InputFormattingTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C5F2049C925913795DF4EC95E6ECA00 /* RevealApiCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealApiCallback.swift; path = Sources/Skyflow/reveal/RevealApiCallback.swift; sourceTree = "<group>"; };
+		5CD115FBAAE6072558DF5325052C2778 /* ContextOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContextOptions.swift; path = Sources/Skyflow/core/ContextOptions.swift; sourceTree = "<group>"; };
+		5D899AEB951B1607E20E4BAF4B7FDB39 /* ElementType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ElementType.swift; path = Sources/Skyflow/elements/core/ElementType.swift; sourceTree = "<group>"; };
+		603CF8E859D109322F440E9AF737C3BA /* LogLevel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LogLevel.swift; path = Sources/Skyflow/core/LogLevel.swift; sourceTree = "<group>"; };
+		619826614523EBC868B88E1A159DBBAB /* RegexMatchRule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RegexMatchRule.swift; path = Sources/Skyflow/elements/validations/RegexMatchRule.swift; sourceTree = "<group>"; };
+		659A7AEE227280C6427C40920E665653 /* BaseElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseElement.swift; path = Sources/Skyflow/BaseElement.swift; sourceTree = "<group>"; };
+		66D49D3F87164BFE7F09ADCA12222118 /* Skyflow-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Skyflow-umbrella.h"; sourceTree = "<group>"; };
+		672F841D6548EFB21615C8BA781B5837 /* CardBin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CardBin.swift; path = Sources/Skyflow/elements/utils/CardBin.swift; sourceTree = "<group>"; };
+		6A082C308FD570D4958F235187C26CE5 /* SkyflowLabelView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowLabelView.swift; path = Sources/Skyflow/reveal/SkyflowLabelView.swift; sourceTree = "<group>"; };
+		6C837F6D1019BB5B8BD2B760B31A4114 /* CharacterSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CharacterSet.swift; path = Sources/Skyflow/elements/utils/CharacterSet.swift; sourceTree = "<group>"; };
+		6E507A427267A7533DCF0D2379B1ACD6 /* Configuration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = Sources/Skyflow/core/Configuration.swift; sourceTree = "<group>"; };
+		70D9C0A7D47FCC76EC8B0C4A72B99E2C /* ResourceBundle-Skyflow-Skyflow-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-Skyflow-Skyflow-Info.plist"; sourceTree = "<group>"; };
+		711B7D6E2B5718B05FAB8B9FEE4BCBD1 /* AEXML.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = AEXML.debug.xcconfig; sourceTree = "<group>"; };
+		73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		7306EC7637349293F998975F8CDD9F9C /* Pods-InputFormatting-InputFormattingUITests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-InputFormatting-InputFormattingUITests-umbrella.h"; sourceTree = "<group>"; };
+		74F79929D565F8EABAF2BC67BC081FA3 /* SkyflowValidateLengthMatch.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidateLengthMatch.swift; path = Sources/Skyflow/elements/validations/SkyflowValidateLengthMatch.swift; sourceTree = "<group>"; };
+		759DFE47256D2811AEA5A3A0698D4FC3 /* AEXML.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = AEXML.release.xcconfig; sourceTree = "<group>"; };
+		7841CE35186C6C0BD6F74343BFABD617 /* Pods-InputFormatting-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-InputFormatting-dummy.m"; sourceTree = "<group>"; };
+		786B6BB41D755C528469BE2DD69B4FC3 /* Parser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Parser.swift; path = Sources/AEXML/Parser.swift; sourceTree = "<group>"; };
+		787BC7CB64FA8763354E615361BCFF65 /* Pods-InputFormattingTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-InputFormattingTests-Info.plist"; sourceTree = "<group>"; };
+		78BD680D486946E2B0301ACC5D204818 /* Options.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Options.swift; path = Sources/AEXML/Options.swift; sourceTree = "<group>"; };
+		78EED71E6ED44350390BD157126F742A /* SkyflowValidateExpirationYear.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidateExpirationYear.swift; path = Sources/Skyflow/elements/validations/SkyflowValidateExpirationYear.swift; sourceTree = "<group>"; };
+		7D5318499695B837E7A7351072FF0427 /* TokenProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TokenProvider.swift; path = Sources/Skyflow/core/protocols/TokenProvider.swift; sourceTree = "<group>"; };
+		7DD283A62F2FFF719304F063563F4C93 /* Skyflow.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Skyflow.modulemap; sourceTree = "<group>"; };
+		7E89221D3E2634E1458AB5993532CFAC /* skyflow_iOS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = skyflow_iOS.swift; path = Sources/Skyflow/skyflow_iOS.swift; sourceTree = "<group>"; };
+		7EB3E7E4D9442123B16165344A2A4084 /* Pods-InputFormatting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-InputFormatting.debug.xcconfig"; sourceTree = "<group>"; };
+		7FAA27A9DED8F2380491DBB4276D305F /* SkyflowValidationError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidationError.swift; path = Sources/Skyflow/elements/validations/SkyflowValidationError.swift; sourceTree = "<group>"; };
+		7FC71B003FEEDB9C8A269DA2790BEE83 /* Callback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Callback.swift; path = Sources/Skyflow/core/protocols/Callback.swift; sourceTree = "<group>"; };
+		80487778CC68AD8B26E323F13FB62C73 /* AEXML-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "AEXML-dummy.m"; sourceTree = "<group>"; };
+		80BFCF43F180C219B135FDABA3C66BA0 /* AEXML-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "AEXML-umbrella.h"; sourceTree = "<group>"; };
+		82BB37996AE4463C03E1125AC0FED61A /* Container.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Container.swift; path = Sources/Skyflow/core/container/Container.swift; sourceTree = "<group>"; };
+		82DCCBE68DF9A1DCF128B27C40EA6337 /* Skyflow-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Skyflow-Info.plist"; sourceTree = "<group>"; };
+		89FB864D2469A99EE63FADD652B4C414 /* CollectContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectContainer.swift; path = Sources/Skyflow/collect/CollectContainer.swift; sourceTree = "<group>"; };
+		8A7CD76C759420F5567825D4CCADC547 /* Init.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Init.swift; path = Sources/Skyflow/core/Init.swift; sourceTree = "<group>"; };
+		8C7A380738C3B38D9CB181AC27A4CB85 /* Pods-InputFormatting-InputFormattingUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-InputFormatting-InputFormattingUITests.release.xcconfig"; sourceTree = "<group>"; };
+		93D4FD16EB25014D59194374DFC530E5 /* UILabel+Copyable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UILabel+Copyable.swift"; path = "Sources/Skyflow/reveal/UILabel+Copyable.swift"; sourceTree = "<group>"; };
+		981C8F25A3257695D5EEB55EBDA2E8DD /* Pods-InputFormatting-InputFormattingUITests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-InputFormatting-InputFormattingUITests"; path = Pods_InputFormatting_InputFormattingUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9830DD53FC5E528331C9B886F6737A16 /* Pods-InputFormatting-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-InputFormatting-frameworks.sh"; sourceTree = "<group>"; };
+		9B274AD6A5864D52C50A3317761125DD /* Pods-InputFormattingTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-InputFormattingTests.release.xcconfig"; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9DE72CAC284D187C273B0C2531D750F4 /* ContainerOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContainerOptions.swift; path = Sources/Skyflow/core/container/ContainerOptions.swift; sourceTree = "<group>"; };
+		9EBAE2BCBDA9001098A6F3B81B11490C /* Pods-InputFormatting-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-InputFormatting-acknowledgements.markdown"; sourceTree = "<group>"; };
+		9F1DAC6BD4E0D741E4E94084226CB4C3 /* Skyflow.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Skyflow.debug.xcconfig; sourceTree = "<group>"; };
+		9F86634B14FB59E5FEA3D9AECA278236 /* Pods-InputFormatting-InputFormattingUITests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-InputFormatting-InputFormattingUITests-acknowledgements.plist"; sourceTree = "<group>"; };
+		A17998749BFABCC61919FD0555E39D7A /* AEXML-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "AEXML-Info.plist"; sourceTree = "<group>"; };
+		A20F04E8FE849C4145309D6B8920F630 /* Pods-InputFormatting-InputFormattingUITests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-InputFormatting-InputFormattingUITests-frameworks.sh"; sourceTree = "<group>"; };
+		A31ED08D333A7488AC2D60F1B416304B /* TextFieldValidationDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextFieldValidationDelegate.swift; path = Sources/Skyflow/elements/TextFieldValidationDelegate.swift; sourceTree = "<group>"; };
+		A5C0A343E16D702DE8584A58744AC47D /* Skyflow */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Skyflow; path = Skyflow.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A619D6743D0F73B7272DA0997BA1F9EF /* EventName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EventName.swift; path = Sources/Skyflow/core/EventName.swift; sourceTree = "<group>"; };
+		AB54EDE16D046473DE1EFA22B9A2B58C /* Skyflow.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Skyflow.release.xcconfig; sourceTree = "<group>"; };
+		AD4C23852CDDEBC1CD90CAC411E9C613 /* Pods-InputFormattingTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-InputFormattingTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AF51C6AA5BDE52CC4351A9085476FD4B /* RevealContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealContainer.swift; path = Sources/Skyflow/reveal/RevealContainer.swift; sourceTree = "<group>"; };
+		B1D3DF78C72D0B73E58C178A0E6B951B /* RevealErrorRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevealErrorRecord.swift; path = Sources/Skyflow/reveal/RevealErrorRecord.swift; sourceTree = "<group>"; };
+		B54A832841E64DA85466FCCD5A50BEE8 /* CardType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CardType.swift; path = Sources/Skyflow/elements/utils/CardType.swift; sourceTree = "<group>"; };
+		B56986B1C9234DFD30978A9CF799A70E /* Client.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Client.swift; path = Sources/Skyflow/core/Client.swift; sourceTree = "<group>"; };
+		B6E95D8BCB3B7B7AEE3AED7627F6A25C /* Pods-InputFormattingTests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-InputFormattingTests.modulemap"; sourceTree = "<group>"; };
+		B7F452C8575CD760062098924FC3A1D2 /* AEXML */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = AEXML; path = AEXML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAA927B0E983DA1344D4B461FEEA4260 /* AEXML.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = AEXML.modulemap; sourceTree = "<group>"; };
+		BD53B8E0EDD677A54EB4575CAC055099 /* Styles.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Styles.swift; path = Sources/Skyflow/elements/core/styles/Styles.swift; sourceTree = "<group>"; };
+		BE29960A65DF341A29782B06BB192E55 /* Pods-InputFormatting-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-InputFormatting-Info.plist"; sourceTree = "<group>"; };
+		BFA90AE738AC778F19C34B084137E7A6 /* GetByIdRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GetByIdRecord.swift; path = Sources/Skyflow/reveal/GetByIdRecord.swift; sourceTree = "<group>"; };
+		C429A9270F4CA93A90FE24A22EEE2254 /* Pods-InputFormatting-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-InputFormatting-umbrella.h"; sourceTree = "<group>"; };
+		C5BA140F7FEC55BA100307B060EC645A /* Pods-InputFormattingTests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-InputFormattingTests-umbrella.h"; sourceTree = "<group>"; };
+		CE485FF895415A26663CBAFB9AA18C5F /* Pods-InputFormatting */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-InputFormatting"; path = Pods_InputFormatting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6C4B9790ED5879A36892A62335D820 /* AEXML-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "AEXML-prefix.pch"; sourceTree = "<group>"; };
+		CF718055A5C66E3543E699756DCBB56C /* Label.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Label.swift; path = Sources/Skyflow/reveal/Label.swift; sourceTree = "<group>"; };
+		D029369A74AB6B68C6499329A7D80163 /* StringExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StringExtension.swift; path = Sources/Skyflow/utils/StringExtension.swift; sourceTree = "<group>"; };
+		D3F909E519D7FC703856855910CA2409 /* TokenAPICallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TokenAPICallback.swift; path = Sources/Skyflow/collect/TokenAPICallback.swift; sourceTree = "<group>"; };
+		D5EC936D28FF96B0CEA54AB01D2B9565 /* Pods-InputFormatting.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-InputFormatting.modulemap"; sourceTree = "<group>"; };
+		D771C631F6122BD93564AB041BB21B56 /* RedactionType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RedactionType.swift; path = Sources/Skyflow/reveal/RedactionType.swift; sourceTree = "<group>"; };
+		D80D338553C883B3DB203EB01720EA52 /* Pods-InputFormatting-InputFormattingUITests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-InputFormatting-InputFormattingUITests.modulemap"; sourceTree = "<group>"; };
+		D87BAB6355A75301D792F40411E79F26 /* ElementValueMatchRule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ElementValueMatchRule.swift; path = Sources/Skyflow/elements/validations/ElementValueMatchRule.swift; sourceTree = "<group>"; };
+		DA6986F42BEE279EBDCB51C6D364E2B7 /* ContainerProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ContainerProtocol.swift; path = Sources/Skyflow/core/container/ContainerProtocol.swift; sourceTree = "<group>"; };
+		DABA32DE9E57977DE0696E6FA521ABF8 /* Error.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Error.swift; path = Sources/AEXML/Error.swift; sourceTree = "<group>"; };
+		E3BFAA211D7D6E94D20AD08DE5AD3ECD /* Pods-InputFormatting-InputFormattingUITests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-InputFormatting-InputFormattingUITests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		E5447C11806D53134B046DC9CC63513F /* Pods-InputFormatting-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-InputFormatting-acknowledgements.plist"; sourceTree = "<group>"; };
+		EB4005F0B0E70C157D518E6FC18055A8 /* State.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = State.swift; path = Sources/Skyflow/elements/core/state/State.swift; sourceTree = "<group>"; };
+		EF2A4611BE2D31F1F66BBD02B36BE88E /* SkyflowValidateCardNumber.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SkyflowValidateCardNumber.swift; path = Sources/Skyflow/elements/validations/SkyflowValidateCardNumber.swift; sourceTree = "<group>"; };
+		F0769754965638516CC145A7522CD412 /* Env.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Env.swift; path = Sources/Skyflow/core/Env.swift; sourceTree = "<group>"; };
+		F23EDC36F12794D6E146F56C921DCB6C /* Pods-InputFormatting-InputFormattingUITests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-InputFormatting-InputFormattingUITests-dummy.m"; sourceTree = "<group>"; };
+		F80B9BDAF44325B6281430860983FD06 /* CollectElementOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectElementOptions.swift; path = Sources/Skyflow/elements/core/CollectElementOptions.swift; sourceTree = "<group>"; };
+		F947D345E1BCDFD5CAC3F8C8B629AEB7 /* CollectElementInput.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectElementInput.swift; path = Sources/Skyflow/elements/core/CollectElementInput.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		03D140CB1F51591458A650CAC2672301 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2308ADB3A35672C367382F4DDEE588E3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9937BCD97D289651DF555018C7CB6F9E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		457C5511CF12F048CDC585FC25130319 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9124B8BE11FB7B88050F33E17FE9C98A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0AB61A4D9084A887FED04C6257E8037 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D768E1132ED092B444A5CA0E54D24F90 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C532B25F5EF1DA8F03EBDFD1221DCFA9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				990BBBE12ABD540839528407A3D68B03 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E310CBB5AB5C3E23115E1DDC659802ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				412AB6937928BC8EEADDC8AD0F96F842 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		349CAFB3F16B3541C768987D69D7BA96 /* Pods-InputFormatting-InputFormattingUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D80D338553C883B3DB203EB01720EA52 /* Pods-InputFormatting-InputFormattingUITests.modulemap */,
+				E3BFAA211D7D6E94D20AD08DE5AD3ECD /* Pods-InputFormatting-InputFormattingUITests-acknowledgements.markdown */,
+				9F86634B14FB59E5FEA3D9AECA278236 /* Pods-InputFormatting-InputFormattingUITests-acknowledgements.plist */,
+				F23EDC36F12794D6E146F56C921DCB6C /* Pods-InputFormatting-InputFormattingUITests-dummy.m */,
+				A20F04E8FE849C4145309D6B8920F630 /* Pods-InputFormatting-InputFormattingUITests-frameworks.sh */,
+				393CD764D73983D63D4817DE46323AA7 /* Pods-InputFormatting-InputFormattingUITests-Info.plist */,
+				7306EC7637349293F998975F8CDD9F9C /* Pods-InputFormatting-InputFormattingUITests-umbrella.h */,
+				4E7D886A8D5469CFB21935139998F4CE /* Pods-InputFormatting-InputFormattingUITests.debug.xcconfig */,
+				8C7A380738C3B38D9CB181AC27A4CB85 /* Pods-InputFormatting-InputFormattingUITests.release.xcconfig */,
+			);
+			name = "Pods-InputFormatting-InputFormattingUITests";
+			path = "Target Support Files/Pods-InputFormatting-InputFormattingUITests";
+			sourceTree = "<group>";
+		};
+		41EDC4FF2636D4B423BA14296E812363 /* Skyflow */ = {
+			isa = PBXGroup;
+			children = (
+				2761E1F1EFF6AA503A092DEC6B1C7598 /* APIClient.swift */,
+				659A7AEE227280C6427C40920E665653 /* BaseElement.swift */,
+				7FC71B003FEEDB9C8A269DA2790BEE83 /* Callback.swift */,
+				672F841D6548EFB21615C8BA781B5837 /* CardBin.swift */,
+				B54A832841E64DA85466FCCD5A50BEE8 /* CardType.swift */,
+				6C837F6D1019BB5B8BD2B760B31A4114 /* CharacterSet.swift */,
+				B56986B1C9234DFD30978A9CF799A70E /* Client.swift */,
+				55ACADB388EF4BE0B0D9A8B264F0A472 /* CollectAPICallback.swift */,
+				89FB864D2469A99EE63FADD652B4C414 /* CollectContainer.swift */,
+				F947D345E1BCDFD5CAC3F8C8B629AEB7 /* CollectElementInput.swift */,
+				F80B9BDAF44325B6281430860983FD06 /* CollectElementOptions.swift */,
+				245D331A5D1BF2E7961A7A13490E342A /* CollectOptions.swift */,
+				214995CC69362684AD86D1FFAF1A9781 /* CollectRequestBody.swift */,
+				6E507A427267A7533DCF0D2379B1ACD6 /* Configuration.swift */,
+				82BB37996AE4463C03E1125AC0FED61A /* Container.swift */,
+				9DE72CAC284D187C273B0C2531D750F4 /* ContainerOptions.swift */,
+				DA6986F42BEE279EBDCB51C6D364E2B7 /* ContainerProtocol.swift */,
+				20249AE16CBECDDE4EF2A7B633814004 /* ContainerType.swift */,
+				5CD115FBAAE6072558DF5325052C2778 /* ContextOptions.swift */,
+				1D029C4C6E7F1CFC0265F9E841A5AB93 /* ConversionHelpers.swift */,
+				1059291C8C3B28DAC4C59CB741CC43D1 /* DictionaryExtension.swift */,
+				03ACC803CC78E70C8D36AEF5D9306B73 /* Element.swift */,
+				5D899AEB951B1607E20E4BAF4B7FDB39 /* ElementType.swift */,
+				D87BAB6355A75301D792F40411E79F26 /* ElementValueMatchRule.swift */,
+				F0769754965638516CC145A7522CD412 /* Env.swift */,
+				292947795D08A6E3307C727235A7BF4D /* ErrorCodes.swift */,
+				A619D6743D0F73B7272DA0997BA1F9EF /* EventName.swift */,
+				4DDC7174B29675BC43A2D22B76D91ADF /* FormatLabel.swift */,
+				329D7EB6E49E91C62911DB41421661CD /* FormatTextField.swift */,
+				BFA90AE738AC778F19C34B084137E7A6 /* GetByIdRecord.swift */,
+				3093F644E69D6E118AE26AEA63234C99 /* ICOptions.swift */,
+				8A7CD76C759420F5567825D4CCADC547 /* Init.swift */,
+				0EF9B0A1B7A203E9AD13F07116C54372 /* InsertOptions.swift */,
+				38BB35E62B98F2B04AA0585A61E8592E /* InterfaceName.swift */,
+				CF718055A5C66E3543E699756DCBB56C /* Label.swift */,
+				0994336F6422CCC406558B3446A32EF5 /* LengthMatchRule.swift */,
+				3346E2BA5C2ACC98C3E5BB349A1AC21F /* Log.swift */,
+				603CF8E859D109322F440E9AF737C3BA /* LogLevel.swift */,
+				4C1B8D3336355BC4D04183226046DFD5 /* Message.swift */,
+				51B6AC6D553DD6541B6386A10B09E312 /* Options.swift */,
+				31056BA715FA724895D0222569596CEB /* PaddingLabel.swift */,
+				D771C631F6122BD93564AB041BB21B56 /* RedactionType.swift */,
+				619826614523EBC868B88E1A159DBBAB /* RegexMatchRule.swift */,
+				5C5F2049C925913795DF4EC95E6ECA00 /* RevealApiCallback.swift */,
+				302BD500857AE96D4ACC5533CCE4F9FD /* RevealByIDAPICallback.swift */,
+				AF51C6AA5BDE52CC4351A9085476FD4B /* RevealContainer.swift */,
+				32460F5268A6C882DE0A17F593E789FA /* RevealElementInput.swift */,
+				2B457CCA79C519D8D9C0C313C5EA2EF7 /* RevealElementOptions.swift */,
+				B1D3DF78C72D0B73E58C178A0E6B951B /* RevealErrorRecord.swift */,
+				17A52639F1E9E73EEBE8B6827CD58501 /* RevealOptions.swift */,
+				4FFB26A1953DC407A838317576C0A55D /* RevealRequestBody.swift */,
+				31DB5A403AC4D6D075B1FD52801C7050 /* RevealRequestRecord.swift */,
+				220F31E1A4AE1867FB4B642CD80D6CD3 /* RevealSuccessRecord.swift */,
+				41219141319AD27758E542AEC1AAECD5 /* RevealValueCallback.swift */,
+				7E89221D3E2634E1458AB5993532CFAC /* skyflow_iOS.swift */,
+				22846E4E0BD1CE34E4051DCC9B61C03D /* SkyflowElement.swift */,
+				37F41EE5BFF08E248C7D463923E4CF11 /* SkyflowInternalValidatorProtocol.swift */,
+				6A082C308FD570D4958F235187C26CE5 /* SkyflowLabelView.swift */,
+				56BA911CC11C034307A3258B6A3A951F /* SkyflowValidateCardExpirationDate.swift */,
+				EF2A4611BE2D31F1F66BBD02B36BE88E /* SkyflowValidateCardNumber.swift */,
+				251D33E308DB47CEE8537F70D1AA4C41 /* SkyflowValidateExpirationMonth.swift */,
+				78EED71E6ED44350390BD157126F742A /* SkyflowValidateExpirationYear.swift */,
+				74F79929D565F8EABAF2BC67BC081FA3 /* SkyflowValidateLengthMatch.swift */,
+				7FAA27A9DED8F2380491DBB4276D305F /* SkyflowValidationError.swift */,
+				04A4EC19C36A7B50313A5050C1A6C271 /* SkyflowValidator.swift */,
+				EB4005F0B0E70C157D518E6FC18055A8 /* State.swift */,
+				11F310518836E111B97C51062E5F134B /* StateforText.swift */,
+				D029369A74AB6B68C6499329A7D80163 /* StringExtension.swift */,
+				4C703F28BBD1B7BED3DC5B1B7365F947 /* Style.swift */,
+				BD53B8E0EDD677A54EB4575CAC055099 /* Styles.swift */,
+				3EA963365AEFC01B3BBCFF2E5D1DDAD9 /* TextField.swift */,
+				A31ED08D333A7488AC2D60F1B416304B /* TextFieldValidationDelegate.swift */,
+				D3F909E519D7FC703856855910CA2409 /* TokenAPICallback.swift */,
+				7D5318499695B837E7A7351072FF0427 /* TokenProvider.swift */,
+				93D4FD16EB25014D59194374DFC530E5 /* UILabel+Copyable.swift */,
+				1D25D6A1A90479B08C9A60169AB32D87 /* ValidationRule.swift */,
+				0EDB34FEF8F0D1ADDA1AD677DF9802F6 /* ValidationSet.swift */,
+				BD601E0760AB785AC4CDB63C9904C783 /* Resources */,
+				A9DED98824C32A71A4CA5231AA8C4A1C /* Support Files */,
+			);
+			name = Skyflow;
+			path = Skyflow;
+			sourceTree = "<group>";
+		};
+		485CBFD56F059D146CA0DFBDCDF4BE07 /* Pods-InputFormattingTests */ = {
+			isa = PBXGroup;
+			children = (
+				B6E95D8BCB3B7B7AEE3AED7627F6A25C /* Pods-InputFormattingTests.modulemap */,
+				12F300AC02BF0AE962765F7BCC3C1E71 /* Pods-InputFormattingTests-acknowledgements.markdown */,
+				16BF22C36826885B449AC0F705CBCD73 /* Pods-InputFormattingTests-acknowledgements.plist */,
+				412CDB158BC92F28F6516B70AFAFF6F9 /* Pods-InputFormattingTests-dummy.m */,
+				787BC7CB64FA8763354E615361BCFF65 /* Pods-InputFormattingTests-Info.plist */,
+				C5BA140F7FEC55BA100307B060EC645A /* Pods-InputFormattingTests-umbrella.h */,
+				AD4C23852CDDEBC1CD90CAC411E9C613 /* Pods-InputFormattingTests.debug.xcconfig */,
+				9B274AD6A5864D52C50A3317761125DD /* Pods-InputFormattingTests.release.xcconfig */,
+			);
+			name = "Pods-InputFormattingTests";
+			path = "Target Support Files/Pods-InputFormattingTests";
+			sourceTree = "<group>";
+		};
+		578452D2E740E91742655AC8F1636D1F /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		5DCF6A1509642AEA73512712C7000148 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				BAA927B0E983DA1344D4B461FEEA4260 /* AEXML.modulemap */,
+				80487778CC68AD8B26E323F13FB62C73 /* AEXML-dummy.m */,
+				A17998749BFABCC61919FD0555E39D7A /* AEXML-Info.plist */,
+				CE6C4B9790ED5879A36892A62335D820 /* AEXML-prefix.pch */,
+				80BFCF43F180C219B135FDABA3C66BA0 /* AEXML-umbrella.h */,
+				711B7D6E2B5718B05FAB8B9FEE4BCBD1 /* AEXML.debug.xcconfig */,
+				759DFE47256D2811AEA5A3A0698D4FC3 /* AEXML.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/AEXML";
+			sourceTree = "<group>";
+		};
+		88417EEE12117372477D4BB1181E6D73 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7F452C8575CD760062098924FC3A1D2 /* AEXML */,
+				CE485FF895415A26663CBAFB9AA18C5F /* Pods-InputFormatting */,
+				981C8F25A3257695D5EEB55EBDA2E8DD /* Pods-InputFormatting-InputFormattingUITests */,
+				5830D01A6FBE4D1B56505ABADC61CC84 /* Pods-InputFormattingTests */,
+				A5C0A343E16D702DE8584A58744AC47D /* Skyflow */,
+				1F131D556D062654AA9726D469FA4893 /* Skyflow-Skyflow */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		974293A1E2C141FDA2EDA0AB82B35920 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DF388463792F9FE3A82A9D8F0DE94DC8 /* AEXML */,
+				41EDC4FF2636D4B423BA14296E812363 /* Skyflow */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A9DED98824C32A71A4CA5231AA8C4A1C /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				70D9C0A7D47FCC76EC8B0C4A72B99E2C /* ResourceBundle-Skyflow-Skyflow-Info.plist */,
+				7DD283A62F2FFF719304F063563F4C93 /* Skyflow.modulemap */,
+				0797E66685EBD6673738C5CBACA8E09D /* Skyflow-dummy.m */,
+				82DCCBE68DF9A1DCF128B27C40EA6337 /* Skyflow-Info.plist */,
+				09F1F6CD68284FC143ED5C6B359610FE /* Skyflow-prefix.pch */,
+				66D49D3F87164BFE7F09ADCA12222118 /* Skyflow-umbrella.h */,
+				9F1DAC6BD4E0D741E4E94084226CB4C3 /* Skyflow.debug.xcconfig */,
+				AB54EDE16D046473DE1EFA22B9A2B58C /* Skyflow.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Skyflow";
+			sourceTree = "<group>";
+		};
+		BD601E0760AB785AC4CDB63C9904C783 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0A94DD7D1F4DA3B36F252767102ABF25 /* Assets.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CF1408CF629C7361332E53B88F7BD30C = {
+			isa = PBXGroup;
+			children = (
+				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
+				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
+				974293A1E2C141FDA2EDA0AB82B35920 /* Pods */,
+				88417EEE12117372477D4BB1181E6D73 /* Products */,
+				FCB404F469B0E8A7F6AA648C6D98293E /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				578452D2E740E91742655AC8F1636D1F /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF388463792F9FE3A82A9D8F0DE94DC8 /* AEXML */ = {
+			isa = PBXGroup;
+			children = (
+				491EA3AF83A3D2BC27BDE38A3A8EAD07 /* Document.swift */,
+				07C79D412ABA825679CE5439CD59DED6 /* Element.swift */,
+				DABA32DE9E57977DE0696E6FA521ABF8 /* Error.swift */,
+				78BD680D486946E2B0301ACC5D204818 /* Options.swift */,
+				786B6BB41D755C528469BE2DD69B4FC3 /* Parser.swift */,
+				5DCF6A1509642AEA73512712C7000148 /* Support Files */,
+			);
+			name = AEXML;
+			path = AEXML;
+			sourceTree = "<group>";
+		};
+		F540576AF082EA3AB7683551A3FBDD3A /* Pods-InputFormatting */ = {
+			isa = PBXGroup;
+			children = (
+				D5EC936D28FF96B0CEA54AB01D2B9565 /* Pods-InputFormatting.modulemap */,
+				9EBAE2BCBDA9001098A6F3B81B11490C /* Pods-InputFormatting-acknowledgements.markdown */,
+				E5447C11806D53134B046DC9CC63513F /* Pods-InputFormatting-acknowledgements.plist */,
+				7841CE35186C6C0BD6F74343BFABD617 /* Pods-InputFormatting-dummy.m */,
+				9830DD53FC5E528331C9B886F6737A16 /* Pods-InputFormatting-frameworks.sh */,
+				BE29960A65DF341A29782B06BB192E55 /* Pods-InputFormatting-Info.plist */,
+				C429A9270F4CA93A90FE24A22EEE2254 /* Pods-InputFormatting-umbrella.h */,
+				7EB3E7E4D9442123B16165344A2A4084 /* Pods-InputFormatting.debug.xcconfig */,
+				572F85B91F979E07BA64F4BD4651AE1B /* Pods-InputFormatting.release.xcconfig */,
+			);
+			name = "Pods-InputFormatting";
+			path = "Target Support Files/Pods-InputFormatting";
+			sourceTree = "<group>";
+		};
+		FCB404F469B0E8A7F6AA648C6D98293E /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				F540576AF082EA3AB7683551A3FBDD3A /* Pods-InputFormatting */,
+				349CAFB3F16B3541C768987D69D7BA96 /* Pods-InputFormatting-InputFormattingUITests */,
+				485CBFD56F059D146CA0DFBDCDF4BE07 /* Pods-InputFormattingTests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		32D2D9BB78BF0CEABD74A2DDF1A05A0D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				33C42E4606F46C988F99750773FA0785 /* Pods-InputFormatting-InputFormattingUITests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8E7F33C3930362068C3103BDC98DA2F5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C408CB4FEF6A26D885BD15300A556BC0 /* AEXML-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AD52E9C29063959675CFCCA93C39C290 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A600437581D9FCCCC4BD7DCE7936DC9F /* Skyflow-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0CD02165F63F2B6387832ECE32003DB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1E260DBFB442BF7CB4E46C998F20B81 /* Pods-InputFormattingTests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C7BEA27181C2A4B88FFBDD612C3DD2FC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8225407B8EFE29340F4156C683809412 /* Pods-InputFormatting-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0CFCD76F75EC3DF719C5185029771683 /* Skyflow-Skyflow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00F88023964964EA7FA65A5CB3767242 /* Build configuration list for PBXNativeTarget "Skyflow-Skyflow" */;
+			buildPhases = (
+				64E43B4656DF1CBC83B037B2603F1ACD /* Sources */,
+				03D140CB1F51591458A650CAC2672301 /* Frameworks */,
+				1543F463CCDB93395110036439D4575E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Skyflow-Skyflow";
+			productName = Skyflow;
+			productReference = 1F131D556D062654AA9726D469FA4893 /* Skyflow-Skyflow */;
+			productType = "com.apple.product-type.bundle";
+		};
+		4B04C54C6BF0E9BD40F6E943816DEE8B /* Skyflow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9DC1927C2A94B80B62B30B33085C8BFC /* Build configuration list for PBXNativeTarget "Skyflow" */;
+			buildPhases = (
+				AD52E9C29063959675CFCCA93C39C290 /* Headers */,
+				67A29D3EACEB3E457A9A1D95AE0D636B /* Sources */,
+				C532B25F5EF1DA8F03EBDFD1221DCFA9 /* Frameworks */,
+				AE5B80F8DA7D7E4DEEDD96DB9978BFA9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				49C42160E3424FB33BB2D7EB883A16DF /* PBXTargetDependency */,
+				6509D7814E7C6244EC6A857FC9A122C6 /* PBXTargetDependency */,
+			);
+			name = Skyflow;
+			productName = Skyflow;
+			productReference = A5C0A343E16D702DE8584A58744AC47D /* Skyflow */;
+			productType = "com.apple.product-type.framework";
+		};
+		8684801AD3062ED34D683ABBD95C2F32 /* Pods-InputFormatting */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C59C7E024571E7E3EC994AD256FF872 /* Build configuration list for PBXNativeTarget "Pods-InputFormatting" */;
+			buildPhases = (
+				C7BEA27181C2A4B88FFBDD612C3DD2FC /* Headers */,
+				ABC5E395F74599C73CBD0095B0615D93 /* Sources */,
+				2308ADB3A35672C367382F4DDEE588E3 /* Frameworks */,
+				A5D9828A0C4D95655F32F654B07A91B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10F8987A67DC288FA4F21CC741A806A7 /* PBXTargetDependency */,
+				B6B4C1E261E53E519AA0472B81C76963 /* PBXTargetDependency */,
+			);
+			name = "Pods-InputFormatting";
+			productName = Pods_InputFormatting;
+			productReference = CE485FF895415A26663CBAFB9AA18C5F /* Pods-InputFormatting */;
+			productType = "com.apple.product-type.framework";
+		};
+		93E0B1AE89E684F3F3FA798E54042CA6 /* Pods-InputFormattingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D178903ABE550493F1EC7A77FA7ACE9B /* Build configuration list for PBXNativeTarget "Pods-InputFormattingTests" */;
+			buildPhases = (
+				C0CD02165F63F2B6387832ECE32003DB /* Headers */,
+				9B084974EF71410CC9338C9CB0647863 /* Sources */,
+				E310CBB5AB5C3E23115E1DDC659802ED /* Frameworks */,
+				3A927F8D15369C0749585A0E27243D42 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				13427F82E0A98015402E9B0ABC97C6F7 /* PBXTargetDependency */,
+			);
+			name = "Pods-InputFormattingTests";
+			productName = Pods_InputFormattingTests;
+			productReference = 5830D01A6FBE4D1B56505ABADC61CC84 /* Pods-InputFormattingTests */;
+			productType = "com.apple.product-type.framework";
+		};
+		D0C3B2890BA25B4203C768E55BB4D4FA /* AEXML */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D39FDA84DF437EF4EB660C36F5065E6 /* Build configuration list for PBXNativeTarget "AEXML" */;
+			buildPhases = (
+				8E7F33C3930362068C3103BDC98DA2F5 /* Headers */,
+				E9E8440644184450778E10C0A25B595F /* Sources */,
+				457C5511CF12F048CDC585FC25130319 /* Frameworks */,
+				CC28BB5042E5066A22664608BBF3A051 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AEXML;
+			productName = AEXML;
+			productReference = B7F452C8575CD760062098924FC3A1D2 /* AEXML */;
+			productType = "com.apple.product-type.framework";
+		};
+		D352020B284D11893F354B4C609DAAB6 /* Pods-InputFormatting-InputFormattingUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2ECE1FF4E4B8A959F0ED24CF580669C8 /* Build configuration list for PBXNativeTarget "Pods-InputFormatting-InputFormattingUITests" */;
+			buildPhases = (
+				32D2D9BB78BF0CEABD74A2DDF1A05A0D /* Headers */,
+				BD9D0C886213E9A56B03F44E2341FCDD /* Sources */,
+				B0AB61A4D9084A887FED04C6257E8037 /* Frameworks */,
+				8B81D38BF23AA09DADF210EE5CD01027 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7ED0A8D9D25E52E866BFF18AAF048A3D /* PBXTargetDependency */,
+				203CF70931F59FB264810B87936901CF /* PBXTargetDependency */,
+			);
+			name = "Pods-InputFormatting-InputFormattingUITests";
+			productName = Pods_InputFormatting_InputFormattingUITests;
+			productReference = 981C8F25A3257695D5EEB55EBDA2E8DD /* Pods-InputFormatting-InputFormattingUITests */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1300;
+				LastUpgradeCheck = 1300;
+			};
+			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			productRefGroup = 88417EEE12117372477D4BB1181E6D73 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D0C3B2890BA25B4203C768E55BB4D4FA /* AEXML */,
+				8684801AD3062ED34D683ABBD95C2F32 /* Pods-InputFormatting */,
+				D352020B284D11893F354B4C609DAAB6 /* Pods-InputFormatting-InputFormattingUITests */,
+				93E0B1AE89E684F3F3FA798E54042CA6 /* Pods-InputFormattingTests */,
+				4B04C54C6BF0E9BD40F6E943816DEE8B /* Skyflow */,
+				0CFCD76F75EC3DF719C5185029771683 /* Skyflow-Skyflow */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1543F463CCDB93395110036439D4575E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B2ECCA7BFCDDF0C2F5AF1610AEAB48D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3A927F8D15369C0749585A0E27243D42 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8B81D38BF23AA09DADF210EE5CD01027 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5D9828A0C4D95655F32F654B07A91B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AE5B80F8DA7D7E4DEEDD96DB9978BFA9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				027D414E9FA85556C8E575743B0B2271 /* Skyflow-Skyflow in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC28BB5042E5066A22664608BBF3A051 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		64E43B4656DF1CBC83B037B2603F1ACD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		67A29D3EACEB3E457A9A1D95AE0D636B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9B24BB339A619FCC78212613CEA2FC7 /* APIClient.swift in Sources */,
+				91CCBF7A650643EE403D921DA513136B /* BaseElement.swift in Sources */,
+				57A3492F1643321415D1DFF9FA4349AE /* Callback.swift in Sources */,
+				AE552B25912AECCAD72BE57E2F4F4453 /* CardBin.swift in Sources */,
+				B7DC7D8788B6AECD901B1AF7CCF53E2B /* CardType.swift in Sources */,
+				78AAC8FFDCD06B2B5262713DE6CC8E92 /* CharacterSet.swift in Sources */,
+				212F6DBC32731482F1C29DDDCC5912C0 /* Client.swift in Sources */,
+				76C04D13EBE21B95E0F6DD395BDBBA82 /* CollectAPICallback.swift in Sources */,
+				3E061CFB646FD299F1A142DC8DE161C3 /* CollectContainer.swift in Sources */,
+				36FE0017B54A08080DF82D9F316BB560 /* CollectElementInput.swift in Sources */,
+				5D2CEBEC60BE750C7FF2E5647DE2C8F1 /* CollectElementOptions.swift in Sources */,
+				45E985BB839F896CDF989F500CB3A0B2 /* CollectOptions.swift in Sources */,
+				54DBA21BF09261C6C571316AA258D876 /* CollectRequestBody.swift in Sources */,
+				48C155B86574EE596D156A9A29C3E5FD /* Configuration.swift in Sources */,
+				EFAF4DA354442307C1CD60FC0CD23BD2 /* Container.swift in Sources */,
+				E95F343E6AEF01BDB82CB53FA7994F40 /* ContainerOptions.swift in Sources */,
+				624D1E8832C5CCA10E35EAB9EDD66765 /* ContainerProtocol.swift in Sources */,
+				1AC82960A57AD9B4379E944B50269230 /* ContainerType.swift in Sources */,
+				ED79A9021BFAD4C023183BF2EC84D774 /* ContextOptions.swift in Sources */,
+				4D3EF0C108986845D6CA9A8344F57445 /* ConversionHelpers.swift in Sources */,
+				7A0A33677B22AFA32D7122492F1BB683 /* DictionaryExtension.swift in Sources */,
+				C9D341DE5DA99546E8AB0BCCCA7A8A83 /* Element.swift in Sources */,
+				C995BE78EA96811129A91FB8C973EC78 /* ElementType.swift in Sources */,
+				970D20736B2C5BCB83BA9C5F02B2AB07 /* ElementValueMatchRule.swift in Sources */,
+				E8FB15D988A328CA3BEA9FE4E76DD81F /* Env.swift in Sources */,
+				2806196B2816A832F8CEA817D9574843 /* ErrorCodes.swift in Sources */,
+				CE138581B99116FB649E3666DD82A0AA /* EventName.swift in Sources */,
+				1BF785F86ADE4D74084A429C1BAFA188 /* FormatLabel.swift in Sources */,
+				B669B15EFF1B26265488717FB66F5838 /* FormatTextField.swift in Sources */,
+				6D662D31AE6A497965EACA33E8BA7839 /* GetByIdRecord.swift in Sources */,
+				929488875FF303671B028DF77C8BB788 /* ICOptions.swift in Sources */,
+				4871619A28F1D8EA1B712314DEFE02B0 /* Init.swift in Sources */,
+				94C8C7CB60E3C725A300F7DB2FAFDCE8 /* InsertOptions.swift in Sources */,
+				A44E22B30AD2C51435FBC79FC23DAB37 /* InterfaceName.swift in Sources */,
+				D9A478E49EAEE2FD7768F36E41308111 /* Label.swift in Sources */,
+				B6447666DBC84673C90EFBB7FAEDFA75 /* LengthMatchRule.swift in Sources */,
+				89ABBAB8FC22B9B7CFEC85C7127D62BF /* Log.swift in Sources */,
+				79848C09FC3EAA92BE9FA62901EB68DC /* LogLevel.swift in Sources */,
+				D4B148DDA6762B87BE181757B6283DB8 /* Message.swift in Sources */,
+				85EAD61AA0C55FC102EEB49BE0578C0A /* Options.swift in Sources */,
+				A7043C9DCACEA65E39071AEBF3272F40 /* PaddingLabel.swift in Sources */,
+				6E7A539D6D2EAD8EBBA8EF9F1702710E /* RedactionType.swift in Sources */,
+				084B0C35E539C16B3A7CBBA337852470 /* RegexMatchRule.swift in Sources */,
+				CEAA3A3CAA50400FAD749E249E8E0E71 /* RevealApiCallback.swift in Sources */,
+				A360F86A319990D8EFF93E4CA149AD4A /* RevealByIDAPICallback.swift in Sources */,
+				E76C3BF4E71366A923BE7D35993C5FBA /* RevealContainer.swift in Sources */,
+				D7657256DEE0FCBCF45FB191F823E8E6 /* RevealElementInput.swift in Sources */,
+				8CE2964E1830BE4CC17F5F6C67698639 /* RevealElementOptions.swift in Sources */,
+				67A3DFCE8E8ECBF86C187D70DCF19817 /* RevealErrorRecord.swift in Sources */,
+				3C0A85B21DC1B081B06614F5C683D741 /* RevealOptions.swift in Sources */,
+				49FE20AD4311B9B4EEFD839353736EAA /* RevealRequestBody.swift in Sources */,
+				5E6A63214D96ED145412EC3D34FA9B98 /* RevealRequestRecord.swift in Sources */,
+				DEF731CDA126C8B8520CB271AB0D1B92 /* RevealSuccessRecord.swift in Sources */,
+				600A3F7251C1557F09F888981913C2D7 /* RevealValueCallback.swift in Sources */,
+				CA780B5643D4FC25609494DE80F580C9 /* Skyflow-dummy.m in Sources */,
+				26D28015F0CFADBB401AD674D8B73785 /* skyflow_iOS.swift in Sources */,
+				20D10A8815351675B59FDA1FEAC0639D /* SkyflowElement.swift in Sources */,
+				97F4C7F94BDAE6707BEDE0ADEB2231FC /* SkyflowInternalValidatorProtocol.swift in Sources */,
+				7937425B49C01A9C4D87922C750B86FF /* SkyflowLabelView.swift in Sources */,
+				78A2C29E1E07AE3D0658FBC92CC17D7E /* SkyflowValidateCardExpirationDate.swift in Sources */,
+				CD1F8AB4C9464EDB472E0C43ECBCE46F /* SkyflowValidateCardNumber.swift in Sources */,
+				DA2B1C72D05DC9A06CDA5D83AC55BED0 /* SkyflowValidateExpirationMonth.swift in Sources */,
+				67EB8F815C7B6448376510516A8F7629 /* SkyflowValidateExpirationYear.swift in Sources */,
+				0F2B6B39EBAAFC85CE852E88F9C33039 /* SkyflowValidateLengthMatch.swift in Sources */,
+				AA86E139C312A9417AC45DAEA01114B3 /* SkyflowValidationError.swift in Sources */,
+				A6E53DFF95C0BF6BF9B92C53ED3D5C9F /* SkyflowValidator.swift in Sources */,
+				9FACEFA056974D87E3B790D85490226B /* State.swift in Sources */,
+				C11ABC4764015509FF1D6D9AFAF4608C /* StateforText.swift in Sources */,
+				F160631EFCFF033CB938370D6362A3B1 /* StringExtension.swift in Sources */,
+				4ACA3329F84020C3405E4A31328E86EF /* Style.swift in Sources */,
+				7658EAE53BC3CAB9CFB29E88CF008E78 /* Styles.swift in Sources */,
+				AAC996A37881C234BD276E22A41B39C0 /* TextField.swift in Sources */,
+				311231E227A6FB64C062C88CFC15A091 /* TextFieldValidationDelegate.swift in Sources */,
+				95A72DB81EF766A475A44BAC247A1A40 /* TokenAPICallback.swift in Sources */,
+				DBDC05CD2DA9252E780B3EB3F7FED680 /* TokenProvider.swift in Sources */,
+				626888BF0B43B994A34F5AA71A859213 /* UILabel+Copyable.swift in Sources */,
+				7F2C13D000DC1B3FA61041340EC07CCF /* ValidationRule.swift in Sources */,
+				060587ECEA62B85F1D18BF88B794A61F /* ValidationSet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B084974EF71410CC9338C9CB0647863 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CCDCDE10E0082070492937AB16DDCBB /* Pods-InputFormattingTests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ABC5E395F74599C73CBD0095B0615D93 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9990B8E4F160C4B718726964E52F8231 /* Pods-InputFormatting-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD9D0C886213E9A56B03F44E2341FCDD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36BC9B081DB857FD82B9D4452DBE9BD9 /* Pods-InputFormatting-InputFormattingUITests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9E8440644184450778E10C0A25B595F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A682FC64C423760D29323D3F118FF46 /* AEXML-dummy.m in Sources */,
+				77FB2D46B74A31CED74228E9DAA96255 /* Document.swift in Sources */,
+				7B28E3090642676E37130CBBD712E025 /* Element.swift in Sources */,
+				4D2B298D73BD362885D0DE01D789B702 /* Error.swift in Sources */,
+				0292C8F1ED87AB54D617383CA60E0441 /* Options.swift in Sources */,
+				617308966F74EFAB6657BB97EBE55E0B /* Parser.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		10F8987A67DC288FA4F21CC741A806A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AEXML;
+			target = D0C3B2890BA25B4203C768E55BB4D4FA /* AEXML */;
+			targetProxy = 9AEE7F68CE8B135DF650F17F09095B92 /* PBXContainerItemProxy */;
+		};
+		13427F82E0A98015402E9B0ABC97C6F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Pods-InputFormatting";
+			target = 8684801AD3062ED34D683ABBD95C2F32 /* Pods-InputFormatting */;
+			targetProxy = D80CAF4AA1AD5A52CB634377CB6FA407 /* PBXContainerItemProxy */;
+		};
+		203CF70931F59FB264810B87936901CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Skyflow;
+			target = 4B04C54C6BF0E9BD40F6E943816DEE8B /* Skyflow */;
+			targetProxy = 1A9C51D5AEC453C92F87264056F1E326 /* PBXContainerItemProxy */;
+		};
+		49C42160E3424FB33BB2D7EB883A16DF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AEXML;
+			target = D0C3B2890BA25B4203C768E55BB4D4FA /* AEXML */;
+			targetProxy = 125C5D86AD8D596163C5F0D8FE942249 /* PBXContainerItemProxy */;
+		};
+		6509D7814E7C6244EC6A857FC9A122C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Skyflow-Skyflow";
+			target = 0CFCD76F75EC3DF719C5185029771683 /* Skyflow-Skyflow */;
+			targetProxy = 79EF6262900AE789FB33DF64AD2F105A /* PBXContainerItemProxy */;
+		};
+		7ED0A8D9D25E52E866BFF18AAF048A3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AEXML;
+			target = D0C3B2890BA25B4203C768E55BB4D4FA /* AEXML */;
+			targetProxy = D7E74FCF5EE5C748A99E68402B4865BB /* PBXContainerItemProxy */;
+		};
+		B6B4C1E261E53E519AA0472B81C76963 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Skyflow;
+			target = 4B04C54C6BF0E9BD40F6E943816DEE8B /* Skyflow */;
+			targetProxy = E265B7D532983230AEE1D6924BFC6797 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		29DC1F2796C16A6A21B3015DA79CF98D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8C7A380738C3B38D9CB181AC27A4CB85 /* Pods-InputFormatting-InputFormattingUITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-InputFormatting-InputFormattingUITests/Pods-InputFormatting-InputFormattingUITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-InputFormatting-InputFormattingUITests/Pods-InputFormatting-InputFormattingUITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		30E0B9EFD9A5C45D0D351231E81B30B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		4444D186CDC017381692EB91137AFB26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E7D886A8D5469CFB21935139998F4CE /* Pods-InputFormatting-InputFormattingUITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-InputFormatting-InputFormattingUITests/Pods-InputFormatting-InputFormattingUITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-InputFormatting-InputFormattingUITests/Pods-InputFormatting-InputFormattingUITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		485ACFA341C750F2419EE6A52C414FA4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB54EDE16D046473DE1EFA22B9A2B58C /* Skyflow.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Skyflow/Skyflow-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Skyflow/Skyflow-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Skyflow/Skyflow.modulemap";
+				PRODUCT_MODULE_NAME = Skyflow;
+				PRODUCT_NAME = Skyflow;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		4D1EDE7372DB66A010B775984BA6FF4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7EB3E7E4D9442123B16165344A2A4084 /* Pods-InputFormatting.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-InputFormatting/Pods-InputFormatting-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-InputFormatting/Pods-InputFormatting.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7D2ACE7062DA483C7608084FE68CFCDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 711B7D6E2B5718B05FAB8B9FEE4BCBD1 /* AEXML.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/AEXML/AEXML-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/AEXML/AEXML-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/AEXML/AEXML.modulemap";
+				PRODUCT_MODULE_NAME = AEXML;
+				PRODUCT_NAME = AEXML;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.3;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		84081BC1B0EE71615A61FE958EA39BCC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9B274AD6A5864D52C50A3317761125DD /* Pods-InputFormattingTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-InputFormattingTests/Pods-InputFormattingTests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-InputFormattingTests/Pods-InputFormattingTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D15AF10E72867E3B0639FCE9EDDE02A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9F1DAC6BD4E0D741E4E94084226CB4C3 /* Skyflow.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Skyflow/Skyflow-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Skyflow/Skyflow-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Skyflow/Skyflow.modulemap";
+				PRODUCT_MODULE_NAME = Skyflow;
+				PRODUCT_NAME = Skyflow;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		D89E59B0471C7FC93AB11F0B486D7D86 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 572F85B91F979E07BA64F4BD4651AE1B /* Pods-InputFormatting.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-InputFormatting/Pods-InputFormatting-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-InputFormatting/Pods-InputFormatting.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E27DCB7642614F4A4EC805FEE08EF386 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB54EDE16D046473DE1EFA22B9A2B58C /* Skyflow.release.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Skyflow";
+				IBSC_MODULE = Skyflow;
+				INFOPLIST_FILE = "Target Support Files/Skyflow/ResourceBundle-Skyflow-Skyflow-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = Skyflow;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		F4E36CEE9545BF9A1BC4569EF5CFFA8F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD4C23852CDDEBC1CD90CAC411E9C613 /* Pods-InputFormattingTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-InputFormattingTests/Pods-InputFormattingTests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-InputFormattingTests/Pods-InputFormattingTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F4FF6A0D1970CA9705974E3CB2134802 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		FB48CB94B2E30974753609F9A1CDBFCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9F1DAC6BD4E0D741E4E94084226CB4C3 /* Skyflow.debug.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Skyflow";
+				IBSC_MODULE = Skyflow;
+				INFOPLIST_FILE = "Target Support Files/Skyflow/ResourceBundle-Skyflow-Skyflow-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = Skyflow;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		FB9E764E28010122CC3F1902B7FFABE6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 759DFE47256D2811AEA5A3A0698D4FC3 /* AEXML.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/AEXML/AEXML-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/AEXML/AEXML-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/AEXML/AEXML.modulemap";
+				PRODUCT_MODULE_NAME = AEXML;
+				PRODUCT_NAME = AEXML;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.3;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		00F88023964964EA7FA65A5CB3767242 /* Build configuration list for PBXNativeTarget "Skyflow-Skyflow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB48CB94B2E30974753609F9A1CDBFCA /* Debug */,
+				E27DCB7642614F4A4EC805FEE08EF386 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2ECE1FF4E4B8A959F0ED24CF580669C8 /* Build configuration list for PBXNativeTarget "Pods-InputFormatting-InputFormattingUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4444D186CDC017381692EB91137AFB26 /* Debug */,
+				29DC1F2796C16A6A21B3015DA79CF98D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4FF6A0D1970CA9705974E3CB2134802 /* Debug */,
+				30E0B9EFD9A5C45D0D351231E81B30B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C59C7E024571E7E3EC994AD256FF872 /* Build configuration list for PBXNativeTarget "Pods-InputFormatting" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D1EDE7372DB66A010B775984BA6FF4D /* Debug */,
+				D89E59B0471C7FC93AB11F0B486D7D86 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D39FDA84DF437EF4EB660C36F5065E6 /* Build configuration list for PBXNativeTarget "AEXML" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D2ACE7062DA483C7608084FE68CFCDE /* Debug */,
+				FB9E764E28010122CC3F1902B7FFABE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9DC1927C2A94B80B62B30B33085C8BFC /* Build configuration list for PBXNativeTarget "Skyflow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D15AF10E72867E3B0639FCE9EDDE02A9 /* Debug */,
+				485ACFA341C750F2419EE6A52C414FA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D178903ABE550493F1EC7A77FA7ACE9B /* Build configuration list for PBXNativeTarget "Pods-InputFormattingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4E36CEE9545BF9A1BC4569EF5CFFA8F /* Debug */,
+				84081BC1B0EE71615A61FE958EA39BCC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+}

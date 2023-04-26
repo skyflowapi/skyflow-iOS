@@ -1,0 +1,20 @@
+PODS:
+  - AEXML (4.6.1)
+  - Skyflow (1.17.6):
+    - AEXML
+
+DEPENDENCIES:
+  - Skyflow (>= 1.17.6)
+
+SPEC REPOS:
+  trunk:
+    - AEXML
+    - Skyflow
+
+SPEC CHECKSUMS:
+  AEXML: 1e255ecc6597212f97a7454a69ebd3ede64ac1cf
+  Skyflow: edc4d650e5a6c918c81617b0c6a0f77338c06d33
+
+PODFILE CHECKSUM: 90fb49d9ae3296af51189980540c62fd7f9e4816
+
+COCOAPODS: 1.11.3
