@@ -512,6 +512,116 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(cvvElement?.actualValue, "")
         XCTAssertEqual(cvvElement?.textField.secureText, "")
     }
+    func testCollectElementSetValueAndClearValueWithCustomFormatting(){
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": "[0-9]"])
+
+        let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
+
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+        
+        collectInputField?.setValue(value: "1234123412341234")
+        
+        XCTAssertEqual(collectInputField?.actualValue, "+91 1234-1234-1234 1234")
+        XCTAssertEqual(collectInputField?.textField.secureText, "+91 1234-1234-1234 1234")
+        
+        collectInputField?.clearValue()
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+    }
+    func testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation(){
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": ""])
+
+        let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
+
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+        
+        collectInputField?.setValue(value: "----123412341234")
+        
+        XCTAssertEqual(collectInputField?.actualValue, "+91 -----1234-1234 1234")
+        XCTAssertEqual(collectInputField?.textField.secureText, "+91 -----1234-1234 1234")
+        
+        collectInputField?.clearValue()
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+    }
+    func testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation(){
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY")
+
+        let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
+
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+        
+        collectInputField?.setValue(value: "1234123412341234")
+        
+        XCTAssertEqual(collectInputField?.actualValue, "+91 YYYY-YYYY-YYYY YYYY")
+        XCTAssertEqual(collectInputField?.textField.secureText, "+91 YYYY-YYYY-YYYY YYYY")
+        
+        collectInputField?.clearValue()
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+    }
+    func testCollectElementSetValueAndClearValueWithoutCustomFormatting(){
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let requiredOption = Skyflow.CollectElementOptions(required: true)
+
+        let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
+
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+        
+        collectInputField?.setValue(value: "1234123412341234")
+        
+        XCTAssertEqual(collectInputField?.actualValue, "1234123412341234")
+        XCTAssertEqual(collectInputField?.textField.secureText, "1234123412341234")
+        
+        collectInputField?.clearValue()
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+    }
+    func testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber(){
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.CARD_NUMBER )
+        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "XXXX-XXXX-XXXX-XXXX")
+
+        let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
+
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+        
+        collectInputField?.setValue(value: "4111111111111111")
+        
+        XCTAssertEqual(collectInputField?.actualValue, "4111111111111111")
+        XCTAssertEqual(collectInputField?.textField.secureText, "4111-1111-1111-1111")
+        
+        collectInputField?.clearValue()
+        
+        XCTAssertEqual(collectInputField?.actualValue, "")
+        XCTAssertEqual(collectInputField?.textField.secureText, "")
+    }
     
     func testCollectNoVaultID() {
         skyflow.vaultID = ""
@@ -835,7 +945,66 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(date?.actualValue, "")
     }
     
-    
+    func testAddAndFormatRegexforCardNumberCase1() {
+        
+        let textField = FormatTextField()
+        textField.formatPattern = "####-####-####-####"
+        let str = "4111111111111111"
+        textField.addAndFormatText(str)
+        XCTAssertEqual(textField.secureText, "4111-1111-1111-1111")
+    }
+    func testAddAndFormatRegexforCardNumberCase2() {
+        
+        let textField = FormatTextField()
+        let str = "4111111111111111"
+        textField.addAndFormatText(str)
+        XCTAssertEqual(textField.secureText, "4111111111111111")
+    }
+    func testFormatInputWithEmptyFormatTranslation() {
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "1234", format: "X-X-X-X", translation: ["X": "[0-9]"])
+        XCTAssertEqual(textField.secureText, "1-2-3-4")
+    }
+    func testFormatInputMethodCase2(){
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "", format: "X-X-X-X", translation: ["X": "[0-9]"])
+        XCTAssertEqual(textField.secureText, "")
+    }
+    func testFormatInputMethodCase3(){ // when reveal data is less than format length
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "123", format: "X-X-X-X", translation: ["X": "[0-9]"])
+        XCTAssertEqual(textField.secureText, "1-2-3")
+    }
+    func testFormatInputMethodCase4(){ // when reveal data is greater than format length
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "12345", format: "X-X-X-X", translation: ["X": "[0-9]"])
+        XCTAssertEqual(textField.secureText, "1-2-3-4")
+    }
+    func testFormatInputMethodCase5(){ // when translation doesnt contain format character
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "12345", format: "X-X-X-X", translation: ["Y": "[0-9]"])
+        XCTAssertEqual(textField.secureText, "X-X-X-X")
+    }
+    func testFormatInputMethodCase6(){ // when translation doesnt contain format character
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "12345", format: "", translation: ["X": "[0-9]"])
+        XCTAssertEqual(textField.secureText, "")
+    }
+    func testFormatInputMethodCase7(){ // when reveal data is not same as regex in translation
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "12345", format: "XXXX", translation: ["X": "[A-Z]"])
+        XCTAssertEqual(textField.secureText, "")
+    }
+    func testFormatInputMethodCase8(){ // when reveal data is not same as regex in translation
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "ZA", format: "XXXX", translation: ["X": "[ZA]"])
+        XCTAssertEqual(textField.secureText, "ZA")
+    }
+    func testFormatInputMethodCase9(){ // when reveal data type is not same as regex in translation
+        let textField = FormatTextField()
+        textField.secureText = textField.formatInput(input: "ZA", format: "XXXX", translation: ["X": "[-]"])
+        XCTAssertEqual(textField.secureText, "")
+    }
     
     static var allTests = [
         ("testCreateSkyflowElement", testCreateSkyflowElement),
@@ -845,6 +1014,22 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testContainerInsertInvalidInput", testContainerInsertInvalidInput),
         ("testContainerInsertMixedInvalidInput", testContainerInsertMixedInvalidInput),
         ("testContainerInsertIsRequiredAndEmpty", testContainerInsertIsRequiredAndEmpty),
+        ("testCollectElementSetValueAndClearValueWithCustomFormatting", testCollectElementSetValueAndClearValueWithCustomFormatting),
+        ("testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation", testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation),
+        ("testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation", testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation),
+        ("testCollectElementSetValueAndClearValueWithoutCustomFormatting", testCollectElementSetValueAndClearValueWithoutCustomFormatting),
+        ("testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber", testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber),
+        ("testAddAndFormatRegexforCardNumberCase1", testAddAndFormatRegexforCardNumberCase1),
+        ("testAddAndFormatRegexforCardNumberCase2", testAddAndFormatRegexforCardNumberCase2),
+        ("testFormatInputWithEmptyFormatTranslation", testFormatInputWithEmptyFormatTranslation),
+        ("testFormatInputMethodCase2", testFormatInputMethodCase2),
+        ("testFormatInputMethodCase3",testFormatInputMethodCase3),
+        ("testFormatInputMethodCase4",testFormatInputMethodCase4),
+        ("testFormatInputMethodCase5",testFormatInputMethodCase5),
+        ("testFormatInputMethodCase6",testFormatInputMethodCase6),
+        ("testFormatInputMethodCase8",testFormatInputMethodCase8),
+        ("testFormatInputMethodCase9",testFormatInputMethodCase9),
+        ("testFormatInputMethodCase7",testFormatInputMethodCase7),
 //        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
     ]
 }
