@@ -15,15 +15,13 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
     }
     
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
+      
         func updateCursorPosition(offset: Int) {
             if let cursorLoc = textField.position(from: textField.beginningOfDocument, offset: (range.location + string.count+offset)) {
                 textField.selectedTextRange = textField.textRange(from: cursorLoc, to: cursorLoc)
             }
         }
-        
         func updateFormat(_ text: String, _ isEmpty: Bool = false) -> Bool{
-            
             if collectField.fieldType == .EXPIRATION_MONTH {
                 if let month = Int(text) {
                     if month == 0 {
@@ -47,8 +45,8 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
                 collectField.textFieldDidChange(collectField.textField)
             }
             return false
+            
         }
-        
         func formatMonth() -> Bool{
             if let month = Int(text) {
                 if month > 1 && month < 10 {
@@ -64,9 +62,25 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             }
             return false
         }
-        
-        let text = ((textField as! FormatTextField).secureText! as NSString).replacingCharacters(in: range, with: string)
+        func customFormat() -> Bool {
+            if(collectField.options.translation == nil){
+                collectField.options.translation = ["X": "[0-9]"]
+            }
+            for (key, value) in collectField.options.translation! {
+                if value == "" {
+                    collectField.options.translation![key] = "(?:)"
+                }
+            }
+            if (collectField.options.format.count >= text.count) {
+                let formattedResult = collectField.textField.formatInput(input: text, format: collectField.options.format, translation: collectField.options.translation!)
+                textField.text = formattedResult
+                updateCursorPosition(offset: formattedResult.count)
+                collectField.textFieldDidChange(collectField.textField)
+            }
 
+            return false
+        }
+        let text = ((textField as! FormatTextField).secureText! as NSString).replacingCharacters(in: range, with: string)
         let count = text.count
         
         if string.isEmpty {
@@ -75,9 +89,10 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             }
             return updateFormat(text, true)
         }
-        
-        if let elementType = collectField.fieldType.instance {
-            
+        if (collectField.fieldType == .INPUT_FIELD && !(collectField.options.format == "mm/yy" || collectField.options.format == "")) {
+            return customFormat()
+         }
+        if let elementType = collectField.fieldType.instance {       
             if let acceptabledCharacters = elementType.acceptableCharacters, string.rangeOfCharacter(from: acceptabledCharacters) == nil {
                 return false
             }

@@ -192,4 +192,5 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertNotEqual(collectID, "")
         XCTAssertNotEqual(revealID, "")
     }
+    
 }

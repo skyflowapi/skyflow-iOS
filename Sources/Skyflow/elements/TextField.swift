@@ -73,7 +73,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         return StateforText(tf: self)
     }
     
-    override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
+    override init(input: CollectElementInput,options: CollectElementOptions, contextOptions: ContextOptions) {
         super.init(input: input, options: options, contextOptions: contextOptions)
         self.userValidationRules.append(input.validations)
         self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
@@ -81,6 +81,15 @@ public class TextField: SkyflowElement, Element, BaseElement {
         
         setFormatPattern()
         setupField()
+        let formatNotSupportedElements = [ElementType.CARDHOLDER_NAME, ElementType.EXPIRATION_MONTH, ElementType.CVV, ElementType.PIN]
+        if(formatNotSupportedElements.contains(fieldType)) {
+            var context = self.contextOptions
+            context?.interface = .COLLECT_CONTAINER
+            context?.logLevel = .WARN
+            if(options.translation != nil || options.format != "mm/yy"){
+                Log.warn(message: .FORMAT_AND_TRANSLATION, values: [fieldType.name], contextOptions: context!)
+            }
+        }
     }
     
     internal func addValidations() {
@@ -96,10 +105,10 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal func addDateValidations() {
         let defaultFormat = "mm/yy"
         let supportedFormats = [defaultFormat, "mm/yyyy", "yy/mm", "yyyy/mm"]
-        if !supportedFormats.contains(self.options.format) {
+        if !supportedFormats.contains(self.options.format.lowercased()) {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .INVALID_EXPIRYDATE_FORMAT, values: [self.options.format], contextOptions: context!)
+            Log.warn(message: .INVALID_EXPIRYDATE_FORMAT, values: [self.options.format.lowercased()], contextOptions: context!)
             self.options.format = defaultFormat
         }
         let expiryDateRule = SkyflowValidateCardExpirationDate(format: options.format, error: SkyflowValidationErrorType.expirationDate.rawValue)
@@ -125,9 +134,14 @@ public class TextField: SkyflowElement, Element, BaseElement {
         switch fieldType {
         case .CARD_NUMBER:
             let cardType = CardType.forCardNumber(cardNumber: self.actualValue).instance
-            self.textField.formatPattern = cardType.formatPattern
+            if(options.format.uppercased() == "XXXX-XXXX-XXXX-XXXX"){
+              self.textField.formatPattern = cardType.formatPattern.replacingOccurrences(of: " ", with: "-")
+            } else {
+                self.textField.formatPattern = cardType.formatPattern
+
+            }
         case .EXPIRATION_DATE:
-            self.textField.formatPattern = self.options.format.replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
+            self.textField.formatPattern = self.options.format.lowercased().replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
         default:
             if let instance = fieldType.instance {
                 self.textField.formatPattern = instance.formatPattern
@@ -170,15 +184,32 @@ public class TextField: SkyflowElement, Element, BaseElement {
         return actualValue
     }
     
+    
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }
     
     public func setValue(value: String) {
         if(contextOptions.env == .DEV){
-            actualValue = value
-            self.textField.addAndFormatText(value)
+            if(self.fieldType == .INPUT_FIELD && !(options.format == "mm/yy" || options.format == "")){
+                if(options.translation == nil){
+                    options.translation = ["X": "[0-9]"]
+                }
+                for (key, value) in options.translation! {
+                    if value == "" {
+                        options.translation![key] = "(?:)"
+                    }
+                }
+                let result =  self.textField.formatInput(input: value, format: options.format, translation: options.translation!)
+                self.textField.secureText = result
+                actualValue = result
+            }else {
+                actualValue = value
+                
+                self.textField.addAndFormatText(value)
+            }
             textFieldDidChange(self.textField)
+
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
@@ -378,7 +409,6 @@ extension TextField {
         updateActualValue()
         textFieldValueChanged()
         onChangeHandler?((self.state as! StateforText).getStateForListener())
-        
         if self.fieldType == .CARD_NUMBER {
             let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
