@@ -5,6 +5,7 @@
 // Callback used while API callback for Collect the elements
 
 import Foundation
+import UIKit
 
 internal class CollectAPICallback: Callback {
     var apiClient: APIClient
@@ -20,7 +21,6 @@ internal class CollectAPICallback: Callback {
         self.options = options
         self.contextOptions = contextOptions
     }
-
     internal func onSuccess(_ responseBody: Any) {
         guard let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) else {
             self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
@@ -61,8 +61,10 @@ internal class CollectAPICallback: Callback {
         }
         return temp
     }
-    
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
+        let deviceDetails = FetchMetrices().getMetrices()
+        let jsonData = try? JSONSerialization.data(withJSONObject: deviceDetails, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
 
@@ -72,6 +74,7 @@ internal class CollectAPICallback: Callback {
         }
         
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+        request.setValue(jsonString, forHTTPHeaderField: "sky-metadata")
 
         return (request, URLSession(configuration: .default))
 
