@@ -85,18 +85,22 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(revealContainer?.revealElements.count, 1)
         XCTAssertNotNil(revealContainer?.revealElements[0].labelField)
     }
-
+    func compareDictionaries(dict1: [String: Any], dict2: [String: Any]) -> Bool {
+        let nsDict1 = dict1 as NSDictionary
+        let nsDict2 = dict2 as NSDictionary
+        return nsDict1.isEqual(to: nsDict2 as! [AnyHashable : Any])
+    }
     
     func testCreateRevealRequestBody() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
         
-        let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: String]]]
+        let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: Any]]]
         
-        let result: [String: [[String: String]]] = ["records": [["token": revealTestId]]]
+        let result: [String: [[String: Any]]] = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
         
-        XCTAssertEqual(result, requestBody)
+        XCTAssertTrue(compareDictionaries(dict1: result, dict2: requestBody))
     }
     
     func testDetokenizeInvalidToken() {

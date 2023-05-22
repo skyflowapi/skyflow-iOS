@@ -106,7 +106,8 @@ class RevealAPICallback: Callback {
             [
                 "detokenizationParameters": [
                     [
-                        "token": record.token
+                        "token": record.token,
+                        "redaction": record.redaction
                     ]
                 ]
             ]
