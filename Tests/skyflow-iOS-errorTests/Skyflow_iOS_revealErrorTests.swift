@@ -20,8 +20,8 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
     override func setUp() {
         self.skyflow = Client(Configuration(
-            vaultID: "1",
-            vaultURL: "2",
+            vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+            vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
             tokenProvider: DemoTokenProvider(),
             options: Options(logLevel: .DEBUG)))
         self.revealTestId = "6255-9119-4502-5915"

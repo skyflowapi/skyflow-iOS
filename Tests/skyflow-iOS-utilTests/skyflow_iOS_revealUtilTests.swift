@@ -62,6 +62,15 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let record = RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue)
         do {
             let result = try self.revealApiCallback.getRevealRequestBody(record: record)
+            print(result)
+            print(type(of: result))
+            if let jsonObject = try? JSONSerialization.jsonObject(with: result, options: []) as? [String: Any] {
+                let key = jsonObject.keys
+                let values = jsonObject.values
+                XCTAssertTrue(key.contains("detokenizationParameters"))                
+            } else {
+                print("Failed to convert JSON data into a JSON object.")
+            }
             XCTAssertNotNil(result)
         } catch {
             XCTFail(error.localizedDescription)
