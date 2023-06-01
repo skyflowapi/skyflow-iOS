@@ -62,9 +62,15 @@ internal class CollectAPICallback: Callback {
         return temp
     }
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
-        let deviceDetails = FetchMetrices().getMetrices()
-        let jsonData = try? JSONSerialization.data(withJSONObject: deviceDetails, options: [])
-        let jsonString = String(data: jsonData!, encoding: .utf8)
+        var jsonString = ""
+
+        do {
+           let deviceDetails = FetchMetrices().getMetrices()
+            let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
+            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+        } catch {
+            jsonString = ""
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
 

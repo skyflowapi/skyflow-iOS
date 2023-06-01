@@ -103,9 +103,15 @@ class RevealByIDAPICallback: Callback {
     }
     
     internal func getRequestSession(urlComponents: URLComponents?) -> (URLRequest, URLSession) {
-        let deviceDetails = FetchMetrices().getMetrices()
-        let jsonData = try? JSONSerialization.data(withJSONObject: deviceDetails, options: [])
-        let jsonString = String(data: jsonData!, encoding: .utf8)
+        var jsonString = ""
+
+        do {
+           let deviceDetails = FetchMetrices().getMetrices()
+           let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
+           jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+        } catch {
+            jsonString = ""
+        }
         var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
         request.httpMethod = "GET"
         request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")

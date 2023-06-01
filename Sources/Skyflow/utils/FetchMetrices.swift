@@ -11,15 +11,22 @@ import UIKit
 internal class FetchMetrices {
     
     internal func getDeviceDetails() -> [String: Any] {
-        let currentDevice = UIDevice.current
-        let systemName = currentDevice.systemName
-        let deviceName = currentDevice.name
-        let systemVersion = currentDevice.systemVersion
-        let deviceDetails = [
-            "device": deviceName,
-            "os_details": systemName + "@" + systemVersion,
-            "sdk_name_version": "skyflow-iOS@" + SDK_VERSION
-        ]
+        var deviceDetails: [String: Any] = [:]
+        do {
+            let currentDevice = UIDevice.current
+
+            deviceDetails["device"] = currentDevice.name
+
+            let systemName = currentDevice.systemName
+            let systemVersion = currentDevice.systemVersion
+
+            deviceDetails["os_details"] = systemName + "@" + systemVersion
+            deviceDetails["sdk_name_version"] = "skyflow-iOS@" + SDK_VERSION
+        } catch {
+            deviceDetails["device"] = ""
+            deviceDetails["os_details"] = ""
+            deviceDetails["sdk_name_version"] = ""
+        }
         return deviceDetails
     }
 
