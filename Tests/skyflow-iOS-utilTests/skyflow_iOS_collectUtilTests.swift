@@ -153,5 +153,38 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         XCTAssertTrue(callback.receivedResponse.contains("Invalid Bearer token"))
     }
+    func testGetDeviceDetails() {
+        let device = UIDevice()
+        let deviceInfo = FetchMetrices().getMetrices()
+        XCTAssertEqual(UIDevice.current.name, deviceInfo["sdk_client_device_model"] as! String)
+        XCTAssertEqual("skyflow-iOS@" + SDK_VERSION, deviceInfo["sdk_name_version"] as! String);
+        XCTAssertEqual(device.systemName + "@" + device.systemVersion, deviceInfo["sdk_client_os_detail"] as! String)
+    }
+    func testDeviceDetails() {
+        
+        let deviceDetails = FetchMetrices().getDeviceDetails()
+         
+         XCTAssertNotNil(deviceDetails["device"])
+         XCTAssertNotNil(deviceDetails["os_details"])
+         XCTAssertNotNil(deviceDetails["sdk_name_version"])
+         
+         if let device = deviceDetails["device"] as? String {
+             XCTAssertFalse(device.isEmpty)
+         } else {
+             XCTAssertTrue(deviceDetails["device"] as! String == "")
+         }
+         
+         if let osDetails = deviceDetails["os_details"] as? String {
+             XCTAssertFalse(osDetails.isEmpty)
+         } else {
+             XCTAssertTrue(deviceDetails["os_details"] as! String == "")
+         }
+         
+         if let sdkNameVersion = deviceDetails["sdk_name_version"] as? String {
+             XCTAssertFalse(sdkNameVersion.isEmpty)
+         } else {
+             XCTAssertTrue(deviceDetails["sdk_name_version"] as! String == "")
+         }
+     }
 
 }

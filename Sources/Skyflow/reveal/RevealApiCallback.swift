@@ -91,12 +91,22 @@ class RevealAPICallback: Callback {
     }
     
     internal func getRequestSession() -> (URLRequest, URLSession){
+        var jsonString = ""
+
+        do {
+           let deviceDetails = FetchMetrices().getMetrices()
+            let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
+            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+        } catch {
+            jsonString = ""
+        }
         let url = URL(string: (connectionUrl + "/detokenize"))
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+        request.setValue(jsonString, forHTTPHeaderField: "sky-metadata")
         
         return (request, URLSession(configuration: .default))
     }
