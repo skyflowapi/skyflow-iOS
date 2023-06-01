@@ -59,9 +59,18 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     }
     
     func testRevealRequestBody() {
-        let record = RevealRequestRecord(token: "token")
+        let record = RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue)
         do {
             let result = try self.revealApiCallback.getRevealRequestBody(record: record)
+            print(result)
+            print(type(of: result))
+            if let jsonObject = try? JSONSerialization.jsonObject(with: result, options: []) as? [String: Any] {
+                let key = jsonObject.keys
+                let values = jsonObject.values
+                XCTAssertTrue(key.contains("detokenizationParameters"))                
+            } else {
+                print("Failed to convert JSON data into a JSON object.")
+            }
             XCTAssertNotNil(result)
         } catch {
             XCTFail(error.localizedDescription)
@@ -73,7 +82,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let serverError = NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "Internal Server Error"])
         do {
             let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
-            try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token"), data: responseData, response: nil, error: serverError)
+            try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue), data: responseData, response: nil, error: serverError)
             XCTFail("Not throwing on http error")
         } catch {
             XCTAssertEqual(error.localizedDescription, serverError.localizedDescription)
@@ -85,7 +94,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let httpResponse = HTTPURLResponse(url: URL(string: "https://www.example.org")!, statusCode: 500, httpVersion: "1.1", headerFields: ["x-request-id": "RID"])
         do {
             let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
-            let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token"), data: responseData, response: httpResponse, error: nil)
+            let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue), data: responseData, response: httpResponse, error: nil)
             XCTAssertNil(success)
             XCTAssertNotNil(failure)
             XCTAssertEqual(failure?.error.localizedDescription, "Interface:  - Internal Server Error - request-id: RID")
@@ -99,7 +108,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let httpResponse = HTTPURLResponse(url: URL(string: "https://www.example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: ["x-request-id": "RID"])
         do {
             let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
-            let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token"), data: responseData, response: httpResponse, error: nil)
+            let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue), data: responseData, response: httpResponse, error: nil)
             XCTAssertNil(failure)
             XCTAssertNotNil(success)
             XCTAssertEqual(success?.token_id, "token")

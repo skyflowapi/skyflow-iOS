@@ -12,6 +12,7 @@ internal class RevealRequestBody {
         for element in elements {
             var entry: [String: Any] = [:]
             entry["token"] = element.revealInput.token
+            entry["redaction"] = element.revealInput.redaction
             payload.append(entry)
         }
 
