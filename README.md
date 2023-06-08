@@ -752,7 +752,7 @@ cardNumber.clearValue()
 For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
  
 - ### Using Skyflow tokens
-    For retrieving using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
+    To retrieve record data using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains tokens for `record` values to fetch
     ```swift
     [
       "records": [
@@ -763,9 +763,10 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
       ]
     ]
    ```
-  Note: If you do not provide a redaction type, RedactionType.PLAIN_TEXT is the default.
+  Note: `redaction` defaults to [RedactionType.PLAIN_TEXT](#redaction-types).
  
-The following example sample code makes a detokenize call to reveal the masked value of a token.  
+The following example code makes a detokenize call to reveal the masked value of a token:
+
 ```swift
   let getCallback = GetCallback()   // Custom callback - implementation of Skyflow.Callback
  
@@ -812,7 +813,7 @@ The following example sample code makes a detokenize call to reveal the masked v
       ]
     ]
     ```
- 
+ ### Redaction Types
   There are 4 accepted values in Skyflow.RedactionTypes:  
   - `PLAIN_TEXT`
   - `MASKED`
@@ -886,12 +887,12 @@ let revealElementInput = Skyflow.RevealElementInput(
     errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
     label: "cardNumber",                 // optional, label for the element,
     altText: "XXXX XXXX XXXX XXXX",      // optional, string that is shown before reveal, will show token if it is not provided
-    redaction: Skyflow.RedactionType,    // optional, Redaction Type to be applied to data.
+    redaction: Skyflow.RedactionType,    // optional. Redaction to apply for retrieved data. E.g. RedactionType.MASKED
 )
 ```
 `Note`: 
 - `token` is optional only if it is being used in invokeConnection()
--  If you don't provide a `redaction` type, `RedactionType.PLAIN_TEXT` will apply by default.
+- `redaction` defaults to [`RedactionType.PLAIN_TEXT`](#redaction-types).
 
  
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
@@ -954,7 +955,7 @@ The `setAltText(value: String)` method can be used to set the altText of the Rev
 `clearAltText()` method can be used to clear the altText, this will cause the element to display the token or actual value of the element. If the element has no token, the element will be empty.
  
 ### Reveal data with Skyflow Elements
-#### Reveal call example:
+#### End-to-end example of revealing data with Skyflow Elements
 ```swift
 // Initialize skyflow configuration
 let config = Skyflow.Configuration(vaultID: <VAULT_ID>, vaultURL: <VAULT_URL>, tokenProvider: demoTokenProvider)
