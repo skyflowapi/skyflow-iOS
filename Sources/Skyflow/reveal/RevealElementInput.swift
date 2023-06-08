@@ -15,8 +15,7 @@ public struct RevealElementInput {
     internal var redaction: RedactionType
     internal var altText: String
 
-    @available(*, deprecated, message: "redaction param is deprecated")
-    public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, redaction: RedactionType = .DEFAULT, altText: String = "") {
+    public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, redaction: RedactionType = .PLAIN_TEXT, altText: String = "") {
         self.token = token
         self.inputStyles = inputStyles
         self.labelStyles = labelStyles
@@ -32,7 +31,7 @@ public struct RevealElementInput {
         self.labelStyles = labelStyles
         self.errorTextStyles = errorTextStyles
         self.label = label
-        self.redaction = .DEFAULT
+        self.redaction = .PLAIN_TEXT
         self.altText = altText
     }
 }
