@@ -49,7 +49,7 @@ internal enum ErrorCodes: CustomStringConvertible {
 
     // Single message value
     case EMPTY_VAULT(code: Int = 400, message: String = "Vault ID <VAULT_ID> is invalid", value: String)
-    case INVALID_REDACTION_TYPE(code: Int = 400, message: String = "Redacton type <REDACTION> is invalid", value: String)
+    case INVALID_REDACTION_TYPE(code: Int = 400, message: String = "Redaction type <REDACTION> is invalid", value: String)
     case INVALID_DATA_TYPE_PASSED(code: Int = 400, message: String = "Invalid data type passed to <PARAM_NAME> parameter", value: String)
     case INVALID_VALUE(code: Int = 400, message: String = "Value present in the element with <COLUMN_NAME> is not valid", value: String)
     case DUPLICATE_ELEMENT_IN_RESPONSE_BODY(code: Int = 400, message: String = "Duplicate Skyflow element with label <LABEL> found in response body", value: String)

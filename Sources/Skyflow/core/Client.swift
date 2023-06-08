@@ -117,6 +117,11 @@ public class Client {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
         func checkRecord(_ token: [String: Any]) -> ErrorCodes? {
+               if token["redaction"] != nil {
+                   guard let _ = token["redaction"] as? RedactionType else {
+                       return .INVALID_REDACTION_TYPE(value: String(describing: token["redaction"]!))
+                   }
+               }
                 if token["token"] == nil {
                     return .ID_KEY_ERROR()
                 } else {
@@ -150,7 +155,11 @@ public class Client {
             for token in tokens {
                 let errorCode = checkRecord(token)
                 if errorCode == nil, let id = token["token"] as? String {
-                    list.append(RevealRequestRecord(token: id))
+                    if token["redaction"] == nil{
+                        list.append(RevealRequestRecord(token: id, redaction: RedactionType.PLAIN_TEXT.rawValue))
+                    } else if let redaction = token["redaction"] as? RedactionType{
+                        list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
+                    }
                 } else {
                     return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 }
