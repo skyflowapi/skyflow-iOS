@@ -752,22 +752,35 @@ cardNumber.clearValue()
 For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
  
 - ### Using Skyflow tokens
-    For retrieving using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
+    To retrieve record data using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains tokens for `record` values to fetch
     ```swift
     [
       "records": [
         [
-          "token": String     
+          "token": String,
+          "redaction": Skyflow.RedactionType // Optional. Redaction to apply for retrieved data.     
         ]
       ]
     ]
    ```
-   
-  An example of a detokenize call:
-  ```swift
+  Note: `redaction` defaults to [RedactionType.PLAIN_TEXT](#redaction-types).
+ 
+The following example code makes a detokenize call to reveal the masked value of a token:
+
+```swift
   let getCallback = GetCallback()   // Custom callback - implementation of Skyflow.Callback
  
-  let records = ["records": [["token": "45012507-f72b-4f5c-9bf9-86b133bae719"]]] as [String: Any]
+  let records = [
+                  "records": [
+                    [
+                      "token": "45012507-f72b-4f5c-9bf9-86b133bae719",
+                    ],
+                    [
+                      "token": "1r434532-6f76-4319-bdd3-96281e051051",
+                      "redaction": Skyflow.RedactionType.MASKED
+                    ]
+                  ]
+                ] as [String: Any]
  
   skyflowClient.detokenize(records: records, callback: getCallback)
   ```
@@ -778,8 +791,12 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
       {
         "token": "131e70dc-6f76-4319-bdd3-96281e051051",
         "value": "1990-01-01"
+      },
+      {
+        "token": "1r434532-6f76-4319-bdd3-96281e051051",
+        "value": "xxxxxxer",
       }
-    ]
+     ]
   }
   ```
  
@@ -796,7 +813,7 @@ For non-PCI use-cases, retrieving data from the vault and revealing it in the mo
       ]
     ]
     ```
- 
+ ### Redaction Types
   There are 4 accepted values in Skyflow.RedactionTypes:  
   - `PLAIN_TEXT`
   - `MASKED`
@@ -864,16 +881,19 @@ To create a reveal Element, we must first construct a Skyflow.RevealElementInput
  
 ```swift
 let revealElementInput = Skyflow.RevealElementInput(
-    token: String,                     // optional, token of the data being revealed
+    token: String,                       // optional, token of the data being revealed
     inputStyles: Skyflow.Styles(),       // optional, styles to be applied to the element
     labelStyles: Skyflow.Styles(),       // optional, styles to be applied to the label of the reveal element
     errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
-    label: "cardNumber",                  // optional, label for the element,
-    altText: "XXXX XXXX XXXX XXXX"       // optional, string that is shown before reveal, will show token if it is not provided
+    label: "cardNumber",                 // optional, label for the element,
+    altText: "XXXX XXXX XXXX XXXX",      // optional, string that is shown before reveal, will show token if it is not provided
+    redaction: Skyflow.RedactionType,    // optional. Redaction to apply for retrieved data. E.g. RedactionType.MASKED
 )
 ```
 `Note`: 
 - `token` is optional only if it is being used in invokeConnection()
+- `redaction` defaults to [`RedactionType.PLAIN_TEXT`](#redaction-types).
+
  
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
  
@@ -935,7 +955,7 @@ The `setAltText(value: String)` method can be used to set the altText of the Rev
 `clearAltText()` method can be used to clear the altText, this will cause the element to display the token or actual value of the element. If the element has no token, the element will be empty.
  
 ### Reveal data with Skyflow Elements
-#### Reveal call example:
+#### End-to-end example of revealing data with Skyflow Elements
 ```swift
 // Initialize skyflow configuration
 let config = Skyflow.Configuration(vaultID: <VAULT_ID>, vaultURL: <VAULT_URL>, tokenProvider: demoTokenProvider)
@@ -960,7 +980,8 @@ let cardNumberInput = Skyflow.RevealElementInput(
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
     label: "cardnumber",
-    altText: "XXXX XXXX XXXX XXXX"
+    altText: "XXXX XXXX XXXX XXXX",
+    redaction: SKyflow.RedactionType.MASKED
 )
 
 let cardNumberElement = container?.create(input: cardNumberInput)
@@ -974,6 +995,16 @@ let cvvInput = Skyflow.RevealElementInput(
     altText: "XXX"
 )
 let cvvElement = container?.create(input: cvvInput)
+
+let expiryDateInput = Skyflow.RevealElementInput(
+    token: "a4b24714-6a26-4256-b9d4-55ad69aa4047",
+    inputStyles: inputStyles,
+    labelStyles: labelStyles,
+    errorTextStyles: errorTextStyles,
+    label: "expiryDate",
+    altText: "MM/YYYY"
+)
+let expiryDateElement = container?.create(input: expiryDateInput)
 
 // Can interact with these objects as a normal UIView Object and add to View
 
@@ -1006,13 +1037,16 @@ The response below shows that some tokens assigned to the reveal elements get re
 ```json
 {
     "success": [ {
-        "id": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75"
+        "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75"
+    },
+    {
+        "token": "89024714-6a26-4256-b9d4-55ad69aa4047"
     }],
     "errors": [ {
-        "id": "89024714-6a26-4256-b9d4-55ad69aa4047",
+        "id": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
         "error": {
             "code": 404,
-            "description": "Tokens not found for 89024714-6a26-4256-b9d4-55ad69aa4047"
+            "description": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047"
         }
     }]
 }
