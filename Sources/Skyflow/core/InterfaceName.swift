@@ -18,6 +18,7 @@ internal enum InterfaceName {
     case INSERT
     case DETOKENIZE
     case GETBYID
+    case GET
     case EMPTY
     
     var description: String {
@@ -29,6 +30,7 @@ internal enum InterfaceName {
         case .DETOKENIZE: return "client detokenize"
         case .GETBYID: return "client getById"
         case .EMPTY: return ""
+        case .GET: return "client get"
         }
     }
 }
