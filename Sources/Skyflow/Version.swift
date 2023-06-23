@@ -11,4 +11,4 @@
 
 import Foundation
 
-var SDK_VERSION = "1.18.0"
+var SDK_VERSION = "1.19.0"

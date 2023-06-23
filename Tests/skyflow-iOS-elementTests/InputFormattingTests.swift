@@ -337,6 +337,5 @@ class InputFormattingTests: XCTestCase {
         
         XCTAssertEqual((prodField.state as! StateforText).getStateForListener()["value"] as! String, "378282XXXXXXXXX")
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "378282246310005")
-    }
-
+    }    
 }
