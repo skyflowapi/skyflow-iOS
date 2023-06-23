@@ -8,7 +8,9 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
     return [
         testCase(skyflow_iOS_elementTests.allTests),
-        testCase(InputFormattingTests.allTests)
+        testCase(InputFormattingTests.allTests),
+        testCase(TextFieldDelegateTests.allTests),
+        testCase(CollectElementOptionsTests.allTests)
     ]
 }
 #endif
