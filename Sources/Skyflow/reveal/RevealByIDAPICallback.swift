@@ -103,11 +103,22 @@ class RevealByIDAPICallback: Callback {
     }
     
     internal func getRequestSession(urlComponents: URLComponents?) -> (URLRequest, URLSession) {
+        var jsonString = ""
+
+        do {
+           let deviceDetails = FetchMetrices().getMetrices()
+           let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
+           jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+        } catch {
+            jsonString = ""
+        }
         var request = URLRequest(url: (urlComponents?.url!.absoluteURL)!)
         request.httpMethod = "GET"
         request.setValue("application/json; utf-8", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
+        request.setValue(jsonString, forHTTPHeaderField: "sky-metadata")
+
         return (request, URLSession(configuration: .default))
     }
     

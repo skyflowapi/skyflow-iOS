@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.0] - 2023-06-08
+
+### Added
+- Added redaction type in Reveal and detokenize
+
 ## [1.17.6] - 2023-03-09
 
 ### Fixed

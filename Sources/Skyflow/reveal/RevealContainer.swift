@@ -61,8 +61,8 @@ public extension Container {
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
             for token in tokens {
-                if let id = token["token"] as? String {
-                    list.append(RevealRequestRecord(token: id))
+                if let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
+                    list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
                 }
             }
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: tempContextOptions,

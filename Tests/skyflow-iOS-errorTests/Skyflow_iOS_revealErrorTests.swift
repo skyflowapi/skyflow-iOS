@@ -95,6 +95,12 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let result = getDataFromClientWithExpectation(records: records)
         XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.INVALID_TOKEN_TYPE().description)
     }
+    func testDetokenizeInvalidRedaction() {
+        let records = ["records": [["token": "123233232", "redaction": "123"]]]
+        let result = getDataFromClientWithExpectation(records: records)
+        XCTAssertEqual(result, "Interface: client detokenize - " + ErrorCodes.INVALID_REDACTION_TYPE(value: "123").description)
+    }
+
 
     func testContainerRevealWithUnmountedElements() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
@@ -111,6 +117,19 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let result = callback.receivedResponse
 
         XCTAssertEqual(result, "Interface: reveal container - " + ErrorCodes.UNMOUNTED_REVEAL_ELEMENT(value: revealTestId).description)
+    }
+    func testContainerRevealWithNoRedaction() { // when redaction is not specify plaintext will be applied
+        let window = UIWindow()
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+        let styles = Styles(base: bstyle)
+
+        let revealElementInput = RevealElementInput(token: "232h3j23h2jh",inputStyles: styles, label: "RevealElement")
+        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+
+        window.addSubview(revealElement!)
+        XCTAssertEqual(revealElement!.revealInput.redaction, .PLAIN_TEXT)
     }
 
     func testContainerRevealWithEmptyToken() {

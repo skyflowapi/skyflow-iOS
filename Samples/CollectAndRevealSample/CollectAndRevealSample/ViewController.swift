@@ -205,7 +205,8 @@ class ViewController: UIViewController {
             let revealCardNumberInput = Skyflow.RevealElementInput(
                 token: tokens.card_number,
                 inputStyles: revealStyles,
-                label: "Card Number"
+                label: "Card Number",
+                redaction: .REDACTED
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
@@ -214,19 +215,23 @@ class ViewController: UIViewController {
             let revealCVVtInput = Skyflow.RevealElementInput(
                 token: tokens.cvv,
                 inputStyles: revealStyles,
-                label: "CVV"
+                label: "CVV",
+                redaction: .MASKED
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = Skyflow.RevealElementInput(
                 token: tokens.cardholder_name,
                 inputStyles: revealStyles,
-                label: "Card Holder Name"
+                label: "Card Holder Name",
+                redaction: .DEFAULT
+
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = Skyflow.RevealElementInput(
                 token: tokens.expiry_month,
                 inputStyles: revealStyles,
-                label: "Expiration Month"
+                label: "Expiration Month",
+                redaction: .PLAIN_TEXT                
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = Skyflow.RevealElementInput(
