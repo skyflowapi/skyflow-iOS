@@ -2,6 +2,12 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+### Added
+
+## [1.19.0] - 2023-06-23
+- Added input formatting for collect and reveal elements
+
+### Added
 
 ## [1.18.0] - 2023-06-08
 
