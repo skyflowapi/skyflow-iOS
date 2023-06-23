@@ -66,7 +66,7 @@ public enum ElementType: Int, CaseIterable {
                         validation: rules, keyboardType: .alphabet, acceptableCharacters: CharacterSet.CardHolderCharacters)
 
         case .CARD_NUMBER :
-            rules.add(rule: SkyflowValidateCardNumber(error: SkyflowValidationErrorType.cardNumber.rawValue, regex: "^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$"))            
+            rules.add(rule: SkyflowValidateCardNumber(error: SkyflowValidationErrorType.cardNumber.rawValue, regex: "^$|^[\\s]*?([0-9]{2,6}[ |-]?){3,5}[\\s]*$"))
             return Type(formatPattern: "#### #### #### ####",
                         regex: "^$|^[\\s]*?([0-9]{2,6}[ -]?){3,5}[\\s]*$",
                         validation: rules, keyboardType: .numberPad, acceptableCharacters: CharacterSet.SkyflowAsciiDecimalDigits)

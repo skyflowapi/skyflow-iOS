@@ -44,11 +44,82 @@ public class Label: UIView, Element, BaseElement {
     required internal init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-
+    func formatInput(input: String, format: String, translation: [Character: String]) -> String {
+        let inputArray = Array(input)
+        let formatArray = Array(format)
+        var output = ""
+        var j = 0
+        for i in 0..<inputArray.count {
+            let character = inputArray[i]
+            if j < formatArray.count {
+                let formatChar = formatArray[j]
+                if let translationString = translation[formatChar] {
+                    let regex = try! NSRegularExpression(pattern: translationString, options: [])
+                    let characterString = String(character)
+                    let range = NSRange(location: 0, length: characterString.count)
+                    if regex.firstMatch(in: characterString, options: [], range: range) != nil {
+                        output.append(characterString)
+                        j += 1
+                    }
+                } else {
+                    if j >= formatArray.count {
+                        break
+                    }
+                    if character == formatChar {
+                        output.append(character)
+                        j += 1
+                    } else {
+                        var k = j
+                        for var k in 0+j..<format.count {
+                            var formatChar = formatArray[k]
+                            if let translationString = translation[formatChar] {
+                                let regex = try! NSRegularExpression(pattern: translationString, options: [])
+                                let characterString = String(character)
+                                let range = NSRange(location: 0, length: characterString.count)
+                                if regex.firstMatch(in: characterString, options: [], range: range) != nil {
+                                    output.append(characterString)
+                                    j += 1
+                                }
+                                break
+                            } else {
+                                output.append(formatChar)
+                                j += 1
+                                k += 1
+                            }
+                        }
+                    }
+                }
+            }  else {
+                break
+            }
+        }
+        return output
+    }
     
     internal func updateVal(value: String) {
-        self.skyflowLabelView.updateVal(value: value)
-        self.actualValue = value
+        if let format = self.options?.format {
+            if format != "" {
+                if(self.options.translation == nil){
+                    self.options.translation = ["X": "[0-9]"]
+                }
+                for (key, value) in self.options.translation! {
+                    if value == "" {
+                        self.options.translation![key] = "(?:)"
+                    }
+                }
+                let formattedText = formatInput(input: value, format: format, translation: self.options.translation!)
+                self.skyflowLabelView.updateVal(value: formattedText)
+                self.actualValue = value
+            }
+            else {
+                self.skyflowLabelView.updateVal(value: value)
+                self.actualValue = value
+            }
+        }
+        else {
+            self.skyflowLabelView.updateVal(value: value)
+            self.actualValue = value
+        }
     }
 
     internal func isMounted() -> Bool {
