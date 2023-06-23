@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - 'Skyflow.podspec'
       - '*.md'
+      - 'Sources/Skyflow/Version.swift'
     branches: 
       - release/*
 
@@ -36,6 +37,7 @@ jobs:
            git config user.name ${{ github.actor }}
            git config user.email ${{ github.actor }}@users.noreply.github.com
            git add Skyflow.podspec
+           git add Sources/Skyflow/Version.swift
            git commit -m "[AUTOMATED] Private Release ${{ steps.previoustag.outputs.tag }}.$(git rev-parse --short $GITHUB_SHA)"
            git push origin
 

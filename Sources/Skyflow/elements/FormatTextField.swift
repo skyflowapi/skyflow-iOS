@@ -18,7 +18,7 @@ internal class FormatTextField: UITextField {
 
     /**
      formatPattern: "#### #### #### ####"
-     If the pattern is set to "" no mask would be applied and
+     If the pattern is set to "" no translation would be applied and
      the textfield would remain same
      */
     var formatPattern: String = ""
@@ -28,7 +28,7 @@ internal class FormatTextField: UITextField {
 
 
     /**
-     Var that have the maximum length, based on the mask set
+     Var that have the maximum length, based on the translation set
      */
     var maxLength: Int {
         get {
@@ -67,7 +67,7 @@ internal class FormatTextField: UITextField {
         }
     }
 
-    /** returns textfield text without mask (format pattern) */
+    /** returns textfield text without translation (format pattern) */
     internal var getSecureRawText: String? {
         return getRawText()
     }
@@ -174,6 +174,56 @@ internal class FormatTextField: UITextField {
         }
         
         self.secureText = formattedText
+    }
+    func formatInput(input: String, format: String, translation: [Character: String]) -> String {
+        let inputArray = Array(input)
+        let formatArray = Array(format)
+        var output = ""
+        var j = 0
+        for i in 0..<inputArray.count {
+            let character = inputArray[i]
+            if j < formatArray.count {
+                let formatChar = formatArray[j]
+                if let translationString = translation[formatChar] {
+                    let regex = try! NSRegularExpression(pattern: translationString, options: [])
+                    let characterString = String(character)
+                    let range = NSRange(location: 0, length: characterString.count)
+                    if regex.firstMatch(in: characterString, options: [], range: range) != nil {
+                        output.append(characterString)
+                        j += 1
+                    }
+                } else {
+                    if j >= formatArray.count {
+                        break
+                    }
+                    if character == formatChar {
+                        output.append(character)
+                        j += 1
+                    } else {
+                        for var k in 0+j..<format.count {
+                            var formatChar = formatArray[k]
+                            if let translationString = translation[formatChar] {
+                                let regex = try! NSRegularExpression(pattern: translationString, options: [])
+                                let characterString = String(character)
+                                let range = NSRange(location: 0, length: characterString.count)
+                                if regex.firstMatch(in: characterString, options: [], range: range) != nil {
+                                    output.append(characterString)
+                                    j += 1
+                                }
+                                break
+                            } else {
+                                output.append(formatChar)
+                                j += 1
+                                k += 1
+                            }
+                        }
+                    }
+                }
+            }  else {
+                break
+            }
+        }
+        return output
     }
 }
 
