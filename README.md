@@ -827,19 +827,39 @@ The following example code makes a detokenize call to reveal the masked value of
   }
   ```
  
-- ### Using Skyflow ID's
-    For retrieving using SkyflowID's, use the `getById(records)` method. The records parameter takes a Dictionary object that contains `records` to be fetched as shown below.
-    ```swift
+- ### Using Skyflow ID's or Unique Column Values
+    For retrieving data from the vault, use the `get(records: JSONObject, options: GetOptions? = GetOptions(), callback: Skyflow.Callback)` method.
+    The `records` parameter takes a Dictionary object that contains `records` to be fetched as shown below. Each object inside array should contain:
+
+    - Either an array of Skyflow IDs to fetch
+    - Or a column name and an array of column values
+    
+    The second parameter, `options`, is a `GetOptions` object that retrieves tokens of Skyflow IDs.
+
+  Notes:
+  - You can use either Skyflow IDs or unique values to retrieve records. You can't use both at the same time.
+  - GetOptions parameter is applicable only for retrieving tokens using Skyflow ID.
+  - You can't pass GetOptions along with the redaction type.
+  - tokens defaults to false.
+
+ ```swift
     [
       "records": [
         [
           "ids": ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
-          "table": String,                    // name of table holding the above skyflow_id's
-          "redaction": Skyflow.RedactionType    //redaction to be applied to retrieved data
-        ]
+          "table": String,                      // Name of table holding the above skyflow_id's
+          "redaction": Skyflow.RedactionType    // Redaction to be applied to retrieved data
+        ],
+        [
+          "columnValues": ArrayList<String>(),     // Array of column values of the records to be fetched
+          "table": String,                         // Name of table holding the above skyflow_id's
+          "columnName": String,                    // A unique column name
+          "redaction": Skyflow.RedactionType       // Redaction to be applied to retrieved data
+        ],
+        
       ]
     ]
-    ```
+ ```
  ### Redaction Types
   There are 4 accepted values in Skyflow.RedactionTypes:  
   - `PLAIN_TEXT`
@@ -847,53 +867,125 @@ The following example code makes a detokenize call to reveal the masked value of
   - `REDACTED`
   - `DEFAULT`  
   
-  An example of getById call:
+ An example of get call to fetch records:
   ```swift
   let getCallback = GetCallback() // Custom callback - implementation of Skyflow.Callback
  
   let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
   let record = ["ids": skyflowIDs, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
+  
+  let columnValues = ["12345", "123456"]
+  let columnRecord = ["columnValues": columnValues,"columnName": "card_pin", "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
+  
+  let invalidID = ["invalid skyflow ID"]
+  let badRecord = ["ids": invalidID, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
  
+  let records = ["records": [record,columnRecord, badRecord]]
+ 
+  skyflowClient.get(records: records, callback: getCallback)
+  ```
+ 
+  The sample response:
+  ```json
+  {
+    "records": [ {
+        "fields": {
+            "card_number": "4111111111111111",
+            "cvv": "127",
+            "expiry_date": "11/35",
+            "fullname": "myname",
+            "skyflow_id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
+          },
+          "table": "cards"
+      }, {
+        "fields": {
+            "card_number": "4111111111111111",
+            "cvv": "317",
+            "expiry_date": "10/23",
+            "fullname": "sam",
+            "skyflow_id": "da26de53-95d5-4bdb-99db-8d8c66a35ff9"
+        },
+        "table": "cards"
+      },{
+        "fields": {
+            "card_number": "4111111111111111",
+            "cvv": "345",
+            "card_pin":"12345"
+            "expiry_date": "12/29",
+            "fullname": "joey",
+            "skyflow_id": "ed2e7851-9f84-4d70-9e5d-182f6d8d4fa3"
+          },
+        "table": "cards"
+      }, {
+          "fields": {
+            "card_number": "4111111111111111",
+            "cvv": "222",
+            "card_pin":"123456"
+            "expiry_date": "10/27",
+            "fullname": "john",
+            "skyflow_id": "5d4f7e52-6f2e-4794-b9c6-45bed59fa1f1"
+          },
+          "table": "cards"
+      }
+    ],
+    "errors": [ {
+       "error": {
+          "code": "404",
+          "description": "No Records Found"
+        },
+        "skyflow_ids": ["invalid skyflow id"]
+    }]
+  }
+ ```
+  
+  An example of get call to fetch tokens:
+
+  ```swift
+  let getCallback = GetCallback() // Custom callback - implementation of Skyflow.Callback
+ 
+  let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
+  let record = ["ids": skyflowIDs, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
+   
   let invalidID = ["invalid skyflow ID"]
   let badRecord = ["ids": invalidID, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
  
   let records = ["records": [record, badRecord]]
  
-  skyflowClient.getById(records: records, callback: getCallback)
+  skyflowClient.get(records: records, options: GetOptions(tokens: true), callback: getCallback)
   ```
- 
-  The sample response:
+ The sample Response:
   ```json
+  {
+  "records": [
     {
-      "records": [ {
-          "fields": {
-              "card_number": "4111111111111111",
-              "cvv": "127",
-              "expiry_date": "11/35",
-              "fullname": "myname",
-              "skyflow_id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
-          },
-          "table": "cards"
-      }, {
-          "fields": {
-              "card_number": "4111111111111111",
-              "cvv": "317",
-              "expiry_date": "10/23",
-              "fullname": "sam",
-              "skyflow_id": "da26de53-95d5-4bdb-99db-8d8c66a35ff9"
-          },
-          "table": "cards"
-      }],
-      "errors": [ {
-          "error": {
-              "code": "404",
-              "description": "No Records Found"
-          },
-          "skyflow_ids": ["invalid skyflow id"]
-      }]
+      "fields": {
+        "card_number": "9802-3257-3113-0294",
+        "expiry_date": "45012507-f72b-4f5c-9bf9-86b133bae719",
+        "fullname": "131e2507-f72b-4f5c-9bf9-86b133bae719",
+      },
+      "table": "cards"
+    },
+    {
+      "fields": {
+        "card_number": "0294-3213-3157-9802",
+        "expiry_date": "131e2507-f72b-4f5c-9bf9-86b133bae719",
+        "fullname": "45012507-f72b-4f5c-9bf9-86b133bae719",
+      },
+      "table": "cards"
     }
+  ],
+  "errors": [
+    {
+      "error": {
+        "code": "404",
+        "description": "No Records Found"
+      },
+      "ids": ["invalid skyflow id"]
+    }
+  ]
+}
   ```
- 
+
  
 ## Using Skyflow Elements to reveal data
 Skyflow Elements can be used to securely reveal data in an application without exposing your front end to the sensitive data. This is great for use-cases like card issuance where you may want to reveal the card number to a user without increasing your PCI compliance scope.
