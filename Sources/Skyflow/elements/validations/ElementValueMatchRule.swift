@@ -15,6 +15,7 @@ public struct ElementValueMatchRule: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
     
+    /// This is description for init method
     public init(element: TextField, error: SkyflowValidationError? = nil) {
         self.element = element
         if error != nil {
@@ -26,7 +27,14 @@ public struct ElementValueMatchRule: ValidationRule {
 }
 
 extension ElementValueMatchRule: SkyflowInternalValidationProtocol {
-    /// validate element value
+    /**
+    validate element value
+
+    - Parameters:
+        - _ text: This is the description for _ text parameter.
+
+    - Returns: This is the description of what method returns.
+    */
     public func validate(_ text: String?) -> Bool {
         guard text != nil else {
             return false

@@ -4,8 +4,7 @@
 
 import Foundation
 
-// Validate input in scope of length.
-
+/// Validate input in scope of length.
 public struct LengthMatchRule: ValidationRule {
     /// input string minimum length
     public let minLength: Int
@@ -16,6 +15,7 @@ public struct LengthMatchRule: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
+    /// This is the description for init method.
     public init(minLength: Int = 0, maxLength: Int = Int.max, error: SkyflowValidationError? = nil) {
         self.minLength = minLength
         self.maxLength = maxLength
@@ -28,7 +28,14 @@ public struct LengthMatchRule: ValidationRule {
 }
 
 extension LengthMatchRule: SkyflowInternalValidationProtocol {
-    /// validate length of text
+    /**
+    validate length of text
+
+    - Parameters:
+        - _ text: This is the description for _ text parameter.
+
+    - Returns: This is the description of what method returns.
+    */
     public func validate(_ text: String?) -> Bool {
         
         guard text != nil else {

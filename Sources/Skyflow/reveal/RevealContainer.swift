@@ -9,10 +9,20 @@
 
 import Foundation
 
+/// This is the description for RevealContainer Class
 public class RevealContainer: ContainerProtocol {
 }
 
 public extension Container {
+    /**
+    This is the description for container method.
+
+    - Parameters:
+        - type: This is the description for type parameter.
+        - options: This is the description for options parameter.
+
+    - Returns: This is the description of what method returns.
+    */
     func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
@@ -25,6 +35,15 @@ public extension Container {
         return revealElement
     }
 
+    /**
+    This is the description for container method.
+
+    - Parameters:
+        - type: This is the description for type parameter.
+        - options: This is the description for options parameter.
+
+    - Returns: This is the description of what method returns.
+    */
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER

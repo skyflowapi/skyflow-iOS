@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// This is the description for LogLevel enum.
 public enum LogLevel: Int {
     case DEBUG = 0
     case INFO = 1

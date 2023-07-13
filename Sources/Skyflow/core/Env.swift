@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// This is the description for Env enum.
 public enum Env {
     case DEV
     case PROD

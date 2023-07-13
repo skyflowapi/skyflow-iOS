@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// This is the description for borderColor property.
 public struct RevealElementInput {
     internal var token: String
     internal var inputStyles: Styles?
@@ -25,6 +26,17 @@ public struct RevealElementInput {
         self.altText = altText
     }
 
+    /**
+    This is the description for init method.
+
+    - Parameters:
+        - token: This is the description for token parameter.
+        - inputStyles: This is the description for inputStyles parameter.
+        - labelStyles: This is the description for labelStyles parameter.
+        - errorTextStyles: This is the description for errorTextStyles parameter.
+        - label: This is the description for label parameter.
+        - altText: This is the description for altText parameter.
+    */
     public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, altText: String = "") {
         self.token = token
         self.inputStyles = inputStyles

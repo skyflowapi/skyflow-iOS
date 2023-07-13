@@ -7,13 +7,28 @@
 import Foundation
 import AEXML
 
+/// This is the description for Client Class.
 public class Client {
+    /// This is the description for vaultID property.
     var vaultID: String
+
+    /// This is the description for apiClient property.
     var apiClient: APIClient
+
+    /// This is the description for vaultURL property.
     var vaultURL: String
+
+    /// This is the description for contextOptions property.
     var contextOptions: ContextOptions
+    /// This is the description for elementLookup property.
     var elementLookup: [String: Any] = [:]
     
+    /**
+    This is the description for init method.
+
+    - Parameters:
+        - _ skyflowConfig: This is the description for _ skyflowConfig parameter.
+    */
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
         self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
@@ -22,6 +37,14 @@ public class Client {
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
+    /**
+    This is the description for insert method.
+
+    - Parameters:
+        - records: This is the description for records parameter.
+        - options: This is the description for options parameter.
+        - callback: This is the description for callback parameter.
+    */
     public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INSERT
@@ -95,6 +118,15 @@ public class Client {
         }
     }
 
+    /**
+    This is the description for container method.
+
+    - Parameters:
+        - type: This is the description for type parameter.
+        - options: This is the description for options parameter.
+
+    - Returns: This is the description of what method returns.
+    */
     public func container<T>(type: T.Type, options: ContainerOptions? = ContainerOptions()) -> Container<T>? {
         if options != nil {
             // Set options
@@ -113,6 +145,14 @@ public class Client {
         return nil
     }
 
+    /**
+    This is the description for detokenize method.
+
+    - Parameters:
+        - records: This is the description for records parameter.
+        - options: This is the description for options parameter.
+        - callback: This is the description for callback paramter.
+    */
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
@@ -177,6 +217,13 @@ public class Client {
         }
     }
 
+    /**
+    This is the description for getById method.
+
+    - Parameters:
+        - records: This is the description for records parameter.
+        - callback: This is the description for callback paramter.
+    */
     public func getById(records: [String: Any], callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GETBYID
