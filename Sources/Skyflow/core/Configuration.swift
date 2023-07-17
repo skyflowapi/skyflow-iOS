@@ -8,13 +8,9 @@ import Foundation
 
 /// This is the description for Configuration method.
 public struct Configuration {
-    /// This is the description for vaultID property.
     var vaultID: String
-    /// This is the description for vaultURL property.
     var vaultURL: String
-    /// This is the description for tokenProvider property.
     var tokenProvider: TokenProvider
-    /// This is the description for options property.
     var options: Options?
 
     /**

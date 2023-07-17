@@ -30,7 +30,7 @@ extension RegexMatchRule: SkyflowInternalValidationProtocol {
     validate the text with specified regex
 
     - Parameters:
-        - _ text: This is the description for _ text parameter.
+        - text: This is the description for text parameter.
 
     - Returns: This is the description of what method returns.
     */

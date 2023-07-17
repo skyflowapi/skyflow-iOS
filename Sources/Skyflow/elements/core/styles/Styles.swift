@@ -8,20 +8,24 @@ import Foundation
 
 /// This is the description for Styles struct.
 public struct Styles {
-    /// This is the description for base property.
     var base: Style?
-    /// This is the description for complete property.
     var complete: Style?
-    /// This is the description for empty property.
     var empty: Style?
-    /// This is the description for focus property.
     var focus: Style?
-    /// This is the description for invalid property.
     var invalid: Style?
-    /// This is the description for requiredAstrisk property.
     var requiredAstrisk: Style?
 
-   /// This is the description for init method.
+   /**
+    This is the description for init method.
+
+    - Parameters:
+        - base: This is the description for base parameter.
+        - complete: This is the description for complete parameter.
+        - empty: This is the description for empty parameter.
+        - focus: This is the description for focus parameter.
+        - invalid: This is the description for invalid parameter.
+        - requiredAstrisk: This is the description for requiredAstrisk parameter.
+    */
    public init(base: Style? = Style(),
                complete: Style? = Style(),
                empty: Style? =  Style(),

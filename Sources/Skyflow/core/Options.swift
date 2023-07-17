@@ -4,7 +4,6 @@
 
 /// Object that describes the options parameter
 
-/// This is the description for Options struct.
 public struct Options {
     /// This is the description for logLevel property.
     var logLevel: LogLevel

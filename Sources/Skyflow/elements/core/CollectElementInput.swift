@@ -8,28 +8,32 @@ import Foundation
 
 /// This is the description for CollectElementInput struct.
 public struct CollectElementInput {
-    /// This is the description for table property.
     var table: String
-    /// This is the description for column property.
     var column: String
-    /// This is the description for inputStyles property.
     var inputStyles: Styles
-    /// This is the description for labelStyles property.
     var labelStyles: Styles
-    /// This is the description for errorTextStyles property.
     var errorTextStyles: Styles
-    /// This is the description for iconStyles property.
     var iconStyles: Styles
-    /// This is the description for label property.
     var label: String
-    /// This is the description for placeholder property.
     var placeholder: String
-    /// This is the description for type property.
     var type: ElementType
-    /// This is the description for validations property.
     var validations: ValidationSet
     
-    /// This is the description for init method.
+    /**
+    This is the description for init method.
+
+    - Parameters:
+        - table: This is the description for table parameter.
+        - column: This is the description for column parameter.
+        - inputStyles: This is the description for inputStyles parameter.
+        - labelStyles: This is the description for labelStyles parameter.
+        - errorTextStyles: This is the description for errorTextStyles parameter.
+        - iconStyles: This is the description for iconStyles parameter.
+        - label: This is the description for label parameter.
+        - placeholder: This is the description for placeholder parameter.
+        - type: This is the description for type parameter.
+        - validations: This is the description for validations parameter.
+    */
     public init(table: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
                 placeholder: String? = "", type: ElementType, validations: ValidationSet=ValidationSet()) {

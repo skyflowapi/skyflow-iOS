@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// This is the description for borderColor property.
+/// This is the description for RevealElementInpt struct.
 public struct RevealElementInput {
     internal var token: String
     internal var inputStyles: Styles?

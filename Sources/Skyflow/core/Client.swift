@@ -9,25 +9,17 @@ import AEXML
 
 /// This is the description for Client Class.
 public class Client {
-    /// This is the description for vaultID property.
     var vaultID: String
-
-    /// This is the description for apiClient property.
     var apiClient: APIClient
-
-    /// This is the description for vaultURL property.
     var vaultURL: String
-
-    /// This is the description for contextOptions property.
     var contextOptions: ContextOptions
-    /// This is the description for elementLookup property.
     var elementLookup: [String: Any] = [:]
     
     /**
     This is the description for init method.
 
     - Parameters:
-        - _ skyflowConfig: This is the description for _ skyflowConfig parameter.
+        - skyflowConfig: This is the description for skyflowConfig parameter.
     */
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID

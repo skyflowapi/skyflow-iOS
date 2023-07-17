@@ -11,16 +11,20 @@ import UIKit
 
 /// This is the description for CollectElementOptions struct.
 public struct CollectElementOptions {
-    /// This is the description for required property.
     var required: Bool
-    /// This is the description for enableCardIcon property.
     var enableCardIcon: Bool
-    /// This is the description for format property.
     var format: String
-    /// This is the description for format property.
     var translation: [ Character: String ]?
 
-    /// This is the description for init mrthod.
+    /**
+    This is the description for init method.
+
+    - Parameters:
+        - required: This is the description for required parameter.
+        - enableCardIcon: This is the description for enableCardIcon parameter.
+        - format: This is the description for format parameter.
+        - translation: This is the description for translation parameter.
+    */
     public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil) {
         self.required = required!
         self.enableCardIcon = enableCardIcon
