@@ -46,6 +46,7 @@ internal enum Message {
     case NO_REGEX_MATCH_FOUND
     case FORMAT_AND_TRANSLATION
     case EMPTY_TRANSLATION_VALUE
+    case VALIDATE_COMPOSABLE_RECORDS
 
 
     var description: String {
@@ -57,6 +58,8 @@ internal enum Message {
         case .VALIDATE_DETOKENIZE_INPUT: return "Validating detokenize input" // U
         case .VALIDATE_GET_BY_ID_INPUT: return "Validating getByID input" // U
         case .VALIDATE_COLLECT_RECORDS: return "Validating collect element input" // U
+        case .VALIDATE_COMPOSABLE_RECORDS: return "Validating composable element input" // U
+
         case .VALIDATE_REVEAL_RECORDS: return "Validating reveal element input" // U
         case .CREATED_ELEMENT: return "Created <> element" // U
         case .ELEMENT_REVEALED: return "<> Element revealed" // U?

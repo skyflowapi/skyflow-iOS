@@ -225,12 +225,12 @@ class InputFormattingTests: XCTestCase {
     }
     
     func testStateWithBIN() {
-        let prodOptions = ContextOptions()
+        let prodOptions = ContextOptions(env: .PROD)
         let devOptions = ContextOptions(env: .DEV)
         let cardInput = CollectElementInput(type: .CARD_NUMBER)
         
         let prodField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        let devField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: devOptions)
+        let devField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: devOptions, elements: [prodField])
         
         prodField.actualValue = "4111 1111 1111 1111"
         devField.actualValue = "4111 1111 1111 1111"
@@ -329,8 +329,8 @@ class InputFormattingTests: XCTestCase {
         let prodOptions = ContextOptions()
         let devOptions = ContextOptions(env: .DEV)
         
-        let prodField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        let devField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: devOptions)
+        let prodField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: prodOptions, elements: [])
+        let devField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: devOptions, elements: [])
         
         prodField.actualValue = "378282246310005"
         devField.actualValue = "378282246310005"
