@@ -6,17 +6,28 @@
 
 import Foundation
 
-
+/// This is the description ValidationSet
 public struct ValidationSet {
     internal var rules = [ValidationRule]()
 
     public init() { }
 
+    /**
+    This is the description for init method.
+
+    - Parameters:
+        - rules: This is the description for rules parameter.
+    */
     public init(rules: [ValidationRule]) {
         self.rules = rules
     }
 
-    /// Add validation rule
+    /**
+    Add validation rule.
+
+    - Parameters:
+        - rule: This is the description for rule parameter.
+    */
     public mutating func add(rule: ValidationRule) {
              rules.append(rule)
     }

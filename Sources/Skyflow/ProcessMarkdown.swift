@@ -52,7 +52,7 @@ func convertParamsToTable(at fileURL: URL) {
 
     var emptyLineCount = 0
 
-    updatedMarkdownLines.append("{% env enable=\"goSdkRef\" %}")
+    updatedMarkdownLines.append("{% env enable=\"iosSdkRef\" %}")
     updatedMarkdownLines.append("")
     
     // Iterate over each line in the markdown
@@ -87,7 +87,13 @@ func convertParamsToTable(at fileURL: URL) {
             }
             parameterList.append(line)
         } else {
-            updatedMarkdownLines.append(line)
+            if(line.starts(with: "``` swift"))
+            {
+                updatedMarkdownLines.append(line.replacingOccurrences(of: " ", with: ""))
+            }
+            else {
+                updatedMarkdownLines.append(line)
+            }
         }
     }
 
@@ -112,6 +118,7 @@ func convertParamsToTable(at fileURL: URL) {
     // Join the updated markdown lines
     let updatedMarkdown = updatedMarkdownLines.joined(separator: "\n")
     
+    // print("Updated markdown: \(updatedMarkdown)")
     // Write the updated markdown back to the file
     do {
         try updatedMarkdown.write(to: fileURL, atomically: true, encoding: .utf8)
@@ -152,7 +159,8 @@ func extractHeadings(from markdown: String) -> String {
         if isInsideCodeBlock || !line.starts(with: "###") {
             modifiedMarkdown += line + "\n"
         } else if let methodName = extractMethodName(from: line) {
-            modifiedMarkdown += "### \(methodName)\n"
+            let hashes = line.components(separatedBy: " ")[0]
+            modifiedMarkdown += "\(hashes) \(methodName)\n"
         }
     }
     
@@ -175,17 +183,18 @@ func sanitizeMethodName(_ methodName: String) -> String {
     let regex = try! NSRegularExpression(pattern: pattern, options: [])
     let range = NSRange(location: 0, length: methodName.utf16.count)
     
-    let sanitizedMethodName = regex.stringByReplacingMatches(
+    var sanitizedMethodName = regex.stringByReplacingMatches(
         in: methodName,
         options: [],
         range: range,
         withTemplate: "()"
     )
-    
+    sanitizedMethodName = sanitizedMethodName.replacingOccurrences(of: "`", with: "")
+    // print("heading: \(sanitizedMethodName)")
     return sanitizedMethodName
 }
 // Usage example
 let path = "docs/markdown"
-let filesToDelete = ["_Footer.md", "_Sidebar.md", "ContainerOptions.md", "ContainerProtocol.md", "Callback.md", "TokenProvider.md", "SkyflowValidationError.md", "Label.md", "UILabel.md", "ValidationRule.md", "SkyflowLabelView.md", "Home.md", "RevealOptions.md"]
+let filesToDelete = ["_Footer.md", "_Sidebar.md", "ContainerOptions.md", "Callback.md", "TokenProvider.md", "Label.md", "UILabel.md", "SkyflowLabelView.md", "Home.md", "RevealOptions.md", "FormatLabel.md"]
 
 processMarkdownFiles(at: path, fileNamesToDelete: filesToDelete)

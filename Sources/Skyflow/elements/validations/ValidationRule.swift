@@ -11,6 +11,7 @@
 
 import Foundation
 
+/// This is the description for ValidationRule protocol
 public protocol ValidationRule {
     var error: String { get }
 }
