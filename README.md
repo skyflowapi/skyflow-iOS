@@ -10,7 +10,7 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
 - [Installation](#installation)
     - [Requirements](#requirements)
     - [Configuration](#configuration)
-- [Initializing Skyflow-iOS](#initializing-skyflow-iOS)
+- [Initializing Skyflow-iOS](#initializing-skyflow-ios)
 - [Securely collecting data client-side](#securely-collecting-data-client-side)
 - [Securely revealing data client-side](#securely-revealing-data-client-side)
  
@@ -135,12 +135,12 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
  
 ---
 # Securely collecting data client-side
--  [**Inserting data into the vault**](#inserting-data-into-the-vault)
+-  [**Inserting data into the vault**](#insert-data-into-the-vault)
 -  [**Using Skyflow Elements to collect data**](#using-skyflow-elements-to-collect-data)
 -  [**Using validations on Collect Elements**](#validations)
 -  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
 -  [**UI Error for Collect Elements**](#ui-error-for-collect-elements)
-- [**Set and Clear value for Collect Elements (DEV ENV ONLY)**](#set-and-clear-value-for-collect-elements-dev-env-only)
+-  [**Set and Clear value for Collect Elements (DEV ENV ONLY)**](#set-and-clear-value-for-collect-elements-dev-env-only)
  
 ## Insert data into the vault
  
