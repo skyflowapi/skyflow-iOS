@@ -1,0 +1,20 @@
+PODS:
+  - AEXML (4.6.1)
+  - Skyflow (1.19.0):
+    - AEXML
+
+DEPENDENCIES:
+  - Skyflow (>= 1.19.0)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AEXML
+    - Skyflow
+
+SPEC CHECKSUMS:
+  AEXML: 1e255ecc6597212f97a7454a69ebd3ede64ac1cf
+  Skyflow: 80dda3cb9d5e00d9dfc03df7665b2bec30860c54
+
+PODFILE CHECKSUM: 8d5ae2e759f4ac0e88af3763d735c791f1ae2201
+
+COCOAPODS: 1.11.3
