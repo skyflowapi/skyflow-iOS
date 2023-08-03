@@ -12,6 +12,7 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
     - [Configuration](#configuration)
 - [Initializing Skyflow-iOS](#initializing-skyflow-ios)
 - [Securely collecting data client-side](#securely-collecting-data-client-side)
+- [Securely collecting data client-side using Composable Elements](#securely-collecting-data-client-side-using-composable-elements)
 - [Securely revealing data client-side](#securely-revealing-data-client-side)
  
 # Installation
@@ -213,7 +214,7 @@ skyflowClient.insert(records: records, options: insertOptions, callback: insertC
 
 ## Using Skyflow Elements to collect data
  
-**Skyflow Elements** provide developers with pre-built form elements to securely collect sensitive data client-side.  This reduces your PCI compliance scope by not exposing your front-end application to sensitive data. Follow the steps below to securely collect data with Skyflow Elements in your application.
+**Skyflow Elements** provide developers with pre-built form elements to securely collect sensitive data client-side. This reduces your PCI compliance scope by not exposing your front-end application to sensitive data. Follow the steps below to securely collect data with Skyflow Elements in your application.
  
 ### Step 1: Create a container
  
@@ -420,6 +421,7 @@ let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecor
 //Custom callback - implementation of Skyflow.callback
 let insertCallback = InsertCallback() 
 container?.collect(callback: insertCallback, options: options)
+
 ```
 ### Collect data with Skyflow Elements
  
@@ -581,7 +583,7 @@ stackView.addArrangedSubview(confirmPassword!)
 ### Event Listener on Collect Elements
  
  
-Helps to communicate with skyflow elements / iframes by listening to an event
+Helps to communicate with skyflow elements by listening to an event
  
 ```swift
 element!.on(eventName: Skyflow.EventName) { _ in
@@ -767,7 +769,585 @@ cardNumber.setValue("4111111111111111")
 cardNumber.clearValue()
 ```
  
----
+# Securely collecting data client-side using Composable Elements
+
+Composable Elements combine multiple Skyflow Elements in a single row. The following steps create a composable element and securely collect data through it.
+
+## Step 1: Create a composable container
+
+First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
+
+```swift
+let container = skyflowClient.container(type: Skyflow.ContainerType.COMPOSABLE,  options: ContainerOptions)
+```
+
+The container requires an options object that contains the following keys:
+
+- `layout`: An array that indicates the number of rows in the container and the number of elements in each row. The index value of the array defines the number of rows, and each value in the array represents the number of elements in that row, in order.
+
+    For example: `[2,1]` means the container has two rows, with two elements in the first row and one element in the second row.
+
+    `Note`: The sum of values in the layout array should be equal to the number of elements created
+
+- `styles`: styles to apply to each composable row.
+
+- `errorTextStyles`: styles to apply if an error is encountered.
+
+```swift
+var containerOptions = ContainerOptions(
+                        layout: [1,1,2],               // required
+                        styles: Skyflow.Styles,        // optional
+                        errorTextStyles: Skyflow.Styles //optional
+                        )
+```
+### Step 2: Create Composable Elements
+Composable Elements use the following schema:
+
+```swift
+let composableElementInput = Skyflow.CollectElementInput(
+    table: String,                  // optional, the table this data belongs to
+    column: String,                 // optional, the column into which this data should be inserted
+    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
+    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
+    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    label: String,                   // optional label for the form element
+    placeholder: String,             // optional placeholder for the form element
+    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
+    validations: ValidationSet,      // optional set of validations for the input element
+    type: Skyflow.ElementType,       // Skyflow.ElementType enum
+)
+```
+The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
+**Note**: 
+-   Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
+ 
+The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
+ 
+- `base`: all other variants inherit from these styles
+- `complete`: applied when the Element has valid input
+- `empty`: applied when the Element has no input
+- `focus`: applied when the Element has focus
+- `invalid`: applied when the Element has invalid input
+ 
+Each Style object accepts the following properties, please note that each property is optional:
+ 
+```swift
+let style = Skyflow.Style(
+    borderColor: UIColor,            // optional
+    cornerRadius: CGFloat,           // optional
+    padding: UIEdgeInsets,           // optional
+    borderWidth: CGFloat,            // optional
+    font: UIFont,                   // optional
+    textAlignment: NSTextAlignment,  // optional
+    textColor: UIColor               // optional
+)
+```
+An example Skyflow.Styles object
+```swift
+let styles = Skyflow.Styles(
+    base: style,                    // optional
+    complete: style,                // optional
+    empty: style,                   // optional
+    focus: style,                   // optional
+    invalid: style                  // optional
+)
+```
+ 
+The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyflow.Styles` object which are applied to the `label` and `errorText` text views respectively.
+ 
+The states that are available for `labelStyles` are `base` and `focus`.
+ 
+The state that is available for `errorTextStyles` is only the `base` state, it shows up when there is some error in the composable element.
+ 
+The parameters in `Skyflow.Style` object that are respected for `label` and `errorText` text views are
+- padding
+- font
+- textColor
+- textAlignment
+ 
+Other parameters in the `Skyflow.Style` object are ignored for `label` and `errorText` text views.
+ 
+Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the appropriate regex and validations to the form element. 
+
+The iOS SDK supports the following composable elements:
+
+- `INPUT_FIELD`
+- `CARDHOLDER_NAME`
+- `CARD_NUMBER`
+- `EXPIRATION_DATE`
+- `CVV`
+- `PIN`
+- `EXPIRATION_YEAR`
+- `EXPIRATION_MONTH`
+
+**Note**: Only when the entered value in the below composable elements is valid, the focus shifts automatically. The element types are:
+
+- `CARD_NUMBER`
+- `EXPIRATION_DATE`
+- `EXPIRATION_MONTH`
+- `EXPIRATION_YEAR`
+
+The `INPUT_FIELD` type is a custom UI element without any built-in validations. See the section on [validations](#validations) for more information on validations.
+ 
+Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
+ 
+```swift
+Skyflow.CollectElementOptions(
+  required: Boolean,               // Indicates whether the field is marked as required. Defaults to 'false'
+  enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
+  format: String,                  // Format for the element 
+  translation: [Character: String] // Indicates the allowed data type value for format.
+)
+```
+- `required`: Indicates whether the field is marked as required or not. Default is `false`.
+- `enableCardIcon`: Indicates whether the icon is visible for the CARD_NUMBER element. Default is `true`.
+- `format`:  A string value that indicates the format pattern applicable to the element type. Only applicable to EXPIRATION_DATE, CARD_NUMBER, EXPIRATION_YEAR, and INPUT_FIELD elements.
+   For INPUT_FIELD elements,
+     -  the length of `format` determines the expected length of the user input.
+     - if `translation` isn't specified, the `format` value is considered a string literal.
+- `translation`: A dictionary of key/value pairs, where the key is a character that appears in `format` and the value is a regex pattern of acceptable inputs for that character. Each key can only appear once. Only applicable for INPUT_FIELD elements.
+
+The accepted EXPIRATION_DATE values are
+
+- `mm/yy` (default)
+- `mm/yyyy`
+- `yy/mm`
+- `yyyy/mm`
+
+The accepted EXPIRATION_YEAR values are
+
+- `yy` (default)
+- `yyyy`
+
+Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
+ 
+```swift
+let composableElementInput = Skyflow.CollectElementInput(
+    table: String,                  // the table this data belongs to
+    column: String,                 // the column into which this data should be inserted
+    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
+    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
+    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    label: String,                   // optional label for the form element
+    placeholder: String,             // optional placeholder for the form element
+    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
+    validations: ValidationSet,      // optional set of validations for the input element
+    type: Skyflow.ElementType,       // Skyflow.ElementType enum
+)
+
+let collectElementOptions = Skyflow.CollectElementOptions(
+    required: false,  // indicates whether the field is marked as required. Defaults to 'false',
+    enableCardIcon: true, // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
+    format: "mm/yy" // Format for the element
+)
+
+let element = container?.create(input: composableElementInput, options: collectElementOptions)
+```
+## Step 3: Mount Elements to the Screen
+
+To specify where the Elements will be rendered on the screen, create a parent UIView (like UIStackView, etc) and you can add composable elements view using `container?.getComposableView()`, it as a subview programmatically.
+ 
+```swift
+let stackView = UIStackView()
+do {
+    let composableView = try container?.getComposableView()
+    stackView.addArrangedSubview(composableView)
+} catch {
+    print(error)
+}
+```
+ 
+The Skyflow Element is an implementation of the UIView so it can be used/mounted similarly. Alternatively, you can use the `unmount` method to reset any collect element to it's initial state
+ 
+``` swift
+func clearFieldsOnSubmit(_ elements: [TextField]) {
+    // resets all elements in the array
+    for element in elements {
+        element.unmount()
+    }
+}
+```
+## Step 4: Collect data from elements
+When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. 
+The options parameter takes a `Skyflow.CollectOptions` object as shown below:
+
+- `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
+- `additionalFields`: Non-PCI elements data to insert into the vault, specified in the records object format.
+- `upsert`: To support upsert operations, the table containing the data and a column marked as unique in that table.
+
+```swift
+// Non-PCI records
+let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+// Upsert
+let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+
+let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions)
+ 
+//Custom callback - implementation of Skyflow.callback
+let insertCallback = InsertCallback() 
+container?.collect(callback: insertCallback, options: options)
+```
+End to end example of collecting data with Composable Elements
+
+```swift
+
+//Initialize skyflow configuration.
+let config = Skyflow.Configuration(vaultID: VAULT_ID, vaultURL: VAULT_URL, tokenProvider: demoTokenProvider)
+ 
+//Initialize skyflow client.
+let skyflowClient = Skyflow.initialize(config)
+
+let containerOptions = ContainerOptions(layout: [1,2], styles: Styles(base: Style(borderColor: UIColor.gray)), errorTextStyles: Styles(base: Style(textColor: UIColor.red)))
+//Create a Composable Container.
+let container = self.skyflow?.container(type: Skyflow.ContainerType.COMPOSABLE, options: containerOptions)
+ 
+//Create Skyflow.Styles with individual Skyflow.Style variants.
+let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
+let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
+let completeStyle = Skyflow.Style(borderColor: UIColor.green)
+let focusTextStyle = Skyflow.Style(textColor: UIColor.red)
+let inputStyles = Skyflow.Styles(base: baseStyle, complete: completeStyle)
+let labelStyles = Skyflow.Styles(base: baseTextStyle, focus: focusTextStyle)
+let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
+ 
+// Create Composable Elements.
+
+let cardHolderNameElementInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "first_name",
+    inputStyles: inputStyles,
+    labelStyles: labelStyles,
+    errorTextStyles: errorTextStyles,
+    label: "first name",
+    placeholder: "first name",
+    type: Skyflow.ElementType.CARDHOLDER_NAME
+)
+// Create an option to require the element.
+let requiredOption = Skyflow.CollectElementOptions(required: true) 
+
+// Create a Composable Element from the Composable Container.
+let cardHolderNameElement = container?.create(input: cardHolderNameElementInput, options: requiredOption)
+ 
+ 
+let cardNumberElementInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    inputStyles: inputStyles,
+    labelStyles: labelStyles,
+    errorTextStyles: errorTextStyles,
+    label: "card number",
+    placeholder: "card number",
+    type: Skyflow.ElementType.CARD_NUMBER
+)
+ 
+let cardNumberElement = container?.create(input: cardNumberElementInput, options: requiredOption)
+
+let cvvElementInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cvv",
+    inputStyles: inputStyles,
+    labelStyles: labelStyles,
+    errorTextStyles: errorTextStyles,
+    label: "cvv",
+    placeholder: "cvv",
+    type: Skyflow.ElementType.CVV
+)
+ 
+let cvvElement = container?.create(input: cvvElementInput, options: requiredOption)
+
+// Can interact with this object as a normal UIView Object and add to View
+let stackView = UIStackView()
+do {
+    let composableView = try container?.getComposableView()
+    stackView.addArrangedSubview(composableView)
+} catch {
+    print(error)
+}
+ 
+// Non-PCI records
+let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+ 
+ //Upsert options
+let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+ 
+// Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
+let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+ 
+ 
+//Implement a custom Skyflow.Callback to call on Insertion success/failure.
+public class InsertCallback: Skyflow.Callback {
+  public func onSuccess(_ responseBody: Any) {
+      print(responseBody)
+  }
+   public func onFailure(_ error: Any) {
+      print(error)
+  }
+}
+
+// Initialize custom Skyflow.Callback.
+let insertCallback = InsertCallback()
+ 
+// Call collect method on CollectContainer.
+container?.collect(callback: insertCallback, options: collectOptions)
+```
+
+### Sample Response:
+
+```
+{
+    "records": [ {
+        "table": "cards",
+        "fields": {
+            "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1"
+        }
+    }, {
+        "table": "persons",
+        "fields": {
+            "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
+        }
+    }]
+}
+```
+[For information on validations, see validations.](#validations)
+
+
+
+## Set an event listener on Composable Elements:
+You can communicate with Skyflow Elements by listening to element events:
+
+```swift
+element!.on(eventName: Skyflow.EventName) { _ in
+    // handle function
+}
+```
+
+The SDK supports four events:
+
+- CHANGE: Triggered when the Element's value changes.
+- READY: Triggered when the Element is fully rendered.
+- FOCUS: Triggered when the Element gains focus.
+- BLUR: Triggered when the Element loses focus.
+
+The handler ```(state: [String: Any]) -> Void``` is a callback function you provide, that will be called when the event is fired with the state object as shown below. 
+
+```swift
+let state = [
+    "elementType": Skyflow.ElementType,
+    "isEmpty": Bool ,
+    "isFocused": Bool,
+    "isValid": Bool,
+    "value": String
+]
+```
+
+`Note`: 
+values of SkyflowElements will be returned in element state object only when `env` is `DEV`, else it is empty string i.e, '', but in case of CARD_NUMBER type element when the `env` is `PROD` for all the card types except AMEX, it will return first eight digits, for AMEX it will return first six digits and rest all digits in masked format.
+
+#### Example Usage of Event Listener on Composable Elements
+
+```swift
+// create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(
+    vaultID: VAULT_ID,
+    vaultURL: VAULT_URL,
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG)
+)
+
+let skyflowClient = Skyflow.initialize(config)
+
+let containerOptions = ContainerOptions(layout: [2], styles: Styles(base: Style(borderColor: UIColor.gray)), errorTextStyles: Styles(base: Style(textColor: UIColor.red)))
+//Create a Composable Container.
+let container = self.skyflow?.container(type: Skyflow.ContainerType.COMPOSABLE, options: containerOptions)
+
+// Create a CollectElementInput
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+    )
+let cardHolderNameInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardHolderName",
+    type: Skyflow.ElementType.CARDHOLDER_NAME,
+    )    
+
+let cardNumber = container?.create(input: cardNumberInput)
+let cardHolderName = container?.create(input: cardHolderNameInput)
+
+let stackView = UIStackView()
+do {
+    let composableView = try container?.getComposableView()
+    stackView.addArrangedSubview(composableView)
+} catch {
+    print(error)
+}
+// subscribing to CHANGE event, which gets triggered when element changes
+cardNumber.on(eventName: Skyflow.EventName.CHANGE) { state in
+    // Your implementation when Change event occurs
+    print(state)
+}
+
+cardHolderName.on(eventName: Skyflow.EventName.CHANGE) { state in
+    // Your implementation when Change event occurs
+    print(state)
+}
+```
+
+##### Sample Element state object when `env` is `DEV`
+```swift
+[
+    "elementType": Skyflow.ElementType.CARD_NUMBER,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": true,
+    "value": "4111111111111111"
+]
+[
+    "elementType": Skyflow.ElementType.CARDHOLDER_NAME,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": true,
+    "value": "John"
+]
+
+```
+##### Sample Element state object when `env` is `PROD`
+```swift
+[
+    "elementType": Skyflow.ElementType.CARD_NUMBER,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": true,
+    "value": "41111111XXXXXXXX"
+]
+[
+    "elementType": Skyflow.ElementType.CARDHOLDER_NAME,
+    "isEmpty": false,
+    "isFocused": true,
+    "isValid": true,
+    "value": ""
+]
+```
+### Update composable elements
+You can update composable element properties with the `update` interface.
+
+The `update` interface takes the below object:
+```swift
+let updateElement =  Skyflow.CollectElementInput(
+    table: String,                   // optional the table this data belongs to
+    column: String,                  // optional the column into which this data should be inserted
+    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
+    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
+    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    label: String,                   // optional label for the form element
+    placeholder: String,             // optional placeholder for the form element
+    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
+    validations: ValidationSet,      // optional set of validations for the input element
+)
+```
+Only include the properties that you want to update for the specified composable element.
+
+Properties your provided when you created the element remain the same until you explicitly update them.
+
+`Note`: You can't update the type property of an element.
+
+### End to end example
+```swift
+// create skyflow client with loglevel:"DEBUG"
+let config = Skyflow.Configuration(
+    vaultID: VAULT_ID,
+    vaultURL: VAULT_URL,
+    tokenProvider: demoTokenProvider,
+    options: Skyflow.Options(logLevel: Skyflow.LogLevel.DEBUG)
+)
+
+let skyflowClient = Skyflow.initialize(config)
+
+let containerOptions = ContainerOptions(layout: [2], styles: Styles(base: Style(borderColor: UIColor.gray)), errorTextStyles: Styles(base: Style(textColor: UIColor.red)))
+//Create a Composable Container.
+let container = self.skyflow?.container(type: Skyflow.ContainerType.COMPOSABLE, options: containerOptions)
+
+// Create a CollectElementInput
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+    )
+let cardHolderNameInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardHolderName",
+    type: Skyflow.ElementType.CARDHOLDER_NAME,
+    )    
+
+let cardNumber = container?.create(input: cardNumberInput)
+let cardHolderName = container?.create(input: cardHolderNameInput)
+
+let stackView = UIStackView()
+do {
+    let composableView = try container?.getComposableView()
+    stackView.addArrangedSubview(composableView)
+} catch {
+    print(error)
+}
+// Update table, column, inputStyles properties on cardNumber.
+cardNumber.update(update: CollectElementInput(
+    table: "cards",
+    column: "cardHolderName",
+    inputStyles: Skyflow.Styles(base: Style(borderColor: UIColor.red))
+))
+let lengthRule = LengthMatchRule(
+                    minLength: 5,
+                    maxLength: 16,
+                    error: "Must be between 5 and 16 digits")
+
+// Update validations and placeholder property on cardHolderName.
+cardHolderName.update(update: CollectElementInput(
+    placeholder: "cardHolderName",
+    validations: ValidationSet(rules: [lengthRule]))
+))
+```
+
+### Set an event listener on a composable container
+
+Currently, the SDK supports one event:
+
+ - `SUBMIT`: Triggered when the Enter key is pressed in any container element.
+  
+The handler function(void) -> void is a callback function you provide that's called when the `SUBMIT` event fires.
+
+#### Example
+
+```swift
+let containerOptions = ContainerOptions(layout: [1], styles: Styles(base: Style(borderColor: UIColor.gray)), errorTextStyles: Styles(base: Style(textColor: UIColor.red)))
+//Create a Composable Container.
+let composableContainer = self.skyflow?.container(type: Skyflow.ContainerType.COMPOSABLE, options: containerOptions)
+
+// Creating the element.
+let cardNumberInput = Skyflow.CollectElementInput(
+    table: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+    )
+let cardNumber = composableContainer?.create(input: cardNumberInput)
+
+// get composable view and mount it
+let stackView = UIStackView()
+do {
+    let composableView = try composableContainer?.getComposableView()
+    stackView.addArrangedSubview(composableView)
+} catch {
+    print(error)
+}
+// Subscribing to the `SUBMIT` event, which gets triggered when the user hits `enter` key in any container element input.
+composableContainer?.on(eventName: .SUBMIT){
+    // Your implementation when the SUBMIT(enter) event occurs.
+    print('Submit Event Listener is being Triggered.')
+}
+
+```
+
 # Securely revealing data client-side
 -  [**Retrieving data from the vault**](#retrieving-data-from-the-vault)
 -  [**Using Skyflow Elements to reveal data**](#using-skyflow-elements-to-reveal-data)
