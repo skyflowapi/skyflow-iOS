@@ -80,11 +80,11 @@ public extension Container {
         var previousChildView: UIView? = nil
         var previousLabel: UILabel? = nil
         var labelArray: [UILabel] = (0..<layout.count).map { _ in UILabel() }
-        let result = createRows(from: layout, numberOfRows: layout.count)
-        var k = 0
-        let arr = layout
+        let rowWiseError = createRows(from: layout, numberOfRows: layout.count)
+        var elementCount = 0
+        let layoutArray = layout
         
-        for i in arr.indices {
+        for i in layoutArray.indices {
             let childView = UIView()
             labelArray[i] = UILabel()
             parentView.addSubview(childView)
@@ -96,8 +96,8 @@ public extension Container {
             labelArray[i].textAlignment = containerOptions?.errorTextStyles?.base?.textAlignment ?? .left
             childView.translatesAutoresizingMaskIntoConstraints = false
 
-            for j in 0..<arr[i] {
-                childView.addSubview(elements[k])
+            for j in 0..<layoutArray[i] {
+                childView.addSubview(elements[elementCount])
                 let padding = containerOptions?.styles?.base?.padding  ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
                 childView.layer.borderColor = containerOptions?.styles?.base?.borderColor?.cgColor ?? .none
                 childView.layer.borderWidth = containerOptions?.styles?.base?.borderWidth ?? 0
@@ -111,25 +111,25 @@ public extension Container {
                     childView.widthAnchor.constraint(equalToConstant: (containerOptions?.styles?.base?.width)!).isActive = true
                 }
                                 
-                elements[k].translatesAutoresizingMaskIntoConstraints = false
+                elements[elementCount].translatesAutoresizingMaskIntoConstraints = false
                 
-                if arr[i] > 1 && k >= 1 && j > 0 {
+                if layoutArray[i] > 1 && elementCount >= 1 && j > 0 {
 
-                    elements[k].leadingAnchor.constraint(equalTo: elements[k-1].trailingAnchor, constant: 20.0).isActive = true
-                    elements[k].centerYAnchor.constraint(equalTo: childView.centerYAnchor).isActive = true
+                    elements[elementCount].leadingAnchor.constraint(equalTo: elements[elementCount-1].trailingAnchor, constant: 20.0).isActive = true
+                    elements[elementCount].centerYAnchor.constraint(equalTo: childView.centerYAnchor).isActive = true
                     
                 } else if j == 0 {
-                    elements[k].centerYAnchor.constraint(equalTo: childView.centerYAnchor).isActive = true
-                    elements[k].leftAnchor.constraint(equalTo: childView.leftAnchor, constant: 6.0).isActive = true
-                    elements[k].leadingAnchor.constraint(equalTo: childView.leadingAnchor, constant: 6.0).isActive = true
+                    elements[elementCount].centerYAnchor.constraint(equalTo: childView.centerYAnchor).isActive = true
+                    elements[elementCount].leftAnchor.constraint(equalTo: childView.leftAnchor, constant: 6.0).isActive = true
+                    elements[elementCount].leadingAnchor.constraint(equalTo: childView.leadingAnchor, constant: 6.0).isActive = true
                 }
-                elements[k].topAnchor.constraint(equalTo: childView.topAnchor).isActive = true
-                elements[k].bottomAnchor.constraint(equalTo: childView.bottomAnchor).isActive = true
+                elements[elementCount].topAnchor.constraint(equalTo: childView.topAnchor).isActive = true
+                elements[elementCount].bottomAnchor.constraint(equalTo: childView.bottomAnchor).isActive = true
 
                 for element in elements {
                     element.onFocusIsTrue = {
                         errorList[element.elements.count] = ""
-                        labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: result)
+                        labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: rowWiseError)
                         labelArray[i].textColor = self.containerOptions?.errorTextStyles?.focus?.textColor ?? self.containerOptions?.errorTextStyles?.base?.textColor ?? .none
                         labelArray[i].font = self.containerOptions?.errorTextStyles?.focus?.font ?? self.containerOptions?.errorTextStyles?.base?.font ?? .none
                         labelArray[i].textAlignment = self.containerOptions?.errorTextStyles?.focus?.textAlignment ?? self.containerOptions?.errorTextStyles?.base?.textAlignment ?? .left
@@ -141,11 +141,11 @@ public extension Container {
                         } else {
                             errorList[element.elements.count] = element.errorMessage.text! + ". "
                         }
-                        labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: result)
+                        labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: rowWiseError)
                     }
                     element.onBeginEditing = {
                         errorList[element.elements.count] = ""
-                        labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: result)
+                        labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: rowWiseError)
                         if( element.elements.count + 1 < self.elements.count ){
                             if ALLOWED_FOCUS_AUTO_SHIFT_ELEMENT_TYPES.contains(element.fieldType) && element.textField.isFirstResponder && (element.state.getState()["isValid"] as! Bool)  {
                                 if(element.elements.count + 1 < self.elements.count){
@@ -155,7 +155,7 @@ public extension Container {
                         }
                     }
                 }
-                k += 1
+                elementCount += 1
             }
 
             childView.translatesAutoresizingMaskIntoConstraints = false
