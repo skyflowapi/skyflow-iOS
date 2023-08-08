@@ -15,6 +15,9 @@ import UIKit
 
 
 public class TextField: SkyflowElement, Element, BaseElement {
+    var onBeginEditing: (() -> Void)?
+    var onEndEditing: (() -> Void)?
+    var onFocusIsTrue: (() -> Void)?
     internal var textField = FormatTextField(frame: .zero)
     internal var errorMessage = PaddingLabel(frame: .zero)
     internal var isDirty = false
@@ -23,7 +26,6 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
-    
     internal var textFieldDelegate: UITextFieldDelegate? = nil
     
     internal var errorTriggered: Bool = false
@@ -73,12 +75,11 @@ public class TextField: SkyflowElement, Element, BaseElement {
         return StateforText(tf: self)
     }
     
-    override init(input: CollectElementInput,options: CollectElementOptions, contextOptions: ContextOptions) {
-        super.init(input: input, options: options, contextOptions: contextOptions)
+    override init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions, elements: [TextField]? = nil) {
+        super.init(input: input, options: options, contextOptions: contextOptions, elements: elements ?? [])
         self.userValidationRules.append(input.validations)
         self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
         self.textField.delegate = self.textFieldDelegate!
-        
         setFormatPattern()
         setupField()
         let formatNotSupportedElements = [ElementType.CARDHOLDER_NAME, ElementType.EXPIRATION_MONTH, ElementType.CVV, ElementType.PIN]
@@ -173,6 +174,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal var onBlurHandler: (([String: Any]) -> Void)?
     internal var onReadyHandler: (([String: Any]) -> Void)?
     internal var onFocusHandler: (([String: Any]) -> Void)?
+    internal var onSubmitHandler: (() -> Void)?
+
     
     override func getOutput() -> String? {
         return textField.getTextwithFormatPattern
@@ -188,6 +191,90 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal func getOutputTextwithoutFormatPattern() -> String? {
         return textField.getSecureRawText
     }
+    
+    public func update(update: CollectElementInput){
+        collectInput.placeholder = update.placeholder
+        if update.column.isEmpty != true {
+            collectInput.column = update.column
+        }
+        if update.table.isEmpty != true {
+            collectInput.table = update.table
+        }
+        if update.column.isEmpty != true {
+            collectInput.column = update.column
+        }
+        if update.label.isEmpty != true {
+            collectInput.label = update.label
+        }
+        if update.validations.rules.isEmpty != true {
+            collectInput.validations = update.validations
+        }
+         updateStyle(update.inputStyles.base, &collectInput.inputStyles.base)
+         updateStyle(update.inputStyles.complete, &collectInput.inputStyles.complete)
+         updateStyle(update.inputStyles.empty, &collectInput.inputStyles.empty)
+         updateStyle(update.inputStyles.focus, &collectInput.inputStyles.focus)
+         updateStyle(update.inputStyles.invalid, &collectInput.inputStyles.invalid)
+         updateStyle(update.inputStyles.requiredAstrisk, &collectInput.inputStyles.invalid)
+
+         updateStyle(update.labelStyles.base, &collectInput.labelStyles.base)
+         updateStyle(update.labelStyles.complete, &collectInput.labelStyles.complete)
+         updateStyle(update.labelStyles.empty, &collectInput.labelStyles.empty)
+         updateStyle(update.labelStyles.focus, &collectInput.labelStyles.focus)
+         updateStyle(update.labelStyles.invalid, &collectInput.labelStyles.invalid)
+         updateStyle(update.labelStyles.requiredAstrisk, &collectInput.labelStyles.requiredAstrisk)
+        
+         updateStyle(update.errorTextStyles.base, &collectInput.errorTextStyles.base)
+         updateStyle(update.errorTextStyles.complete, &collectInput.errorTextStyles.complete)
+         updateStyle(update.errorTextStyles.empty, &collectInput.errorTextStyles.empty)
+         updateStyle(update.errorTextStyles.focus, &collectInput.errorTextStyles.focus)
+         updateStyle(update.errorTextStyles.invalid, &collectInput.errorTextStyles.invalid)
+         updateStyle(update.errorTextStyles.requiredAstrisk, &collectInput.errorTextStyles.requiredAstrisk)
+        
+         updateStyle(update.iconStyles.base, &collectInput.iconStyles.base)
+         updateStyle(update.iconStyles.complete, &collectInput.iconStyles.complete)
+         updateStyle(update.iconStyles.empty, &collectInput.iconStyles.empty)
+         updateStyle(update.iconStyles.focus, &collectInput.iconStyles.focus)
+         updateStyle(update.iconStyles.invalid, &collectInput.iconStyles.invalid)
+         updateStyle(update.iconStyles.requiredAstrisk, &collectInput.iconStyles.requiredAstrisk)
+
+        setupField()
+    }
+    func updateStyle(_ source: Style?, _ destination: inout Style?) {
+            guard let newStyle = source else { return }
+            if destination == nil {
+                destination = Style()
+            }
+        if (newStyle.borderColor != nil) {
+            destination?.borderColor = newStyle.borderColor
+        }
+        if (newStyle.cornerRadius != nil){
+            destination?.cornerRadius = newStyle.cornerRadius
+        }
+        if (newStyle.padding != nil){
+            destination?.padding = newStyle.padding
+
+        }
+        if (newStyle.textAlignment != nil){
+            destination?.textAlignment = newStyle.textAlignment
+
+        }
+        if (newStyle.borderWidth != nil){
+            destination?.borderWidth = newStyle.borderWidth
+
+        }
+        if (newStyle.font != nil){
+            destination?.font = newStyle.font
+
+        }
+        if (newStyle.width != nil){
+            destination?.width = newStyle.width
+
+        }
+        if (newStyle.height != nil){
+            destination?.height = newStyle.height
+
+        }
+        }
     
     public func setValue(value: String) {
         if(contextOptions.env == .DEV){
@@ -213,7 +300,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
+            Log.warn(message: .SET_VALUE_WARNING, values: [self.collectInput.type?.name ?? "collect"],contextOptions: context!)
         }
     }
     
@@ -224,7 +311,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         } else {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
-            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type.name],contextOptions: context!)
+            Log.warn(message: .CLEAR_VALUE_WARNING, values: [self.collectInput.type?.name ?? "collect"],contextOptions: context!)
         }
     }
     
@@ -237,12 +324,23 @@ public class TextField: SkyflowElement, Element, BaseElement {
             textField.keyboardType = instance.keyboardType
         }
         addValidations()
+        if collectInput.inputStyles.base?.width != nil {
+            NSLayoutConstraint.activate([
+                self.textField.widthAnchor.constraint(equalToConstant: (collectInput.inputStyles.base?.width)!)
+            ])
+
+        }
+        if collectInput.inputStyles.base?.height != nil {
+            NSLayoutConstraint.activate([
+                self.textField.heightAnchor.constraint(equalToConstant: (collectInput.inputStyles.base?.height)!)
+            ])
+
+        }
         
         self.textFieldLabel.textColor = collectInput.labelStyles.base?.textColor ?? .none
         self.textFieldLabel.font = collectInput.labelStyles.base?.font ?? .none
         self.textFieldLabel.textAlignment = collectInput.labelStyles.base?.textAlignment ?? .left
         self.textFieldLabel.insets = collectInput.labelStyles.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        
         self.errorMessage.textColor = collectInput.errorTextStyles.base?.textColor ?? .none
         self.errorMessage.font = collectInput.errorTextStyles.base?.font ?? .none
         self.errorMessage.textAlignment = collectInput.errorTextStyles.base?.textAlignment ?? .left
@@ -344,6 +442,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
             onReadyHandler = handler
         case .FOCUS:
             onFocusHandler = handler
+        case .SUBMIT:
+            break
         }
     }
     
@@ -386,6 +486,15 @@ extension TextField {
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             p.left = 60
         }
+        if style?.width != nil {
+            NSLayoutConstraint.activate ([
+                self.textField.widthAnchor.constraint(equalToConstant: (style?.width)!)
+            ])
+            
+        }
+        if style?.height != nil {
+        self.textField.heightAnchor.constraint(equalToConstant: (style?.height)!).isActive = true
+        }
         self.textField.padding = p
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
         self.textFieldBorderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
@@ -404,6 +513,7 @@ extension TextField {
         self.textField.delegate?.textFieldDidEndEditing?(textField)
     }
     
+    
     @objc func  textFieldDidChange(_ textField: UITextField) {
         isDirty = true
         updateActualValue()
@@ -415,6 +525,7 @@ extension TextField {
             updateImage(name: card.imageName)
         }
         setFormatPattern()
+        onBeginEditing?()
     }
     
     func updateActualValue() {
@@ -467,11 +578,13 @@ extension TextField {
                 else {
                     errorMessage.text = currentState["validationError"] as? String
                 }
+
             }
         } else {
             updateInputStyle(collectInput!.inputStyles.invalid)
             errorMessage.alpha = 1.0
         }
+        onEndEditing?()
     }
 }
 
@@ -533,12 +646,15 @@ internal extension TextField {
         
         stackView.addArrangedSubview(textFieldLabel)
         stackView.addArrangedSubview(textField)
-        stackView.addArrangedSubview(errorMessage)
-        
+        if contextOptions.interface != .COMPOSABLE_CONTAINER {
+            stackView.addArrangedSubview(errorMessage)
+        }
+
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        
         addSubview(stackView)
         
         setMainPaddings()
@@ -578,7 +694,9 @@ internal extension TextField {
     @objc
     func focusOn() {
         textField.becomeFirstResponder()
+        onFocusIsTrue?()
         textFieldValueChanged()
+        
     }
 }
 
