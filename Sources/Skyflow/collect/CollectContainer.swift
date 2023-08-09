@@ -13,12 +13,12 @@ public extension Container {
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
-        let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions)
+         let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions, elements: elements)
         elements.append(skyflowElement)
         let uuid = NSUUID().uuidString
         self.skyflow.elementLookup[uuid] = skyflowElement
         skyflowElement.uuid = uuid
-        Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: tempContextOptions)
+         Log.info(message: .CREATED_ELEMENT, values: [input.label == "" ? "collect" : input.label], contextOptions: tempContextOptions)
         return skyflowElement
     }
 
@@ -105,10 +105,10 @@ public extension Container {
 
     private func checkElement(element: TextField) -> ErrorCodes? {
         if element.collectInput.table.isEmpty {
-            return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type.name)
+            return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type?.name ?? element.fieldType.name)
         }
         if element.collectInput.column.isEmpty {
-            return .EMPTY_COLUMN_NAME_IN_COLLECT(value: element.collectInput.type.name)
+            return .EMPTY_COLUMN_NAME_IN_COLLECT(value: element.collectInput.type?.name ?? element.fieldType.name)
         }
         if !element.isMounted() {
             return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)

@@ -17,6 +17,9 @@ public struct Style {
     var font: UIFont?
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
+    var width: CGFloat?
+    var height: CGFloat?
+//    var margin: UIEdgeInsets?
 
     public init(borderColor: UIColor? = nil,
                 cornerRadius: CGFloat? = nil,
@@ -24,7 +27,11 @@ public struct Style {
                 borderWidth: CGFloat? = nil,
                 font: UIFont? = nil,
                 textAlignment: NSTextAlignment? = nil,
-                textColor: UIColor? = nil) {
+                textColor: UIColor? = nil,
+                width: CGFloat? = nil,
+                height: CGFloat? = nil
+//                margin: UIEdgeInsets? = nil
+    ) {
         // Assign parametric values to struct members
         self.borderColor = borderColor
         self.cornerRadius = cornerRadius
@@ -33,5 +40,8 @@ public struct Style {
         self.font = font
         self.textAlignment = textAlignment
         self.textColor = textColor
+        self.width = width
+        self.height = height
+//        self.margin = margin
     }
 }
