@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// This is the description for Container Class
+/// Creates a container.
 public class Container<T: ContainerProtocol> {
     internal var skyflow: Client
     internal var elements: [TextField] = []

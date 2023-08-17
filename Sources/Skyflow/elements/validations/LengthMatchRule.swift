@@ -15,7 +15,7 @@ public struct LengthMatchRule: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
-    /// This is the description for init method.
+    ///  Initializes the rule to set the minimum and maximum permissible length of the textfield value.
     public init(minLength: Int = 0, maxLength: Int = Int.max, error: SkyflowValidationError? = nil) {
         self.minLength = minLength
         self.maxLength = maxLength
@@ -29,12 +29,12 @@ public struct LengthMatchRule: ValidationRule {
 
 extension LengthMatchRule: SkyflowInternalValidationProtocol {
     /**
-    validate length of text
+    Validates the length of the input text within the specified range.
 
     - Parameters:
-        - text: This is the description for text parameter.
+        - text: Text that needs to be validated.
 
-    - Returns: This is the description of what method returns.
+    - Returns: Returns `true` if the text length is within the specified range, else `false`.
     */
     public func validate(_ text: String?) -> Bool {
         

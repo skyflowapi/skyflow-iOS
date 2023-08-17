@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// This is the description for EventName enum.
+/// Supported event names.
 public enum EventName: String {
     case CHANGE = "CHANGE"
     case READY = "READY"

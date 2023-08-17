@@ -11,6 +11,6 @@
 
 import Foundation
 
-/// This is the description for ContainerProtocol
+/// Represents a protocol for container-related functionality.
 public protocol ContainerProtocol {
 }

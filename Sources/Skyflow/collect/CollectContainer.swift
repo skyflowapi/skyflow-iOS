@@ -7,19 +7,19 @@
 import Foundation
 import UIKit
 
-/// This is the description for CollectContainer Class
+/// Wraps all Collect Elements.
 public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
 
     /**
-    This is the description for create method.
+    Creates a Collect Element.
 
     - Parameters:
-        - input: This is the description for input parameter.
-        - options: This is the description for options parameter.
+        - input: Collect Element input.
+        - options: Collect Element options.
 
-    - Returns: This is the description of what method returns.
+    - Returns: Returns the Collect Element.
     */
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
@@ -34,11 +34,11 @@ public extension Container {
     }
 
     /**
-    This is the description for collect method.
+    Collects the data and sends it to the vault.
 
     - Parameters:
-        - callback: This is the description for callback parameter.
-        - options: This is the description for options parameter.
+        - callback: Implementation of Skyflow.Callback.
+        - options: Collects the data and sends it to the vault.
     */
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions

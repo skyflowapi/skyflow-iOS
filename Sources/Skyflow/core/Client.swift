@@ -16,10 +16,10 @@ public class Client {
     var elementLookup: [String: Any] = [:]
     
     /**
-    This is the description for init method.
+    Initializes the Skyflow client.
 
     - Parameters:
-        - skyflowConfig: This is the description for skyflowConfig parameter.
+        - skyflowConfig: Configuration for the Skyflow client.
     */
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
@@ -30,12 +30,12 @@ public class Client {
     }
 
     /**
-    This is the description for insert method.
+    Inserts data into the vault.
 
     - Parameters:
-        - records: This is the description for records parameter.
-        - options: This is the description for options parameter.
-        - callback: This is the description for callback parameter.
+        - records: Records to insert.
+        - options: Options for the insertion.
+        - callback: Implementation of Skyflow.Callback.
     */
     public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
@@ -111,13 +111,13 @@ public class Client {
     }
 
     /**
-    This is the description for container method.
+    Creates a container.
 
     - Parameters:
-        - type: This is the description for type parameter.
-        - options: This is the description for options parameter.
+        - type: Type of the container.
+        - options: Options for the container.
 
-    - Returns: This is the description of what method returns.
+    - Returns: Returns a container of the specified type.
     */
     public func container<T>(type: T.Type, options: ContainerOptions? = ContainerOptions()) -> Container<T>? {
         if options != nil {
@@ -138,12 +138,12 @@ public class Client {
     }
 
     /**
-    This is the description for detokenize method.
+    Returns values that correspond to the specified tokens.
 
     - Parameters:
-        - records: This is the description for records parameter.
-        - options: This is the description for options parameter.
-        - callback: This is the description for callback paramter.
+        - records: Records to fetch.
+        - options: Additional options for the reveal method.
+        - callback: Implementation of Skyflow.Callback.
     */
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
@@ -210,11 +210,11 @@ public class Client {
     }
 
     /**
-    This is the description for getById method.
+    Reveal records by Skyflow ID.
 
     - Parameters:
         - records: This is the description for records parameter.
-        - callback: This is the description for callback paramter.
+        - callback: Implementation of Skyflow.Callback.
     */
     public func getById(records: [String: Any], callback: Callback) {
         var tempContextOptions = self.contextOptions

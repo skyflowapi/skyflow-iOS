@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// This is the description for Configuration method.
+/// Configuration for the Skyflow client.
 public struct Configuration {
     var vaultID: String
     var vaultURL: String
@@ -17,10 +17,10 @@ public struct Configuration {
     This is the description for init method.
 
     - Parameters:
-        - vaultID: This is the description for vaultID parameter.
-        - vaultURL: This is the description for vaultURL parameter.
-        - tokenProvider: This is the description for tokenProvider paramter.
-        - options: This is the description for options parameter.
+        - vaultID: ID of the vault to connect to.
+        - vaultURL: URL of the vault to connect to.
+        - tokenProvider: An implementation of the token provider interface.
+        - options: Additional options for configuration.
     */
     public init(vaultID: String = "", vaultURL: String = "", tokenProvider: TokenProvider, options: Options? = Options()) {
         self.vaultID = vaultID

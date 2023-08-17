@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// This is the description for RevealElementInpt struct.
+/// Configuration for Reveal Elements.
 public struct RevealElementInput {
     internal var token: String
     internal var inputStyles: Styles?
@@ -27,15 +27,15 @@ public struct RevealElementInput {
     }
 
     /**
-    This is the description for init method.
+    Initializes the Reveal Element input.
 
     - Parameters:
-        - token: This is the description for token parameter.
-        - inputStyles: This is the description for inputStyles parameter.
-        - labelStyles: This is the description for labelStyles parameter.
-        - errorTextStyles: This is the description for errorTextStyles parameter.
-        - label: This is the description for label parameter.
-        - altText: This is the description for altText parameter.
+        - token: A token to retrieve the value of.
+        - inputStyles: Input styles for the Reveal Element.
+        - labelStyles: Styles for the Reveal Element's label.
+        - errorTextStyles: Styles for the Reveal Element's error text.
+        - label: Label for the Reveal Element.
+        - altText: Alternative text for the Reveal Element.
     */
     public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, altText: String = "") {
         self.token = token

@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// This is the description for CollectElementInput struct.
+/// Configuration for a Collect Element.
 public struct CollectElementInput {
     var table: String
     var column: String
@@ -20,19 +20,19 @@ public struct CollectElementInput {
     var validations: ValidationSet
     
     /**
-    This is the description for init method.
+    Initializes the Collect element input.
 
     - Parameters:
-        - table: This is the description for table parameter.
-        - column: This is the description for column parameter.
-        - inputStyles: This is the description for inputStyles parameter.
-        - labelStyles: This is the description for labelStyles parameter.
-        - errorTextStyles: This is the description for errorTextStyles parameter.
-        - iconStyles: This is the description for iconStyles parameter.
-        - label: This is the description for label parameter.
-        - placeholder: This is the description for placeholder parameter.
-        - type: This is the description for type parameter.
-        - validations: This is the description for validations parameter.
+        - table: Table that the data belongs to.
+        - column: Column that the data belongs to.
+        - inputStyles: Styles for the element.
+        - labelStyles: Styles for the element's label.
+        - errorTextStyles: Styles for the element's error text.
+        - iconStyles: Styles for the element's icon.
+        - label: Label for the element.
+        - placeholder: Placeholder text for the element.
+        - type: Type of the element.
+        - validations: Input validation rules for the element.
     */
     public init(table: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",

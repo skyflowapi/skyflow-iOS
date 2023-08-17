@@ -14,7 +14,7 @@ public struct RegexMatchRule: ValidationRule {
     /// Validation Error
     public let error: SkyflowValidationError
 
-    /// This is the description for init method.
+    /// Initializes the rule to specify any Regular Expression to be matched with the text field value.
     public init(regex: String, error: SkyflowValidationError?=nil) {
         self.regex = regex
         if error != nil {
@@ -27,12 +27,12 @@ public struct RegexMatchRule: ValidationRule {
 }
 extension RegexMatchRule: SkyflowInternalValidationProtocol {
     /**
-    validate the text with specified regex
+    validate the text using the specified regular expression.
 
     - Parameters:
-        - text: This is the description for text parameter.
+        - text: Text that needs to be validated.
 
-    - Returns: This is the description of what method returns.
+    - Returns: Returns `true` if the text matches the regular expression, else `false`.
     */
     public func validate(_ text: String?) -> Bool {
         if text!.isEmpty {

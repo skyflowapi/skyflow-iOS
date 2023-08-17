@@ -7,12 +7,12 @@
 import Foundation
 
 /**
-This is the description for initialize method.
+Initializes the Skyflow client.
 
 - Parameters:
-    - skyflowConfig: This is the description for skyflowConfig parameter.
+    - skyflowConfig: Configuration for the Skyflow client.
 
-- Returns: This is the description of what method returns.
+- Returns: Returns an instance of the Skyflow client.
 */
 public func initialize(_ skyflowConfig: Configuration) -> Client {
     return Client(skyflowConfig)

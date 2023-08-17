@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 #endif
 
-/// This is the description for Style struct.
+/// Contains various styles for Skyflow elements.
 public struct Style {
     var borderColor: UIColor?
     var cornerRadius: CGFloat?
@@ -20,16 +20,16 @@ public struct Style {
     var textColor: UIColor?
 
     /**
-    This is the description for init method.
+    Initializes the styles for Skyflow elements.
 
     - Parameters:
-        - borderColor: This is the description for borderColor parameter.
-        - cornerRadius: This is the description for cornerRadius parameter.
-        - padding: This is the description for padding parameter.
-        - borderWidth: This is the description for borderWidth parameter.
-        - font: This is the description for font parameter.
-        - textAlignment: This is the description for textAlignment parameter.
-        - textColor: This is the description for textColor parameter.
+        - borderColor: Color of the border.
+        - cornerRadius: Radius applied to the corners.
+        - padding: Padding for the element.
+        - borderWidth: Width of the border.
+        - font: Type of font used.
+        - textAlignment: Alignment of the text.
+        - textColor: Color of the text.
     */
     public init(borderColor: UIColor? = nil,
                 cornerRadius: CGFloat? = nil,

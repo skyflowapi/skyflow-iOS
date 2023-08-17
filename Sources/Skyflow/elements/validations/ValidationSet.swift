@@ -6,27 +6,27 @@
 
 import Foundation
 
-/// This is the description ValidationSet
+/// Set of validation rules.
 public struct ValidationSet {
     internal var rules = [ValidationRule]()
 
     public init() { }
 
     /**
-    This is the description for init method.
+    Initializes the validation set with an array of validation rules.
 
     - Parameters:
-        - rules: This is the description for rules parameter.
+        - rules: Validation rules to be included in the set.
     */
     public init(rules: [ValidationRule]) {
         self.rules = rules
     }
 
     /**
-    Add validation rule.
+    Adds a validation rule to the set.
 
     - Parameters:
-        - rule: This is the description for rule parameter.
+        - rule: Validation rule that is added to the set.
     */
     public mutating func add(rule: ValidationRule) {
              rules.append(rule)

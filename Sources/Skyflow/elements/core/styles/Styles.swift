@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// This is the description for Styles struct.
+/// Contains different styles to apply on a Skyflow element.
 public struct Styles {
     var base: Style?
     var complete: Style?
@@ -16,15 +16,15 @@ public struct Styles {
     var requiredAstrisk: Style?
 
    /**
-    This is the description for init method.
+    Initializes the styles to apply on a Skyflow element.
 
     - Parameters:
-        - base: This is the description for base parameter.
-        - complete: This is the description for complete parameter.
-        - empty: This is the description for empty parameter.
-        - focus: This is the description for focus parameter.
-        - invalid: This is the description for invalid parameter.
-        - requiredAstrisk: This is the description for requiredAstrisk parameter.
+        - base: Styles applied on skyflow elements in its base form.
+        - complete: Styles applied when value is valid.
+        - empty: Styles applied when skyflow element is empty.
+        - focus: Styles applied when skyflow element is focused.
+        - invalid: Styles applied when value is invalid.
+        - requiredAstrisk: Styles applied on the required asterisk.
     */
    public init(base: Style? = Style(),
                complete: Style? = Style(),

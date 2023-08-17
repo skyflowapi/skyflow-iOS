@@ -16,11 +16,11 @@ public struct ElementValueMatchRule: ValidationRule {
     public let error: SkyflowValidationError
     
     /**
-    This is the description for init method.
+    Initializes the rule to match the value of one element with another.
 
     - Parameters:
-        - element: This is the description for element parameter.
-        - error: Validation Error.
+        - element: Element whose value needs to be matched.
+        - error: Custom validation error.
     */
     public init(element: TextField, error: SkyflowValidationError? = nil) {
         self.element = element
@@ -34,12 +34,12 @@ public struct ElementValueMatchRule: ValidationRule {
 
 extension ElementValueMatchRule: SkyflowInternalValidationProtocol {
     /**
-    validate element value
+    Validates the element's value against the specified text.
 
     - Parameters:
-        - text: This is the description for text parameter.
+        - text: Text that needs to be validated.
 
-    - Returns: This is the description of what method returns.
+    - Returns: Returns `true` if the text matches the value of the element, else `false`.
     */
     public func validate(_ text: String?) -> Bool {
         guard text != nil else {

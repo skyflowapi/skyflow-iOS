@@ -4,17 +4,17 @@
 
 import Foundation
 
-/// This is the description for RevealElementOptions struct
+/// Configuration options for a Reveal Element.
 public struct RevealElementOptions {
     var format: String?
     var translation: [ Character: String ]?
 
     /**
-    This is the description for init method.
+    Initializes the Reveal Element options.
 
     - Parameters:
-        - format: This is the description for format parameter.
-        - translation: This is the description for translation parameter.
+        - format: Format of the Reveal Element.
+        - translation: Custom allowed substitutions and regex patterns for `format`.
     */
     public init(format: String? = nil, translation: [ Character: String ]? = nil) {
         self.format = format

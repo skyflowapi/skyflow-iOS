@@ -6,17 +6,17 @@
 
 import Foundation
 
-/// This is the description for InsertOptions Class
+/// Contains additional parameters for the insert method.
 public struct InsertOptions {
     var tokens: Bool
     var upsert: [[String: Any]]?
 
     /**
-    This is the description for container method.
+    Initializes the Insert options.
 
     - Parameters:
-        - tokens: This is the description for tokens parameter.
-        - upsert: This is the description for upsert parameter.
+        - tokens: If `true`, returns tokens for the collected data. Defaults to `false`.
+        - upsert: If specified, upserts data. If not specified, inserts data.
     */
     public init(tokens: Bool = true, upsert: [[String:  Any]]? = nil) {
         self.tokens = tokens

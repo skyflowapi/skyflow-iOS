@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 #endif
 
-/// This is the description for CollectElementOptions struct.
+/// Contains the additional options for Collect Element.
 public struct CollectElementOptions {
     var required: Bool
     var enableCardIcon: Bool
@@ -17,13 +17,13 @@ public struct CollectElementOptions {
     var translation: [ Character: String ]?
 
     /**
-    This is the description for init method.
+    Initializes the Collect element options.
 
     - Parameters:
-        - required: This is the description for required parameter.
-        - enableCardIcon: This is the description for enableCardIcon parameter.
-        - format: This is the description for format parameter.
-        - translation: This is the description for translation parameter.
+        - required: Indicates whether the field is marked as required. Defaults to `false`.
+        - enableCardIcon: Indicates whether card icon should be enabled (only for CARD_NUMBER inputs).
+        - format: Format of the Collect Element.
+        - translation: Allowed data type values for format.
     */
     public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil) {
         self.required = required!

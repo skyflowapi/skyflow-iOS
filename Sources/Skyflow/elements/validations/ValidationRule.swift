@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// This is the description for ValidationRule protocol
+/// Defines a validation rule for input validation.
 public protocol ValidationRule {
     var error: String { get }
 }

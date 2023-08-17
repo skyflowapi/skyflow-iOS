@@ -5,17 +5,17 @@
 /// Object that describes the options parameter
 
 public struct Options {
-    /// This is the description for logLevel property.
+    /// Log level to apply. 
     var logLevel: LogLevel
-    /// This is the description for env property.
+    /// Type of environment.
     var env: Env
 
     /**
-    This is the description for init method.
+    Initializes the Skyflow client.
 
     - Parameters:
-        - logLevel: This is the description for logLevel parameter.
-        - env: This is the description for env parameter.
+        - logLevel: Log level to apply.
+        - env: Type of environment.
     */
     public init(logLevel: LogLevel = .ERROR, env: Env = .PROD) {
         self.logLevel = logLevel
