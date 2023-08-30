@@ -27,7 +27,7 @@ public struct RegexMatchRule: ValidationRule {
 }
 extension RegexMatchRule: SkyflowInternalValidationProtocol {
     /**
-    validate the text using the specified regular expression.
+    Validate the text using the specified regular expression.
 
     - Parameters:
         - text: Text that needs to be validated.

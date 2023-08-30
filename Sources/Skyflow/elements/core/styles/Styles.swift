@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// Contains different styles to apply on a Skyflow element.
+/// Different styles to apply to a Skyflow element.
 public struct Styles {
     var base: Style?
     var complete: Style?

@@ -9,7 +9,7 @@
 
 import Foundation
 
-/// Wraps all Reveal Elements.
+/// Container for all Reveal Elements.
 public class RevealContainer: ContainerProtocol {
 }
 

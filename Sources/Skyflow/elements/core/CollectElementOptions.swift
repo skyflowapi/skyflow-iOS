@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 #endif
 
-/// Contains the additional options for Collect Element.
+/// Additional options for a Collect Element.
 public struct CollectElementOptions {
     var required: Bool
     var enableCardIcon: Bool

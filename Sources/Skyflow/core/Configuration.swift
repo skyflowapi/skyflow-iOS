@@ -14,7 +14,7 @@ public struct Configuration {
     var options: Options?
 
     /**
-    This is the description for init method.
+    Configuration for the Skyflow client.
 
     - Parameters:
         - vaultID: ID of the vault to connect to.

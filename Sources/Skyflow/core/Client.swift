@@ -7,7 +7,7 @@
 import Foundation
 import AEXML
 
-/// This is the description for Client Class.
+/// Client for interacting with Skyflow.
 public class Client {
     var vaultID: String
     var apiClient: APIClient

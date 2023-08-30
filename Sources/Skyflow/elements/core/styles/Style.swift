@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 #endif
 
-/// Contains various styles for Skyflow elements.
+/// Various styles for Skyflow elements.
 public struct Style {
     var borderColor: UIColor?
     var cornerRadius: CGFloat?
