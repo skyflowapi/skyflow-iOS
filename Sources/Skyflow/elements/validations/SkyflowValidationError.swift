@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Skyflow Validation Error object type
+/// Type of Skyflow Validation Error object.
 public typealias SkyflowValidationError = String
 
 /// Default validation error types

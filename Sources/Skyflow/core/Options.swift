@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-/// Object that describes the options parameter
+/// Additional configuration for the Skyflow client.
 
 public struct Options {
     /// Log level to apply. 

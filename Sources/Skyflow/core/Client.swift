@@ -213,7 +213,7 @@ public class Client {
     Reveal records by Skyflow ID.
 
     - Parameters:
-        - records: This is the description for records parameter.
+        - records: Records to fetch.
         - callback: Implementation of Skyflow.Callback.
     */
     public func getById(records: [String: Any], callback: Callback) {

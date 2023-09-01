@@ -6,10 +6,10 @@ import Foundation
 
 /// Validate input in scope of length.
 public struct LengthMatchRule: ValidationRule {
-    /// input string minimum length
+    /// Minimum length of input string.
     public let minLength: Int
 
-    /// input string maximum length
+    /// Maximum length of input string.
     public let maxLength: Int
 
     /// Validation Error
