@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// Supported log levels.
 public enum LogLevel: Int {
     case DEBUG = 0
     case INFO = 1

@@ -7,6 +7,7 @@
 import Foundation
 import AEXML
 
+/// Client for interacting with Skyflow.
 public class Client {
     var vaultID: String
     var apiClient: APIClient
@@ -14,6 +15,12 @@ public class Client {
     var contextOptions: ContextOptions
     var elementLookup: [String: Any] = [:]
     
+    /**
+    Initializes the Skyflow client.
+
+    - Parameters:
+        - skyflowConfig: Configuration for the Skyflow client.
+    */
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
         self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
@@ -22,6 +29,14 @@ public class Client {
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
+    /**
+    Inserts data into the vault.
+
+    - Parameters:
+        - records: Records to insert.
+        - options: Options for the insertion.
+        - callback: Implementation of Skyflow.Callback.
+    */
     public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INSERT
@@ -95,6 +110,15 @@ public class Client {
         }
     }
 
+    /**
+    Creates a container.
+
+    - Parameters:
+        - type: Type of the container.
+        - options: Options for the container.
+
+    - Returns: Returns a container of the specified type.
+    */
     public func container<T>(type: T.Type, options: ContainerOptions? = ContainerOptions()) -> Container<T>? {
         if options != nil {
             // Set options
@@ -113,6 +137,14 @@ public class Client {
         return nil
     }
 
+    /**
+    Returns values that correspond to the specified tokens.
+
+    - Parameters:
+        - records: Records to fetch.
+        - options: Additional options for the reveal method.
+        - callback: Implementation of Skyflow.Callback.
+    */
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
@@ -177,6 +209,13 @@ public class Client {
         }
     }
 
+    /**
+    Reveal records by Skyflow ID.
+
+    - Parameters:
+        - records: Records to fetch.
+        - callback: Implementation of Skyflow.Callback.
+    */
     public func getById(records: [String: Any], callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GETBYID

@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// Supported redaction types.
 public enum RedactionType: String {
     case PLAIN_TEXT = "PLAIN_TEXT"
     case DEFAULT = "DEFAULT"

@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// Supported environments.
 public enum Env {
     case DEV
     case PROD

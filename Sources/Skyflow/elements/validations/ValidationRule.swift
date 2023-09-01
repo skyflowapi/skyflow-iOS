@@ -11,6 +11,7 @@
 
 import Foundation
 
+/// Defines a validation rule for input validation.
 public protocol ValidationRule {
     var error: String { get }
 }

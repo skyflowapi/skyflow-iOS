@@ -9,10 +9,20 @@
 
 import Foundation
 
+/// Container for all Reveal Elements.
 public class RevealContainer: ContainerProtocol {
 }
 
 public extension Container {
+    /**
+    Creates a Reveal Element.
+
+    - Parameters:
+        - input: Input configuration for a Reveal Element.
+        - options: Additional options for a Reveal Element.
+
+    - Returns: Returns the Reveal Element.
+    */
     func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
@@ -25,6 +35,15 @@ public extension Container {
         return revealElement
     }
 
+    /**
+    Reveals data in the container.
+
+    - Parameters:
+        - callback: Implementation of Skyflow.Callback.
+        - options: This is the description for options parameter.
+
+    - Returns: Additional options for the reveal method.
+    */
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
