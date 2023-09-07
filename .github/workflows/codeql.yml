@@ -1,0 +1,57 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ main, release/* ]
+  pull_request:
+    branches: [ main, release/* ]
+  workflow_dispatch:
+  
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'swift' ]
+        
+    env:
+      GOBIN: ${{ github.workspace }}/bin
+      GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        path: ./
+        
+    - name: Print Environment Variables
+      run: |
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+        echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+        echo "GOPATH: $GOPATH"
+        
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+        
+    - name: Upload SARIF Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: sarif-results
+        path: /home/runner/work/skyflow-iOS/results/swift.sarif
