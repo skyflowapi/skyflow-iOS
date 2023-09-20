@@ -18,12 +18,12 @@ jobs:
   SwiftLint:
    runs-on: ubuntu-latest
    steps:
-     - uses: actions/checkout@v1
-     - name: SwiftLint 
-       uses: norio-nomura/action-swiftlint@3.2.1
-       env:
+   - uses: actions/checkout@v1
+   - name: SwiftLint 
+     uses: norio-nomura/action-swiftlint@3.2.1
+     env:
          DIFF_BASE: ${{ github.base_ref }}
-       with:
+     with:
           args: --config .swiftlint.yml
   xcode-build:
     name: Xcode Build
