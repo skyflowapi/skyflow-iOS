@@ -382,6 +382,7 @@ extension TextField {
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
+        self.textField.tintColor = style?.cursorColor ?? fallbackStyle?.cursorColor ?? UIColor.black
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             p.left = 60
