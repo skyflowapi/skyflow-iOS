@@ -1101,6 +1101,17 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField.secureText = textField.formatInput(input: "ZA", format: "XXXX", translation: ["X": "[-]"])
         XCTAssertEqual(textField.secureText, "")
     }
+    func testCursorColor() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: Styles(base: Style(cursorColor: .orange)), placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        XCTAssertEqual(cardNumber?.textField.tintColor, .orange)
+    }
     
     static var allTests = [
         ("testCreateSkyflowElement", testCreateSkyflowElement),
@@ -1126,6 +1137,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testFormatInputMethodCase8",testFormatInputMethodCase8),
         ("testFormatInputMethodCase9",testFormatInputMethodCase9),
         ("testFormatInputMethodCase7",testFormatInputMethodCase7),
+        ("testCursorColor",testCursorColor)
+
 //        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
     ]
 }

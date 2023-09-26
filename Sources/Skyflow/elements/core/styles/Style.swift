@@ -17,14 +17,15 @@ public struct Style {
     var font: UIFont?
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
-    var margin: UIEdgeInsets?
     var boxShadow: CALayer?
     var backgroundColor: UIColor?
     var minWidth: CGFloat?
     var maxWidth: CGFloat?
     var minHeight: CGFloat?
     var maxHeight: CGFloat?
-    
+    var cursorColor: UIColor?
+
+
     public init(borderColor: UIColor? = nil,
                 cornerRadius: CGFloat? = nil,
                 padding: UIEdgeInsets? = nil,
@@ -32,15 +33,13 @@ public struct Style {
                 font: UIFont? = nil,
                 textAlignment: NSTextAlignment? = nil,
                 textColor: UIColor? = nil,
-                margin: UIEdgeInsets? = nil,
                 boxShadow: CALayer? = nil,
                 backgroundColor: UIColor? = nil,
                 minWidth: CGFloat? = nil,
                 maxWidth: CGFloat? = nil,
                 minHeight: CGFloat? = nil,
-                maxHeight: CGFloat? = nil
-                
-    ) {
+                maxHeight: CGFloat? = nil,
+                cursorColor: UIColor? = nil) {
         // Assign parametric values to struct members
         self.borderColor = borderColor
         self.cornerRadius = cornerRadius
@@ -49,12 +48,12 @@ public struct Style {
         self.font = font
         self.textAlignment = textAlignment
         self.textColor = textColor
-        self.margin = margin
         self.boxShadow = boxShadow
         self.backgroundColor = backgroundColor
         self.minWidth = minWidth
         self.maxWidth = maxWidth
         self.minHeight = minHeight
         self.maxHeight = maxHeight
+        self.cursorColor = cursorColor
     }
 }
