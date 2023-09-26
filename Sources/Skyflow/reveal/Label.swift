@@ -108,16 +108,16 @@ public class Label: UIView, Element, BaseElement {
                     }
                 }
                 let formattedText = formatInput(input: value, format: format, translation: self.options.translation!)
-                self.skyflowLabelView.updateVal(value: formattedText)
+                self.skyflowLabelView.updateVal(value: formattedText, actualValue: value)
                 self.actualValue = value
             }
             else {
-                self.skyflowLabelView.updateVal(value: value)
+                self.skyflowLabelView.updateVal(value: value, actualValue: value)
                 self.actualValue = value
             }
         }
         else {
-            self.skyflowLabelView.updateVal(value: value)
+            self.skyflowLabelView.updateVal(value: value, actualValue: value)
             self.actualValue = value
         }
     }
@@ -218,18 +218,18 @@ public class Label: UIView, Element, BaseElement {
     public func setToken(_ token: String) {
         self.revealInput.token = token
         if self.revealInput.altText.isEmpty {
-            self.skyflowLabelView.updateVal(value: token)
+            self.skyflowLabelView.updateVal(value: token, actualValue: "")
         }
     }
     
     public func setAltText(_ altText: String) {
         self.revealInput.altText = altText
-        self.skyflowLabelView.updateVal(value: altText)
+        self.skyflowLabelView.updateVal(value: altText, actualValue: "")
     }
     
     public func clearAltText() {
         self.revealInput.altText = ""
-        self.skyflowLabelView.updateVal(value: actualValue == nil ? revealInput.token : actualValue!)
+        self.skyflowLabelView.updateVal(value: actualValue == nil ? revealInput.token : actualValue!, actualValue: "")
     }
     
     internal func getToken() -> String{

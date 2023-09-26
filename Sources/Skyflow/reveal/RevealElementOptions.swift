@@ -7,11 +7,13 @@ import Foundation
 public struct RevealElementOptions {
     var format: String?
     var translation: [ Character: String ]?
+    var enableCopy: Bool?
 
 
-    public init(format: String? = nil, translation: [ Character: String ]? = nil) {
+    public init(format: String? = nil, translation: [ Character: String ]? = nil, enableCopy: Bool? = false) {
         self.format = format
         self.translation = translation
+        self.enableCopy = enableCopy
         if (self.translation != nil){
             for (key, value) in self.translation! {
                 if value == "" {
