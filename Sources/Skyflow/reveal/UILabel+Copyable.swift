@@ -135,18 +135,16 @@ public extension UILabel {
             }
         }
 
-        @objc private func copyIconTapped(_ sender: UITapGestureRecognizer) {
+        @objc internal func copyIconTapped(_ sender: UITapGestureRecognizer) {
             // Copy text when the copy icon is tapped
             copy(sender)
-            if #available(iOS 13.0, *) {
-        
-                DispatchQueue.main.async {
-                    let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
-                    feedbackGenerator.prepare()
-                    feedbackGenerator.impactOccurred()
-                }
-            }
-            
+//            if #available(iOS 13.0, *) {
+//                DispatchQueue.main.async {
+//                    let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+//                    feedbackGenerator.prepare()
+//                    feedbackGenerator.impactOccurred()
+//                }
+//            }
         }
  
     @objc internal func longPressGestureRecognized(gestureRecognizer: UIGestureRecognizer) {

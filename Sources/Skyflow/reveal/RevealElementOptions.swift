@@ -15,7 +15,7 @@ public struct RevealElementOptions {
         self.translation = translation
         self.enableCopy = enableCopy
         if (self.translation != nil){
-            for (key, value) in self.translation! {
+            for (_, value) in self.translation! {
                 if value == "" {
                     var contextOptions =  ContextOptions()
                     contextOptions.interface = .REVEAL_CONTAINER

@@ -307,14 +307,14 @@ public class TextField: SkyflowElement, Element, BaseElement {
     @objc private func copyIconTapped(_ sender: UITapGestureRecognizer) {
         // Copy text when the copy icon is tapped
         copy(sender)
-        if #available(iOS 11.0, *) {
-            
-            DispatchQueue.main.async {
-                let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
-                feedbackGenerator.prepare()
-                feedbackGenerator.impactOccurred()
-            }
-        }
+//        if #available(iOS 11.0, *) {
+//
+//            DispatchQueue.main.async {
+//                let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+//                feedbackGenerator.prepare()
+//                feedbackGenerator.impactOccurred()
+//            }
+//        }
     }
     @objc
     public override func copy(_ sender: Any?) {

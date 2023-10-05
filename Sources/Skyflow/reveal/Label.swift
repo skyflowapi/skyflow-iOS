@@ -218,18 +218,18 @@ public class Label: UIView, Element, BaseElement {
     public func setToken(_ token: String) {
         self.revealInput.token = token
         if self.revealInput.altText.isEmpty {
-            self.skyflowLabelView.updateVal(value: token, actualValue: "")
+            self.skyflowLabelView.updateVal(value: token, actualValue: nil)
         }
     }
     
     public func setAltText(_ altText: String) {
         self.revealInput.altText = altText
-        self.skyflowLabelView.updateVal(value: altText, actualValue: "")
+        self.skyflowLabelView.updateVal(value: altText, actualValue: nil)
     }
     
     public func clearAltText() {
         self.revealInput.altText = ""
-        self.skyflowLabelView.updateVal(value: actualValue == nil ? revealInput.token : actualValue!, actualValue: "")
+        self.skyflowLabelView.updateVal(value: actualValue == nil ? revealInput.token : actualValue!, actualValue: nil)
     }
     
     internal func getToken() -> String{
