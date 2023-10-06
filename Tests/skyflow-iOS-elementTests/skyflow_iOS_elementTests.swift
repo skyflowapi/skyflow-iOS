@@ -249,6 +249,13 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         XCTAssertEqual(self.label.getToken(), dummyToken)
     }
+    func testLabelSetTokenActualValueCheck() {
+        let dummyToken = "dummyToken"
+        self.label.setToken(dummyToken)
+        
+        XCTAssertEqual(self.label.getToken(), dummyToken)
+        XCTAssertEqual(self.label.skyflowLabelView.label.actualValue, "")
+    }
     
     func testLabelSetAltText() {
         let dummyAltText = "dummyAltText"
@@ -257,14 +264,30 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(self.label.revealInput.token, "token")
         XCTAssertEqual(self.label.skyflowLabelView.label.secureText, dummyAltText)
     }
-    
+    func testLabelSetAltTextActualValueCheck() {
+        let dummyAltText = "dummyAltText"
+        self.label.setAltText(dummyAltText)
+        
+        XCTAssertEqual(self.label.revealInput.token, "token")
+        XCTAssertEqual(self.label.skyflowLabelView.label.secureText, dummyAltText)
+        XCTAssertEqual(self.label.skyflowLabelView.label.actualValue, "")
+
+    }
+
     func testLabelClearAltText() {
         self.label.clearAltText()
         
         XCTAssertEqual(self.label.revealInput.token, "token")
         XCTAssertEqual(self.label.skyflowLabelView.label.secureText, "token")
     }
-    
+    func testLabelClearAltTextActualValueCheck() {
+        self.label.clearAltText()
+        
+        XCTAssertEqual(self.label.revealInput.token, "token")
+        XCTAssertEqual(self.label.skyflowLabelView.label.secureText, "token")
+        XCTAssertEqual(self.label.skyflowLabelView.label.actualValue, "")
+
+    }
     func testExpiryYearValidationYY() {
         
         let yearValidation = SkyflowValidateExpirationYear(format: "yy", error: SkyflowValidationErrorType.expirationYear.rawValue)

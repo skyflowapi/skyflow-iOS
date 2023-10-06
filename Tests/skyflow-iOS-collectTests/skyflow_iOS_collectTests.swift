@@ -1005,6 +1005,81 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField.secureText = textField.formatInput(input: "ZA", format: "XXXX", translation: ["X": "[-]"])
         XCTAssertEqual(textField.secureText, "")
     }
+    func testElementCopyIconenableCopyTrue() {
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false, enableCopy: true)
+        
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput1, options: options)
+        
+        cardNumber?.textField.secureText = "4111111111111111"
+        
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        window.addSubview(cardNumber!)
+        
+        let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+        let image2 = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+        let myViews = cardNumber?.textField.rightView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, image)
+        XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
+    }
+    func testElementCopyIconenableCopyFalse() {
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false, enableCopy: false)
+        
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput1, options: options)
+        
+        cardNumber?.textField.secureText = "4111111111111111"
+        
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        window.addSubview(cardNumber!)
+        
+        let myViews = cardNumber?.textField.rightView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, nil)
+        XCTAssertNotEqual(cardNumber?.textField.rightView?.isHidden, true)
+    }
+    func testElementCopyIconenableCopyTrueInvalidValue() {
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false, enableCopy: true)
+        
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput1, options: options)
+        
+        cardNumber?.textField.secureText = "411111111"
+        cardNumber?.actualValue = "411111111"
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        cardNumber?.setValue(value: "4111111")
+        window.addSubview(cardNumber!)
+
+        XCTAssertEqual(cardNumber?.state.getState()["isValid"] as! Bool, false)
+                
+        XCTAssertEqual(cardNumber?.textField.rightView?.isHidden, true)
+        cardNumber?.textField.secureText = "4111111111111111"
+        
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        
+        let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+        let image2 = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+        let myViews = cardNumber?.textField.rightView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, image)
+        XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
+    }
     
     static var allTests = [
         ("testCreateSkyflowElement", testCreateSkyflowElement),
@@ -1030,6 +1105,9 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testFormatInputMethodCase8",testFormatInputMethodCase8),
         ("testFormatInputMethodCase9",testFormatInputMethodCase9),
         ("testFormatInputMethodCase7",testFormatInputMethodCase7),
+        ("testElementCopyIconenableCopyTrue",testElementCopyIconenableCopyTrue),
+        ("testElementCopyIconenableCopyFalse",testElementCopyIconenableCopyFalse),
+        ("testElementCopyIconenableCopyTrueInvalidValue",testElementCopyIconenableCopyTrueInvalidValue),
 //        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
     ]
 }
