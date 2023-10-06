@@ -11,7 +11,6 @@ public class SkyflowLabelView: UIView {
     internal var label = FormatLabel(frame: .zero)
     internal var revealInput: RevealElementInput!
     internal var options: RevealElementOptions!
-
     internal var horizontalConstraints = [NSLayoutConstraint]()
 
     internal var verticalConstraint = [NSLayoutConstraint]()
@@ -115,8 +114,12 @@ public class SkyflowLabelView: UIView {
         super.init(coder: aDecoder)
     }
 
-    internal func updateVal(value: String) {
+    internal func updateVal(value: String, actualValue: String?) {
         self.label.secureText = value
+        if options.enableCopy == true && actualValue != nil {
+            self.label.copyAfterReveal = true
+            self.label.actualValue = actualValue ?? ""
+        }
     }
 
     internal func buildLabel() {
