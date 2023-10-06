@@ -1105,6 +1105,9 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testFormatInputMethodCase8",testFormatInputMethodCase8),
         ("testFormatInputMethodCase9",testFormatInputMethodCase9),
         ("testFormatInputMethodCase7",testFormatInputMethodCase7),
+        ("testElementCopyIconenableCopyTrue",testElementCopyIconenableCopyTrue),
+        ("testElementCopyIconenableCopyFalse",testElementCopyIconenableCopyFalse),
+        ("testElementCopyIconenableCopyTrueInvalidValue",testElementCopyIconenableCopyTrueInvalidValue),
 //        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
     ]
 }

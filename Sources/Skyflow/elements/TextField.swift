@@ -307,25 +307,34 @@ public class TextField: SkyflowElement, Element, BaseElement {
     @objc private func copyIconTapped(_ sender: UITapGestureRecognizer) {
         // Copy text when the copy icon is tapped
         copy(sender)
-//        if #available(iOS 11.0, *) {
-//
-//            DispatchQueue.main.async {
-//                let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
-//                feedbackGenerator.prepare()
-//                feedbackGenerator.impactOccurred()
-//            }
-//        }
     }
     @objc
     public override func copy(_ sender: Any?) {
         let pasteboard = UIPasteboard.general
         pasteboard.string = actualValue
+        #if SWIFT_PACKAGE
         let image = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+        #else
+        let frameworkBundle = Bundle(for: TextField.self)
+        var bundleURL = frameworkBundle.resourceURL
+        bundleURL!.appendPathComponent("Skyflow.bundle")
+        let resourceBundle = Bundle(url: bundleURL!)
+        var image = UIImage(named: "Success-Icon", in: resourceBundle, compatibleWith: nil)
+        #endif
         copyIconImageView?.image = image
 
         // Reset the copy icon after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            self?.copyIconImageView?.image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+            #if SWIFT_PACKAGE
+            let copyImage = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+            #else
+            let frameworkBundle = Bundle(for: TextField.self)
+            var bundleURL = frameworkBundle.resourceURL
+            bundleURL!.appendPathComponent("Skyflow.bundle")
+            let resourceBundle = Bundle(url: bundleURL!)
+            var copyImage = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+            #endif
+            self?.copyIconImageView?.image = copyImage
         }
             
     }

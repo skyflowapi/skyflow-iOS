@@ -2,6 +2,7 @@
 // Class for adding feature of copy textfield of UILabel on longpressgesture for reveal element
 
 import UIKit
+import Foundation
  
 public extension UILabel {
  
@@ -98,12 +99,29 @@ public extension UILabel {
         if copyAfterReveal {
                 let pasteboard = UIPasteboard.general
             pasteboard.string = actualValue
+                #if SWIFT_PACKAGE
                 let image = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+                #else
+                let frameworkBundle = Bundle(for: TextField.self)
+                var bundleURL = frameworkBundle.resourceURL
+                bundleURL!.appendPathComponent("Skyflow.bundle")
+                let resourceBundle = Bundle(url: bundleURL!)
+                var image = UIImage(named: "Success-Icon", in: resourceBundle, compatibleWith: nil)
+                #endif
                 copyIconImageView?.image = image
 
                 // Reset the copy icon after a delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    self?.copyIconImageView?.image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+                    #if SWIFT_PACKAGE
+                    let copyImage = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+                    #else
+                    let frameworkBundle = Bundle(for: TextField.self)
+                    var bundleURL = frameworkBundle.resourceURL
+                    bundleURL!.appendPathComponent("Skyflow.bundle")
+                    let resourceBundle = Bundle(url: bundleURL!)
+                    var copyImage = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+                    #endif
+                    self?.copyIconImageView?.image = copyImage
                 }
             }
     }
@@ -112,8 +130,16 @@ public extension UILabel {
                 let iconSize: CGFloat = 24.0
 
                 if copyIconImageView == nil {
-                    let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
-                    let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: iconSize, height: iconSize))
+                #if SWIFT_PACKAGE
+                let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+                #else
+                let frameworkBundle = Bundle(for: TextField.self)
+                var bundleURL = frameworkBundle.resourceURL
+                bundleURL!.appendPathComponent("Skyflow.bundle")
+                let resourceBundle = Bundle(url: bundleURL!)
+                var image = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+                #endif
+                let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: iconSize, height: iconSize))
                     imageView.image = image
                     imageView.contentMode = .center
                     imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -138,13 +164,6 @@ public extension UILabel {
         @objc internal func copyIconTapped(_ sender: UITapGestureRecognizer) {
             // Copy text when the copy icon is tapped
             copy(sender)
-//            if #available(iOS 13.0, *) {
-//                DispatchQueue.main.async {
-//                    let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
-//                    feedbackGenerator.prepare()
-//                    feedbackGenerator.impactOccurred()
-//                }
-//            }
         }
  
     @objc internal func longPressGestureRecognized(gestureRecognizer: UIGestureRecognizer) {
