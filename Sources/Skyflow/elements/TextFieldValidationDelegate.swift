@@ -82,7 +82,15 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         }
         let text = ((textField as! FormatTextField).secureText! as NSString).replacingCharacters(in: range, with: string)
         let count = text.count
-        
+        if collectField.fieldType == .EXPIRATION_MONTH {
+            if collectField.options.enableCopy && (text != "0" && text.count > 0) {
+                collectField.textField.rightViewMode = .always
+                collectField.textField.rightView?.isHidden = false
+            } else if collectField.options.enableCopy {
+                collectField.textField.rightViewMode = .always
+                collectField.textField.rightView?.isHidden = true
+            }
+        }
         if string.isEmpty {
             if (collectField.fieldType == .EXPIRATION_MONTH){
                 (textField as! FormatTextField).secureText = ""
