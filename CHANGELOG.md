@@ -2,6 +2,12 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+### Added
+
+## [1.20.0] - 2023-10-06
+- Ability to customise Copy behaviour for Collect and Reveal Elements.
+
 ### Added
 
 ## [1.19.0] - 2023-06-23

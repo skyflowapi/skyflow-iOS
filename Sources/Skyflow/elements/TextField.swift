@@ -26,6 +26,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
     internal var stackView = UIStackView()
     internal var textFieldLabel = PaddingLabel(frame: .zero)
     internal var hasBecomeResponder: Bool = false
+    internal var copyIconImageView: UIImageView?
+    
     internal var textFieldDelegate: UITextFieldDelegate? = nil
     
     internal var errorTriggered: Bool = false
@@ -364,6 +366,12 @@ public class TextField: SkyflowElement, Element, BaseElement {
             containerView.addSubview(imageView)
             textField.leftView = containerView
         }
+        if self.options.enableCopy {
+            textField.rightViewMode =  UITextField.ViewMode.always
+            textField.rightView = addCopyIcon()
+            textField.rightView?.isHidden = true
+        }
+
         
         if self.fieldType == .CARD_NUMBER {
             let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
@@ -375,6 +383,60 @@ public class TextField: SkyflowElement, Element, BaseElement {
         
     }
     
+    private func addCopyIcon() -> UIView{
+        copyIconImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        #if SWIFT_PACKAGE
+        let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+        #else
+        let frameworkBundle = Bundle(for: TextField.self)
+        var bundleURL = frameworkBundle.resourceURL
+        bundleURL!.appendPathComponent("Skyflow.bundle")
+        let resourceBundle = Bundle(url: bundleURL!)
+        var image = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+        #endif
+        copyIconImageView?.image = image
+        copyIconImageView?.contentMode = .scaleAspectFit
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 24 , height: 24))
+        containerView.addSubview(copyIconImageView!)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copyIconTapped(_:)))
+        containerView.isUserInteractionEnabled = true
+        containerView.addGestureRecognizer(tapGesture)
+        return containerView
+    }
+    @objc private func copyIconTapped(_ sender: UITapGestureRecognizer) {
+        // Copy text when the copy icon is tapped
+        copy(sender)
+    }
+    @objc
+    public override func copy(_ sender: Any?) {
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = actualValue
+        #if SWIFT_PACKAGE
+        let image = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+        #else
+        let frameworkBundle = Bundle(for: TextField.self)
+        var bundleURL = frameworkBundle.resourceURL
+        bundleURL!.appendPathComponent("Skyflow.bundle")
+        let resourceBundle = Bundle(url: bundleURL!)
+        var image = UIImage(named: "Success-Icon", in: resourceBundle, compatibleWith: nil)
+        #endif
+        copyIconImageView?.image = image
+
+        // Reset the copy icon after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            #if SWIFT_PACKAGE
+            let copyImage = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+            #else
+            let frameworkBundle = Bundle(for: TextField.self)
+            var bundleURL = frameworkBundle.resourceURL
+            bundleURL!.appendPathComponent("Skyflow.bundle")
+            let resourceBundle = Bundle(url: bundleURL!)
+            var copyImage = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+            #endif
+            self?.copyIconImageView?.image = copyImage
+        }
+            
+    }
     internal func updateImage(name: String){
         
         if self.options.enableCardIcon == false {
@@ -401,7 +463,6 @@ public class TextField: SkyflowElement, Element, BaseElement {
         imageView.layer.cornerRadius = self.collectInput!.iconStyles.base?.cornerRadius ?? 0
         textField.leftViewMode = .always
         textField.leftView = containerView
-        
     }
     
     override func validate() -> SkyflowValidationError {
@@ -526,6 +587,15 @@ extension TextField {
         }
         setFormatPattern()
         onBeginEditing?()
+
+        if self.options.enableCopy && (self.state.getState()["isValid"] as! Bool && !self.actualValue.isEmpty) {
+            self.textField.rightViewMode = .always
+            self.textField.rightView?.isHidden = false
+        } else if self.options.enableCopy {
+            self.textField.rightViewMode = .always
+            self.textField.rightView?.isHidden = true
+        }
+
     }
     
     func updateActualValue() {
