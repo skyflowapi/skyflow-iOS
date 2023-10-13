@@ -312,6 +312,7 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
+  enableCopy: Boolean,                // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
 )
 ```
     
@@ -322,6 +323,7 @@ Skyflow.CollectElementOptions(
      -  the length of `format` determines the expected length of the user input.
      - if `translation` isn't specified, the `format` value is considered a string literal.
 - `translation`: A dictionary of key/value pairs, where the key is a character that appears in `format` and the value is a regex pattern of acceptable inputs for that character. Each key can only appear once. Only applicable for INPUT_FIELD elements.
+- `enableCopy`: Indicates whether to enable the copy icon in collect elements to copy text to clipboard.
   
 Accepted values by element type:
 
@@ -376,9 +378,10 @@ let collectElementInput = Skyflow.CollectElementInput(
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
-    required: false,  // indicates whether the field is marked as required. Defaults to 'false',
+    required: false,      // indicates whether the field is marked as required. Defaults to 'false',
     enableCardIcon: true, // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
-    format: "mm/yy" // Format for the element
+    format: "mm/yy"       // format for the element,
+    enableCopy: true,     // indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
 )
 
 let element = container?.create(input: collectElementInput, options: collectElementOptions)
@@ -457,7 +460,7 @@ let input = Skyflow.CollectElementInput(
 )
  
 // Create an option to require the element.
-let requiredOption = Skyflow.CollectElementOptions(required: true) 
+let requiredOption = Skyflow.CollectElementOptions(required: true, enableCopy: true) 
  
 // Create a Collect Element from the Collect Container.
 let skyflowElement = container?.create(input: input, options: requiredOption)
@@ -950,10 +953,12 @@ Along with `RevealElementInput`, you can define other options in the `RevealElem
 Skyflow.RevealElementOptions(
   format: String, // Format for the element.
   translation: [Character: String] // Indicates the allowed data type value for format
+  enableCopy: Boolean, // Indicates whether to enable the copy icon in reveal elements to copy text to clipboard. Defaults to 'false'
 )
 ```
 - `format`: A string value that indicates how the  element should display the value, including placeholder characters that map to keys `translation` If `translation` isn't specified, the `format` value is considered a string literal.
 - `translation`: A dictionary of key/value pairs, where the key is a character that appears in `format` and the value is a regex pattern of acceptable inputs for that character. Each key can only appear once. Defaults to `[ "X": "[0-9]"]`.
+- `enableCopy`: Indicates whether to enable the copy icon in reveal elements to copy text to clipboard.
 
 Reveal Element Options examples:
 

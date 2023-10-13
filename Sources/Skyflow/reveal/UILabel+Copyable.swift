@@ -2,6 +2,7 @@
 // Class for adding feature of copy textfield of UILabel on longpressgesture for reveal element
 
 import UIKit
+import Foundation
  
 public extension UILabel {
  
@@ -9,8 +10,29 @@ public extension UILabel {
         static var isCopyingEnabled: UInt8 = 0
         static var shouldUseLongPressGestureRecognizer: UInt8 = 1
         static var longPressGestureRecognizer: UInt8 = 2
+        static var copyIconImageView: UIImageView?
+        static var copyAfterReveal: Bool = false
+        static var actualValue: String = ""
     }
- 
+    @objc var copyAfterReveal: Bool {
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.copyAfterReveal, newValue, .OBJC_ASSOCIATION_ASSIGN)
+                setupCopyIcon()
+        }
+        get {
+            let value = objc_getAssociatedObject(self, &AssociatedKeys.copyAfterReveal)
+            return (value as? Bool) ?? false
+        }
+    }
+    @objc var actualValue: String {
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.actualValue, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+        get {
+            let value = objc_getAssociatedObject(self, &AssociatedKeys.actualValue)
+            return (value as? String) ?? ""
+        }
+    }
     /// Set this property to `true` in order to enable the copy feature. Defaults to `false`.
     @objc
     @IBInspectable var isCopyingEnabled: Bool {
@@ -23,7 +45,17 @@ public extension UILabel {
             return (value as? Bool) ?? false
         }
     }
- 
+
+    // Add a computed property to manage the copy icon image view
+    @objc
+    @IBInspectable var copyIconImageView: UIImageView? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.copyIconImageView) as? UIImageView
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.copyIconImageView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
  
     /// Used to enable/disable the internal long press gesture recognizer. Defaults to `true`.
     @IBInspectable var shouldUseLongPressGestureRecognizer: Bool {
@@ -64,8 +96,75 @@ public extension UILabel {
             let pasteboard = UIPasteboard.general
             pasteboard.string = text
         }
+        if copyAfterReveal {
+                let pasteboard = UIPasteboard.general
+            pasteboard.string = actualValue
+                #if SWIFT_PACKAGE
+                let image = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+                #else
+                let frameworkBundle = Bundle(for: TextField.self)
+                var bundleURL = frameworkBundle.resourceURL
+                bundleURL!.appendPathComponent("Skyflow.bundle")
+                let resourceBundle = Bundle(url: bundleURL!)
+                var image = UIImage(named: "Success-Icon", in: resourceBundle, compatibleWith: nil)
+                #endif
+                copyIconImageView?.image = image
+
+                // Reset the copy icon after a delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    #if SWIFT_PACKAGE
+                    let copyImage = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+                    #else
+                    let frameworkBundle = Bundle(for: TextField.self)
+                    var bundleURL = frameworkBundle.resourceURL
+                    bundleURL!.appendPathComponent("Skyflow.bundle")
+                    let resourceBundle = Bundle(url: bundleURL!)
+                    var copyImage = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+                    #endif
+                    self?.copyIconImageView?.image = copyImage
+                }
+            }
     }
- 
+    fileprivate func setupCopyIcon() {
+            if isCopyingEnabled {
+                let iconSize: CGFloat = 24.0
+
+                if copyIconImageView == nil {
+                #if SWIFT_PACKAGE
+                let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+                #else
+                let frameworkBundle = Bundle(for: TextField.self)
+                var bundleURL = frameworkBundle.resourceURL
+                bundleURL!.appendPathComponent("Skyflow.bundle")
+                let resourceBundle = Bundle(url: bundleURL!)
+                var image = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
+                #endif
+                let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: iconSize, height: iconSize))
+                    imageView.image = image
+                    imageView.contentMode = .center
+                    imageView.translatesAutoresizingMaskIntoConstraints = false
+                    imageView.contentMode = .scaleAspectFit
+                    addSubview(imageView)
+
+                    NSLayoutConstraint.activate([
+                        imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 5),
+                        imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                        imageView.widthAnchor.constraint(equalToConstant: iconSize),
+                        imageView.heightAnchor.constraint(equalToConstant: iconSize)
+                    ])
+                    copyIconImageView = imageView
+                }
+
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copyIconTapped(_:)))
+                copyIconImageView?.isUserInteractionEnabled = true
+                copyIconImageView?.addGestureRecognizer(tapGesture)
+            }
+        }
+
+        @objc internal func copyIconTapped(_ sender: UITapGestureRecognizer) {
+            // Copy text when the copy icon is tapped
+            copy(sender)
+        }
  
     @objc internal func longPressGestureRecognized(gestureRecognizer: UIGestureRecognizer) {
         if gestureRecognizer === longPressGestureRecognizer && gestureRecognizer.state == .began {
@@ -98,6 +197,7 @@ public extension UILabel {
                                                            action: #selector(longPressGestureRecognized(gestureRecognizer:)))
             longPressGestureRecognizer = longPressGR
             addGestureRecognizer(longPressGR)
+            
         }
     }
 }

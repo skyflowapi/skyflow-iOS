@@ -95,7 +95,7 @@ public class Client {
         }
     }
 
-    public func container<T>(type: T.Type, options: ContainerOptions? = ContainerOptions()) -> Container<T>? {
+    public func container<T>(type: T.Type, options: ContainerOptions? = nil) -> Container<T>? {
         if options != nil {
             // Set options
         }
@@ -109,7 +109,9 @@ public class Client {
             Log.info(message: .REVEAL_CONTAINER_CREATED, contextOptions: self.contextOptions)
             return Container<T>(skyflow: self)
         }
-
+        if T.self == ComposableContainer.self {
+            return Container<T>(skyflow: self, options: options)
+        }
         return nil
     }
 
