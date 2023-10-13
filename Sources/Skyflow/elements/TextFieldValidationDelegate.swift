@@ -10,10 +10,10 @@ import UIKit
 internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         
     var collectField: TextField
+
     internal init(collectField: TextField) {
         self.collectField = collectField
     }
-    
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
       
         func updateCursorPosition(offset: Int) {
@@ -51,9 +51,13 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             if let month = Int(text) {
                 if month > 1 && month < 10 {
                     textField.text = "0\(month)"
+                    collectField.onBeginEditing?()
                 }
                 else if month <= 12 {
                     textField.text = "\(month)"
+                    if( month == 11 || month == 12 || month == 10){
+                        collectField.onBeginEditing?()
+                    }
                 }
             }
             self.collectField.updateActualValue()
@@ -153,8 +157,12 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         collectField.updateLabelStyle()
         collectField.updateErrorMessage()
         collectField.onBlurHandler?((collectField.state as! StateforText).getStateForListener())
+//        collectField.onEndEditing?()
     }
-    
+   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+       collectField.onSubmitHandler?()
+       return true
+       }
     
     @objc func textFieldDidEndEditingOnExit(_ textField: UITextField) {
         collectField.textFieldValueChanged()
