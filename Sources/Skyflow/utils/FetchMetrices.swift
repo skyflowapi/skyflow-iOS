@@ -36,7 +36,7 @@ internal class FetchMetrices {
         let deviceDetails = [
             "sdk_name_version": details["sdk_name_version"] ,
             "sdk_client_device_model": details["device"],
-            "sdk_client_os_detail": details["os_details"],
+            "sdk_client_os_details": details["os_details"],
         ]
         return deviceDetails as [String : Any]
     }

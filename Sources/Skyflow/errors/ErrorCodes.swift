@@ -10,6 +10,9 @@ import Foundation
 internal enum ErrorCodes: CustomStringConvertible {
     // No message values
     case EMPTY_TABLE_NAME(code: Int = 400, message: String = "table key cannot be empty")
+    case EMPTY_COMPOSABLE_LAYOUT_ARRAY(code: Int = 400, message: String = "Interface: client container - layout array cannot be empty in composable container options.")
+    case MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: Int = 400, message: String = "options object is required for composable container.")
+    case MISSING_COMPOSABLE_LAYOUT_KEY(code:Int = 400, message: String = "layout is required in composable container options.")
     case EMPTY_COLUMN_NAME(code: Int = 400, message: String = "Column Name is empty")
     case EMPTY_VAULT_ID(code: Int = 400, message: String = "Invalid client credentials. VaultID is required.")
     case EMPTY_VAULT_URL(code: Int = 400, message: String = "Invalid client credentials. VaultURL cannot be empty.")
@@ -82,6 +85,7 @@ internal enum ErrorCodes: CustomStringConvertible {
     case MISSING_COLUMN_NAME_IN_USERT_OPTION(code: Int = 400, message: String = "Column name is missing for atleast one of the upsert option")
     case COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "Column name is empty for atleast one of the upsert option")
     case TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "Table name is empty for atleast one of the upsert option")
+    case MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(code: Int = 400, message: String = "created elements count should be equal to sum of layout values.")
     var code: Int {
         switch self {
         // No Formatting required
@@ -94,6 +98,14 @@ internal enum ErrorCodes: CustomStringConvertible {
             return code
         // Multi value formatting
         case .INVALID_TABLE_NAME(let code, _, _), .DUPLICATE_ELEMENT_FOUND(let code, _, _), .DUPLICATE_ADDITIONAL_FIELD_FOUND(let code, _, _):
+            return code
+        case .EMPTY_COMPOSABLE_LAYOUT_ARRAY(code: let code, message: _):
+            return code
+        case .MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: let code, message: let message):
+            return code
+        case .MISSING_COMPOSABLE_LAYOUT_KEY(code: let code, message: let message):
+            return code
+        case .MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(code: let code, message: let message):
             return code
         }
     }
@@ -111,6 +123,14 @@ internal enum ErrorCodes: CustomStringConvertible {
         // Multi value formatting
         case .INVALID_TABLE_NAME( _, let message, let values), .DUPLICATE_ELEMENT_FOUND( _, let message, let values), .DUPLICATE_ADDITIONAL_FIELD_FOUND( _, let message, let values):
             return formatMessage(message, values)
+        case .EMPTY_COMPOSABLE_LAYOUT_ARRAY(code: _, message: let message):
+            return message
+        case .MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: let code, message: let message):
+            return message
+        case .MISSING_COMPOSABLE_LAYOUT_KEY(code: let code, message: let message):
+            return message
+        case .MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(code: let code, message: let message):
+            return message
         }
     }
     internal var errorObject: NSError {

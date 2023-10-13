@@ -80,7 +80,12 @@ internal class FormatTextField: UITextField {
     internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
     override open func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: padding)
+        if super.rightViewMode == .always {
+            let newBound = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
+            return newBound
+        } else {
+            return bounds.inset(by: padding)
+        }
     }
 
     override open func placeholderRect(forBounds bounds: CGRect) -> CGRect {
@@ -88,8 +93,14 @@ internal class FormatTextField: UITextField {
     }
 
     override open func editingRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: padding)
+        if super.rightViewMode == .always {
+            let newBound = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
+            return newBound
+        } else {
+            return bounds.inset(by: padding)
+        }
     }
+    
 
     func updateTextFormat() {
         self.undoManager?.removeAllActions()
