@@ -159,7 +159,7 @@ public class Label: UIView, Element, BaseElement {
         self.stackView.spacing = 0
         self.stackView.alignment = .fill
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
-
+        self.stackView.widthAnchor.constraint(equalToConstant: 60).isActive = true
 
         self.stackView.addArrangedSubview(self.labelField)
         self.stackView.addArrangedSubview(self.skyflowLabelView)
