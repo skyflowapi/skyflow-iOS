@@ -145,7 +145,9 @@ public class Label: UIView, Element, BaseElement {
         self.labelField.insets = self.revealInput.labelStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         self.labelField.widthAnchor.constraint(equalToConstant: 100).isActive = true
         self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        self.skyflowLabelView.borderWidth = 10
         self.errorMessage.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        self.labelField.backgroundColor = .gray
         self.widthAnchor.constraint(equalToConstant: 60).isActive = true
         // Set errorText base styles
         self.errorMessage.alpha = 0.0
