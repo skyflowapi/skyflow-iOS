@@ -552,13 +552,13 @@ extension TextField {
             self.textField.layer.shadowColor = shadowLayer.shadowColor
             
         }
-        let attributes = [
-                NSAttributedString.Key.foregroundColor: style?.placeholderColor ?? fallbackStyle?.placeholderColor ?? .none,
-                NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font ?? .none
-            ]
-        self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes)
-
-        self.textField.backgroundColor = style?.backgroundColor ?? fallbackStyle?.backgroundColor ?? .none
+//        let attributes = [
+//                NSAttributedString.Key.foregroundColor: style?.placeholderColor ?? fallbackStyle?.placeholderColor ?? .none,
+//                NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font ?? .none
+//            ]
+//        self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes)
+//
+//        self.textField.backgroundColor = style?.backgroundColor ?? fallbackStyle?.backgroundColor ?? .none
 
         self.textField.tintColor = style?.cursorColor ?? fallbackStyle?.cursorColor ?? UIColor.black
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
