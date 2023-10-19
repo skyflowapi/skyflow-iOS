@@ -32,5 +32,17 @@ class RevealElementOptionsTests: XCTestCase {
         let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX", translation: ["X": "[0-9]"])
         XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
         XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
-    }    
+    }
+    func testRevealElementOptionsTestWithEnableTrue(){
+        let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX", translation: ["X": "[0-9]"], enableCopy: true)
+        XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
+        XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.enableCopy, true)
+    }
+    func testRevealElementOptionsTestWithFalseEnable(){
+        let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX", translation: ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
+        XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.enableCopy, false)
+    }
 }
