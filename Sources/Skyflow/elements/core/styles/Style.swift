@@ -27,6 +27,7 @@ public struct Style {
 
     var width: CGFloat?
     var height: CGFloat?
+    var placeholderColor: UIColor?
 //    var margin: UIEdgeInsets?
 
     public init(borderColor: UIColor? = nil,
@@ -42,9 +43,10 @@ public struct Style {
                 maxWidth: CGFloat? = nil,
                 minHeight: CGFloat? = nil,
                 maxHeight: CGFloat? = nil,
-                cursorColor: UIColor? = nil
+                cursorColor: UIColor? = nil,
                 width: CGFloat? = nil,
-                height: CGFloat? = nil
+                height: CGFloat? = nil,
+                placeholderColor: UIColor? = nil
 //                margin: UIEdgeInsets? = nil
     ) {
         // Assign parametric values to struct members
@@ -64,6 +66,7 @@ public struct Style {
         self.cursorColor = cursorColor
         self.width = width
         self.height = height
+        self.placeholderColor = placeholderColor
 //        self.margin = margin
     }
 }

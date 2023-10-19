@@ -319,7 +319,6 @@ public class TextField: SkyflowElement, Element, BaseElement {
     
     override func setupField() {
         super.setupField()
-        textField.placeholder = collectInput.placeholder
         updateInputStyle()
         if let instance = fieldType.instance {
             validationRules = instance.validation
@@ -552,6 +551,12 @@ extension TextField {
             self.textField.layer.shadowColor = shadowLayer.shadowColor
             
         }
+        let attributes = [
+                NSAttributedString.Key.foregroundColor: style?.placeholderColor ?? fallbackStyle?.placeholderColor ?? .none,
+                NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font ?? .none
+            ]
+        self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes as [NSAttributedString.Key : Any])
+
         self.textField.backgroundColor = style?.backgroundColor ?? fallbackStyle?.backgroundColor ?? .none
 
         self.textField.tintColor = style?.cursorColor ?? fallbackStyle?.cursorColor ?? UIColor.black
