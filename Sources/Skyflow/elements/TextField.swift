@@ -552,11 +552,14 @@ extension TextField {
             self.textField.layer.shadowColor = shadowLayer.shadowColor
             
         }
-        let attributes = [
-            NSAttributedString.Key.foregroundColor: style?.placeholderColor ?? fallbackStyle?.placeholderColor ?? UIColor.gray,
-                NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font ?? 16
-            ]
-        self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes)
+        if style?.placeholderColor != nil || fallbackStyle?.placeholderColor != nil {
+            let attributes = [
+                NSAttributedString.Key.foregroundColor: style?.placeholderColor ?? fallbackStyle?.placeholderColor,
+                    NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font
+                ]
+            self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes)
+
+        }
 
         self.textField.backgroundColor = style?.backgroundColor ?? fallbackStyle?.backgroundColor ?? .none
 
