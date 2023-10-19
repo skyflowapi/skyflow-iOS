@@ -157,7 +157,7 @@ public class Label: UIView, Element, BaseElement {
         self.stackView.axis = .vertical
 //        stackView.distribution = .equalSpacing
         self.stackView.spacing = 0
-        self.stackView.alignment = .fill
+//        self.stackView.alignment = .fill
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.stackView.widthAnchor.constraint(equalToConstant: 60).isActive = true
 
