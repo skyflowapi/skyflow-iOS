@@ -558,7 +558,6 @@ extension TextField {
                     NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font
                 ]
             self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes)
-
         }
 
         self.textField.backgroundColor = style?.backgroundColor ?? fallbackStyle?.backgroundColor ?? .none
