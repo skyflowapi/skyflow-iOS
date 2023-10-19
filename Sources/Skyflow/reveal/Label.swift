@@ -143,7 +143,9 @@ public class Label: UIView, Element, BaseElement {
         self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
         self.labelField.font = self.revealInput.labelStyles?.base?.font ?? .none
         self.labelField.insets = self.revealInput.labelStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
+        self.labelField.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        self.errorMessage.widthAnchor.constraint(equalToConstant: 100).isActive = true
         // Set errorText base styles
         self.errorMessage.alpha = 0.0
         self.errorMessage.textColor = self.revealInput.errorTextStyles?.base?.textColor ?? .none
