@@ -150,10 +150,7 @@ public class Label: UIView, Element, BaseElement {
         self.errorMessage.textAlignment = self.revealInput.errorTextStyles?.base?.textAlignment ?? .natural
         self.errorMessage.font = self.revealInput.errorTextStyles?.base?.font ?? .none
         self.errorMessage.insets = self.revealInput.errorTextStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        NSLayoutConstraint.activate([
-            self.skyflowLabelView.heightAnchor.constraint(equalToConstant: 50),
-            self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 50)
-        ])
+
         self.stackView.axis = .vertical
 //        stackView.distribution = .equalSpacing
         self.stackView.spacing = 0
