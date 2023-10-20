@@ -147,7 +147,7 @@ public class Label: UIView, Element, BaseElement {
         self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 100).isActive = true
         self.skyflowLabelView.borderWidth = 10
         self.errorMessage.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        self.labelField.backgroundColor = .gray
+//        self.labelField.backgroundColor = .gray
         self.widthAnchor.constraint(equalToConstant: 60).isActive = true
         self.backgroundColor = .red
         // Set errorText base styles
