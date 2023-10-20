@@ -149,6 +149,7 @@ public class Label: UIView, Element, BaseElement {
         self.errorMessage.widthAnchor.constraint(equalToConstant: 100).isActive = true
         self.labelField.backgroundColor = .gray
         self.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        self.backgroundColor = .red
         // Set errorText base styles
         self.errorMessage.alpha = 0.0
         self.errorMessage.textColor = self.revealInput.errorTextStyles?.base?.textColor ?? .none
