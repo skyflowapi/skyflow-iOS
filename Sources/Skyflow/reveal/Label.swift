@@ -140,7 +140,7 @@ public class Label: UIView, Element, BaseElement {
         self.errorMessage.translatesAutoresizingMaskIntoConstraints = false
         self.skyflowLabelView.translatesAutoresizingMaskIntoConstraints = false
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
-
+        self.stackView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         // Set label base styles
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
@@ -151,7 +151,7 @@ public class Label: UIView, Element, BaseElement {
         self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 100).isActive = true
         self.skyflowLabelView.borderWidth = 10
         self.errorMessage.widthAnchor.constraint(equalToConstant: 100).isActive = true
-//        self.labelField.backgroundColor = .gray
+        self.labelField.backgroundColor = .gray
         self.widthAnchor.constraint(equalToConstant: 60).isActive = true
         self.backgroundColor = .red
         // Set errorText base styles
