@@ -128,18 +128,11 @@ public class SkyflowLabelView: UIView {
         self.label.secureText = self.revealInput.altText.isEmpty ? self.revealInput.token : self.revealInput.altText
         self.translatesAutoresizingMaskIntoConstraints = false
         self.label.translatesAutoresizingMaskIntoConstraints = false
-        self.label.widthAnchor.constraint(equalToConstant: 50).isActive = true
         self.textAlignment = revealInput.inputStyles?.base?.textAlignment ?? .natural
         self.textColor = revealInput.inputStyles?.base?.textColor ?? .none
         self.borderColor = revealInput.inputStyles?.base?.borderColor ?? .none
         self.cornerRadius = revealInput.inputStyles?.base?.cornerRadius ?? 0
         self.borderWidth = revealInput.inputStyles?.base?.borderWidth ?? 0
-        self.widthAnchor.constraint(equalToConstant: 90).isActive = true
-        self.backgroundColor = .orange
-        self.label.backgroundColor = .blue
-        let widthConstraint = self.label.widthAnchor.constraint(equalToConstant: 50)
-        widthConstraint.priority = .defaultHigh
-        widthConstraint.isActive = true
         addSubview(self.label)
         self.padding = revealInput.inputStyles?.base?.padding ?? .zero
     }

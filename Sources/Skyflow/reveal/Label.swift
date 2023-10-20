@@ -136,38 +136,30 @@ public class Label: UIView, Element, BaseElement {
 
     internal func buildLabel() {
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.labelField.translatesAutoresizingMaskIntoConstraints = false
-        self.errorMessage.translatesAutoresizingMaskIntoConstraints = false
-        self.skyflowLabelView.translatesAutoresizingMaskIntoConstraints = false
-        self.stackView.translatesAutoresizingMaskIntoConstraints = false
-        self.stackView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        self.skyflowLabelView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+
         // Set label base styles
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
         self.labelField.textAlignment = self.revealInput.labelStyles?.base?.textAlignment ?? .natural
         self.labelField.font = self.revealInput.labelStyles?.base?.font ?? .none
         self.labelField.insets = self.revealInput.labelStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        self.labelField.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        self.skyflowLabelView.borderWidth = 10
-        self.errorMessage.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        self.labelField.backgroundColor = .gray
-        self.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        self.backgroundColor = .red
+
         // Set errorText base styles
         self.errorMessage.alpha = 0.0
         self.errorMessage.textColor = self.revealInput.errorTextStyles?.base?.textColor ?? .none
         self.errorMessage.textAlignment = self.revealInput.errorTextStyles?.base?.textAlignment ?? .natural
         self.errorMessage.font = self.revealInput.errorTextStyles?.base?.font ?? .none
         self.errorMessage.insets = self.revealInput.errorTextStyles?.base?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
+        NSLayoutConstraint.activate([
+            self.skyflowLabelView.heightAnchor.constraint(equalToConstant: 50),
+            self.skyflowLabelView.widthAnchor.constraint(equalToConstant: 50)
+        ])
         self.stackView.axis = .vertical
 //        stackView.distribution = .equalSpacing
         self.stackView.spacing = 0
-//        self.stackView.alignment = .fill
+        self.stackView.alignment = .fill
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
-        self.stackView.widthAnchor.constraint(equalToConstant: 60).isActive = true
+
 
         self.stackView.addArrangedSubview(self.labelField)
         self.stackView.addArrangedSubview(self.skyflowLabelView)
