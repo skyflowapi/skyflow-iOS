@@ -141,6 +141,7 @@ public class Label: UIView, Element, BaseElement {
         self.skyflowLabelView.translatesAutoresizingMaskIntoConstraints = false
         self.stackView.translatesAutoresizingMaskIntoConstraints = false
         self.stackView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        self.skyflowLabelView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         // Set label base styles
         self.labelField.text = self.revealInput.label
         self.labelField.textColor = self.revealInput.labelStyles?.base?.textColor ?? .none
