@@ -137,6 +137,9 @@ public class SkyflowLabelView: UIView {
         self.widthAnchor.constraint(equalToConstant: 90).isActive = true
         self.backgroundColor = .orange
         self.label.backgroundColor = .blue
+        let widthConstraint = self.label.widthAnchor.constraint(equalToConstant: 50)
+        widthConstraint.priority = .defaultHigh
+        widthConstraint.isActive = true
         addSubview(self.label)
         self.padding = revealInput.inputStyles?.base?.padding ?? .zero
     }
