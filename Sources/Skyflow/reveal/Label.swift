@@ -136,6 +136,10 @@ public class Label: UIView, Element, BaseElement {
 
     internal func buildLabel() {
         self.translatesAutoresizingMaskIntoConstraints = false
+        self.labelField.translatesAutoresizingMaskIntoConstraints = false
+        self.errorMessage.translatesAutoresizingMaskIntoConstraints = false
+        self.skyflowLabelView.translatesAutoresizingMaskIntoConstraints = false
+        self.stackView.translatesAutoresizingMaskIntoConstraints = false
 
         // Set label base styles
         self.labelField.text = self.revealInput.label
