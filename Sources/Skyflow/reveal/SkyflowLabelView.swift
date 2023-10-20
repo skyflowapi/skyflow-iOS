@@ -133,6 +133,8 @@ public class SkyflowLabelView: UIView {
         self.borderColor = revealInput.inputStyles?.base?.borderColor ?? .none
         self.cornerRadius = revealInput.inputStyles?.base?.cornerRadius ?? 0
         self.borderWidth = revealInput.inputStyles?.base?.borderWidth ?? 0
+        self.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.heightAnchor.constraint(equalToConstant: 50).isActive = true
         addSubview(self.label)
         self.padding = revealInput.inputStyles?.base?.padding ?? .zero
     }
