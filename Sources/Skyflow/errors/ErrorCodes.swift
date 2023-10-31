@@ -121,6 +121,7 @@ internal enum ErrorCodes: CustomStringConvertible {
         case .INVALID_COLUMN_VALUES_IN_GET(code: let code, message: _):
             return code
         case .EMPTY_COLUMN_VALUE(code: let code, message: _):
+            return code
         case .EMPTY_COMPOSABLE_LAYOUT_ARRAY(code: let code, message: _):
             return code
         case .MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: let code, message: let message):
