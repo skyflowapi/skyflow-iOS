@@ -7,6 +7,6 @@ target 'CollectAndRevealSample' do
   #use_frameworks!
 
   # Pods for skyflow-iOS-sample-app
-  pod 'Skyflow', ">= 1.18.0" 
+  pod 'Skyflow', ">= 1.20.0" 
 
 end

@@ -112,7 +112,7 @@ class ViewController: UIViewController {
                 placeholder: "YYYY",
                 type: .EXPIRATION_YEAR
             )
-            let requiredOption = Skyflow.CollectElementOptions(required: true)
+            let requiredOption = Skyflow.CollectElementOptions(required: true, enableCopy: true)
             let collectCardNumber = container?.create(input: collectCardNumberInput, options: requiredOption)
             let collectName = container?.create(input: collectNameInput, options: requiredOption)
             let collectCVV = container?.create(input: collectCVVInput, options: requiredOption)

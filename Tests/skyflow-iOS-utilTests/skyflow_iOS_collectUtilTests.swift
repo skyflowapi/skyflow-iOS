@@ -158,7 +158,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         let deviceInfo = FetchMetrices().getMetrices()
         XCTAssertEqual(UIDevice.current.name, deviceInfo["sdk_client_device_model"] as! String)
         XCTAssertEqual("skyflow-iOS@" + SDK_VERSION, deviceInfo["sdk_name_version"] as! String);
-        XCTAssertEqual(device.systemName + "@" + device.systemVersion, deviceInfo["sdk_client_os_detail"] as! String)
+        XCTAssertEqual(device.systemName + "@" + device.systemVersion, deviceInfo["sdk_client_os_details"] as! String)
     }
     func testDeviceDetails() {
         

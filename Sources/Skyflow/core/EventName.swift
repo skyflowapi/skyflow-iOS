@@ -11,4 +11,5 @@ public enum EventName: String {
     case READY = "READY"
     case FOCUS = "FOCUS"
     case BLUR = "BLUR"
+    case SUBMIT = "SUBMIT"
 }
