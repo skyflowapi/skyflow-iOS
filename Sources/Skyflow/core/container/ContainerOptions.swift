@@ -12,5 +12,18 @@
 import Foundation
 
 public struct ContainerOptions {
-    public init() {}
+    var layout: [Int]
+    var styles: Styles?
+    var errorTextStyles: Styles?
+
+    public init(){
+        layout = [0]
+    }
+
+    public init(layout: [Int], styles: Styles? = Styles(), errorTextStyles: Styles? = Styles()) {
+        self.layout = layout
+        self.styles = styles
+        self.errorTextStyles = errorTextStyles
+    }
+
 }

@@ -1,0 +1,19 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'ComposableElements' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+  pod 'Skyflow' , '1.21.0'
+  # Pods for ComposableElements
+
+  target 'ComposableElementsTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'ComposableElementsUITests' do
+    # Pods for testing
+  end
+
+end
