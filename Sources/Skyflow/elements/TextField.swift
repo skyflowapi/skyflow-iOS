@@ -544,6 +544,7 @@ extension TextField {
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
+
         if let shadowLayer = style?.boxShadow ?? fallbackStyle?.boxShadow {
             //To apply Shadow
             self.textField.layer.shadowOpacity = shadowLayer.shadowOpacity

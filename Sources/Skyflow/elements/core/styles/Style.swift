@@ -24,7 +24,6 @@ public struct Style {
     var minHeight: CGFloat?
     var maxHeight: CGFloat?
     var cursorColor: UIColor?
-
     var width: CGFloat?
     var height: CGFloat?
     var placeholderColor: UIColor?
