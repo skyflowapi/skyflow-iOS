@@ -319,7 +319,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
     
     override func setupField() {
         super.setupField()
-        textField.placeholder = collectInput.placeholder
+        self.textField.placeholder = collectInput.placeholder
         updateInputStyle()
         if let instance = fieldType.instance {
             validationRules = instance.validation
@@ -539,15 +539,36 @@ extension TextField {
 extension TextField {
     
     internal func updateInputStyle(_ style: Style? = nil) {
+        self.textField.translatesAutoresizingMaskIntoConstraints = false
         let fallbackStyle = self.collectInput.inputStyles.base
         self.textField.font = style?.font ?? fallbackStyle?.font ?? .none
         self.textField.textAlignment = style?.textAlignment ?? fallbackStyle?.textAlignment ?? .natural
         self.textField.textColor = style?.textColor ?? fallbackStyle?.textColor ?? .none
+
+        if let shadowLayer = style?.boxShadow ?? fallbackStyle?.boxShadow {
+            //To apply Shadow
+            self.textField.layer.shadowOpacity = shadowLayer.shadowOpacity
+            self.textField.layer.shadowRadius = shadowLayer.shadowRadius
+            self.textField.layer.shadowOffset = shadowLayer.shadowOffset
+            self.textField.layer.shadowColor = shadowLayer.shadowColor
+            
+        }
+        if style?.placeholderColor != nil || fallbackStyle?.placeholderColor != nil {
+            let attributes = [
+                NSAttributedString.Key.foregroundColor: style?.placeholderColor ?? fallbackStyle?.placeholderColor,
+                    NSAttributedString.Key.font: style?.font ?? fallbackStyle?.font
+                ]
+            self.textField.attributedPlaceholder = NSAttributedString(string: collectInput.placeholder, attributes: attributes)
+        }
+
+        self.textField.backgroundColor = style?.backgroundColor ?? fallbackStyle?.backgroundColor ?? .none
+
         self.textField.tintColor = style?.cursorColor ?? fallbackStyle?.cursorColor ?? UIColor.black
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             p.left = 60
         }
+        
         if style?.width != nil {
             NSLayoutConstraint.activate ([
                 self.textField.widthAnchor.constraint(equalToConstant: (style?.width)!)
@@ -561,6 +582,28 @@ extension TextField {
         self.textFieldBorderWidth = style?.borderWidth ?? fallbackStyle?.borderWidth ?? 0
         self.textFieldBorderColor = style?.borderColor ?? fallbackStyle?.borderColor ?? .none
         self.textFieldCornerRadius = style?.cornerRadius ?? fallbackStyle?.cornerRadius ?? 0
+
+        // Define constraints for width and height
+        if let minWidth = style?.minWidth ?? fallbackStyle?.minWidth {
+            let minWidthConstraint = self.textField.widthAnchor.constraint(greaterThanOrEqualToConstant: minWidth)
+            minWidthConstraint.priority = .required
+            NSLayoutConstraint.activate([minWidthConstraint])
+        }
+        if let minHeight =  style?.minHeight ?? fallbackStyle?.minHeight {
+            let minHeightConstraint = self.textField.heightAnchor.constraint(greaterThanOrEqualToConstant: minHeight)
+            minHeightConstraint.priority = .required
+            NSLayoutConstraint.activate([minHeightConstraint])
+        }
+        if let maxWidth = style?.maxWidth ?? fallbackStyle?.maxWidth {
+            let maxWidthConstraint = self.textField.widthAnchor.constraint(lessThanOrEqualToConstant: maxWidth)
+            NSLayoutConstraint.activate([maxWidthConstraint])
+
+        }
+        if let maxHeight = style?.maxHeight ?? fallbackStyle?.maxHeight {
+            let maxHeightConstraint = self.textField.heightAnchor.constraint(lessThanOrEqualToConstant: maxHeight)
+            // Activate the constraints
+            NSLayoutConstraint.activate([maxHeightConstraint])
+        }
     }
     
     internal func updateLabelStyle(_ style: Style? = nil) {
@@ -712,9 +755,6 @@ internal extension TextField {
             }
             self.textFieldLabel.attributedText = attributedString;
         }
-        
-        
-        
         stackView.addArrangedSubview(textFieldLabel)
         stackView.addArrangedSubview(textField)
         if contextOptions.interface != .COMPOSABLE_CONTAINER {
@@ -725,9 +765,9 @@ internal extension TextField {
         stackView.spacing = 0
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
+
         
         addSubview(stackView)
-        
         setMainPaddings()
     }
     
@@ -744,13 +784,13 @@ internal extension TextField {
         super.setMainPaddings()
         
         let views = ["view": self, "stackView": stackView]
-        
+
         horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-\(0)-[stackView]-\(0)-|",
                                                                options: .alignAllCenterY,
                                                                metrics: nil,
                                                                views: views)
         NSLayoutConstraint.activate(horizontalConstraints)
-        
+
         verticalConstraint = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(0)-[stackView]-\(0)-|",
                                                             options: .alignAllCenterX,
                                                             metrics: nil,
@@ -788,4 +828,3 @@ extension TextField {
         return uuid;
     }
 }
-

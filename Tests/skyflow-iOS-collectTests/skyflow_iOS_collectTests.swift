@@ -42,7 +42,103 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
         XCTAssertEqual(cardNumber?.getValue(), "4111 1111 1111 1111")
     }
+    func testCreateSkyflowElementNewStyles() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let shadowLayer = CALayer()
+        
+        // Configure shadow properties
+        shadowLayer.shadowColor = UIColor.red.cgColor
+        shadowLayer.shadowOpacity = 0.2
+        shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+        shadowLayer.shadowRadius = 1
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, boxShadow: shadowLayer, backgroundColor: .red, minWidth: 100, minHeight: 50)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        let minWidthConstraint = cardNumber?.textField.constraints.first {
+            $0.firstAttribute == .width && $0.relation == .greaterThanOrEqual
+        }
+        XCTAssertNotNil(minWidthConstraint)
+        XCTAssertEqual(minWidthConstraint?.constant, 100)
+        XCTAssertEqual(minWidthConstraint?.priority, .required)
+        
+        XCTAssertEqual(bstyle.borderColor, UIColor.blue)
+        XCTAssertEqual(cardNumber?.textField.backgroundColor, .red)
+        XCTAssertEqual(cardNumber?.getValue(), "4111 1111 1111 1111")
+    }
     
+    
+    
+    
+    func testSkyflowElementNewStylesMinHeight() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, backgroundColor: .red, minWidth: 100, minHeight: 50)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        // Retrieve the minHeight constraint
+        let minHeightConstraint = cardNumber?.textField.constraints.first {
+            $0.firstAttribute == .height && $0.relation == .greaterThanOrEqual
+        }
+        
+        XCTAssertNotNil(minHeightConstraint)
+        XCTAssertEqual(minHeightConstraint?.constant, 50)
+        XCTAssertEqual(minHeightConstraint?.priority, .required)
+}
+    func testSkyflowElementNewStylesMaxWidth() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, backgroundColor: .red, maxWidth: 100, minHeight: 50)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        let maxWidthConstraint = cardNumber?.textField.constraints.first {
+            $0.firstAttribute == .width && $0.relation == .lessThanOrEqual
+        }
+        
+        XCTAssertNotNil(maxWidthConstraint)
+        XCTAssertEqual(maxWidthConstraint?.constant, 100)
+}
+    func testSkyflowElementNewStylesMaxHeight() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, backgroundColor: .red, maxWidth: 100, maxHeight: 100)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        let maxHeightConstraint = cardNumber?.textField.constraints.first {
+                    $0.firstAttribute == .height && $0.relation == .lessThanOrEqual
+                }
+                
+        XCTAssertNotNil(maxHeightConstraint)
+        XCTAssertEqual(maxHeightConstraint?.constant, 100)
+}
     func testValidValueSkyflowElement() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
@@ -1117,7 +1213,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testFormatInputMethodCase9",testFormatInputMethodCase9),
         ("testFormatInputMethodCase7",testFormatInputMethodCase7),
         ("testCursorColor",testCursorColor),
-
         ("testElementCopyIconenableCopyTrue",testElementCopyIconenableCopyTrue),
         ("testElementCopyIconenableCopyFalse",testElementCopyIconenableCopyFalse),
         ("testElementCopyIconenableCopyTrueInvalidValue",testElementCopyIconenableCopyTrueInvalidValue),
