@@ -133,9 +133,10 @@ class GetAPICallback: Callback {
                 urlComponents?.queryItems?.append(URLQueryItem(name: "skyflow_ids", value: id))
             }
         } else if record.columnValues != nil && record.columnName != nil{
-            urlComponents?.queryItems?.append(URLQueryItem(name: "columnName", value: record.columnName))
+            
             for columnValue in record.columnValues! {
-                urlComponents?.queryItems?.append(URLQueryItem(name: "columnValues", value: columnValue))
+                urlComponents?.queryItems?.append(URLQueryItem(name: "column_name", value: record.columnName))
+                urlComponents?.queryItems?.append(URLQueryItem(name: "column_values", value: columnValue))
             }
         }
         if(record.redaction != nil && getOptions.tokens == false){
