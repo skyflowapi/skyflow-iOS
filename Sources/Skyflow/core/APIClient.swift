@@ -112,4 +112,8 @@ internal class APIClient {
         let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, contextOptions: contextOptions)
         self.getAccessToken(callback: revealByIdApiCallback, contextOptions: contextOptions)
     }
+    internal func getRecord(records: [GetRecord], callback: Callback,getOptions: GetOptions, contextOptions: ContextOptions) {
+        let getApiCallback = GetAPICallback(callback: callback, apiClient: self, connectionUrl: (vaultURL + vaultID), records: records, getOptions: getOptions,contextOptions: contextOptions)
+        self.getAccessToken(callback: getApiCallback, contextOptions: contextOptions)
+    }
 }
