@@ -17,8 +17,16 @@ public struct Style {
     var font: UIFont?
     var textAlignment: NSTextAlignment?
     var textColor: UIColor?
+    var boxShadow: CALayer?
+    var backgroundColor: UIColor?
+    var minWidth: CGFloat?
+    var maxWidth: CGFloat?
+    var minHeight: CGFloat?
+    var maxHeight: CGFloat?
+    var cursorColor: UIColor?
     var width: CGFloat?
     var height: CGFloat?
+    var placeholderColor: UIColor?
 //    var margin: UIEdgeInsets?
 
     public init(borderColor: UIColor? = nil,
@@ -28,8 +36,16 @@ public struct Style {
                 font: UIFont? = nil,
                 textAlignment: NSTextAlignment? = nil,
                 textColor: UIColor? = nil,
+                boxShadow: CALayer? = nil,
+                backgroundColor: UIColor? = nil,
+                minWidth: CGFloat? = nil,
+                maxWidth: CGFloat? = nil,
+                minHeight: CGFloat? = nil,
+                maxHeight: CGFloat? = nil,
+                cursorColor: UIColor? = nil,
                 width: CGFloat? = nil,
-                height: CGFloat? = nil
+                height: CGFloat? = nil,
+                placeholderColor: UIColor? = nil
 //                margin: UIEdgeInsets? = nil
     ) {
         // Assign parametric values to struct members
@@ -40,8 +56,16 @@ public struct Style {
         self.font = font
         self.textAlignment = textAlignment
         self.textColor = textColor
+        self.boxShadow = boxShadow
+        self.backgroundColor = backgroundColor
+        self.minWidth = minWidth
+        self.maxWidth = maxWidth
+        self.minHeight = minHeight
+        self.maxHeight = maxHeight
+        self.cursorColor = cursorColor
         self.width = width
         self.height = height
+        self.placeholderColor = placeholderColor
 //        self.margin = margin
     }
 }
