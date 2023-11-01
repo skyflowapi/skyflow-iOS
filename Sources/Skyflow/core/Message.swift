@@ -18,6 +18,7 @@ internal enum Message {
     case VALIDATE_RECORDS
     case VALIDATE_DETOKENIZE_INPUT
     case VALIDATE_GET_BY_ID_INPUT
+    case VALIDATE_GET_INPUT
     case VALIDATE_COLLECT_RECORDS
     case VALIDATE_REVEAL_RECORDS
     case CREATED_ELEMENT
@@ -27,10 +28,12 @@ internal enum Message {
     case INSERT_DATA_SUCCESS
     case DETOKENIZE_SUCCESS
     case GET_BY_ID_SUCCESS
+    case GET_SUCCESS
     case BEARER_TOKEN_RECEIVED
     case INSERT_TRIGGERED
     case DETOKENIZE_TRIGGERED
     case GET_BY_ID_TRIGGERED
+    case GET_TRIGGERED
 
     //Used in tests
     case CLIENT_CONNECTION
@@ -68,6 +71,7 @@ internal enum Message {
         case .INSERT_DATA_SUCCESS: return "Data has been inserted successfully." // U
         case .DETOKENIZE_SUCCESS: return "Data has been revealed successfully." // U
         case .GET_BY_ID_SUCCESS: return "Data has been revealed successfully." // U
+        case .GET_SUCCESS: return "Data has been revealed successfully." // U
         case .BEARER_TOKEN_RECEIVED: return "GetBearerToken promise received successfully." // U
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
@@ -85,6 +89,8 @@ internal enum Message {
         case .SET_VALUE_WARNING: return "<ELEMENT_TYPE> setValue() cannot be invoked while in PROD env. It is Not Recommended."
         case .CLEAR_VALUE_WARNING: return "<ELEMENT_TYPE> clearValue() cannot be invoked while in PROD env. It is Not Recommended."
         case .NO_REGEX_MATCH_FOUND: return "No match found for regex - <REGEX>"
+        case .GET_TRIGGERED: return "Get Method triggered."
+        case .VALIDATE_GET_INPUT: return "Validating getByID input."
         case .FORMAT_AND_TRANSLATION: return "format or translation are not supported on <ELEMENT_TYPE> element type"
         case .EMPTY_TRANSLATION_VALUE: return "Value is empty in Translation Key"
         }
