@@ -336,7 +336,26 @@ public class TextField: SkyflowElement, Element, BaseElement {
             NSLayoutConstraint.activate([
                 self.textField.heightAnchor.constraint(equalToConstant: (collectInput.inputStyles.base?.height)!)
             ])
-
+        }
+        if collectInput.errorTextStyles.base?.height != nil {
+            NSLayoutConstraint.activate([
+                self.errorMessage.heightAnchor.constraint(equalToConstant: (collectInput.errorTextStyles.base?.height)!)
+            ])
+        }
+        if collectInput.errorTextStyles.base?.width != nil {
+            NSLayoutConstraint.activate([
+                self.errorMessage.widthAnchor.constraint(equalToConstant: (collectInput.errorTextStyles.base?.width)!)
+            ])
+        }
+        if collectInput.labelStyles.base?.height != nil {
+            NSLayoutConstraint.activate([
+                self.textFieldLabel.heightAnchor.constraint(equalToConstant: (collectInput.labelStyles.base?.height)!)
+            ])
+        }
+        if collectInput.labelStyles.base?.width != nil {
+            NSLayoutConstraint.activate([
+                self.textFieldLabel.widthAnchor.constraint(equalToConstant: (collectInput.labelStyles.base?.width)!)
+            ])
         }
         
         self.textFieldLabel.textColor = collectInput.labelStyles.base?.textColor ?? .none
