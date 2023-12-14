@@ -21,6 +21,7 @@ public class SkyflowElement: UIView {
     internal var collectInput: CollectElementInput!
     internal var options: CollectElementOptions!
     internal var contextOptions: ContextOptions!
+    internal var elements: [TextField] = []
 
     /// Describes `SkyflowElement` input   State`
     internal var state: State {
@@ -36,8 +37,9 @@ public class SkyflowElement: UIView {
         initialization()
     }
 
-    internal init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions) {
+    internal init(input: CollectElementInput, options: CollectElementOptions, contextOptions: ContextOptions, elements: [TextField]) {
         super.init(frame: CGRect())
+        self.elements = elements
         collectInput = input
         self.options = options
         self.contextOptions = contextOptions

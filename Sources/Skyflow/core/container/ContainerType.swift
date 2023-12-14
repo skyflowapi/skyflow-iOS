@@ -9,4 +9,5 @@ import Foundation
 public class ContainerType {
     public static var COLLECT = CollectContainer.self
     public static var REVEAL = RevealContainer.self
+    public static var COMPOSABLE = ComposableContainer.self
 }

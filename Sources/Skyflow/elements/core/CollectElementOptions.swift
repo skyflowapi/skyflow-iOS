@@ -14,13 +14,15 @@ public struct CollectElementOptions {
     var enableCardIcon: Bool
     var format: String
     var translation: [ Character: String ]?
+    var enableCopy: Bool
 
     
-    public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil) {
+    public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil, enableCopy: Bool = false) {
         self.required = required!
         self.enableCardIcon = enableCardIcon
         self.format = format
         self.translation = translation
+        self.enableCopy = enableCopy
         
         if (self.translation != nil){
             for (key, value) in self.translation! {

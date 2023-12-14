@@ -42,7 +42,103 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
         XCTAssertEqual(cardNumber?.getValue(), "4111 1111 1111 1111")
     }
+    func testCreateSkyflowElementNewStyles() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let shadowLayer = CALayer()
+        
+        // Configure shadow properties
+        shadowLayer.shadowColor = UIColor.red.cgColor
+        shadowLayer.shadowOpacity = 0.2
+        shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+        shadowLayer.shadowRadius = 1
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, boxShadow: shadowLayer, backgroundColor: .red, minWidth: 100, minHeight: 50)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        let minWidthConstraint = cardNumber?.textField.constraints.first {
+            $0.firstAttribute == .width && $0.relation == .greaterThanOrEqual
+        }
+        XCTAssertNotNil(minWidthConstraint)
+        XCTAssertEqual(minWidthConstraint?.constant, 100)
+        XCTAssertEqual(minWidthConstraint?.priority, .required)
+        
+        XCTAssertEqual(bstyle.borderColor, UIColor.blue)
+        XCTAssertEqual(cardNumber?.textField.backgroundColor, .red)
+        XCTAssertEqual(cardNumber?.getValue(), "4111 1111 1111 1111")
+    }
     
+    
+    
+    
+    func testSkyflowElementNewStylesMinHeight() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, backgroundColor: .red, minWidth: 100, minHeight: 50)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        // Retrieve the minHeight constraint
+        let minHeightConstraint = cardNumber?.textField.constraints.first {
+            $0.firstAttribute == .height && $0.relation == .greaterThanOrEqual
+        }
+        
+        XCTAssertNotNil(minHeightConstraint)
+        XCTAssertEqual(minHeightConstraint?.constant, 50)
+        XCTAssertEqual(minHeightConstraint?.priority, .required)
+}
+    func testSkyflowElementNewStylesMaxWidth() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, backgroundColor: .red, maxWidth: 100, minHeight: 50)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        let maxWidthConstraint = cardNumber?.textField.constraints.first {
+            $0.firstAttribute == .width && $0.relation == .lessThanOrEqual
+        }
+        
+        XCTAssertNotNil(maxWidthConstraint)
+        XCTAssertEqual(maxWidthConstraint?.constant, 100)
+}
+    func testSkyflowElementNewStylesMaxHeight() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: ContainerOptions())
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue, backgroundColor: .red, maxWidth: 100, maxHeight: 100)
+        
+        let styles = Styles(base: bstyle)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        cardNumber?.actualValue = "4111 1111 1111 1111"
+        let maxHeightConstraint = cardNumber?.textField.constraints.first {
+                    $0.firstAttribute == .height && $0.relation == .lessThanOrEqual
+                }
+                
+        XCTAssertNotNil(maxHeightConstraint)
+        XCTAssertEqual(maxHeightConstraint?.constant, 100)
+}
     func testValidValueSkyflowElement() {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
@@ -1005,6 +1101,92 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField.secureText = textField.formatInput(input: "ZA", format: "XXXX", translation: ["X": "[-]"])
         XCTAssertEqual(textField.secureText, "")
     }
+    func testCursorColor() {
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false)
+        
+        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: Styles(base: Style(cursorColor: .orange)), placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput, options: options)
+        
+        XCTAssertEqual(cardNumber?.textField.tintColor, .orange)
+    }
+    func testElementCopyIconenableCopyTrue() {
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false, enableCopy: true)
+        
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput1, options: options)
+        
+        cardNumber?.textField.secureText = "4111111111111111"
+        
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        window.addSubview(cardNumber!)
+        
+        let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+        let image2 = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+        let myViews = cardNumber?.textField.rightView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, image)
+        XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
+    }
+    func testElementCopyIconenableCopyFalse() {
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false, enableCopy: false)
+        
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput1, options: options)
+        
+        cardNumber?.textField.secureText = "4111111111111111"
+        
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        window.addSubview(cardNumber!)
+        
+        let myViews = cardNumber?.textField.rightView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, nil)
+        XCTAssertNotEqual(cardNumber?.textField.rightView?.isHidden, true)
+    }
+    func testElementCopyIconenableCopyTrueInvalidValue() {
+        let window = UIWindow()
+        
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        
+        let options = CollectElementOptions(required: false, enableCopy: true)
+        
+        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        
+        let cardNumber = container?.create(input: collectInput1, options: options)
+        
+        cardNumber?.textField.secureText = "411111111"
+        cardNumber?.actualValue = "411111111"
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        cardNumber?.setValue(value: "4111111")
+        window.addSubview(cardNumber!)
+
+        XCTAssertEqual(cardNumber?.state.getState()["isValid"] as! Bool, false)
+                
+        XCTAssertEqual(cardNumber?.textField.rightView?.isHidden, true)
+        cardNumber?.textField.secureText = "4111111111111111"
+        
+        cardNumber?.textFieldDidChange(cardNumber!.textField)
+        
+        let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
+        let image2 = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
+        let myViews = cardNumber?.textField.rightView?.subviews.filter{$0 is UIImageView}
+        
+        XCTAssertEqual((myViews?[0] as? UIImageView)?.image, image)
+        XCTAssertNotEqual((myViews?[0] as? UIImageView)?.image, image2)
+    }
     
     static var allTests = [
         ("testCreateSkyflowElement", testCreateSkyflowElement),
@@ -1030,6 +1212,10 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testFormatInputMethodCase8",testFormatInputMethodCase8),
         ("testFormatInputMethodCase9",testFormatInputMethodCase9),
         ("testFormatInputMethodCase7",testFormatInputMethodCase7),
+        ("testCursorColor",testCursorColor),
+        ("testElementCopyIconenableCopyTrue",testElementCopyIconenableCopyTrue),
+        ("testElementCopyIconenableCopyFalse",testElementCopyIconenableCopyFalse),
+        ("testElementCopyIconenableCopyTrueInvalidValue",testElementCopyIconenableCopyTrueInvalidValue),
 //        ("testContainerInsertIsRequiredAndNotEmpty", testContainerInsertIsRequiredAndNotEmpty)
     ]
 }
