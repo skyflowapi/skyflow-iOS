@@ -257,13 +257,23 @@ Each Style object accepts the following properties, please note that each proper
  
 ```swift
 let style = Skyflow.Style(
-    borderColor: UIColor,            // optional
-    cornerRadius: CGFloat,           // optional
-    padding: UIEdgeInsets,           // optional
-    borderWidth: CGFloat,            // optional
-    font: UIFont,                   // optional
-    textAlignment: NSTextAlignment,  // optional
-    textColor: UIColor               // optional
+     borderColor: UIColor,                        // optional
+     cornerRadius: CGFloat,                       // optional
+     padding: UIEdgeInsets,                       // optional
+     borderWidth: CGFloat,                        // optional
+     font: UIFont,                                // optional
+     textAlignment: NSTextAlignment,              // optional
+     textColor: UIColor,                          // optional
+     boxShadow: CALayer,                         // optional
+     backgroundColor: UIColor,                    // optional
+     minWidth: CGFloat,                           // optional
+     maxWidth: CGFloat,                           // optional
+     minHeight: CGFloat,                          // optional
+     maxHeight: CGFloat,                          // optional
+     cursorColor: UIColor,                        // optional
+     width: CGFloat,                              // optional
+     height: CGFloat,                             // optional
+     placeholderColor: UIColor,                   // optional
 )
 ```
  

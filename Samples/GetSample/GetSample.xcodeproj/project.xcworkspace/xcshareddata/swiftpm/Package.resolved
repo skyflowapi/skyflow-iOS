@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/skyflowapi/skyflow-iOS.git",
       "state" : {
-        "branch" : "SK-788-development-get-method-with-options-support-in-i-os-sdk",
-        "revision" : "5254e3990d8bd7a3d4ecfb92e98f665a6ab4c312"
+        "branch" : "main",
+        "revision" : "d746cff983d44dd4690780c14aa7ca60387d7850"
       }
     }
   ],

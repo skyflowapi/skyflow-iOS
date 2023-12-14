@@ -7,6 +7,6 @@ target 'GetSample' do
   #use_frameworks!
 
   # Pods for GetSample
-  pod 'Skyflow', ">= 1.19.0" 
+  pod 'Skyflow', ">= 1.22.0" 
 
 end

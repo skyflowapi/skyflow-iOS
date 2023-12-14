@@ -622,7 +622,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/skyflowapi/skyflow-iOS.git";
 			requirement = {
-				branch = "SK-788-development-get-method-with-options-support-in-i-os-sdk";
+				branch = main;
 				kind = branch;
 			};
 		};
