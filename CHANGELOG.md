@@ -3,17 +3,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22.0] - 2023-10-06
+
 ### Added
+- Styling enhancements for collect elements
+- Get method with options support
+
+## [1.21.0] - 2023-10-06
+
+### Added
+- Composable elements
 
 ## [1.20.0] - 2023-10-06
+
+### Added
 - Ability to customise Copy behaviour for Collect and Reveal Elements.
 
-### Added
-
 ## [1.19.0] - 2023-06-23
-- Added input formatting for collect and reveal elements
 
 ### Added
+- Added input formatting for collect and reveal elements
 
 ## [1.18.0] - 2023-06-08
 

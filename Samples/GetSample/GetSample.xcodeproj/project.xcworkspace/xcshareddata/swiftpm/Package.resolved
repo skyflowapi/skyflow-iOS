@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "aexml",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tadija/AEXML.git",
+      "state" : {
+        "revision" : "38f7d00b23ecd891e1ee656fa6aeebd6ba04ecc3",
+        "version" : "4.6.1"
+      }
+    },
+    {
+      "identity" : "skyflow-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/skyflowapi/skyflow-iOS.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d746cff983d44dd4690780c14aa7ca60387d7850"
+      }
+    }
+  ],
+  "version" : 2
+}

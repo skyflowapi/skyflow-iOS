@@ -7,6 +7,6 @@ target 'Validations' do
   #use_frameworks!
 
   # Pods for skyflow-iOS-sample-app
-#  pod 'Skyflow'
+  pod 'Skyflow', ">= 1.22.0" 
 
 end

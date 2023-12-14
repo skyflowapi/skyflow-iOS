@@ -4,7 +4,7 @@
 target 'ComposableElements' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'Skyflow' , '1.21.0'
+  pod 'Skyflow', ">= 1.22.0" 
   # Pods for ComposableElements
 
   target 'ComposableElementsTests' do
