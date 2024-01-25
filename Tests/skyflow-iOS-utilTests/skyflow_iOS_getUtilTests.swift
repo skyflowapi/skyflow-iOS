@@ -135,12 +135,23 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
         self.getApiCallback.connectionUrl = "https://example.org"
         let urlComponents = self.getApiCallback.getUrlComponents(record: record, getOptions: GetOptions(tokens: false))!
         
-        XCTAssertEqual(urlComponents.queryItems?.count, 5)
+        XCTAssertEqual(urlComponents.queryItems?.count, 4)
         XCTAssertEqual(urlComponents.queryItems![0], URLQueryItem(name: "column_name", value: "col"))
         XCTAssertEqual(urlComponents.queryItems![1], URLQueryItem(name: "column_values", value: "1"))
-        XCTAssertEqual(urlComponents.queryItems![2], URLQueryItem(name: "column_name", value: "col"))
-        XCTAssertEqual(urlComponents.queryItems![3], URLQueryItem(name: "column_values", value: "2"))
-        XCTAssertEqual(urlComponents.queryItems![4], URLQueryItem(name: "redaction", value: RedactionType.PLAIN_TEXT.rawValue))
+        XCTAssertEqual(urlComponents.queryItems![2], URLQueryItem(name: "column_values", value: "2"))
+        XCTAssertEqual(urlComponents.queryItems![3], URLQueryItem(name: "redaction", value: RedactionType.PLAIN_TEXT.rawValue))
+        XCTAssertEqual(urlComponents.url?.path, "/table")
+    }
+    func testGetUrlComponentsColumnRecordWithSameValues() {
+        let record = GetRecord(columnValues: ["1","1"], table: "table", columnName: "col", redaction: RedactionType.PLAIN_TEXT.rawValue)
+        self.getApiCallback.connectionUrl = "https://example.org"
+        let urlComponents = self.getApiCallback.getUrlComponents(record: record, getOptions: GetOptions(tokens: false))!
+        
+        XCTAssertEqual(urlComponents.queryItems?.count, 4)
+        XCTAssertEqual(urlComponents.queryItems![0], URLQueryItem(name: "column_name", value: "col"))
+        XCTAssertEqual(urlComponents.queryItems![1], URLQueryItem(name: "column_values", value: "1"))
+        XCTAssertEqual(urlComponents.queryItems![2], URLQueryItem(name: "column_values", value: "1"))
+        XCTAssertEqual(urlComponents.queryItems![3], URLQueryItem(name: "redaction", value: RedactionType.PLAIN_TEXT.rawValue))
         XCTAssertEqual(urlComponents.url?.path, "/table")
     }
     func testConstructError() {

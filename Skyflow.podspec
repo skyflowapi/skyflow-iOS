@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
 
   spec.name         = "Skyflow"
 
-  spec.version      = "1.22.0"
+  spec.version      = "1.22.0-dev.c972075"
 
   spec.summary      = "skyflow-iOS"
 
@@ -20,12 +20,12 @@ Pod::Spec.new do |spec|
   
   spec.ios.deployment_target = "9.0"
 
-  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :tag => "1.22.0" }
+  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :commit => "c972075" }
 
   spec.source_files  = "Sources/Skyflow/**/*.{swift}"
 
   spec.resource_bundles = {'Skyflow' => ['Sources/Skyflow/Resources/**/*.{xcassets}'] }
 
-  spec.dependency "AEXML"
+  spec.dependency "AEXML", "4.6.1"
 end
 

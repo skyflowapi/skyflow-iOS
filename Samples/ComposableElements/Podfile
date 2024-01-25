@@ -4,6 +4,7 @@
 target 'ComposableElements' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
+  pod 'AEXML', '4.6.1'
   pod 'Skyflow', ">= 1.22.0" 
   # Pods for ComposableElements
 
