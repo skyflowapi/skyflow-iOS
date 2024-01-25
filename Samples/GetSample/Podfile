@@ -5,7 +5,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 target 'GetSample' do
   #use_frameworks!
-
+  pod 'AEXML', '4.6.1'
   # Pods for GetSample
   pod 'Skyflow', ">= 1.22.0" 
 

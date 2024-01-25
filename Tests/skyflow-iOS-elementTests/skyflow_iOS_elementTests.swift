@@ -208,28 +208,28 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testCardExpiryValidationMMYY() {
-        let mmyy = "12/23"
+        let mmyy = "12/24"
         
         let cardexpValidation = SkyflowValidateCardExpirationDate(format: "mm/yy", error: "Invalid Card expiration date")
         XCTAssertTrue(SkyflowValidator.validate(input: mmyy, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
     }
     
     func testCardExpiryValidationMMYYYY() {
-        let mmyyyy = "12/2023"
+        let mmyyyy = "12/2029"
         
         let cardexpValidation = SkyflowValidateCardExpirationDate(format: "mm/yyyy", error: "Invalid Card expiration date")
         XCTAssertTrue(SkyflowValidator.validate(input: mmyyyy, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
     }
     
     func testCardExpiryValidationYYMM() {
-        let yymm = "23/12"
+        let yymm = "28/12"
         
         let cardexpValidation = SkyflowValidateCardExpirationDate(format: "yy/mm", error: "Invalid Card expiration date")
         XCTAssertTrue(SkyflowValidator.validate(input: yymm, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
     }
     
     func testCardExpiryValidationYYYYMM() {
-        let yyyymm = "2023/12"
+        let yyyymm = "2028/12"
         
         let cardexpValidation = SkyflowValidateCardExpirationDate(format: "yyyy/mm", error: "Invalid Card expiration date")
         XCTAssertTrue(SkyflowValidator.validate(input: yyyymm, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)
@@ -292,7 +292,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let yearValidation = SkyflowValidateExpirationYear(format: "yy", error: SkyflowValidationErrorType.expirationYear.rawValue)
         
         XCTAssertFalse(yearValidation.validate("234"))
-        XCTAssertTrue(yearValidation.validate("23"))
+        XCTAssertTrue(yearValidation.validate("27"))
 
     }
     
