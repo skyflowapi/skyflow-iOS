@@ -26,6 +26,6 @@ Pod::Spec.new do |spec|
 
   spec.resource_bundles = {'Skyflow' => ['Sources/Skyflow/Resources/**/*.{xcassets}'] }
 
-  spec.dependency "AEXML"
+  spec.dependency "AEXML", '4.6.1'
 end
 
