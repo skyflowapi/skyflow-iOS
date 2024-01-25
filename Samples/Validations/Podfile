@@ -5,7 +5,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Validations' do
   #use_frameworks!
-
+  pod 'AEXML', "4.6.1" 
   # Pods for skyflow-iOS-sample-app
   pod 'Skyflow', ">= 1.22.0" 
 

@@ -7,6 +7,7 @@ target 'GetSample' do
   #use_frameworks!
 
   # Pods for GetSample
+  pod 'AEXML', "4.6.1" 
   pod 'Skyflow', ">= 1.22.0" 
 
 end
