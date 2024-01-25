@@ -1,6 +1,0 @@
-framework module Pods_InputFormattingTests {
-  umbrella header "Pods-InputFormattingTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
