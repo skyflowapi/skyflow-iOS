@@ -361,8 +361,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let skyflow = Client(
             Configuration(
-                vaultID: "vaultid",
-                vaultURL: "https://demo.com",
+                vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
+                vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
                 tokenProvider: InvalidTokenProvider()))
         
         let records: [[String: Any]] = [
