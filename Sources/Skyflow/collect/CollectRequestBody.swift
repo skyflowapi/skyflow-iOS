@@ -107,7 +107,7 @@ internal class CollectRequestBody {
                     }
                     if(!hasElementValueMatchRule)
                     {
-                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [element.tableName!, element.columnName]).getErrorObject(contextOptions: contextOptions))
+                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [ element.columnName, element.tableName!]).getErrorObject(contextOptions: contextOptions))
                         return nil
                     }
                     continue;

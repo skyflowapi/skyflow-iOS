@@ -271,7 +271,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["persons", "card_number"]).description)
+        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["card_number", "persons"]).description)
     }
     
     func testCreateRequestBodyDuplicatedAdditionalField() {
@@ -302,7 +302,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["persons", "cvv"]).description)
+        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["cvv", "persons"]).description)
     }
     
     func testCreateRequestBodyDuplicateInAdditionalFields() {
