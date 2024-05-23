@@ -65,7 +65,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: client insert - " + ErrorCodes.RECORDS_KEY_ERROR().description)
+        XCTAssertEqual(String(responseData), ErrorCodes.RECORDS_KEY_ERROR().description)
     }
     
     func testInvalidRecordsKeyInPayload() {
@@ -78,7 +78,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
-        XCTAssertEqual(String(responseData), "Interface: client insert - " + ErrorCodes.INVALID_RECORDS_TYPE().description)
+        XCTAssertEqual(String(responseData), ErrorCodes.INVALID_RECORDS_TYPE().description)
     }
     
     func testNoTableKeyInPayload() {
@@ -97,7 +97,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: client insert - " + ErrorCodes.TABLE_KEY_ERROR().description)
+        XCTAssertEqual(String(responseData), ErrorCodes.TABLE_KEY_ERROR(value: "\(0)").description)
     }
     
     func testInvalidTableNameType() {
@@ -117,7 +117,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: client insert - " + ErrorCodes.INVALID_TABLE_NAME_TYPE().description)
+        XCTAssertEqual(String(responseData),  ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "\(0)").description)
     }
     
     func testNoFieldsKeyInPayload() {
@@ -136,7 +136,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: client insert - " + ErrorCodes.FIELDS_KEY_ERROR().description)
+        XCTAssertEqual(String(responseData),  ErrorCodes.FIELDS_KEY_ERROR(value: "\(0)").description)
     }
     
     func testInvalidFieldsType() {
@@ -156,7 +156,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
         
-        XCTAssertEqual(String(responseData), "Interface: client insert - " + ErrorCodes.INVALID_FIELDS_TYPE().description)
+        XCTAssertEqual(String(responseData),  ErrorCodes.INVALID_FIELDS_TYPE(value: "\(0)").description)
     }
     
     func testContainerNoTableName() {
@@ -189,7 +189,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.EMPTY_TABLE_NAME_IN_COLLECT(value: ElementType.CARD_NUMBER.name).description)
+        XCTAssertEqual(responseData,  ErrorCodes.EMPTY_TABLE_NAME_IN_COLLECT().description)
         
     }
     
@@ -224,7 +224,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.EMPTY_COLUMN_NAME_IN_COLLECT(value: ElementType.CARD_NUMBER.name).description)
+        XCTAssertEqual(responseData,  ErrorCodes.EMPTY_COLUMN_NAME_IN_COLLECT().description)
         
     }
     
@@ -249,7 +249,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "card_number").description)
+        XCTAssertEqual(responseData,  ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "card_number").description)
     }
     
     func testCreateRequestBodyDuplicateElements() {
@@ -271,7 +271,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["persons", "card_number"]).description)
+        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["persons", "card_number"]).description)
     }
     
     func testCreateRequestBodyDuplicatedAdditionalField() {
@@ -302,7 +302,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["persons", "cvv"]).description)
+        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["persons", "cvv"]).description)
     }
     
     func testCreateRequestBodyDuplicateInAdditionalFields() {
@@ -338,7 +338,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData, "Interface: collect container - " + ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: ["persons", "duplicate"]).description)
+        XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: "duplicate").description)
     }
     
 }

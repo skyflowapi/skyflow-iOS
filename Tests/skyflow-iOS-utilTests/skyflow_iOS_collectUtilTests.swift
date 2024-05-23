@@ -35,7 +35,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         
         let result = callback.receivedResponse
-        XCTAssert(result.contains("Bad or missing URL"))
+        XCTAssert(result.contains("unsupported URL"))
     }
     
     func testGetRequestSession() {
@@ -134,7 +134,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             XCTFail("Not throwing on Api Error")
             
         } catch {
-            XCTAssertEqual(error.localizedDescription, "Interface:  - Internal Server Error - request-id: RID")
+            XCTAssertEqual(error.localizedDescription, "Internal Server Error - request-id: RID")
         }
     }
     
@@ -151,7 +151,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         container?.collect(callback: callback)
         
         wait(for: [expectation], timeout: 20.0)
-        XCTAssertTrue(callback.receivedResponse.contains("Invalid Bearer token"))
+        XCTAssertTrue(callback.receivedResponse.contains("Token generated from 'getBearerToken' callback function is invalid"))
     }
     func testGetDeviceDetails() {
         let device = UIDevice()

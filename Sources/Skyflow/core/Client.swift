@@ -45,30 +45,30 @@ public class Client {
 
         Log.info(message: .VALIDATE_RECORDS, contextOptions: tempContextOptions)
         if let recordEntries = records["records"] as? [[String: Any]] {
-            for record in recordEntries {
+            for (index, record) in recordEntries.enumerated() {
                 if record["table"] != nil {
                     if !(record["table"] is String) {
-                        errorCode = .INVALID_TABLE_NAME_TYPE()
+                        errorCode = .INVALID_TABLE_NAME_TYPE(value: "\(index)")
                     } else {
                         if (record["table"] as! String).isEmpty {
                             errorCode = .EMPTY_TABLE_NAME()
                         } else {
                             if record["fields"] != nil {
                                 if !(record["fields"] is [String: Any]) {
-                                    errorCode = .INVALID_FIELDS_TYPE()
+                                    errorCode = .INVALID_FIELDS_TYPE(value: "\(index)")
                                     break
                                 }
                                 let fields = record["fields"] as! [String: Any]
                                 if fields.isEmpty {
-                                    errorCode = .EMPTY_FIELDS_KEY()
+                                    errorCode = .EMPTY_FIELDS_KEY(value: "\(index)")
                                 }
                              } else {
-                                errorCode = .FIELDS_KEY_ERROR()
+                                errorCode = .FIELDS_KEY_ERROR(value: "\(index)")
                              }
                          }
                     }
                 } else {
-                    errorCode = .TABLE_KEY_ERROR()
+                    errorCode = .TABLE_KEY_ERROR(value: "\(index)")
                 }
             }
             if errorCode != nil {
@@ -118,17 +118,17 @@ public class Client {
     public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
-        func checkRecord(_ token: [String: Any]) -> ErrorCodes? {
+        func checkRecord(token: [String: Any], index: Int) -> ErrorCodes? {
                if token["redaction"] != nil {
                    guard let _ = token["redaction"] as? RedactionType else {
-                       return .INVALID_REDACTION_TYPE(value: String(describing: token["redaction"]!))
+                       return .INVALID_REDACTION_TYPE()
                    }
                }
                 if token["token"] == nil {
                     return .ID_KEY_ERROR()
                 } else {
                     guard let _ = token["token"] as? String else {
-                        return .INVALID_TOKEN_TYPE()
+                        return .INVALID_TOKEN_TYPE(value: "\(index)")
                     }
                 }
             return nil
@@ -154,8 +154,8 @@ public class Client {
             if tokens.isEmpty {
                 return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions))
             }
-            for token in tokens {
-                let errorCode = checkRecord(token)
+            for (index,token) in tokens.enumerated() {
+                let errorCode = checkRecord(token: token, index: index)
                 if errorCode == nil, let id = token["token"] as? String {
                     if token["redaction"] == nil{
                         list.append(RevealRequestRecord(token: id, redaction: RedactionType.PLAIN_TEXT.rawValue))
@@ -193,41 +193,41 @@ public class Client {
         }
         Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: tempContextOptions)
 
-        func checkEntry(entry: [String: Any]) -> ErrorCodes? {
+        func checkEntry(entry: [String: Any], index: Int) -> ErrorCodes? {
             if entry.isEmpty {
                 return .EMPTY_RECORDS_OBJECT()
             }
             if entry["ids"] == nil {
-                return .MISSING_KEY_IDS()
+                return .MISSING_KEY_IDS(value: "\(index)")
             }
             if !(entry["ids"] is [String]) {
                 return .INVALID_IDS_TYPE()
             }
             if ((entry["ids"] as? [String])?.count == 0) {
-                return .EMPTY_IDS()
+                return .EMPTY_IDS(value: "\(index)")
             }
             let ids = entry["ids"] as! [String]
             for id in ids {
                 if (id == "") {
-                    return .EMPTY_ID_VALUE()
+                    return .EMPTY_ID_VALUE(value: "\(index)")
                 }
             }
             if entry["table"] == nil {
-                return .TABLE_KEY_ERROR()
+                return .TABLE_KEY_ERROR(value: "\(index)")
             }
             if !(entry["table"] is String) {
-                return .INVALID_TABLE_NAME_TYPE()
+                return .INVALID_TABLE_NAME_TYPE(value: "\(index)")
             }
             if ((entry["table"] as? String) == "") {
                 return .EMPTY_TABLE_NAME()
             }
             if entry["redaction"] == nil {
-                return .REDACTION_KEY_ERROR()
+                return .REDACTION_KEY_ERROR(value: "\(index)")
             }
             if (entry["redaction"] as? RedactionType) != nil {
                 return nil
             } else {
-                return .INVALID_REDACTION_TYPE(value: entry["redaction"] as! String)
+                return .INVALID_REDACTION_TYPE()
             }
         }
 
@@ -240,8 +240,8 @@ public class Client {
             if entries.isEmpty {
                 return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions))
             }
-            for entry in entries {
-                let errorCode = checkEntry(entry: entry)
+            for (index, entry) in entries.enumerated() {
+                let errorCode = checkEntry(entry: entry, index: index)
                 if errorCode != nil {
                     return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 } else {
@@ -284,8 +284,8 @@ public class Client {
             if entries.isEmpty {
                 return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions))
             }
-            for entry in entries {
-                let errorCode = validateGetRecords(entry: entry, getOptions: options)
+            for (index,entry) in entries.enumerated() {
+                let errorCode = validateGetRecords(entry: entry, getOptions: options, index: index)
                 if errorCode != nil {
                     return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 } else {
@@ -313,7 +313,7 @@ public class Client {
             callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
-    internal func validateGetRecords(entry: [String: Any], getOptions: GetOptions) -> ErrorCodes? {
+    internal func validateGetRecords(entry: [String: Any], getOptions: GetOptions, index: Int) -> ErrorCodes? {
         if entry.isEmpty {
             return .EMPTY_RECORDS_OBJECT()
         }
@@ -322,20 +322,20 @@ public class Client {
                 return .INVALID_IDS_TYPE()
             }
             if ((entry["ids"] as? [String])?.count == 0) {
-                return .EMPTY_IDS()
+                return .EMPTY_IDS(value: "\(index)")
             }
             let ids = entry["ids"] as! [String]
             for id in ids {
                 if (id == "") {
-                    return .EMPTY_ID_VALUE()
+                    return .EMPTY_ID_VALUE(value: "\(index)")
                 }
             }
         }
         if entry["table"] == nil {
-            return .TABLE_KEY_ERROR()
+            return .TABLE_KEY_ERROR(value: "\(index)")
         }
         if !(entry["table"] is String) {
-            return .INVALID_TABLE_NAME_TYPE()
+            return .INVALID_TABLE_NAME_TYPE(value: "\(index)")
         }
         if ((entry["table"] as? String) == "") {
             return .EMPTY_TABLE_NAME()
@@ -351,9 +351,9 @@ public class Client {
             }
         } else {
             if entry["redaction"] == nil {
-                return .REDACTION_KEY_ERROR()
+                return .REDACTION_KEY_ERROR(value: "\(index)")
             } else if (entry["redaction"] as? RedactionType) == nil {
-                return .INVALID_REDACTION_TYPE(value: String(describing: entry["redaction"]))
+                return .INVALID_REDACTION_TYPE()
             }
         }
                 
@@ -364,24 +364,24 @@ public class Client {
         } else if (entry["columnName"] != nil && entry["columnValues"] == nil){
             return .MISSING_RECORD_COLUMN_VALUE()
         } else if !(entry["columnName"] is String){
-            return .INVALID_COLUMN_NAME()
+            return .INVALID_COLUMN_NAME(value: "\(index)")
         } else if ((entry["ids"] != nil) && (entry["columnName"] != nil)){
             return .SKYFLOW_IDS_AND_COLUMN_NAME_BOTH_SPECIFIED()
         }
         if (entry["columnValues"] != nil){
             if ((entry["columnValues"] as? [String])?.count == 0) {
-                return .EMPTY_RECORD_COLUMN_VALUES()
+                return .EMPTY_RECORD_COLUMN_VALUES(value: "\(index)")
             }
             if !(entry["columnValues"] is [String]) {
                 return .INVALID_COLUMN_VALUES_IN_GET()
             }
             if ((entry["columnValues"] as? [String])?.count == 0) {
-                return .EMPTY_RECORD_COLUMN_VALUES()
+                return .EMPTY_RECORD_COLUMN_VALUES(value: "\(index)")
             }
             let columnValues = entry["columnValues"] as! [String]
             for columnValue in columnValues {
                 if (columnValue == "") {
-                    return .EMPTY_COLUMN_VALUE()
+                    return .EMPTY_COLUMN_VALUE(value: "\(index)")
                 }
             }
             if( entry["columnName"] == nil ){

@@ -21,7 +21,7 @@ internal class CollectRequestBody {
                     let tableSetEntry = tableName + "-" + (prefix == "" ? key : prefix + "." + key)
                     if tableSet.contains(tableSetEntry) {
                         if !self.breakFlag {
-                            self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).getErrorObject(contextOptions: contextOptions))
+                            self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: key).getErrorObject(contextOptions: contextOptions))
                             self.breakFlag = true
                             return
                         }
@@ -43,7 +43,7 @@ internal class CollectRequestBody {
                     mergedDict[keyPath: keypath] = val
                 } else {
                     if !self.breakFlag {
-                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(values: [tableName, key]).getErrorObject(contextOptions: contextOptions))
+                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: key).getErrorObject(contextOptions: contextOptions))
                         self.breakFlag = true
                         return
                     }

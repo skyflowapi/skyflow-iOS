@@ -23,6 +23,6 @@ internal class Log {
         }
     }
     internal static func error(message: String, values: [String] = [], contextOptions: ContextOptions) {
-        print("ERROR: [Skyflow] Interface: \(contextOptions.interface.description) - \(message)")
+        print("ERROR: [Skyflow]: \(message)")
     }
 }
