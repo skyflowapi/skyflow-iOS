@@ -167,6 +167,7 @@ class RevealByIDAPICallback: Callback {
             for entry in jsonDataArray {
                 var entryDict = self.buildFieldsDict(dict: entry)
                 entryDict["table"] = record.table
+                entryDict.removeValue(forKey: "tokens")
                 outputArray.append(entryDict)
             }
         }

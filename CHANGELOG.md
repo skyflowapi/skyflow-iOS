@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22.1] - 2024-01-25
+
+### Fixed
+- Fixed multiple column names error with unique column values in `get` interface.
+
 ## [1.22.0] - 2023-10-06
 
 ### Added

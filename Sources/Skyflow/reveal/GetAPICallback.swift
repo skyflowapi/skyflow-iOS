@@ -90,11 +90,11 @@ class GetAPICallback: Callback {
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
         var temp: [String: Any] = [:]
         for (key, val) in dict {
-            if let v = val as? [String: Any] {
-                temp[key] = buildFieldsDict(dict: v)
-            } else {
-                temp[key] = val
-            }
+                if let v = val as? [String: Any] {
+                    temp[key] = buildFieldsDict(dict: v)
+                } else {
+                    temp[key] = val
+                }
         }
         return temp
     }
@@ -133,10 +133,13 @@ class GetAPICallback: Callback {
                 urlComponents?.queryItems?.append(URLQueryItem(name: "skyflow_ids", value: id))
             }
         } else if record.columnValues != nil && record.columnName != nil{
-            
-            for columnValue in record.columnValues! {
-                urlComponents?.queryItems?.append(URLQueryItem(name: "column_name", value: record.columnName))
-                urlComponents?.queryItems?.append(URLQueryItem(name: "column_values", value: columnValue))
+            if let array = record.columnValues {
+                for (index, value) in array.enumerated() {
+                    if index == 0 {
+                        urlComponents?.queryItems?.append(URLQueryItem(name: "column_name", value: record.columnName))
+                    }
+                    urlComponents?.queryItems?.append(URLQueryItem(name: "column_values", value: value))
+                }
             }
         }
         if(record.redaction != nil && getOptions.tokens == false){
@@ -186,6 +189,7 @@ class GetAPICallback: Callback {
             for entry in jsonDataArray {
                 var entryDict = self.buildFieldsDict(dict: entry)
                 entryDict["table"] = record.table
+                entryDict.removeValue(forKey: "tokens")
                 outputArray.append(entryDict)
             }
         }
