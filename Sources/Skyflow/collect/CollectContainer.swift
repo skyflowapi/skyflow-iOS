@@ -72,8 +72,8 @@ public extension Container {
                     errorCode = .EMPTY_RECORDS_OBJECT()
                     return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 }
-                for record in additionalFieldEntries {
-                    errorCode = checkRecord(record: record)
+                for (index, record) in additionalFieldEntries.enumerated() {
+                    errorCode = checkRecord(record: record, index: index)
                     if errorCode != nil {
                         return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                     }
@@ -105,10 +105,10 @@ public extension Container {
 
     private func checkElement(element: TextField) -> ErrorCodes? {
         if element.collectInput.table.isEmpty {
-            return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type?.name ?? element.fieldType.name)
+            return .EMPTY_TABLE_NAME_IN_COLLECT()
         }
         if element.collectInput.column.isEmpty {
-            return .EMPTY_COLUMN_NAME_IN_COLLECT(value: element.collectInput.type?.name ?? element.fieldType.name)
+            return .EMPTY_COLUMN_NAME_IN_COLLECT()
         }
         if !element.isMounted() {
             return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
@@ -117,25 +117,25 @@ public extension Container {
         return nil
     }
 
-    private func checkRecord(record: [String: Any]) -> ErrorCodes? {
+    private func checkRecord(record: [String: Any], index: Int) -> ErrorCodes? {
         if record["table"] == nil {
-            return .TABLE_KEY_ERROR()
+            return .TABLE_KEY_ERROR(value: "\(index)")
         }
         if !(record["table"] is String) {
-            return .INVALID_TABLE_NAME_TYPE()
+            return .INVALID_TABLE_NAME_TYPE(value: "\(index)")
         }
         if (record["table"] as? String == "") {
             return .EMPTY_TABLE_NAME()
         }
         if record["fields"] == nil {
-            return .FIELDS_KEY_ERROR()
+            return .FIELDS_KEY_ERROR(value: "\(index)")
         }
         if !(record["fields"] is [String: Any]) {
-            return .INVALID_FIELDS_TYPE()
+            return .INVALID_FIELDS_TYPE(value: "\(index)")
         }
         let fields = record["fields"] as! [String: Any]
         if (fields.isEmpty){
-            return .EMPTY_FIELDS_KEY()
+            return .EMPTY_FIELDS_KEY(value: "\(index)")
         }
 
         return nil

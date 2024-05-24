@@ -186,17 +186,17 @@ public extension Container {
         
         if let options = containerOptions {
             if (options.layout.count == 0) {
-                throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(tempContextOptions.interface.description) - \(ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().description)" ])
+                throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().description)" ])
             }
 
             for i in 0..<(options.layout.count) {
                 totalCount += (options.layout[i])
             }
         } else {
-            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(tempContextOptions.interface.description) - \(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().description)" ])
+            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().description)" ])
         }
         if (elements.count < totalCount || totalCount < elements.count){
-            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(tempContextOptions.interface.description) - \(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ])
+            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ])
         }
 
         let view = createDynamicViews(layout: (containerOptions?.layout)!)
@@ -256,8 +256,8 @@ public extension Container {
                         errorCode = .EMPTY_RECORDS_OBJECT()
                         return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                     }
-                    for record in additionalFieldEntries {
-                        errorCode = checkRecord(record: record)
+                    for (index, record) in additionalFieldEntries.enumerated() {
+                        errorCode = checkRecord(record: record, index: index)
                         if errorCode != nil {
                             return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                         }
@@ -289,10 +289,10 @@ public extension Container {
         
         private func checkElement(element: TextField) -> ErrorCodes? {
             if element.collectInput.table.isEmpty {
-                return .EMPTY_TABLE_NAME_IN_COLLECT(value: element.collectInput.type?.name ?? "composable element")
+                return .EMPTY_TABLE_NAME_IN_COLLECT()
             }
             if element.collectInput.column.isEmpty {
-                return .EMPTY_COLUMN_NAME_IN_COLLECT(value: element.collectInput.type?.name ?? "composable element")
+                return .EMPTY_COLUMN_NAME_IN_COLLECT()
             }
             if !element.isMounted() {
                 return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
@@ -301,25 +301,25 @@ public extension Container {
             return nil
         }
         
-        private func checkRecord(record: [String: Any]) -> ErrorCodes? {
+    private func checkRecord(record: [String: Any], index: Int) -> ErrorCodes? {
             if record["table"] == nil {
-                return .TABLE_KEY_ERROR()
+                return .TABLE_KEY_ERROR(value: "\(index)")
             }
             if !(record["table"] is String) {
-                return .INVALID_TABLE_NAME_TYPE()
+                return .INVALID_TABLE_NAME_TYPE(value: "\(index)")
             }
             if (record["table"] as? String == "") {
                 return .EMPTY_TABLE_NAME()
             }
             if record["fields"] == nil {
-                return .FIELDS_KEY_ERROR()
+                return .FIELDS_KEY_ERROR(value: "\(index)")
             }
             if !(record["fields"] is [String: Any]) {
-                return .INVALID_FIELDS_TYPE()
+                return .INVALID_FIELDS_TYPE(value: "\(index)")
             }
             let fields = record["fields"] as! [String: Any]
             if (fields.isEmpty){
-                return .EMPTY_FIELDS_KEY()
+                return .EMPTY_FIELDS_KEY(value: "\(index)")
             }
             
             return nil

@@ -186,7 +186,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         
         wait(for: [expectFailure], timeout: 10.0)
         
-        XCTAssertEqual(callback.receivedResponse, "Interface: reveal container - \(errorMessage)")
+        XCTAssertEqual(callback.receivedResponse, "\(errorMessage)")
         
     }
     

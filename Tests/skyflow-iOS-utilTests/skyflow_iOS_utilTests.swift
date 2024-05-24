@@ -23,8 +23,8 @@ final class skyflow_iOS_utilTests: XCTestCase {
             try "abcdef".getFirstRegexMatch(of: "9$", contextOptions: ContextOptions())
             XCTFail()
         } catch {
-            XCTAssertEqual((error as! NSError).code, ErrorCodes.REGEX_MATCH_FAILED(value: "9$").code)
-            XCTAssert((error as NSError).localizedDescription.contains( ErrorCodes.REGEX_MATCH_FAILED(value: "9$").description))
+            XCTAssertEqual((error as! NSError).code, ErrorCodes.REGEX_MATCH_FAILED().code)
+            XCTAssert((error as NSError).localizedDescription.contains( ErrorCodes.REGEX_MATCH_FAILED().description))
         }
     }
     
