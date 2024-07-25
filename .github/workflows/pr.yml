@@ -35,16 +35,16 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
         
-      - name: Select Xcode 13
-        run: sudo xcode-select --switch /Applications/Xcode_13.3.app/Contents/Developer
+      - name: Select Xcode 14
+        run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app/Contents/Developer
       
-      - name: Prepare iOS 13 Simulator
+      - name: Prepare iOS 16 Simulator
         run: sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
-             sudo ln -s /Applications/Xcode_11.7.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 13.6.simruntime
+             sudo ln -s /Applications/Xcode_14.3.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 16.4.simruntime
              xcrun simctl list runtimes
       
       - name: Build and Test
-        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=15.4,name=iPhone 11" VAULT_URL="${{ secrets.VAULT_URL }}" CAVV_TEST_TOKEN="${{ secrets.CAVV_TEST_TOKEN }}" PULL_FUNDS_INTEGRATION_CONNECTION_URL="${{ secrets.PULL_FUNDS_INTEGRATION_CONNECTION_URL }}" CVV_INTEGRATION_PATH="${{ secrets.CVV_INTEGRATION_PATH }}" CVV_INTEGRATION_CONNECTION_URL="${{ secrets.CVV_INTEGRATION_CONNECTION_URL }}" CONNECTION_URL="${{ secrets.CONNECTION_URL }}" TEST_EXPIRATION_DATE_TOKEN="${{ secrets.TEST_EXPIRATION_DATE_TOKEN }}" TEST_CARD_NUMBER="${{ secrets.TEST_CARD_NUMBER }}" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="${{ secrets.TEST_SKYFLOW_ID3 }}" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" DETOKENIZE_TEST_TOKEN="${{ secrets.DETOKENIZE_TEST_TOKEN }}" DETOKENIZE_TEST_VALUE="${{ secrets.DETOKENIZE_TEST_VALUE }}" TOKEN_ENDPOINT="${{ secrets.TOKEN_ENDPOINT }}" PULL_FUNDS_INTEGRATION_ID="${{ secrets.PULL_FUNDS_INTEGRATION_ID }}" VISA_BASIC_AUTH="${{ secrets.VISA_BASIC_AUTH }}" CVV_INTEGRATION_ID="${{ secrets.CVV_INTEGRATION_ID }}" VAULT_ID="${{ secrets.VAULT_ID }}" -quiet test        
+        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=16.4,name=iPhone 14" VAULT_URL="${{ secrets.VAULT_URL }}" CAVV_TEST_TOKEN="${{ secrets.CAVV_TEST_TOKEN }}" PULL_FUNDS_INTEGRATION_CONNECTION_URL="${{ secrets.PULL_FUNDS_INTEGRATION_CONNECTION_URL }}" CVV_INTEGRATION_PATH="${{ secrets.CVV_INTEGRATION_PATH }}" CVV_INTEGRATION_CONNECTION_URL="${{ secrets.CVV_INTEGRATION_CONNECTION_URL }}" CONNECTION_URL="${{ secrets.CONNECTION_URL }}" TEST_EXPIRATION_DATE_TOKEN="${{ secrets.TEST_EXPIRATION_DATE_TOKEN }}" TEST_CARD_NUMBER="${{ secrets.TEST_CARD_NUMBER }}" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="${{ secrets.TEST_SKYFLOW_ID3 }}" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" DETOKENIZE_TEST_TOKEN="${{ secrets.DETOKENIZE_TEST_TOKEN }}" DETOKENIZE_TEST_VALUE="${{ secrets.DETOKENIZE_TEST_VALUE }}" TOKEN_ENDPOINT="${{ secrets.TOKEN_ENDPOINT }}" PULL_FUNDS_INTEGRATION_ID="${{ secrets.PULL_FUNDS_INTEGRATION_ID }}" VISA_BASIC_AUTH="${{ secrets.VISA_BASIC_AUTH }}" CVV_INTEGRATION_ID="${{ secrets.CVV_INTEGRATION_ID }}" VAULT_ID="${{ secrets.VAULT_ID }}" -quiet test        
         
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
