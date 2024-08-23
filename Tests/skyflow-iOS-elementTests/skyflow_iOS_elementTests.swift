@@ -316,5 +316,143 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertTrue(yearValidation.validate("01"))
 
     }
+    func getElementForDropDownTesting()-> TextField {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111"
+
+        return textField
+    }
+    func testDropdownVisible() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes?.count == 2)
+        XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
+        XCTAssertTrue(textField.dropdownIcon.isHidden == false)
+    }
+    func testDropdownNotVisible() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": []]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes == nil)
+        XCTAssertEqual(textField.listCardTypes, nil)
+        XCTAssertTrue(textField.dropdownIcon.isHidden)
+    }
+    func testDropdownNotVisibleOneScheme() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX]]))
+        XCTAssertTrue(textField.dropdownIcon.isHidden)
+    }
+    func testDropdownClick() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertFalse(textField.dropdownIcon.isHidden)
+        textField.dropdownButtonTapped()
+        XCTAssertFalse(textField.tableView.isHidden)
+        XCTAssertFalse(textField.tableViewContainer.isHidden)
+    }
+    func testDropdownClickHideDropDown() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        textField.dropdownButtonTapped()
+        let mockWindow = UIWindow(frame: UIScreen.main.bounds)
+        mockWindow.makeKeyAndVisible()
+        mockWindow.addSubview(textField)
+
+        textField.showDropdown()
+        let expectation = self.expectation(description: "Wait for hideDropdown animation")
+        
+        textField.hideDropdown()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            XCTAssertEqual(self.textField.tableViewContainer.frame.size.height, 0)
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+        XCTAssertTrue(textField.tableView.isHidden)
+        XCTAssertTrue(textField.tableViewContainer.isHidden)
+    }
+    func testNumberOfRowsInSection() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+
+        let expectedRows = textField.listCardTypes?.count
+        let numberOfRows = textField.tableView(textField.tableView, numberOfRowsInSection: 0)
+        XCTAssertEqual(numberOfRows, expectedRows)
+    }
+
+    func testCellForRowAtIndexPath() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+
+        var indexPath = IndexPath(row: 0, section: 0)
+        var cell = textField.tableView(textField.tableView, cellForRowAt: indexPath) as? CustomTableViewCell
+        XCTAssertNotNil(cell, "Cell should not be nil")
+        XCTAssertEqual(cell?.customTextLabel.text, CardType.AMEX.instance.defaultName)
+        indexPath = IndexPath(row: 1, section: 0)
+        cell = textField.tableView(textField.tableView, cellForRowAt: indexPath) as? CustomTableViewCell
+        XCTAssertNotNil(cell, "Cell should not be nil")
+        XCTAssertEqual(cell?.customTextLabel.text, CardType.VISA.instance.defaultName)
+    }
+    func testDidSelectRowAt() {
+        let textField = getElementForDropDownTesting()
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+
+         let indexPath = IndexPath(row: 1, section: 0)
+         textField.tableView(textField.tableView, didSelectRowAt: indexPath)
+         let selectedCard = textField.selectedCardBrand?.instance.defaultName
+         XCTAssertEqual(selectedCard, "Visa", "Selected card brand should be updated correctly")
+
+         let cardIconName = textField.selectedCardBrand?.instance.imageName
+         XCTAssertEqual(cardIconName, "Visa-Card", "Card icon should update to match the selected card")
+     }
+
+     func testHideDropdownOnSelection() {
+         let textField = getElementForDropDownTesting()
+         textField.textFieldDidEndEditing(textField.textField)
+         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+
+         textField.showDropdown() // Assuming this method shows the dropdown
+         XCTAssertFalse(textField.tableView.isHidden, "Table view should be visible before selection")
+
+         let indexPath = IndexPath(row: 1, section: 0)
+         textField.tableView(textField.tableView, didSelectRowAt: indexPath)
+
+         XCTAssertTrue(textField.tableView.isHidden, "Table view should be hidden after selection")
+     }
+    func testCustomTableViewCellLayoutSubviews() {
+        let textField = getElementForDropDownTesting()
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+
+        textField.showDropdown() // Assuming this method shows the dropdown
+        let cell = CustomTableViewCell(style: .default, reuseIdentifier: "CustomCell")
+
+        cell.layoutSubviews()
+
+        XCTAssertEqual(cell.separatorInset, UIEdgeInsets.zero, "Separator inset should be zero")
+        XCTAssertEqual(cell.layoutMargins, UIEdgeInsets.zero, "Layout margins should be zero")
+        XCTAssertFalse(cell.preservesSuperviewLayoutMargins, "PreservesSuperviewLayoutMargins should be false")
+        cell.configure(with: "Visa", isSelected: true)
+        cell.customImageView.image = UIImage(named: "checkmark")
+        let customImageViewFrame = cell.customImageView.frame
+        cell.configure(with: "Amex", isSelected: false)
+
+    }
 
 }
