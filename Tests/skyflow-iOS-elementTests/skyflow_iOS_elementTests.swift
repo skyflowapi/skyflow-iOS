@@ -323,6 +323,18 @@ class skyflow_iOS_elementTests: XCTestCase {
 
         return textField
     }
+    func getElementForDropDownTestingRightIcon()-> TextField {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: true, enableCopy: true), contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111"
+        return textField
+    }
+    func getElementOfOtherType()-> TextField {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CVV)
+        let textField = TextField(input: collectInput, options: CollectElementOptions(enableCopy: true), contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "1234"
+        return textField
+    }
     func testDropdownVisible() {
         let textField = getElementForDropDownTesting()
 
@@ -333,7 +345,63 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
         XCTAssertTrue(textField.dropdownIcon.isHidden == false)
     }
+    func testDropdownVisibleWhenCardPosIsRight() {
+        let textField = getElementForDropDownTestingRightIcon()
+        
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes?.count == 2)
+        XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
+        XCTAssertTrue(textField.dropdownIcon.isHidden == false)
+    }
+    func testDropdownNotVisibleWhenCardPosIsRight() {
+        let textField = getElementForDropDownTestingRightIcon()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes != nil)
+        XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
+        XCTAssertFalse(textField.dropdownIcon.isHidden)
+        
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": []]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes == nil)
+        XCTAssertEqual(textField.listCardTypes, nil)
+        XCTAssertTrue(textField.dropdownIcon.isHidden)
+    }
+    func testEnableCopyForOtherElements() {
+        let textField = getElementOfOtherType()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertEqual(textField.listCardTypes, nil)
+        XCTAssertFalse(textField.dropdownIcon.isHidden)
+        
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": []]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes == nil)
+        XCTAssertEqual(textField.listCardTypes, nil)
+    }
     func testDropdownNotVisible() {
+        let textField = getElementForDropDownTesting()
+
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes != nil)
+        XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
+        XCTAssertFalse(textField.dropdownIcon.isHidden)
+        
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": []]))
+        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertTrue(textField.listCardTypes == nil)
+        XCTAssertEqual(textField.listCardTypes, nil)
+        XCTAssertTrue(textField.dropdownIcon.isHidden)
+    }
+    func testDropdownUpdateOptions() {
         let textField = getElementForDropDownTesting()
 
         textField.textFieldDidEndEditing(textField.textField)
@@ -450,9 +518,59 @@ class skyflow_iOS_elementTests: XCTestCase {
         XCTAssertFalse(cell.preservesSuperviewLayoutMargins, "PreservesSuperviewLayoutMargins should be false")
         cell.configure(with: "Visa", isSelected: true)
         cell.customImageView.image = UIImage(named: "checkmark")
-        let customImageViewFrame = cell.customImageView.frame
+        _ = cell.customImageView.frame
         cell.configure(with: "Amex", isSelected: false)
-
+    }
+    class TestableTextField: TextField {
+        var testTopmostWindow: UIWindow?
+        
+        override func getTopmostWindow() -> UIWindow? {
+            return testTopmostWindow ?? super.getTopmostWindow()
+        }
     }
 
+    func getElementForDropDownTestingWindow() -> TestableTextField {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TestableTextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111"
+        return textField
+    }
+    func testShowDropdown() {
+        let textField = getElementForDropDownTestingWindow()
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        
+        textField.tableView.isHidden = true
+        textField.tableViewContainer.isHidden = true
+        textField.listCardTypes = [.AMEX, .CARTES_BANCAIRES, .DINERS_CLUB] // Mock some data
+        
+        let testWindow = UIWindow()
+        textField.testTopmostWindow = testWindow // Inject the test window
+        textField.showDropdown()
+        
+        XCTAssertFalse(textField.tableView.isHidden)
+        XCTAssertFalse(textField.tableViewContainer.isHidden)
+        
+        XCTAssertEqual(textField.tableViewContainer.superview, testWindow)
+        
+        let expectedHeight = CGFloat(textField.listCardTypes!.count * 51)
+        XCTAssertEqual(textField.tableView.frame.size.height, expectedHeight)
+        XCTAssertEqual(textField.tableViewContainer.frame.size.height, expectedHeight)
+    }
+    func testDisableCardIconWhenEnableCopyTrue(){
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: false, enableCopy: true), contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111"
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertTrue(textField.cardIconContainerView.isHidden)
+    }
+    func testDisableCardIconWhenEnableCopyFalse(){
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: false, enableCopy: false), contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111"
+        textField.textFieldDidEndEditing(textField.textField)
+        XCTAssertTrue(textField.cardIconContainerView.isHidden)
+    }
+    
+    
 }
