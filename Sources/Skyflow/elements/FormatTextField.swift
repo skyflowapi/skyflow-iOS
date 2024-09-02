@@ -23,8 +23,6 @@ internal class FormatTextField: UITextField {
      */
     var formatPattern: String = ""
     
-    var cardIconPosition: CardIconAlignment = .left
-
     /** used for text with format pattern*/
     var textwithFormatPattern = ""
 
@@ -82,11 +80,6 @@ internal class FormatTextField: UITextField {
     internal var padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
     override open func textRect(forBounds bounds: CGRect) -> CGRect {
-        if cardIconPosition == .right {
-            var newBound = CGRect(x: 0, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
-            newBound.origin.x = 15
-            return newBound
-        }
         if super.rightViewMode == .always {
             let newBound = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
             return newBound
@@ -97,20 +90,10 @@ internal class FormatTextField: UITextField {
     }
 
     override open func placeholderRect(forBounds bounds: CGRect) -> CGRect {
-        if cardIconPosition == .right {
-            var newBound = CGRect(x: 0, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
-            newBound.origin.x = 15
-            return newBound
-        }
         return bounds.inset(by: padding)
     }
 
     override open func editingRect(forBounds bounds: CGRect) -> CGRect {
-        if cardIconPosition == .right {
-            var newBound = CGRect(x: 0, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
-            newBound.origin.x = 15
-            return newBound
-        }
         if super.rightViewMode == .always {
             let newBound = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
             return newBound

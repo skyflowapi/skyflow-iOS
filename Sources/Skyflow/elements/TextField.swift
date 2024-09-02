@@ -93,7 +93,6 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
         self.userValidationRules.append(input.validations)
         self.textFieldDelegate = TextFieldValidationDelegate(collectField: self)
         self.textField.delegate = self.textFieldDelegate!
-        self.textField.cardIconPosition = collectInput.iconStyles.base?.cardIconAlignment ?? .left
         setFormatPattern()
         setupField()
         let formatNotSupportedElements = [ElementType.CARDHOLDER_NAME, ElementType.EXPIRATION_MONTH, ElementType.CVV, ElementType.PIN]
@@ -255,22 +254,25 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
     }
     // new code
     public func update(updateOptions: CollectElementOptions){
-        if(updateOptions.cardMetaData != nil){
+        if(updateOptions.cardMetaData != nil && self.fieldType == .CARD_NUMBER){
             self.options.cardMetaData = updateOptions.cardMetaData
 
             if let schemes = self.options.cardMetaData?["scheme"] as? [Skyflow.CardType] {
                 if schemes.isEmpty {
                     selectedCardBrand = nil
+                    listCardTypes = nil
+                
                 } else {
                     for _ in schemes {
                         listCardTypes = schemes
-                        let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
-                        let card = CardType.forCardNumber(cardNumber: t).instance
-                        updateImage(name: card.imageName, cardNumber: t)
                     }
                 }
+                let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+                let card = CardType.forCardNumber(cardNumber: t).instance
+                updateImage(name: card.imageName, cardNumber: t)
             }
         }
+        
     }
     // MARK: - UITableViewDelegate and UITableViewDataSource
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -457,26 +459,30 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
                 rightViewForIcons.addSubview(cardIconContainerView)
                 textField.rightViewMode =  UITextField.ViewMode.always
                 textField.rightView = rightViewForIcons
-                
             }
+        } else if self.fieldType == .CARD_NUMBER, !self.options.enableCardIcon {
+            cardIconContainerView.isHidden = true
         }
         if self.options.enableCopy {
             textField.rightViewMode =  UITextField.ViewMode.always
             addCopyIcon()
-            if(cardIconAlignment == .left && self.options.enableCardIcon){
-                textField.rightView = copyContainerView
-                textField.rightView?.isHidden = true
-            } else {
-                
-                if !self.options.enableCardIcon {
-                    textField.rightViewMode =  UITextField.ViewMode.always
-                    textField.rightView = rightViewForIcons
-                    
-                } else {
+            if (self.fieldType == .CARD_NUMBER) {
+                if self.options.enableCardIcon && cardIconAlignment == .left{
+                    textField.rightView = copyContainerView
+                    textField.rightView?.isHidden = true
+                } else if self.options.enableCardIcon && cardIconAlignment == .right {
                     copyContainerView.isHidden = true
                     copyContainerView.frame = CGRect(x: 65, y: 6, width: 30, height: Int(copyContainerView.frame.height))
                     rightViewForIcons.addSubview(copyContainerView)
+                } else {
+                    textField.rightViewMode =  UITextField.ViewMode.always
+                    copyContainerView.isHidden = true
+                    textField.rightView = copyContainerView
+                    cardIconContainerView.isHidden = true
                 }
+            } else {
+                textField.rightView = copyContainerView
+                textField.rightView?.isHidden = true
             }
         }
 
@@ -505,13 +511,10 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
         copyIconImageView?.image = image
         copyIconImageView?.contentMode = .scaleAspectFit
         copyContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 24 , height: 24))
-        copyContainerView.layer.borderColor = UIColor.black.cgColor
-        copyContainerView.layer.borderWidth = 1.0
         copyContainerView.addSubview(copyIconImageView!)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copyIconTapped(_:)))
         copyContainerView.isUserInteractionEnabled = true
         copyContainerView.addGestureRecognizer(tapGesture)
-//        return containerView
     }
     @objc private func copyIconTapped(_ sender: UITapGestureRecognizer) {
         // Copy text when the copy icon is tapped
@@ -588,12 +591,24 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
             if (listCardTypes!.count >= 2){
                 dropdownIcon.isHidden = false
                 getDropDownIcon()
-                imageView.frame = CGRect(x: 0, y: 5, width: 40 + (0), height: 24)
-                containerView.frame = CGRect(x: 0, y: 0, width: 80, height: 40)
+                imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 24)
+                dropdownIcon.frame = CGRect(x: 0, y: 0, width: 12, height: 15)
+                imageView.center = CGPoint(x: containerView.frame.width / 2 - dropdownIcon.frame.width / 2,
+                                           y: containerView.frame.height / 2)
+                dropdownIcon.center = CGPoint(x: imageView.frame.maxX + dropdownIcon.frame.width / 2 + 7,
+                                              y: containerView.frame.height / 2)
+                containerView.frame = CGRect(x: 0, y: 0, width: max(imageView.frame.maxX, dropdownIcon.frame.maxX), height: 40)
+                if (cardIconAlignment == .left){
+                    textField.padding.left = 70
+                }
                 containerView.addSubview(dropdownIcon)
             } else {
                 dropdownIcon.isHidden = true
                 dropdownIcon.removeFromSuperview()
+                if (cardIconAlignment == .left){
+                    textField.padding.left = 60
+                }
+
                 imageView.center = containerView.center
             }
         }
@@ -615,9 +630,13 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
                 textField.leftViewMode = .always
                 textField.leftView = cardIconContainerView
             } else {
+                if (dropdownIcon.isHidden){
+                    cardIconContainerView.frame = CGRect(x: 0, y: 0, width: containerView.frame.width + 5, height: 40)
+                } else {
+                    cardIconContainerView.frame = CGRect(x: 0, y: 0, width: containerView.frame.width + dropdownIcon.frame.width + 5, height: 40)
+                }
                 textField.rightView = cardIconContainerView
                 textField.rightViewMode = .always
-                
             }
             
         }
@@ -800,7 +819,7 @@ extension TextField {
 
         self.textField.tintColor = style?.cursorColor ?? fallbackStyle?.cursorColor ?? UIColor.black
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
+        if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon, cardIconAlignment == .left {
             p.left = 60
         }
         
