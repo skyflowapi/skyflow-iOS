@@ -28,5 +28,8 @@ jobs:
         
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
 
 
