@@ -40,6 +40,12 @@ class CollectElementOptionsTests: XCTestCase {
         XCTAssertEqual(options.format, "XXX")
         XCTAssertEqual(options.translation, nil)
     }
+    func testCollectElementOptionsWithCardMetaData(){
+        let options = CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.CARTES_BANCAIRES]])
+        XCTAssertEqual(options.cardMetaData as! [String : [CardType]], ["scheme": [CardType.AMEX, CardType.CARTES_BANCAIRES]])
+
+    }
+    
 
 
 }

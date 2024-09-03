@@ -27,6 +27,7 @@ public struct Style {
     var width: CGFloat?
     var height: CGFloat?
     var placeholderColor: UIColor?
+    var cardIconAlignment: CardIconAlignment?
 //    var margin: UIEdgeInsets?
 
     public init(borderColor: UIColor? = nil,
@@ -45,7 +46,8 @@ public struct Style {
                 cursorColor: UIColor? = nil,
                 width: CGFloat? = nil,
                 height: CGFloat? = nil,
-                placeholderColor: UIColor? = nil
+                placeholderColor: UIColor? = nil,
+                cardIconAlignment: CardIconAlignment? = .left
 //                margin: UIEdgeInsets? = nil
     ) {
         // Assign parametric values to struct members
@@ -66,6 +68,7 @@ public struct Style {
         self.width = width
         self.height = height
         self.placeholderColor = placeholderColor
+        self.cardIconAlignment = cardIconAlignment
 //        self.margin = margin
     }
 }
