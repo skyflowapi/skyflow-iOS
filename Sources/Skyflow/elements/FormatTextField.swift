@@ -22,7 +22,7 @@ internal class FormatTextField: UITextField {
      the textfield would remain same
      */
     var formatPattern: String = ""
-
+    
     /** used for text with format pattern*/
     var textwithFormatPattern = ""
 
@@ -83,7 +83,8 @@ internal class FormatTextField: UITextField {
         if super.rightViewMode == .always {
             let newBound = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.size.width - 25, height: bounds.size.height).inset(by: padding)
             return newBound
-        } else {
+        }
+         else{
             return bounds.inset(by: padding)
         }
     }

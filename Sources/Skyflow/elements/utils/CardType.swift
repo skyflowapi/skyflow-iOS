@@ -28,6 +28,15 @@ internal class Card {
         self.securityCodeName = securityCodeName
         self.imageName = imageName
     }
+    public init(defaultName: String, imageName: String) {
+        self.defaultName = defaultName
+        self.imageName = imageName
+        self.regex = ""
+        self.cardLengths = []
+        self.formatPattern = ""
+        self.securityCodeLength = 0
+        self.securityCodeName = ""
+    }
 }
 
 /// Default Cards and their FormatPatterns and validationrules.
@@ -41,6 +50,7 @@ public enum  CardType: CaseIterable {
     case MAESTRO
     case UNIONPAY
     case HIPERCARD
+    case CARTES_BANCAIRES
     case UNKNOWN
     case EMPTY
 
@@ -52,7 +62,7 @@ public enum  CardType: CaseIterable {
             securityCodeName: SecurityCode.cvv.rawValue, imageName: "Visa-Card")
 
         case .MASTERCARD: return Card(
-            defaultName: "MasterCard", regex: "^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[0-1]|2720)\\d*",
+            defaultName: "Mastercard", regex: "^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[0-1]|2720)\\d*",
             cardLengths: [16], formatPattern: "#### #### #### ####",
             securityCodeLength: 3, securityCodeName: SecurityCode.cvc.rawValue, imageName: "Mastercard-Card")
 
@@ -67,13 +77,13 @@ public enum  CardType: CaseIterable {
             securityCodeLength: 4, securityCodeName: SecurityCode.cid.rawValue, imageName: "Amex-Card")
 
         case .DINERS_CLUB: return Card(
-            defaultName: "Diners Club", regex: "^(36|38|30[0-5])\\d*",
+            defaultName: "DinersClub", regex: "^(36|38|30[0-5])\\d*",
             cardLengths: [14,15,16, 17, 18, 19],
             formatPattern: "#### ###### #########", securityCodeLength: 3,
             securityCodeName: SecurityCode.cvv.rawValue, imageName: "Diners-Card")
 
         case .JCB: return Card(
-            defaultName: "JCB", regex: "^35\\d*",
+            defaultName: "Jcb", regex: "^35\\d*",
             cardLengths: [16, 17, 18, 19],
             formatPattern: "#### #### #### #### ###", securityCodeLength: 3,
             securityCodeName: SecurityCode.cvv.rawValue, imageName: "JCB-Card")
@@ -85,12 +95,12 @@ public enum  CardType: CaseIterable {
             securityCodeName: SecurityCode.cvc.rawValue, imageName: "Maestro-Card")
 
         case .UNIONPAY: return Card(
-            defaultName: "UnionPay", regex: "^62\\d*",
+            defaultName: "Unionpay", regex: "^62\\d*",
             cardLengths: [16, 17, 18, 19], formatPattern: "#### #### #### #### ###", securityCodeLength: 3,
             securityCodeName: SecurityCode.cvn.rawValue, imageName: "Unionpay-Card")
 
         case .HIPERCARD: return Card(
-            defaultName: "HiperCard", regex: "^606282\\d*",
+            defaultName: "Hipercard", regex: "^606282\\d*",
             cardLengths: [14, 15, 16, 17, 18, 19], formatPattern: "#### #### #### #### ###",
             securityCodeLength: 3, securityCodeName: SecurityCode.cvc.rawValue, imageName: "Hipercard-Card")
         case .UNKNOWN: return Card(
@@ -101,6 +111,8 @@ public enum  CardType: CaseIterable {
             defaultName: "Empty", regex: "^$",
             cardLengths: [12, 13, 14, 15, 16, 17, 18, 19], formatPattern: "#### #### #### #### ###",
             securityCodeLength: 3, securityCodeName: SecurityCode.cvv.rawValue, imageName: "Unknown-Card")
+        case .CARTES_BANCAIRES:
+            return Card(defaultName: "Cartes Bancaires", imageName: "Cartes-Bancaires-Card")
         }
     }
         static func forCardNumber(cardNumber: String) -> CardType {
@@ -129,4 +141,9 @@ internal enum SecurityCode: String {
     case cvc = "cvc"
     case cvn = "cvn"
     case cid = "cid"
+}
+
+public enum CardIconAlignment {
+  case left
+  case right
 }
