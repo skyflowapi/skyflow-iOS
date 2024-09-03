@@ -38,7 +38,7 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
     
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
-    }    
+    }
     internal let tableViewContainer = UIView()
 
     internal let tableView = UITableView()
@@ -271,6 +271,9 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
                 let card = CardType.forCardNumber(cardNumber: t).instance
                 updateImage(name: card.imageName, cardNumber: t)
             }
+            let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+            let card = CardType.forCardNumber(cardNumber: t).instance
+            updateImage(name: card.imageName, cardNumber: t)
         }
         
     }
@@ -305,7 +308,7 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
         } else {
             return UIApplication.shared.keyWindow
         }
-    }    
+    }
     // new code till here
 
     func updateStyle(_ source: Style?, _ destination: inout Style?) {
