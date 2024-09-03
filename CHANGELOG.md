@@ -3,6 +3,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23.0] - 2024-09-03
+
+### Added
+- Card brand choice support for card number element.
+- Support to change the position of card icon in card number element.
+
 ## [1.22.1] - 2024-01-25
 
 ### Fixed
