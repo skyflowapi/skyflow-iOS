@@ -33,6 +33,7 @@ internal class StateforText: State
     
     internal(set) open var isCustomRuleFailed = false
     internal(set) open var isDefaultRuleFailed = false
+    internal(set) open var selectedCardScheme: CardType?
 
     init(tf: TextField) {
         super.init(columnName: tf.columnName, isRequired: tf.isRequired)
@@ -46,6 +47,7 @@ internal class StateforText: State
         inputLength = tf.textField.getSecureRawText?.count ?? 0
         elementType = tf.collectInput.type
         isFocused = tf.hasFocus
+        selectedCardScheme = tf.selectedCardBrand
         if tf.contextOptions.env == .DEV {
             value = tf.actualValue
         } else {
@@ -88,6 +90,9 @@ internal class StateforText: State
         result["isFocused"] = isFocused
         result["value"] = value == nil ? "" : value
         result["isCustomRuleFailed"] = isCustomRuleFailed
+        if elementType == .CARD_NUMBER {
+            result["selectedCardScheme"] = selectedCardScheme == nil ? "" : selectedCardScheme?.instance.defaultName.uppercased()
+        }
         return result
     }
 }

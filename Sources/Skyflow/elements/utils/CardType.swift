@@ -28,6 +28,15 @@ internal class Card {
         self.securityCodeName = securityCodeName
         self.imageName = imageName
     }
+    public init(defaultName: String, imageName: String) {
+        self.defaultName = defaultName
+        self.imageName = imageName
+        self.regex = ""
+        self.cardLengths = []
+        self.formatPattern = ""
+        self.securityCodeLength = 0
+        self.securityCodeName = ""
+    }
 }
 
 /// Default Cards and their FormatPatterns and validationrules.
@@ -41,6 +50,7 @@ public enum  CardType: CaseIterable {
     case MAESTRO
     case UNIONPAY
     case HIPERCARD
+    case CARTES_BANCAIRES
     case UNKNOWN
     case EMPTY
 
@@ -101,6 +111,8 @@ public enum  CardType: CaseIterable {
             defaultName: "Empty", regex: "^$",
             cardLengths: [12, 13, 14, 15, 16, 17, 18, 19], formatPattern: "#### #### #### #### ###",
             securityCodeLength: 3, securityCodeName: SecurityCode.cvv.rawValue, imageName: "Unknown-Card")
+        case .CARTES_BANCAIRES:
+            return Card(defaultName: "Cartes Bancaires", imageName: "Cartes-Bancaires-Card")
         }
     }
         static func forCardNumber(cardNumber: String) -> CardType {
@@ -129,4 +141,9 @@ internal enum SecurityCode: String {
     case cvc = "cvc"
     case cvn = "cvn"
     case cid = "cid"
+}
+
+public enum CardIconAlignment {
+  case left
+  case right
 }
