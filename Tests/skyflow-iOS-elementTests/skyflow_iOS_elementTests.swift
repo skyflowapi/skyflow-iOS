@@ -149,6 +149,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let collectInput = CollectElementInput(table: "tablename", column: "column", placeholder: "John Doe", type: .INPUT_FIELD, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
+        
         // Default UI error
         textField.textField.secureText = "John"
         textField.textFieldDidEndEditing(textField.textField)
