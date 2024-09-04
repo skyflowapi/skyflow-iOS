@@ -38,16 +38,16 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         self.waitForExpectations(timeout: 1, handler: nil)
     }
     
-    func testOnSuccessInvalidUrl() {
-        self.revealApiCallback.connectionUrl = "invalid url"
-        self.revealApiCallback.onSuccess("token")
-        
-        wait(for: [self.expectation], timeout: 20.0)
-        let errors = callback.data["errors"] as! [[String: NSError]]
-        XCTAssertEqual(errors.count, 1)
-        XCTAssertEqual(errors[0]["error"], ErrorCodes.INVALID_URL().getErrorObject(contextOptions: ContextOptions()))
-    }
-    
+   func testOnSuccessInvalidUrl() {
+       self.revealApiCallback.connectionUrl = "invalid url"
+       self.revealApiCallback.onSuccess("token")
+       
+       wait(for: [self.expectation], timeout: 20.0)
+       let errors = callback.data["errors"] as! [[String: NSError]]
+       XCTAssertEqual(errors.count, 1)
+       XCTAssertEqual(errors[0]["error"], ErrorCodes.INVALID_URL().getErrorObject(contextOptions: ContextOptions()))
+   }
+   
     func testGetRequestSession() {
         self.revealApiCallback.connectionUrl = "https://www.example.org"
         
@@ -62,8 +62,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let record = RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue)
         do {
             let result = try self.revealApiCallback.getRevealRequestBody(record: record)
-            print(result)
-            print(type(of: result))
+
             if let jsonObject = try? JSONSerialization.jsonObject(with: result, options: []) as? [String: Any] {
                 let key = jsonObject.keys
                 let values = jsonObject.values
@@ -97,7 +96,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             let (success, failure) = try self.revealApiCallback.processResponse(record: RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue), data: responseData, response: httpResponse, error: nil)
             XCTAssertNil(success)
             XCTAssertNotNil(failure)
-            XCTAssertEqual(failure?.error.localizedDescription, "Interface:  - Internal Server Error - request-id: RID")
+            XCTAssertEqual(failure?.error.localizedDescription, "Internal Server Error - request-id: RID")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -441,7 +440,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         print(callback.data)
         let errors = callback.data["errors"] as! [[String: NSError]]
-        XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Invalid Bearer token"))
+        XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Token generated from 'getBearerToken' callback function is invalid"))
     }
     
 }

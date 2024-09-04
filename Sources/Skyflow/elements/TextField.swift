@@ -937,10 +937,10 @@ extension TextField {
             
             // Error message
             if isRequiredCheckFailed {
-                errorMessage.text =  "Value is required"
+                errorMessage.text =  (label != "" ? label : "Field") + "is required"
             }
             else if  currentState["isDefaultRuleFailed"] as! Bool{
-                errorMessage.text = "Invalid " + (label != "" ? label : "element")
+                errorMessage.text = "Invalid " + (label != "" ? label : "value")
             }
             else if currentState["isCustomRuleFailed"] as! Bool{
                 if SkyflowValidationErrorType(rawValue: currentState["validationError"] as! String) != nil {
@@ -976,7 +976,7 @@ internal extension TextField {
         textFieldLabel.translatesAutoresizingMaskIntoConstraints = false
         
         errorMessage.alpha = 0.0
-        errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "element")
+        errorMessage.text = "Invalid " + (self.collectInput.label != "" ? self.collectInput.label : "value")
         let text = collectInput.label
         
         var verticalAstrisk = -(collectInput.labelStyles.requiredAstrisk?.padding?.top ?? 0.0 ) + (collectInput.labelStyles.requiredAstrisk?.padding?.bottom ?? 0.0 )

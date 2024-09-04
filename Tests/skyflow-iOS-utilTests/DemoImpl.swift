@@ -27,19 +27,21 @@ public class DemoAPICallback: Callback {
             self.receivedResponse = response
         }
         else {
-            data = responseBody as! [String: Any]
+            self.data = responseBody as! [String: Any]
         }
+        print("success", self.receivedResponse, self.data)
         expectation.fulfill()
     }
 
     public func onFailure(_ error: Any) {
-        print("failure")
         print(error)
         if error is NSError {
             self.receivedResponse = String((error as! Error).localizedDescription)
         } else if error is [String: Any] {
             self.data = (error as! [String: Any])
         }
+        print("failure", self.data, self.receivedResponse)
+
         expectation.fulfill()
     }
 }
