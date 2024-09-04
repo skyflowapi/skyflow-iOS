@@ -937,7 +937,7 @@ extension TextField {
             
             // Error message
             if isRequiredCheckFailed {
-                errorMessage.text =  (label != "" ? label : "Field") + "is required"
+                errorMessage.text =  (label != "" ? label : "Field") + " is required"
             }
             else if  currentState["isDefaultRuleFailed"] as! Bool{
                 errorMessage.text = "Invalid " + (label != "" ? label : "value")
