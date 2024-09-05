@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		6A6FD237A87DD8A908DCD0DB /* libPods-CollectAndRevealSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4784F55040EC3EB2355FF51D /* libPods-CollectAndRevealSample.a */; };
+		7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */; };
 		F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E4F272565CF0042C130 /* AppDelegate.swift */; };
 		F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E51272565CF0042C130 /* SceneDelegate.swift */; };
 		F1613E54272565CF0042C130 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E53272565CF0042C130 /* ViewController.swift */; };
@@ -23,6 +24,7 @@
 		0B9127863D5788DE4B8ABC23 /* Pods-CollectAndRevealSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollectAndRevealSample.release.xcconfig"; path = "Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample.release.xcconfig"; sourceTree = "<group>"; };
 		4784F55040EC3EB2355FF51D /* libPods-CollectAndRevealSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CollectAndRevealSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5403FF87EE7827B78D2DFF7C /* Pods-CollectAndRevealSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollectAndRevealSample.debug.xcconfig"; path = "Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample.debug.xcconfig"; sourceTree = "<group>"; };
+		7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBrandChoiceSampleViewController.swift; sourceTree = "<group>"; };
 		F1613E4C272565CF0042C130 /* CollectAndRevealSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollectAndRevealSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1613E4F272565CF0042C130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F1613E51272565CF0042C130 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				F1613E4F272565CF0042C130 /* AppDelegate.swift */,
 				F1613E51272565CF0042C130 /* SceneDelegate.swift */,
 				F1613E53272565CF0042C130 /* ViewController.swift */,
+				7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */,
 				F1613E55272565CF0042C130 /* Main.storyboard */,
 				F1613E58272565D30042C130 /* Assets.xcassets */,
 				F1613E5A272565D30042C130 /* LaunchScreen.storyboard */,
@@ -224,6 +227,7 @@
 				F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */,
 				F1613E652725663C0042C130 /* ExampleAPICallback.swift in Sources */,
 				F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */,
+				7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
