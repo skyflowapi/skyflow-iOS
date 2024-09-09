@@ -82,7 +82,7 @@ jobs:
         category: "/language:${{matrix.language}}"
 
     - name: Upload SARIF Results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
           name: sarif-results-swift
           path: /Users/runner/work/skyflow-ios/results/swift.sarif
