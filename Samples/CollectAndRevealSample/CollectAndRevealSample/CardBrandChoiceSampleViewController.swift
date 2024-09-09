@@ -19,7 +19,9 @@ class CardBrandChoiceSampleViewController: UIViewController {
 
     override func viewDidLoad(){
         super.viewDidLoad()
-        var config = Skyflow.Configuration(vaultID: "<VAULT_ID>", vaultURL: "<VAULT_URL>", tokenProvider: ExampleTokenProvider(), options: Skyflow.Options(env: Skyflow.Env.PROD))
+        view.backgroundColor = .white
+        self.stackView = UIStackView()
+        let config = Skyflow.Configuration(vaultID: "<VAULT_ID>", vaultURL: "<VAULT_URL>", tokenProvider: ExampleTokenProvider(), options: Skyflow.Options(env: Skyflow.Env.PROD))
         skyflowClient = Skyflow.initialize(config)
         if self.skyflowClient != nil {
             container = self.skyflowClient?.container(type: ContainerType.COLLECT, options: nil)
@@ -65,8 +67,29 @@ class CardBrandChoiceSampleViewController: UIViewController {
                 }
             }
             stackView.addArrangedSubview(collectCardNumberElement!)
-            view.addSubview(stackView)
 
+            stackView.axis = .vertical
+            stackView.distribution = .fill
+            stackView.spacing = 5
+            stackView.alignment = .fill
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let scrollView = UIScrollView(frame: .zero)
+            scrollView.isScrollEnabled = true
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(scrollView)
+            
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2).isActive = true
+            scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 2).isActive = true
+            scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            
+            scrollView.addSubview(stackView)
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -10).isActive = true
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+            stackView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
+            stackView.rightAnchor.constraint(equalTo: scrollView.rightAnchor).isActive = true
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         }
 
     }
@@ -121,27 +144,4 @@ class CardBrandChoiceSampleViewController: UIViewController {
         return schemeList
     }
 }
-public class ExampleTokenProvider: TokenProvider {
-    public func getBearerToken(_ apiCallback: Skyflow.Callback) {
-        if let url = URL(string: "<YOUR_TOKEN_PROVIDER_ENDPOINT>") {
-            let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url) { data, _, error in
-                if error != nil {
-                    print(error!)
-                    return
-                }
-                if let safeData = data {
-                    do {
-                        let x = try JSONSerialization.jsonObject(with: safeData, options: []) as? [String: String]
-                        if let accessToken = x?["accessToken"] {
-                            apiCallback.onSuccess(accessToken)
-                        }
-                    } catch {
-                        print("access token wrong format")
-                    }
-                }
-            }
-            task.resume()
-        }
-    }
-}
+
