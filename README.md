@@ -274,6 +274,7 @@ let style = Skyflow.Style(
      width: CGFloat,                              // optional
      height: CGFloat,                             // optional
      placeholderColor: UIColor,                   // optional
+     cardIconAlignment: CardIconAlignment         // optional, Skyflow.CardIconAlignment enum, default is .left
 )
 ```
  
@@ -284,14 +285,17 @@ let styles = Skyflow.Styles(
     complete: style,                // optional
     empty: style,                   // optional
     focus: style,                   // optional
-    invalid: style                  // optional
+    invalid: style,                 // optional
+    requiredAsterisk: style        // optional 
 )
 ```
  
 The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyflow.Styles` object which are applied to the `label` and `errorText` text views respectively.
  
 The states that are available for `labelStyles` are `base` and `focus`.
- 
+
+`requiredAsterisk`: Styles applied for the Asterisk symbol in the label. Defaults to red.
+
 The state that is available for `errorTextStyles` is only the `base` state, it shows up when there is some error in the collect element.
  
 The parameters in `Skyflow.Style` object that are respected for `label` and `errorText` text views are
@@ -323,7 +327,8 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Boolean,                // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  cardMetaData: [String: [Skyflow.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
 )
 ```
     
@@ -335,7 +340,31 @@ Skyflow.CollectElementOptions(
      - if `translation` isn't specified, the `format` value is considered a string literal.
 - `translation`: A dictionary of key/value pairs, where the key is a character that appears in `format` and the value is a regex pattern of acceptable inputs for that character. Each key can only appear once. Only applicable for INPUT_FIELD elements.
 - `enableCopy`: Indicates whether to enable the copy icon in collect elements to copy text to clipboard.
+- `cardMetaData`: An object of metadata keys to control card number element behavior. It supports an optional key called `scheme`, which accepts an array of Skyflow-supported card types and determines which brands display in the card number element's card brand choice dropdown. `Skyflow.CardType` is an enum with all Skyflow-supported card schemes.
+
+```swift
+import Skyflow
+
+const cardMetaData = [ "scheme": [Skyflow.CardType]] // Optional, array of skyflow supported card types.
+```
+
+#### Supported card types by Skyflow.CardType :
+- `VISA`
+- `MASTERCARD`
+- `AMEX`
+- `DINERS_CLUB`
+- `DISCOVER`
+- `JCB`
+- `MAESTRO`
+- `UNIONPAY`
+- `HIPERCARD`
+- `CARTES_BANCAIRES`
   
+Update cardMetaData:
+```swift
+cardNumberElement.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [Skyflow.CardType.CARTES_BANCAIRES, Skyflow.CardType.MASTERCARD]]))
+```
+
 Accepted values by element type:
 
 | Element type | `format`and `translation` values  | Examples |
@@ -454,10 +483,12 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
 let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
 let completeStyle = Skyflow.Style(borderColor: UIColor.green)
-val focusTextStyle = Skyflow.Style(textColor: UIColor.red)
+let focusTextStyle = Skyflow.Style(textColor: UIColor.red)
 let inputStyles = Skyflow.Styles(base: baseStyle, complete: completeStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle, focus: focusTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
+
+let iconStyles = Skyflow.Styles(base: Style(cardIconAlignment: .left))
  
 // Create a CollectElementInput.
 let input = Skyflow.CollectElementInput(
@@ -466,6 +497,7 @@ let input = Skyflow.CollectElementInput(
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
+    iconStyles: iconStyles,
     label: "card number",
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER
@@ -621,11 +653,13 @@ let state = [
     "isEmpty": Bool ,
     "isFocused": Bool,
     "isValid": Bool,
-    "value": String
+    "value": String,
+    "selectedCardScheme": String // only for CARD_NUMBER element type
 ]
 ```
 `Note:`
-values of SkyflowElements will be returned in element state object only when `env` is `DEV`, else it is empty string i.e, '', but in case of CARD_NUMBER type element when the `env` is `PROD` for all the card types except AMEX, it will return first eight digits, for AMEX it will return first six digits and rest all digits in masked format.
+- values of SkyflowElements will be returned in element state object only when `env` is `DEV`, else it is empty string i.e, '', but in case of CARD_NUMBER type element when the `env` is `PROD` for all the card types except AMEX, it will return first eight digits, for AMEX it will return first six digits and rest all digits in masked format.
+- `selectedCardScheme` is only populated for the `CARD_NUMBER` element state when a user chooses a card brand. By default, `selectedCardScheme` is an empty string.
  
 ##### Sample code snippet for using listeners
 ```swift
