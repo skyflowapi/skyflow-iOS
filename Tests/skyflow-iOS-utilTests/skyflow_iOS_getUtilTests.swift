@@ -201,7 +201,7 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
             
             let error = result["error"] as! NSError
             XCTAssertEqual(error.code, 404)
-            XCTAssertEqual(error.localizedDescription, "Interface:  - Error message")
+            XCTAssertEqual(error.localizedDescription, "Error message")
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -221,7 +221,7 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
             
             let error = result["error"] as! NSError
             XCTAssertEqual(error.code, 500)
-            XCTAssertEqual(error.localizedDescription, "Interface:  - Error message")
+            XCTAssertEqual(error.localizedDescription, "Error message")
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
@@ -236,7 +236,6 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
             let data = try JSONSerialization.data(withJSONObject: apiResponse, options: .fragmentsAllowed)
             let processedRespoonse = try self.getApiCallback.processResponse(record: record, data)
             
-            print(processedRespoonse)
             XCTAssertEqual(processedRespoonse.count, 1)
             XCTAssertEqual(processedRespoonse[0]["table"] as! String, "table")
             XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
@@ -322,7 +321,6 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
             
             let processedRespoonse = responseArray!
             
-            print(processedRespoonse)
             XCTAssertEqual(processedRespoonse.count, 1)
             XCTAssertEqual(processedRespoonse[0]["table"] as! String, "table")
             XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")

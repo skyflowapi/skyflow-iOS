@@ -137,7 +137,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.textField.secureText = "invalid"
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
-        XCTAssertEqual(textField.errorMessage.text, "Invalid element")
+        XCTAssertEqual(textField.errorMessage.text, "Invalid value")
     }
     
     func testCustomRegexValidationFailureOnUI() {
@@ -148,6 +148,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         let collectInput = CollectElementInput(table: "tablename", column: "column", placeholder: "John Doe", type: .INPUT_FIELD, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
+
 
         // Default UI error
         textField.textField.secureText = "John"
@@ -203,7 +204,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.resetError()
         
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
-        XCTAssertEqual(textField.errorMessage.text, "Invalid element")
+        XCTAssertEqual(textField.errorMessage.text, "Invalid value")
         XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
     }
     

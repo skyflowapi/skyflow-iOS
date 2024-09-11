@@ -34,25 +34,25 @@ internal struct ICOptions {
                 return true
             }
             
-            for currUpsertOption in self.upsert ?? [[:]]{
+            for (index, currUpsertOption) in (self.upsert ?? [[:]]).enumerated() {
                 if currUpsertOption["table"] == nil {
-                    let errorCode = ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION()
+                    let errorCode = ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "\(index)")
                     self.callback!.onFailure(errorCode.getErrorObject(contextOptions: self.contextOptions!))
                     return true
                 }
                 if currUpsertOption["column"] == nil {
-                    let errorCode = ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION()
+                    let errorCode = ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "\(index)")
                     self.callback!.onFailure(errorCode.getErrorObject(contextOptions: self.contextOptions!))
                     return true
                 }
                 
                 if currUpsertOption["table"] as! String == "" {
-                    let errorCode = ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION()
+                    let errorCode = ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "\(index)")
                     self.callback!.onFailure(errorCode.getErrorObject(contextOptions: self.contextOptions!))
                     return true
                 }
                 if currUpsertOption["column"] as! String == "" {
-                    let errorCode = ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION()
+                    let errorCode = ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "\(index)")
                     self.callback!.onFailure(errorCode.getErrorObject(contextOptions: self.contextOptions!))
                     return true
                 }

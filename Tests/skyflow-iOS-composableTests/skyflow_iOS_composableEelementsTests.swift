@@ -40,7 +40,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(ContextOptions(interface: .COMPOSABLE_CONTAINER).interface.description) - \(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().description)" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -61,7 +61,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(ContextOptions(interface: .COMPOSABLE_CONTAINER).interface.description) - \(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -81,7 +81,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(ContextOptions(interface: .COMPOSABLE_CONTAINER).interface.description) - \(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -101,7 +101,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Interface: \(ContextOptions(interface: .COMPOSABLE_CONTAINER).interface.description) - \(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -244,7 +244,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             XCTAssertEqual(cardNumber!.errorMessage.alpha, 1.0)
             XCTAssertEqual(cardNumber!.errorMessage.text, "Invalid Card Number")
             XCTAssertEqual(cvv!.errorMessage.alpha, 1.0)
-            XCTAssertEqual(cvv!.errorMessage.text, "Invalid element")
+            XCTAssertEqual(cvv!.errorMessage.text, "Invalid value")
         } catch {
             print(error)
         }
@@ -471,7 +471,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
     func testCollectBadTableKeyAddionalFields() {
         let additionalFields = ["records": [["table": []]]]
@@ -483,7 +483,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
     }
     func testCreateRows() {
         let elements = [1, 2]
