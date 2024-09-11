@@ -284,7 +284,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(cardNumber!.errorMessage.alpha, 1.0)
         XCTAssertEqual(cardNumber!.errorMessage.text, "Invalid Card Number")
         XCTAssertEqual(cvv!.errorMessage.alpha, 1.0)
-        XCTAssertEqual(cvv!.errorMessage.text, "Invalid element")
+        XCTAssertEqual(cvv!.errorMessage.text, "Invalid value")
     }
     
     func testContainerInsertMixedInvalidInput() {
@@ -794,7 +794,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_KEY_ERROR().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectBadTableKeyAddionalFields() {
@@ -807,7 +807,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectEmptyTableAddionalFields() {
@@ -833,7 +833,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.FIELDS_KEY_ERROR().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.FIELDS_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectInvalidFieldsAddionalFields() {
@@ -846,7 +846,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_FIELDS_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_FIELDS_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectEmptyFieldsAddionalFields() {
@@ -859,7 +859,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectEmptyColumnNameForUpsertOption() {
@@ -871,7 +871,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         wait(for: [expectation], timeout: 20.0)
         
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     
@@ -884,7 +884,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
 
 
@@ -908,7 +908,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
 
     func testCollectEmptyTableNameUpsertOption() {
@@ -920,7 +920,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
 
    
@@ -944,7 +944,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
 
 
@@ -966,7 +966,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
 
 
@@ -1008,7 +1008,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
 
     func testInsertEmptyTableNameUpsertOption() {
@@ -1029,7 +1029,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
     
     func testUnmount() {
