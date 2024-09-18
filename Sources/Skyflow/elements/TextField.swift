@@ -14,7 +14,8 @@ import UIKit
 #endif
 
 
-public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegate, UITableViewDataSource{
+
+public class TextField: SkyflowElement, Element, BaseElement {
     var onBeginEditing: (() -> Void)?
     var onEndEditing: (() -> Void)?
     var onFocusIsTrue: (() -> Void)?
@@ -39,14 +40,11 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
     internal var isErrorMessageShowing: Bool {
         return self.errorMessage.alpha == 1.0
     }
-    internal let tableViewContainer = UIView()
 
-    internal let tableView = UITableView()
     internal var listCardTypes: [CardType]?
-    internal var dropdownIcon = UIImageView()
-        
+    internal var dropdownButton = UIButton()
     internal var selectedCardBrand: CardType? = nil
-    
+
     internal var uuid: String = ""
     
     internal var textFieldCornerRadius: CGFloat {
@@ -252,7 +250,6 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
 
         setupField()
     }
-    // new code
     public func update(updateOptions: CollectElementOptions){
         if(updateOptions.cardMetaData != nil && self.fieldType == .CARD_NUMBER){
             self.options.cardMetaData = updateOptions.cardMetaData
@@ -265,6 +262,9 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
                 } else {
                     for _ in schemes {
                         listCardTypes = schemes
+                        if (listCardTypes?.count ?? 1 >= 2) {
+                            getDropDownIcon()
+                        }
                     }
                 }
                 let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
@@ -277,39 +277,6 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
         }
         
     }
-    // MARK: - UITableViewDelegate and UITableViewDataSource
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return listCardTypes!.count
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as? CustomTableViewCell else {
-            return UITableViewCell()
-        }
-        let isSelected = listCardTypes?[indexPath.row].instance.defaultName == selectedCardBrand?.instance.defaultName
-        cell.configure(with: listCardTypes?[indexPath.row].instance.defaultName ?? "not found", isSelected: isSelected)
-        return cell
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCardBrand = listCardTypes?[indexPath.row]
-        let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
-        let card = CardType.forCardNumber(cardNumber: t).instance
-        updateImage(name: selectedCardBrand?.instance.imageName ?? card.imageName, cardNumber: t)
-        onChangeHandler?((self.state as! StateforText).getStateForListener())
-        tableView.reloadData()
-        hideDropdown()
-    }
-    internal func getTopmostWindow() -> UIWindow? {
-        if #available(iOS 13.0, *) {
-            return UIApplication.shared.connectedScenes
-                .compactMap { ($0 as? UIWindowScene)?.windows.first(where: { $0.isKeyWindow }) }
-                .first
-        } else {
-            return UIApplication.shared.keyWindow
-        }
-    }
-    // new code till here
 
     func updateStyle(_ source: Style?, _ destination: inout Style?) {
             guard let newStyle = source else { return }
@@ -583,31 +550,33 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
         imageView.layer.borderWidth = self.collectInput!.iconStyles.base?.borderWidth ?? 0
         imageView.layer.cornerRadius = self.collectInput!.iconStyles.base?.cornerRadius ?? 0
     
-        dropdownIcon.frame = CGRect(x: imageView.frame.width + 7, y: containerView.frame.height / 3, width: 12, height: 15)
+//        dropdownIcon.frame = CGRect(x: imageView.frame.width + 7, y: containerView.frame.height / 3, width: 12, height: 15)
 
         if (listCardTypes?.count == 0 || listCardTypes == nil) {
             selectedCardBrand = nil
-            dropdownIcon.isHidden = true
-            dropdownIcon.removeFromSuperview()
+            dropdownButton.isHidden = true
+            dropdownButton.removeFromSuperview()
             imageView.center = containerView.center
+
         } else if (listCardTypes != nil){
             if (listCardTypes!.count >= 2){
-                dropdownIcon.isHidden = false
-                getDropDownIcon()
                 imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 24)
-                dropdownIcon.frame = CGRect(x: 0, y: 0, width: 12, height: 15)
-                imageView.center = CGPoint(x: containerView.frame.width / 2 - dropdownIcon.frame.width / 2,
-                                           y: containerView.frame.height / 2)
-                dropdownIcon.center = CGPoint(x: imageView.frame.maxX + dropdownIcon.frame.width / 2 + 7,
-                                              y: containerView.frame.height / 2)
-                containerView.frame = CGRect(x: 0, y: 0, width: max(imageView.frame.maxX, dropdownIcon.frame.maxX), height: 40)
-                if (cardIconAlignment == .left){
-                    textField.padding.left = 70
+
+                // uimenu code
+                if #available(iOS 14.0, *) {
+                    if (cardIconAlignment == .left){
+                        textField.padding.left = 70
+                    }
+                    dropdownButton.frame = CGRect(x: imageView.frame.maxX + 10, y: (containerView.frame.height / 2) - 5, width: 12, height: 15)
+                    imageView.center = CGPoint(x: containerView.frame.width / 2 - dropdownButton.frame.width / 2,
+                                               y: containerView.frame.height / 2)
+                    containerView.frame = CGRect(x: 0, y: 0, width: max(imageView.frame.maxX, dropdownButton.frame.maxX), height: 40)
+                    containerView.addSubview(dropdownButton)
                 }
-                containerView.addSubview(dropdownIcon)
             } else {
-                dropdownIcon.isHidden = true
-                dropdownIcon.removeFromSuperview()
+                if #available(iOS 14.0, *) {
+                    dropdownButton.isHidden = true
+                }
                 if (cardIconAlignment == .left){
                     textField.padding.left = 60
                 }
@@ -633,10 +602,10 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
                 textField.leftViewMode = .always
                 textField.leftView = cardIconContainerView
             } else {
-                if (dropdownIcon.isHidden){
+                if (dropdownButton.isHidden){
                     cardIconContainerView.frame = CGRect(x: 0, y: 0, width: containerView.frame.width + 5, height: 40)
                 } else {
-                    cardIconContainerView.frame = CGRect(x: 0, y: 0, width: containerView.frame.width + dropdownIcon.frame.width + 5, height: 40)
+                    cardIconContainerView.frame = CGRect(x: 0, y: 0, width: containerView.frame.width + dropdownButton.frame.width + 5, height: 40)
                 }
                 textField.rightView = cardIconContainerView
                 textField.rightViewMode = .always
@@ -646,80 +615,80 @@ public class TextField: SkyflowElement, Element, BaseElement, UITableViewDelegat
     }
     
     private func getDropDownIcon(){
-        dropdownIcon.tintColor = .black
-        #if SWIFT_PACKAGE
-        dropdownIcon.image = UIImage(named: "dropdown", in: Bundle.module, compatibleWith: nil)
-        #else
-        let frameworkBundle = Bundle(for: TextField.self)
-        var bundleURL = frameworkBundle.resourceURL
-        bundleURL!.appendPathComponent("Skyflow.bundle")
-        let resourceBundle = Bundle(url: bundleURL!)
-        dropdownIcon.image = UIImage(named: "dropdown", in: resourceBundle, compatibleWith: nil)
-        #endif
-        //        dropdownIcon.image = UIImage(named: "Success-Icon")
-        dropdownIcon.layer.borderColor = UIColor.black.cgColor
-        dropdownIcon.isHidden = false
-        dropdownIcon.tintColor = .gray
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dropdownButtonTapped))
-        dropdownIcon.isUserInteractionEnabled = true
-        dropdownIcon.addGestureRecognizer(tapGesture)
-        setupTableView()
+        if #available(iOS 14.0, *) {
+            setUpMenuView()
+            dropdownButton.frame = CGRect(x: 0, y: 0, width: 12, height: 15)
+            #if SWIFT_PACKAGE
+            dropdownButton.setImage(UIImage(named: "dropdown", in: Bundle.module, compatibleWith: nil), for: .normal)
+            #else
+            let frameworkBundle = Bundle(for: TextField.self)
+            var bundleURL = frameworkBundle.resourceURL
+            bundleURL!.appendPathComponent("Skyflow.bundle")
+            let resourceBundle = Bundle(url: bundleURL!)
+            dropdownButton.setImage(UIImage(named: "dropdown", in: resourceBundle, compatibleWith: nil), for: .normal)
+            #endif
+            dropdownButton.isHidden = false
+            dropdownButton.tintColor = .gray
+        }
     }
-    internal func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
-        tableView.isHidden = true
-        tableViewContainer.isHidden = true
-        tableView.layer.cornerRadius = 12
+    @available(iOS 14.0, *)
+    internal func setUpMenuView() {
+        let actionClosure: (UIAction) -> Void = { [weak self] action in
+            guard let self = self else { return }
+            
+            if let matchingCardType = CardType.allCases.first(where: { $0.instance.defaultName == action.title }) {
+                self.selectedCardBrand = matchingCardType
+            }
+            if self.fieldType == .CARD_NUMBER {
+                let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+                let card = CardType.forCardNumber(cardNumber: t).instance
+                self.updateImage(name: self.selectedCardBrand?.instance.imageName ?? card.imageName, cardNumber: t)
+                self.onChangeHandler?((self.state as! StateforText).getStateForListener())
+            }
+            
+            self.updateMenuView()
+        }
 
-        tableViewContainer.frame = CGRect(x: textField.frame.origin.x + 30, y: textField.frame.maxY, width: 250, height: 0)
-        tableViewContainer.layer.cornerRadius = 12
-        tableViewContainer.layer.shadowColor = UIColor.black.cgColor
-        tableViewContainer.layer.shadowOffset = CGSize(width: 0, height: 4)
-        tableViewContainer.layer.shadowOpacity = 0.5
-        tableViewContainer.layer.shadowRadius = 10
-        tableViewContainer.layer.masksToBounds = false
+        var menuChildren: [UIMenuElement] = []
 
-        tableView.frame = CGRect(x: 0, y: 0, width: 250, height: 0)
-        tableViewContainer.addSubview(tableView)
-    }
-    @objc internal func dropdownButtonTapped() {
-        if tableViewContainer.isHidden {
-            showDropdown()
+        if let cardTypes = listCardTypes {
+            for cardType in cardTypes {
+                let state: UIMenuElement.State = (cardType.instance.defaultName == selectedCardBrand?.instance.defaultName) ? .on : .off
+                let action = UIAction(title: cardType.instance.defaultName, state: state, handler: actionClosure)
+                menuChildren.append(action)
+            }
         } else {
-            hideDropdown()
         }
+        let menu = UIMenu(options: .displayInline, children: menuChildren)
+        dropdownButton.menu = menu
+        dropdownButton.showsMenuAsPrimaryAction = true
     }
-    internal func hideDropdown() {
-        UIView.animate(withDuration: 0.3, animations: {
-//            self.tableView.frame.size.height = 0
-            self.tableViewContainer.frame.size.height = 0
-        }) { _ in
-            self.tableView.isHidden = true
-            self.tableViewContainer.isHidden = true
+
+    @available(iOS 14.0, *)
+    private func updateMenuView() {
+        var updatedMenuChildren: [UIMenuElement] = []
+
+        if let cardTypes = listCardTypes {
+            for cardType in cardTypes {
+                let state: UIMenuElement.State = (cardType.instance.defaultName == selectedCardBrand?.instance.defaultName) ? .on : .off
+                let action = UIAction(title: cardType.instance.defaultName, state: state, handler: { [weak self] action in
+                    guard let self = self else { return }
+                    if let matchingCardType = CardType.allCases.first(where: { $0.instance.defaultName == action.title }) {
+                        self.selectedCardBrand = matchingCardType
+                    }
+                    if self.fieldType == .CARD_NUMBER {
+                        let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
+                        let card = CardType.forCardNumber(cardNumber: t).instance
+                        self.updateImage(name: self.selectedCardBrand?.instance.imageName ?? card.imageName, cardNumber: t)
+                        self.onChangeHandler?((self.state as! StateforText).getStateForListener())
+                    }
+                    self.updateMenuView()
+                })
+                updatedMenuChildren.append(action)
+            }
         }
-    }
-    internal func showDropdown() {
-        tableView.isHidden = false
-        tableViewContainer.isHidden = false
-        
-        guard let topWindow = getTopmostWindow() else {
-            return
-        }
-        
-        if tableViewContainer.superview == nil {
-            topWindow.addSubview(tableViewContainer)
-        }
-        
-        topWindow.bringSubviewToFront(tableViewContainer)
-        
-        // Configure tableView frame and appearance
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.frame.size.height = CGFloat(self.listCardTypes!.count * 51)
-            self.tableViewContainer.frame.size.height = CGFloat(self.listCardTypes!.count * 51)
-            self.tableView.backgroundColor = .white
-        }
+
+        dropdownButton.menu = UIMenu(options: .displayInline, children: updatedMenuChildren)
     }
 
     override func validate() -> SkyflowValidationError {
@@ -824,6 +793,11 @@ extension TextField {
         var p = style?.padding ?? fallbackStyle?.padding ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon, cardIconAlignment == .left {
             p.left = 60
+            if (listCardTypes != nil){
+                if (listCardTypes!.count >= 2){
+                    p.left = 70
+                }
+            }
         }
         
         if style?.width != nil {
