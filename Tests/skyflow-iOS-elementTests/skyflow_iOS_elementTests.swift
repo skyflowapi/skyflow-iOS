@@ -483,6 +483,107 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertTrue(textField.cardIconContainerView.isHidden)
     }
-    
-    
+    @available(iOS 14.0, *)
+    func testMenuHasCorrectItems() {
+        // Arrange
+        let expectedTitles = CardType.allCases.map { $0.instance.defaultName }
+        let textField = getElementForDropDownTestingWindow()
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX]]))
+        XCTAssertNil(textField.dropdownButton.menu)
+        XCTAssertEqual(1, textField.listCardTypes?.count)
+
+        
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, .MASTERCARD]]))
+        
+        let menu = textField.dropdownButton.menu
+        
+        XCTAssertNotNil(menu)
+        XCTAssertEqual(menu?.children.count, textField.listCardTypes?.count)
+        
+        for child in menu!.children {
+            guard let action = child as? UIAction else {
+                XCTFail("Expected UIAction type in menu children")
+                return
+            }
+        }
+    }
+    @available(iOS 14.0, *)
+    func testMenuHasCorrectItemsMenu() {
+        // Arrange
+        let expectedTitles = CardType.allCases.map { $0.instance.defaultName }
+        let textField = getElementForDropDownTestingWindow()
+        textField.textFieldDidEndEditing(textField.textField)
+        
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, .MASTERCARD]]))
+        let menu = textField.dropdownButton.menu
+        textField.setUpMenuView()
+        textField.updateMenuView()
+        XCTAssertNotNil(menu)
+        XCTAssertEqual(menu?.children.count, textField.listCardTypes?.count)
+        textField.selectedCardBrand = CardType.AMEX
+        textField.setUpMenuView()
+        textField.updateMenuView()
+        for child in menu!.children {
+            guard let action = child as? UIAction else {
+                return
+            }
+            if (action.title == CardType.AMEX.instance.defaultName) {
+                action.state = .on
+            }
+        }
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
+    }
+    func testGetDropDownIconSetsUpButtonRightView() {
+        let textField = getElementForDropDownTestingRightIcon()
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX]]))
+        if #available(iOS 14.0, *) {
+            XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 0, y: 0, width: 0, height: 0))
+            XCTAssertTrue(textField.dropdownButton.isHidden)
+            XCTAssertEqual(textField.cardIconContainerView.frame, CGRect(x: 0, y: 0, width: 100.0, height: 40))
+        }
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, .VISA]]))
+        if #available(iOS 14.0, *) {
+            XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 50, y: 15, width: 12, height: 15))
+            XCTAssertFalse(textField.dropdownButton.isHidden)
+            XCTAssertEqual(textField.cardIconContainerView.frame, CGRect(x: 0, y: 0, width: 100, height: 40))
+        }
+    }
+    func testGetDropDownIconSetsUpButtonLeftView() {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .left)),placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: true, enableCopy: true), contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111"
+        
+        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX]]))
+        if #available(iOS 14.0, *) {
+            XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 0, y: 0, width: 0, height: 0))
+            XCTAssertTrue(textField.dropdownButton.isHidden)
+            XCTAssertEqual(textField.cardIconContainerView.frame, CGRect(x: 0, y: 0, width: 60, height: 40))
+        }
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, .VISA]]))
+        if #available(iOS 14.0, *) {
+            XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 50, y: 15, width: 12, height: 15))
+            XCTAssertFalse(textField.dropdownButton.isHidden)
+            XCTAssertEqual(textField.cardIconContainerView.frame, CGRect(x: 0, y: 0, width: 62, height: 40))
+        }
+    }
+    func testGetDropDownIconSetsUpButtonRightViewEnableCopyFalse() {
+        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CARD_NUMBER)
+        let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: true, enableCopy: false), contextOptions: ContextOptions(), elements: [])
+        textField.textField.secureText = "4111111111111111";        textField.textFieldDidEndEditing(textField.textField)
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX]]))
+        if #available(iOS 14.0, *) {
+            XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 0, y: 0, width: 0, height: 0))
+            XCTAssertTrue(textField.dropdownButton.isHidden)
+            XCTAssertEqual(textField.cardIconContainerView.frame, CGRect(x: 0, y: 0, width: 65, height: 40))
+        }
+        textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, .VISA]]))
+        if #available(iOS 14.0, *) {
+            XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 50, y: 15, width: 12, height: 15))
+            XCTAssertFalse(textField.dropdownButton.isHidden)
+            XCTAssertEqual(textField.cardIconContainerView.frame, CGRect(x: 0, y: 0, width: 79, height: 40))
+        }
+    }
 }

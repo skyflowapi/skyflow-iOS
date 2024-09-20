@@ -262,7 +262,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
                 } else {
                     for _ in schemes {
                         listCardTypes = schemes
-                        if (listCardTypes?.count ?? 1 >= 2) {
+                        if let cardTypes = listCardTypes, cardTypes.count >= 2 {
                             getDropDownIcon()
                         }
                     }
@@ -557,7 +557,6 @@ public class TextField: SkyflowElement, Element, BaseElement {
             dropdownButton.isHidden = true
             dropdownButton.removeFromSuperview()
             imageView.center = containerView.center
-
         } else if (listCardTypes != nil){
             if (listCardTypes!.count >= 2){
                 imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 24)
@@ -657,7 +656,6 @@ public class TextField: SkyflowElement, Element, BaseElement {
                 let action = UIAction(title: cardType.instance.defaultName, state: state, handler: actionClosure)
                 menuChildren.append(action)
             }
-        } else {
         }
         let menu = UIMenu(options: .displayInline, children: menuChildren)
         dropdownButton.menu = menu
@@ -665,7 +663,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
     }
 
     @available(iOS 14.0, *)
-    private func updateMenuView() {
+    internal func updateMenuView() {
         var updatedMenuChildren: [UIMenuElement] = []
 
         if let cardTypes = listCardTypes {
