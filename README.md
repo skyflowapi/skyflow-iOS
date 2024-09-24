@@ -18,7 +18,7 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
 # Installation
  
 ## Requirements
-- iOS 13.0.0 and above
+- iOS 15.0 and above
  
 ## Configuration
 ---
