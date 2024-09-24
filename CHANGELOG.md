@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.24.1] - 2024-09-24
+
+### Fixed
+- Fix card brand choice bug for card number element.
+
+## [1.24.0] - 2024-09-11
+
+### Changed
+- Update Error messages
+
 ## [1.23.0] - 2024-09-03
 
 ### Added
