@@ -341,7 +341,7 @@ class skyflow_iOS_elementTests: XCTestCase {
 
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
-        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
         XCTAssertTrue(textField.listCardTypes?.count == 2)
         XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
         XCTAssertTrue(textField.dropdownButton.isHidden == false)
@@ -351,7 +351,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
-        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
         XCTAssertTrue(textField.listCardTypes?.count == 2)
         XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
         XCTAssertTrue(textField.dropdownButton.isHidden == false)
@@ -361,7 +361,7 @@ class skyflow_iOS_elementTests: XCTestCase {
 
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
-        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
         XCTAssertTrue(textField.listCardTypes != nil)
         XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
         XCTAssertFalse(textField.dropdownButton.isHidden)
@@ -391,7 +391,7 @@ class skyflow_iOS_elementTests: XCTestCase {
 
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
-        XCTAssertTrue(textField.selectedCardBrand == nil)
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
         XCTAssertTrue(textField.listCardTypes != nil)
         XCTAssertEqual(textField.listCardTypes, [CardType.AMEX, CardType.VISA])
         XCTAssertFalse(textField.dropdownButton.isHidden)
@@ -425,7 +425,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
         XCTAssertFalse(textField.dropdownButton.isHidden)
-        XCTAssertEqual(textField.selectedCardBrand, nil)
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
     }
     func testDropdownClickAndMenuVisible() {
         let textField = getElementForDropDownTesting()
@@ -433,7 +433,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
         XCTAssertFalse(textField.dropdownButton.isHidden)
-        XCTAssertEqual(textField.selectedCardBrand, nil)
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
         if #available(iOS 14.0, *) {
             XCTAssertEqual(textField.dropdownButton.menu?.children.count, 2)
             XCTAssertEqual((textField.dropdownButton.menu?.children.first as? UIAction)?.title, CardType.AMEX.instance.defaultName)
@@ -460,6 +460,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let textField = getElementForDropDownTestingWindow()
         textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX, CardType.VISA]]))
+        XCTAssertEqual(textField.selectedCardBrand?.instance.defaultName, CardType.AMEX.instance.defaultName)
         if #available(iOS 14.0, *) {
             XCTAssertEqual(textField.dropdownButton.frame, CGRect(x: 50, y: 15, width: 12, height: 15))
             XCTAssertFalse(textField.dropdownButton.isHidden)
