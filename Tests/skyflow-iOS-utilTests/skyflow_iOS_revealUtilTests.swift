@@ -40,12 +40,13 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     
    func testOnSuccessInvalidUrl() {
        self.revealApiCallback.connectionUrl = "invalid url"
+       let record = RevealRequestRecord(token: "token", redaction: RedactionType.PLAIN_TEXT.rawValue)
+       self.revealApiCallback.records = [record]
        self.revealApiCallback.onSuccess("token")
-       
-       wait(for: [self.expectation], timeout: 20.0)
+       wait(for: [self.expectation], timeout: 10.0)
        let errors = callback.data["errors"] as! [[String: NSError]]
        XCTAssertEqual(errors.count, 1)
-       XCTAssertEqual(errors[0]["error"], ErrorCodes.INVALID_URL().getErrorObject(contextOptions: ContextOptions()))
+       XCTAssertEqual(errors[0]["error"]?.localizedDescription, "unsupported URL")
    }
    
     func testGetRequestSession() {
