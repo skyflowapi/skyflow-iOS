@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.24.2] - 2025-04-14
+
+### Added
+- Flexibility to display the desired card brand scheme for card brand choice.
+
 ## [1.24.1] - 2024-09-24
 
 ### Fixed
