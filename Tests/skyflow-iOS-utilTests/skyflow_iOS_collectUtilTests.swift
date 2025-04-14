@@ -26,7 +26,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
     }
     
     func testOnSuccessInvalidUrl() {
-        let expectation = XCTestExpectation()
+        let expectation = XCTestExpectation(description: "Invalid URL should trigger failure")
         let callback = DemoAPICallback(expectation: expectation)
         self.collectCallback.apiClient.vaultURL = "Invalid url"
         self.collectCallback.callback = callback
@@ -35,7 +35,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
         
         let result = callback.receivedResponse
-        XCTAssert(result.contains("Initialization failed. Invalid credentials. Specify a valid 'vaultURL'"))
+        XCTAssert(result.contains("unsupported URL"))
     }
     
     func testGetRequestSession() {

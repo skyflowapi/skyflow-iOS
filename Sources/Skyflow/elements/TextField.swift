@@ -264,6 +264,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
                         listCardTypes = schemes
                         if let cardTypes = listCardTypes, cardTypes.count >= 2 {
                             getDropDownIcon()
+                            selectedCardBrand = listCardTypes?[0] 
                         }
                     }
                 }
