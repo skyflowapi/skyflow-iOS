@@ -264,13 +264,16 @@ public class TextField: SkyflowElement, Element, BaseElement {
                         listCardTypes = schemes
                         if let cardTypes = listCardTypes, cardTypes.count >= 2 {
                             getDropDownIcon()
-                            selectedCardBrand = listCardTypes?[0] 
+                            selectedCardBrand = listCardTypes?[0]
+                        } else {
+                            selectedCardBrand = nil
                         }
                     }
                 }
                 let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
                 let card = CardType.forCardNumber(cardNumber: t).instance
                 updateImage(name: card.imageName, cardNumber: t)
+                self.onChangeHandler?((self.state as! StateforText).getStateForListener())
             }
             let t = self.textField.secureText!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: " ", with: "")
             let card = CardType.forCardNumber(cardNumber: t).instance
