@@ -209,7 +209,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testCardExpiryValidationMMYY() {
-        let mmyy = "12/24"
+        let mmyy = "12/30"
         
         let cardexpValidation = SkyflowValidateCardExpirationDate(format: "mm/yy", error: "Invalid Card expiration date")
         XCTAssertTrue(SkyflowValidator.validate(input: mmyy, rules: ValidationSet(rules: [cardexpValidation])).isEmpty)

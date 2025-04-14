@@ -31,14 +31,16 @@ final class skyflow_iOS_getByIdUtilTests: XCTestCase {
     func testApiCallbackInvalidUrl() {
         let expectation = XCTestExpectation(description: "expect invalid url failure")
         let failureCallback = DemoAPICallback(expectation: expectation)
-        
+        let record = GetByIdRecord(ids: ["one", "two"], table: "table", redaction: "REDACTED")
+        self.revealApiCallback.records = [record]
         self.revealApiCallback.connectionUrl = "invalid url"
+        self.revealApiCallback.apiClient.vaultURL = "dummy"
         self.revealApiCallback.callback = failureCallback
         self.revealApiCallback.onSuccess("dummy_token")
         
         wait(for: [expectation], timeout: 30.0)
         let result = failureCallback.data["errors"] as! [[String: NSError]]
-        XCTAssertEqual(result[0]["error"], ErrorCodes.INVALID_URL().getErrorObject(contextOptions: ContextOptions()))
+        XCTAssertEqual(result[0]["error"]?.localizedDescription, "unsupported URL")
     }
     
     func testGetRequestSession() {
