@@ -24,7 +24,7 @@ jobs:
              xcrun simctl list runtimes
       
       - name: Build and Test
-        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=17.0.1,name=iPhone 15" VAULT_URL="https://demo.com" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="id3" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" VAULT_ID="${{ secrets.VAULT_ID }}" test
+        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=17.0.1,name=iPhone 15" VAULT_URL="${{ secrets.VAULT_URL }}" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="${{ secrets.TEST_SKYFLOW_ID3 }}" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" VAULT_ID="${{ secrets.VAULT_ID }}" test
         
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
