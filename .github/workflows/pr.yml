@@ -35,16 +35,16 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
         
-      - name: Select Xcode 15
-        run: sudo xcode-select --switch /Applications/Xcode_15.1.app/Contents/Developer
+      - name: Select Xcode 16
+        run: sudo xcode-select --switch /Applications/Xcode_16.1.app/Contents/Developer
 
       - name: Prepare iOS 17 Simulator
         run: sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
-             sudo ln -s /Applications/Xcode_15.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 17.0.1.simruntime
+             sudo ln -s /Applications/Xcode_16.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 18.1.0.simruntime
              xcrun simctl list runtimes
       
       - name: Build and Test
-        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=17.0.1,name=iPhone 15" VAULT_URL="${{ secrets.VAULT_URL }}" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="${{ secrets.TEST_SKYFLOW_ID3 }}" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" VAULT_ID="${{ secrets.VAULT_ID }}" test        
+        run: xcodebuild clean -workspace .swiftpm/xcode/package.xcworkspace -scheme Skyflow -enableCodeCoverage YES -destination "platform=iOS Simulator,OS=18.1.0,name=iPhone 16" VAULT_URL="${{ secrets.VAULT_URL }}" TEST_SKYFLOW_ID1="${{ secrets.TEST_SKYFLOW_ID1 }}" TEST_SKYFLOW_ID2="${{ secrets.TEST_SKYFLOW_ID2 }}" TEST_SKYFLOW_ID3="${{ secrets.TEST_SKYFLOW_ID3 }}" TEST_SKYFLOW_ID4="${{ secrets.TEST_SKYFLOW_ID4 }}" VAULT_ID="${{ secrets.VAULT_ID }}" test        
         
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
