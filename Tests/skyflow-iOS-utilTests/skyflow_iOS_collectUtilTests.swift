@@ -493,7 +493,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             "error": ["message": "Insert failed"]
         ]
         let insertErrorResponseData = try! JSONSerialization.data(withJSONObject: insertErrorResponseDict, options: .fragmentsAllowed)
-        let insertErrorUrlResponse = HTTPURLResponse(url: URL(string: "https://example.org/vault")!, statusCode: 400, httpVersion: "1.1", headerFields: nil)
+        let insertErrorUrlResponse = HTTPURLResponse(url: URL(string: "https://example.org/vault")!, statusCode: 404, httpVersion: "1.1", headerFields: nil)
 
         // Simulate a successful update response
         let updateResponseDict: [String: Any] = [
@@ -506,7 +506,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         do {
             let insertProccessed = try collectCallback.processResponse(data: insertErrorResponseData, response: insertErrorUrlResponse, error: nil)  as! [String: [String: Any]]
             XCTAssertEqual(insertProccessed["error"]?["message"] as? String, "Insert failed")
-            XCTAssertEqual(insertProccessed["error"]?["code"] as? Int, 400)
+            XCTAssertEqual(insertProccessed["error"]?["code"] as? Int, 404)
 
             let processedUpdate = try collectCallback.processUpdateResponse(data: updateResponseData, response: updateUrlResponse, error: nil, table: "table")
             let updateRecords = processedUpdate["records"] as! [[String: Any]]
@@ -520,95 +520,59 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             XCTFail("Insert failure and update success scenario failed: \(error)")
         }
     }
-//    func testInsertResponseStructure() {
-//        let expectation = XCTestExpectation(description: "Insert response structure test")
-//        let callback = DemoAPICallback(expectation: expectation)
-//
-//        let insertRecord: [String: Any] = [
-//            "table": "table",
-//            "fields": ["drivers_license_number": "REDACTED", "ssn": "XXX-XX-7645"]
-//        ]
-//
-//        let collectCallback = CollectAPICallback(
-//            callback: callback,
-//            apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
-//            records: ["records": [insertRecord]],
-//            options: ICOptions(tokens: true, additionalFields: nil),
-//            contextOptions: ContextOptions()
-//        )
-//
-//        // Simulate a successful insert response
-//        let insertResponseDict: [String: Any] = [
-//            "vaultID": "cd1d815aa09b4cbfbb803bd20349f202",
-//            "responses": [
-//                [
-//                    "records": [
-//                        [
-//                            "fields": [
-//                                "drivers_license_number": "REDACTED",
-//                                "ssn": "XXX-XX-7645"
-//                            ],
-//                            "skyflow_id": "4bc4a3a6-dfba-4314-809d-5ca63d43c732"
-//                        ]
-//                    ]
-//                ]
-//            ]
-//        ]
-//        let insertResponseData = try! JSONSerialization.data(withJSONObject: insertResponseDict, options: .fragmentsAllowed)
-//        let insertUrlResponse = HTTPURLResponse(url: URL(string: "https://example.org/vault")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
-//
-//        do {
-//            let processedInsert = try collectCallback.processResponse(data: insertResponseData, response: insertUrlResponse, error: nil)
-//            let insertRecords = processedInsert["records"] as! [[String: Any]]
-//
-//            XCTAssertEqual(insertRecords.count, 1)
-//            XCTAssertEqual(insertRecords[0]["skyflow_id"] as? String, "4bc4a3a6-dfba-4314-809d-5ca63d43c732")
-//            let fields = insertRecords[0]["fields"] as! [String: String]
-//            XCTAssertEqual(fields["drivers_license_number"], "REDACTED")
-//            XCTAssertEqual(fields["ssn"], "XXX-XX-7645")
-//        } catch {
-//            XCTFail("Insert response structure test failed: \(error)")
-//        }
-//    }
-//
-//    func testInsertErrorStructure() {
-//        let expectation = XCTestExpectation(description: "Insert error structure test")
-//        let callback = DemoAPICallback(expectation: expectation)
-//
-//        let insertRecord: [String: Any] = [
-//            "table": "table",
-//            "fields": ["drivers_license_number": "REDACTED", "ssn": "XXX-XX-7645"]
-//        ]
-//
-//        let collectCallback = CollectAPICallback(
-//            callback: callback,
-//            apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
-//            records: ["records": [insertRecord]],
-//            options: ICOptions(tokens: true, additionalFields: nil),
-//            contextOptions: ContextOptions()
-//        )
-//
-//        // Simulate a failed insert response
-//        let insertErrorResponseDict: [String: Any] = [
-//            "error": [
-//                "grpc_code": 3,
-//                "http_code": 400,
-//                "http_status": "Bad Request",
-//                "message": "The request was invalid or cannot be served. Check the request parameters and try again.",
-//                "details": []
-//            ]
-//        ]
-//        let insertErrorResponseData = try! JSONSerialization.data(withJSONObject: insertErrorResponseDict, options: .fragmentsAllowed)
-//        let insertErrorUrlResponse = HTTPURLResponse(url: URL(string: "https://example.org/vault")!, statusCode: 400, httpVersion: "1.1", headerFields: nil)
-//
-//        do {
-//            XCTAssertThrowsError(try collectCallback.processResponse(data: insertErrorResponseData, response: insertErrorUrlResponse, error: nil)) { error in
-//                let errorDict = error as! [String: Any]
-//                let errorMessage = (errorDict["error"] as! [String: Any])["message"] as! String
-//                XCTAssertEqual(errorMessage, "The request was invalid or cannot be served. Check the request parameters and try again.")
-//            }
-//        } catch {
-//            XCTFail("Insert error structure test failed: \(error)")
-//        }
-//    }
+    func testInsertFailureAndUpdateFailure() {
+        let expectation = XCTestExpectation(description: "Insert failure and update failure")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        let insertRecord: [String: Any] = [
+            "table": "table",
+            "fields": ["field": "value"]
+        ]
+
+        let updateRecord: [String: Any] = [
+            "table": "table",
+            "skyflowID": "id1",
+            "fields": ["field": "newValue"]
+        ]
+
+        let collectCallback = CollectAPICallback(
+            callback: callback,
+            apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
+            records: ["records": [insertRecord], "update": ["id1": updateRecord]],
+            options: ICOptions(tokens: true, additionalFields: nil),
+            contextOptions: ContextOptions()
+        )
+
+        // Simulate a failed insert response
+        let insertErrorResponseDict: [String: Any] = [
+            "error": ["message": "Insert failed"]
+        ]
+        let insertErrorResponseData = try! JSONSerialization.data(withJSONObject: insertErrorResponseDict, options: .fragmentsAllowed)
+        let insertErrorUrlResponse = HTTPURLResponse(url: URL(string: "https://example.org/vault")!, statusCode: 404, httpVersion: "1.1", headerFields: nil)
+
+        // Simulate a successful update response
+        let updateResponseDict: [String: Any] = [
+            "skyflow_id": "id1",
+            "tokens": ["field": "newValue"]
+        ]
+        let updateErrorResponseDict: [String: Any] = [
+            "error": ["message": "Update failed"]
+        ]
+        let updateResponseData = try! JSONSerialization.data(withJSONObject: updateErrorResponseDict, options: .fragmentsAllowed)
+        let updateUrlResponse = HTTPURLResponse(url: URL(string: "https://example.org/table/id1")!, statusCode: 404, httpVersion: "1.1", headerFields: nil)
+
+        do {
+            let insertProccessed = try collectCallback.processResponse(data: insertErrorResponseData, response: insertErrorUrlResponse, error: nil)  as! [String: [String: Any]]
+            XCTAssertEqual(insertProccessed["error"]?["message"] as? String, "Insert failed")
+            XCTAssertEqual(insertProccessed["error"]?["code"] as? Int, 404)
+
+            let processedUpdate = try collectCallback.processUpdateResponse(data: updateResponseData, response: updateUrlResponse, error: nil, table: "table") as! [String: [String: Any]]
+
+            XCTAssertEqual(processedUpdate["error"]?["message"] as? String, "Update failed")
+            XCTAssertEqual(processedUpdate["error"]?["code"] as? Int, 404)
+
+        } catch {
+            XCTFail("Insert failure and update success scenario failed: \(error)")
+        }
+    }
 }
