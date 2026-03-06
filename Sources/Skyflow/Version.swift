@@ -13,4 +13,4 @@ import Foundation
 
 var LangAndVersion = "iOS SDK v\(SDK_VERSION)"
 
-var SDK_VERSION = "1.24.2"
+var SDK_VERSION = "1.24.2-dev.1a4210c"
