@@ -63,6 +63,14 @@ internal class APIClient {
         let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
         self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
     }
+    internal func constructUpdateRequestBody(records: [String: Any], options: ICOptions) -> [String: Any] {
+        var postPayload: [String : Any] = [:]
+        var fields: [String: Any] = [:]
+        fields["fields"] = records["fields"]
+        postPayload["record"] = fields
+        postPayload["tokenization"] = options.tokens
+        return postPayload
+    }
 
     internal func constructBatchRequestBody(records: [String: Any], options: ICOptions) -> [String: Any] {
         var postPayload: [Any] = []
