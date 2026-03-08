@@ -59,9 +59,13 @@ internal class APIClient {
         }
     }
 
-    internal func post(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
+    internal func postAndUpdate(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
         let collectApiCallback = CollectAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
         self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
+    }
+    internal func post(records: [String: Any], callback: Callback, options: ICOptions, contextOptions: ContextOptions) {
+        let insertApiCallback = InsertAPICallback(callback: callback, apiClient: self, records: records, options: options, contextOptions: contextOptions)
+        self.getAccessToken(callback: insertApiCallback, contextOptions: contextOptions)
     }
     internal func constructUpdateRequestBody(records: [String: Any], options: ICOptions) -> [String: Any] {
         var postPayload: [String : Any] = [:]
