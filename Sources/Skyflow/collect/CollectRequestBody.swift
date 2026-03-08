@@ -60,13 +60,11 @@ internal class CollectRequestBody {
     ) -> [String: Any]? {
         var tableMap: [String: Int] = [:]
         var payload: [[String: Any]] = []
-//        var updateSkyflowIdMap: [String: Int] = [:]
         var updatePayload: [String: Any] = [:]
         self.callback = callback
         self.breakFlag = false
         self.tableSet = Set<String>()
         var index: Int = 0
-//        var updateIndex: Int = 0
         var inputPayload: [[String: Any]] = []
 
         if additionalFields != nil {
@@ -79,14 +77,16 @@ internal class CollectRequestBody {
                     // add to update payload
                     let skyflowID = entryDict["skyflowID"] as! String
                     if updatePayload[skyflowID] != nil {
-                        var temp = updatePayload[skyflowID] as! [String: Any]
+                        let temp = updatePayload[skyflowID] as! [String: Any]
                         // merge existing fields with new field
                         var existingFields = temp["fields"] as! [String: Any]
                         for (key, val) in fields {
+                            // CHECK IF KEY ALREADY PRESENTS
                             existingFields[key] = val
                         }
-                        temp["fields"] = existingFields
-                        updatePayload[skyflowID] = temp
+                        var updatedTemp = temp
+                        updatedTemp["fields"] = existingFields
+                        updatePayload[skyflowID] = updatedTemp
                     } else {
                         var temp: [String: Any] = [
                             "table": tableName,
@@ -133,7 +133,23 @@ internal class CollectRequestBody {
                     var temp = updatePayload[skyflowID] as! [String: Any]
                     // merge existing fields with new field
                     var existingFields = temp["fields"] as! [String: Any]
-                    existingFields[columnName] = value
+                    if existingFields[columnName] != nil {
+                        var hasElementValueMatchRule: Bool = false
+                        for validation in element.userValidationRules.rules {
+                            if validation is ElementValueMatchRule {
+                                hasElementValueMatchRule = true
+                                break;
+                            }
+                        }
+                        if(!hasElementValueMatchRule)
+                        {
+                            self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [ element.columnName, element.tableName!]).getErrorObject(contextOptions: contextOptions))
+                            return nil
+                        }
+                        continue;
+                    } else {
+                        existingFields[columnName] = value
+                    }
                     temp["fields"] = existingFields
                     updatePayload[skyflowID] = temp
                 } else {
