@@ -7,22 +7,19 @@ target 'UpdateDataUsingElements' do
 
   # Pods for UpdateDataUsingElements
     pod 'AEXML', '4.6.1'
-#   pod 'Skyflow', '1.24.2'
-    pod 'Skyflow', :git => 'https://github.com/skyflowapi/skyflow-iOS.git', :branch => 'release/26.3.1'
+    pod 'Skyflow', '1.25.0'
 
   target 'UpdateDataUsingElementsTests' do
     inherit! :search_paths
     # Pods for testing
      pod 'AEXML', '4.6.1'
-#   pod 'Skyflow', '1.24.2'
-    pod 'Skyflow', :git => 'https://github.com/skyflowapi/skyflow-iOS.git', :branch => 'release/26.3.1'
+     pod 'Skyflow', '1.25.0'
   end
 
   target 'UpdateDataUsingElementsUITests' do
     # Pods for testing
   	pod 'AEXML', '4.6.1'
-#   pod 'Skyflow', '1.24.2'
-    pod 'Skyflow', :git => 'https://github.com/skyflowapi/skyflow-iOS.git', :branch => 'release/26.3.1'
+    pod 'Skyflow', '1.25.0'
 
   end
 
