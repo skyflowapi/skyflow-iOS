@@ -99,7 +99,7 @@ public extension Container {
                 onFailureHandler: {
                 }
             )
-            self.skyflow.apiClient.post(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
+            self.skyflow.apiClient.postAndUpdate(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
     }
 

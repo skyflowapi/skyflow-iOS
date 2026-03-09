@@ -71,6 +71,20 @@ final class skyflow_iOS_utilTests: XCTestCase {
         XCTAssertTrue(tokenization)
     }
     
+    func testConstructUpdateRequestBody() {
+        let apiClient = APIClient(vaultID: "vault123", vaultURL: "https://example.com", tokenProvider: DemoTokenProvider())
+        
+        let updateRecords: [String: Any] = [
+            "update": [
+                ["table": "users", "fields": ["name": "John Doe", "email": "john.doe@example.com"], "skyflowID": "id123"],
+                ["table": "users", "fields": ["name": "Jane Doe", "email": "jane.doe@example.com"], "skyflowID": "id124"]
+            ]
+        ]
+        let singleUpdateRecord = ["table": "users", "fields": ["name": "John Doe", "email": "john.doe@example.com"], "skyflowID": "id123"] as [String : Any]
+        let result = apiClient.constructUpdateRequestBody(records: singleUpdateRecord, options: ICOptions(tokens: false))
+        let records = result["record"] as! [String: Any]
+        let tokenization = result["tokenization"] as! Bool
+        XCTAssertEqual(records as NSDictionary, ["fields": ["name": "John Doe", "email": "john.doe@example.com"]])
+        XCTAssertFalse(tokenization)
+    }
 }
-
-
