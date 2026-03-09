@@ -1,0 +1,26 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'UpdateDataUsingElements' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for UpdateDataUsingElements
+    pod 'AEXML', '4.6.1'
+    pod 'Skyflow', '1.25.0'
+
+  target 'UpdateDataUsingElementsTests' do
+    inherit! :search_paths
+    # Pods for testing
+     pod 'AEXML', '4.6.1'
+     pod 'Skyflow', '1.25.0'
+  end
+
+  target 'UpdateDataUsingElementsUITests' do
+    # Pods for testing
+  	pod 'AEXML', '4.6.1'
+    pod 'Skyflow', '1.25.0'
+
+  end
+
+end
