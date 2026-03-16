@@ -1,15 +1,16 @@
 # skyflow-iOS
 ---
-Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensitive data in the mobile without exposing your front-end infrastructure to sensitive data. 
+Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensitive data in the mobile without exposing your front-end infrastructure to sensitive data. 
  
 [![CI](https://img.shields.io/static/v1?label=CI&message=passing&color=green?style=plastic&logo=github)](https://github.com/skyflowapi/skyflow-ios/actions)
 [![GitHub release](https://img.shields.io/github/v/release/skyflowapi/skyflow-ios.svg)](https://github.com/skyflowapi/skyflow-ios/releases)
 [![License](https://img.shields.io/github/license/skyflowapi/skyflow-ios)](https://github.com/skyflowapi/skyflow-ios/blob/main/LICENSE)
- 
+
 # Table of Contents
 - [Installation](#installation)
     - [Requirements](#requirements)
     - [Configuration](#configuration)
+    - [Migration Guide](#migration-guide)
 - [Initializing Skyflow-iOS](#initializing-skyflow-ios)
 - [Securely collecting data client-side](#securely-collecting-data-client-side)
 - [Securely collecting data client-side using Composable Elements](#securely-collecting-data-client-side-using-composable-elements)
@@ -35,6 +36,9 @@ Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensi
     
     pod 'Skyflow'
     ```
+
+## Migration Guide
+- For step-by-step migration from CocoaPods to SPM, see [CocoaPods → Swift Package Manager (SPM) Migration Guide](docs/cocoapods-to-spm-migration.md).
  
  
 # Initializing skyflow-iOS
