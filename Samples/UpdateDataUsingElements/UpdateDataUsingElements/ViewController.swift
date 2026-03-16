@@ -8,7 +8,7 @@ import Skyflow
 class ViewController: UIViewController {
     var retryCount = 0
     private var skyflow: Skyflow.Client?
-    private var container: Skyflow.Container<Skyflow.CollectContainer>?
+    private var container: Skyflow.Container<Skyflow.ComposableContainer>?
     private var b: UIButton?
 
     private var stackView: UIStackView!
@@ -123,7 +123,7 @@ class ViewController: UIViewController {
 
             do {
                 let composableView = try container?.getComposableView()
-                stackView.addArrangedSubview(composableView)
+                stackView.addArrangedSubview(composableView!)
             } catch {
                 print(error)
             }

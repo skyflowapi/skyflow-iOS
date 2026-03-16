@@ -1,9 +1,21 @@
-Please follow these below steps to run samples
+Please follow these steps to run samples.
 
-- Navigate to the desired sample
-- In CMD, run the command, pod install
-- Open the .xcworkspace file using xcode
-- Click on Build and run
+## Recommended (SPM)
+
+- Navigate to the desired sample.
+- Open the `.xcodeproj` file in Xcode.
+- Add package dependency: `https://github.com/skyflowapi/skyflow-iOS.git`.
+- Select the `Skyflow` product for the sample target.
+- Build and run.
+
+## Existing CocoaPods flow
+
+- Navigate to the desired sample.
+- In terminal, run `pod install`.
+- Open the `.xcworkspace` file in Xcode.
+- Build and run.
+
+For migration steps and risk checks, see [CocoaPods → Swift Package Manager (SPM) Migration Guide](../docs/cocoapods-to-spm-migration.md).
 
 `Note`:
 In every sample, in Skyflow.Config(), replace with the following fields:

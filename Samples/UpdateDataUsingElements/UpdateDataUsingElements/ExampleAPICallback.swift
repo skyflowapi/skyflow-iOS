@@ -6,7 +6,7 @@ import Foundation
 import Skyflow
 
 public class ExampleAPICallback: Skyflow.Callback {
-    private var updateSuccess: ((SuccessResponse) -> Void)?
+    private var updateSuccess: ((Any) -> Void)?
     private var updateFailure: ((Any) -> Void)?
     private var decoder: JSONDecoder?
 
