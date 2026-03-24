@@ -61,6 +61,7 @@ jobs:
           config: .cspell.json
           strict: true
           inline: error
+          incremental_files_only: false
 
 
 
