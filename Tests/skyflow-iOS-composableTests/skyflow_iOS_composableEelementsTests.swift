@@ -281,12 +281,12 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
-        let mycontainer = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [2]))
+        let myContainer = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [2]))
 
         let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
-        let textField = mycontainer?.create(input: collectInput)
+        let textField = myContainer?.create(input: collectInput)
         do {
-            let view = try mycontainer?.getComposableView()
+            let view = try myContainer?.getComposableView()
             let window = UIWindow()
             window.addSubview(view!)
             
@@ -295,7 +295,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             textField?.textFieldDidEndEditing(textField!.textField)
             let expectFailure = XCTestExpectation(description: "Should fail")
             let myCallback = DemoAPICallback(expectation: expectFailure)
-            mycontainer?.collect(callback: myCallback)
+            myContainer?.collect(callback: myCallback)
             wait(for: [expectFailure], timeout: 10.0)
             
             XCTAssertEqual(myCallback.receivedResponse, "for cardnumber INVALID_CARD_NUMBER\n")
@@ -309,12 +309,12 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
-        let mycontainer = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [1]))
+        let myContainer = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [1]))
         
         let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
-        let textField = mycontainer?.create(input: collectInput)
+        let textField = myContainer?.create(input: collectInput)
         do {
-            let view = try mycontainer?.getComposableView()
+            let view = try myContainer?.getComposableView()
             let window = UIWindow()
             window.addSubview(view!)
             textField?.textField.secureText = "invalid"
@@ -323,7 +323,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             
             let expectFailure = XCTestExpectation(description: "Should fail")
             let myCallback = DemoAPICallback(expectation: expectFailure)
-            mycontainer?.collect(callback: myCallback)
+            myContainer?.collect(callback: myCallback)
             
             wait(for: [expectFailure], timeout: 10.0)
             XCTAssertEqual(myCallback.receivedResponse, "for cardnumber triggered error\n")
@@ -473,7 +473,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
-    func testCollectBadTableKeyAddionalFields() {
+    func testCollectBadTableKeyAdditionalFields() {
         let additionalFields = ["records": [["table": []]]]
         let container = skyflow.container(type: ContainerType.COMPOSABLE)
         
@@ -572,7 +572,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         let emptyResult = container?.concatenateStringArray(emptyArray, from: 0, to: 2)
         XCTAssertEqual(emptyResult, "")
     }
-    func testConcatenateStringArrayRveresedIndex(){
+    func testConcatenateStringArrayReversedIndex(){
         let reversedStartIndex = 3
         let reversedEndIndex = 1
         let inputArray = ["Hello", " ", "World", "!"]

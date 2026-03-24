@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-// Impletementation for TextField other than SkyflowInputField, for ex : [validation error, label, reveal element]
+// Implementation for TextField other than SkyflowInputField, for ex : [validation error, label, reveal element]
 
 
 import Foundation

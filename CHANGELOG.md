@@ -130,7 +130,7 @@ All notable changes to this project will be documented in this file.
 - Validation to token obtained from `tokenProvider`
 
 ### Fixed
-- Request headers not getting overriden due to case sensitivity
+- Request headers not getting overridden due to case sensitivity
 
 ## [1.12.0] - 2022-02-24
 

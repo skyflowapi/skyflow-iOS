@@ -2,7 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-// Implemention of different states of LOGS
+// Implementation of different states of LOGS
 
 import Foundation
 

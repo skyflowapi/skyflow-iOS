@@ -15,7 +15,7 @@ class GetByIdScenario {
         self.callback = callback
     }
     
-    func initiatializeRecords() -> GetByIdScenario {
+    func initializeRecords() -> GetByIdScenario {
         self.records = ["records": []]
         
         return self

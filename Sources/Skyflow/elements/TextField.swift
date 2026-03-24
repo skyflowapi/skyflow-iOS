@@ -565,7 +565,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
             if (listCardTypes!.count >= 2){
                 imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 24)
 
-                // uimenu code
+                // UIMenu code
                 if #available(iOS 14.0, *) {
                     if (cardIconAlignment == .left){
                         textField.padding.left = 70

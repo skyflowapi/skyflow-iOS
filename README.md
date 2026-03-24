@@ -219,7 +219,7 @@ skyflowClient.insert(records: records, options: insertOptions, callback: insertC
  
 ### Step 1: Create a container
  
-First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
+First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as shown below
  
 ```swift
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
@@ -563,7 +563,7 @@ You can update the data in a vault with Skyflow Elements. Use the following step
  
 ### Step 1: Create a container
  
-First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
+First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as shown below
  
 ```swift
 let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
@@ -811,7 +811,7 @@ let confirmPasswordInput = CollectElementInput(
 )
 let confirmPassword = container?.create(input: confirmPasswordInput, options: collectElementOptions)
 
-// mount elements on screen - errors will be shown if any of the validaitons fail
+// mount elements on screen - errors will be shown if any of the validations fail
 stackView.addArrangedSubview(password!)
 stackView.addArrangedSubview(confirmPassword!)
 ```
@@ -931,7 +931,7 @@ cardHolderName.on(eventName: Skyflow.EventName.CHANGE) { state in
  
 Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
  
-`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+`setError(error: String)` method is used to set the error text for the element, when this method is triggered, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is triggered on the same element.
  
 `resetError()` method is used to clear the custom error message that is set using `setError`.
  
@@ -1014,7 +1014,7 @@ Composable Elements combine multiple Skyflow Elements in a single row. The follo
 
 ### Step 1: Create a composable container
 
-First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
+First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as shown below
 
 ```swift
 let container = skyflowClient.container(type: Skyflow.ContainerType.COMPOSABLE,  options: ContainerOptions)
@@ -1590,7 +1590,7 @@ composableContainer?.on(eventName: .SUBMIT){
 Composable Elements combine multiple Skyflow Elements in a single row. The following steps create a composable element and securely update data through it.
 
 ### Step 1: Create a composable container
-First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
+First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as shown below
 
 ```swift
 var containerOptions = ContainerOptions(
@@ -2148,7 +2148,7 @@ container.reveal(callback: revealCallback)
  
 Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
  
-`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+`setError(error: String)` method is used to set the error text for the element, when this method is triggered, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is triggered on the same element.
  
 `resetError()` method is used to clear the custom error message that is set using `setError`.
  
@@ -2189,7 +2189,7 @@ let cardNumberInput = Skyflow.RevealElementInput(
     errorTextStyles: errorTextStyles,
     label: "cardnumber",
     altText: "XXXX XXXX XXXX XXXX",
-    redaction: SKyflow.RedactionType.MASKED
+    redaction: Skyflow.RedactionType.MASKED
 )
 
 let cardNumberElement = container?.create(input: cardNumberInput)

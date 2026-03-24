@@ -100,7 +100,7 @@ class ViewController: UIViewController {
             )
             let confirmPassword = container?.create(input: confirmPasswordInput, options: collectElementOptions)
             self.confirmPasswordElement = confirmPassword
-            // mount elements on screen - errors will be shown if any of the validaitons fail
+            // mount elements on screen - errors will be shown if any of the validations fail
             stackView.addArrangedSubview(password!)
             stackView.addArrangedSubview(confirmPassword!)
             let resetButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 40))

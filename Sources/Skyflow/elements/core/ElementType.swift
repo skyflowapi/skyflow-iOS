@@ -37,7 +37,7 @@ public enum ElementType: Int, CaseIterable {
     /// Field type that requires Credit Card Number input formatting and validation.
     case CARD_NUMBER
 
-    /// Field type that requires Card Expiration Date input formatting and validation, format can be set through CollectElementOptions, defaul is MM/YY
+    /// Field type that requires Card Expiration Date input formatting and validation, format can be set through CollectElementOptions, default is MM/YY
     case EXPIRATION_DATE
 
     /// Field type that requires Card CVV input formatting and validation.
@@ -46,13 +46,13 @@ public enum ElementType: Int, CaseIterable {
     /// A generic field type without any validations
     case INPUT_FIELD
     
-    /// Field type that requires Card PIN input formatting and validatoin
+    /// Field type that requires Card PIN input formatting and validation
     case PIN
     
     /// Field type that requires Card Expiration Month formatting and validation (format: MM)
     case EXPIRATION_MONTH
     
-    /// Field type that requires Card Expiration Year formatting and validation, format can be set through CollectElementOptions for YY, defaul is YYYY
+    /// Field type that requires Card Expiration Year formatting and validation, format can be set through CollectElementOptions for YY, default is YYYY
     case EXPIRATION_YEAR
     
 

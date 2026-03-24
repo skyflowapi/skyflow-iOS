@@ -426,10 +426,10 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
-        let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let myContainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
-        let textField = mycontainer?.create(input: collectInput)
+        let textField = myContainer?.create(input: collectInput)
         
         let window = UIWindow()
         window.addSubview(textField!)
@@ -439,7 +439,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
-        mycontainer?.collect(callback: myCallback)
+        myContainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber INVALID_CARD_NUMBER\n")
@@ -449,10 +449,10 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myRegexRule = RegexMatchRule(regex: "(\\d-){4}+\\d{4}", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
-        let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let myContainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
-        let textField = mycontainer?.create(input: collectInput)
+        let textField = myContainer?.create(input: collectInput)
         
         let window = UIWindow()
         window.addSubview(textField!)
@@ -462,7 +462,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
-        mycontainer?.collect(callback: myCallback)
+        myContainer?.collect(callback: myCallback)
         wait(for: [expectFailure], timeout: 10.0)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber Regex match failed\n")
@@ -498,10 +498,10 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let myRegexRule = RegexMatchRule(regex: "\\d+", error: "Regex match failed")
         let myRules = ValidationSet(rules: [myRegexRule])
         
-        let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let myContainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
-        let textField = mycontainer?.create(input: collectInput)
+        let textField = myContainer?.create(input: collectInput)
         
         let window = UIWindow()
         window.addSubview(textField!)
@@ -513,7 +513,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
-        mycontainer?.collect(callback: myCallback)
+        myContainer?.collect(callback: myCallback)
         
         wait(for: [expectFailure], timeout: 10.0)
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber triggered error\n")
@@ -630,7 +630,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(collectInputField?.actualValue, "")
         XCTAssertEqual(collectInputField?.textField.secureText, "")
     }
-    func testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation(){
+    func testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTranslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
@@ -743,7 +743,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectBadTypeAddionalFields() {
+    func testCollectBadTypeAdditionalFields() {
         let additionalFields = ["records": "records"]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -756,7 +756,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectNoRecordsInAddionalFields() {
+    func testCollectNoRecordsInAdditionalFields() {
         let additionalFields = ["typo": []]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -771,7 +771,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
                         .getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectEmptyRecordsAddionalFields() {
+    func testCollectEmptyRecordsAdditionalFields() {
         let additionalFields = ["records": []]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -784,7 +784,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectNoTableKeyAddionalFields() {
+    func testCollectNoTableKeyAdditionalFields() {
         let additionalFields = ["records": [[:]]]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -797,7 +797,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectBadTableKeyAddionalFields() {
+    func testCollectBadTableKeyAdditionalFields() {
         let additionalFields = ["records": [["table": []]]]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -810,7 +810,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectEmptyTableAddionalFields() {
+    func testCollectEmptyTableAdditionalFields() {
         let additionalFields = ["records": [["table": ""]]]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -823,7 +823,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_TABLE_NAME().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectNoFieldsKeyAddionalFields() {
+    func testCollectNoFieldsKeyAdditionalFields() {
         let additionalFields = ["records": [["table": "table"]]]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -836,7 +836,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.FIELDS_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectInvalidFieldsAddionalFields() {
+    func testCollectInvalidFieldsAdditionalFields() {
         let additionalFields = ["records": [["table": "table", "fields": "fields"]]]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -849,7 +849,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_FIELDS_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectEmptyFieldsAddionalFields() {
+    func testCollectEmptyFieldsAdditionalFields() {
         let additionalFields = ["records": [["table": "table", "fields": [:]]]]
         let container = skyflow.container(type: ContainerType.COLLECT)
         
@@ -1076,12 +1076,12 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField.secureText = textField.formatInput(input: "12345", format: "X-X-X-X", translation: ["X": "[0-9]"])
         XCTAssertEqual(textField.secureText, "1-2-3-4")
     }
-    func testFormatInputMethodCase5(){ // when translation doesnt contain format character
+    func testFormatInputMethodCase5(){ // when translation doesn't contain format character
         let textField = FormatTextField()
         textField.secureText = textField.formatInput(input: "12345", format: "X-X-X-X", translation: ["Y": "[0-9]"])
         XCTAssertEqual(textField.secureText, "X-X-X-X")
     }
-    func testFormatInputMethodCase6(){ // when translation doesnt contain format character
+    func testFormatInputMethodCase6(){ // when translation doesn't contain format character
         let textField = FormatTextField()
         textField.secureText = textField.formatInput(input: "12345", format: "", translation: ["X": "[0-9]"])
         XCTAssertEqual(textField.secureText, "")
@@ -1197,7 +1197,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         ("testContainerInsertMixedInvalidInput", testContainerInsertMixedInvalidInput),
         ("testContainerInsertIsRequiredAndEmpty", testContainerInsertIsRequiredAndEmpty),
         ("testCollectElementSetValueAndClearValueWithCustomFormatting", testCollectElementSetValueAndClearValueWithCustomFormatting),
-        ("testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation", testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation),
+        ("testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTranslation", testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTranslation),
         ("testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation", testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation),
         ("testCollectElementSetValueAndClearValueWithoutCustomFormatting", testCollectElementSetValueAndClearValueWithoutCustomFormatting),
         ("testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber", testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber),
