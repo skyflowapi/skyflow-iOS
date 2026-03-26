@@ -65,12 +65,12 @@ class RevealSkyflowLabelViewTests: XCTestCase {
         let result = label.formatInput(input: "12345", format: "X-X-X-X", translation: ["X": "[0-9]"])
         XCTAssertEqual(result, "1-2-3-4")
     }
-    func testSkyflowLabelViewFormatInputMethodCase5(){ // when translation doesnt contain format character
+    func testSkyflowLabelViewFormatInputMethodCase5(){ // when translation doesn't contain format character
         let label = Label(input: RevealElementInput(token: "token", label: "label"), options: RevealElementOptions())
         let result = label.formatInput(input: "12345", format: "X-X-X-X", translation: ["Y": "[0-9]"])
         XCTAssertEqual(result, "X-X-X-X")
     }
-    func testSkyflowLabelViewFormatInputMethodCase6(){ // when translation doesnt contain format character
+    func testSkyflowLabelViewFormatInputMethodCase6(){ // when translation doesn't contain format character
         let label = Label(input: RevealElementInput(token: "token", label: "label"), options: RevealElementOptions())
         let result = label.formatInput(input: "12345", format: "", translation: ["X": "[0-9]"])
         XCTAssertEqual(result, "")

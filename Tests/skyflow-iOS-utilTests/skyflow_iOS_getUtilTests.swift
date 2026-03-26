@@ -234,12 +234,12 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
         let apiResponse = ["records":[["table": "table", "skyflow_id": "SID"]]] as [String: Any]
         do {
             let data = try JSONSerialization.data(withJSONObject: apiResponse, options: .fragmentsAllowed)
-            let processedRespoonse = try self.getApiCallback.processResponse(record: record, data)
+            let processedResponse = try self.getApiCallback.processResponse(record: record, data)
             
-            XCTAssertEqual(processedRespoonse.count, 1)
-            XCTAssertEqual(processedRespoonse[0]["table"] as! String, "table")
-            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
-            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
+            XCTAssertEqual(processedResponse.count, 1)
+            XCTAssertEqual(processedResponse[0]["table"] as! String, "table")
+            XCTAssertEqual(processedResponse[0]["id"] as! String, "SID")
+            XCTAssertEqual(processedResponse[0]["id"] as! String, "SID")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -319,12 +319,12 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
             XCTAssertNil(errorObj)
             XCTAssertNotNil(responseArray)
             
-            let processedRespoonse = responseArray!
+            let processedResponse = responseArray!
             
-            XCTAssertEqual(processedRespoonse.count, 1)
-            XCTAssertEqual(processedRespoonse[0]["table"] as! String, "table")
-            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
-            XCTAssertEqual(processedRespoonse[0]["id"] as! String, "SID")
+            XCTAssertEqual(processedResponse.count, 1)
+            XCTAssertEqual(processedResponse[0]["table"] as! String, "table")
+            XCTAssertEqual(processedResponse[0]["id"] as! String, "SID")
+            XCTAssertEqual(processedResponse[0]["id"] as! String, "SID")
         } catch {
             XCTFail(error.localizedDescription)
         }

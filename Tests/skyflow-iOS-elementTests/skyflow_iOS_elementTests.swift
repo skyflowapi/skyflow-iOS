@@ -187,7 +187,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         textField.setError("triggered error")
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertEqual(textField.errorMessage.alpha, 1.0)
-        // Takes precendence over all errors
+        // Takes precedence over all errors
         XCTAssertEqual(textField.errorMessage.text, "triggered error")
         XCTAssertEqual(textField.textField.textColor, errorStyle.textColor)
     }

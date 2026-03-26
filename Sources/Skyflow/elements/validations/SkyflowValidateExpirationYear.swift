@@ -13,7 +13,7 @@ internal struct SkyflowValidateExpirationYear: ValidationRule {
     public let error: SkyflowValidationError
     public let format: String
 
-    /// Initialzation
+    /// Initialization
     public init(format: String, error: SkyflowValidationError) {
         self.error = error
         self.format = format

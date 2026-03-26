@@ -105,7 +105,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
             return customFormat()
          }
         if let elementType = collectField.fieldType.instance {       
-            if let acceptabledCharacters = elementType.acceptableCharacters, string.rangeOfCharacter(from: acceptabledCharacters) == nil {
+            if let acceptableCharacters = elementType.acceptableCharacters, string.rangeOfCharacter(from: acceptableCharacters) == nil {
                 return false
             }
             

@@ -27,10 +27,10 @@ internal enum ErrorCodes: CustomStringConvertible {
     case MISSING_KEY_IDS(code: Int = 404, message: String = "\(LangAndVersion) Validation error. Missing 'ids' key in records at index <index>. Provide a valid 'ids' key.", value: String)
     // New
     case INVALID_TABLE_NAME_TYPE(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'table' key in records at index <index>. Specify a value of type string instead.", value: String)
-    case INVALID_FIELDS_TYPE(code: Int = 400, message: String = "\(LangAndVersion) Validation error.invaid 'fields' key value in record at index <index>. Specify a value of type array for 'fields' key.", value: String)
+    case INVALID_FIELDS_TYPE(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'fields' key value in record at index <index>. Specify a value of type array for 'fields' key.", value: String)
     case INVALID_RECORDS_TYPE(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'records' key found. Specify a value of type array instead.")
     case INVALID_BEARER_TOKEN_FORMAT(code: Int = 400, message: String = "\(LangAndVersion) Token generated from 'getBearerToken' callback function is invalid. Make sure the implementation of 'getBearerToken' is correct.")
-    case MISSING_RECORDS_ARRAY(code: Int = 404, message: String = "\(LangAndVersion) Validation error.'records' key not found in additionalFields. Specify a 'records' key in addtionalFields.")
+    case MISSING_RECORDS_ARRAY(code: Int = 404, message: String = "\(LangAndVersion) Validation error. 'records' key not found in additionalFields. Specify a 'records' key in additionalFields.")
     case MISSING_RECORDS_IN_ADDITIONAL_FIELDS(code: Int = 404, message: String = "\(LangAndVersion) Validation error.'records' object cannot be empty within additionalFields. Specify a non-empty value instead.")
     case EMPTY_RECORDS_OBJECT(code: Int = 404, message: String = "\(LangAndVersion) Validation error. 'records' key cannot be empty. Provide a non-empty value instead.")
     case MISSING_RECORDS_IN_GETBYID(code: Int = 404, message: String = "\(LangAndVersion) Validation error. 'records' key cannot be empty. Provide a non-empty value instead.")
@@ -66,7 +66,7 @@ internal enum ErrorCodes: CustomStringConvertible {
     // new
     case DUPLICATE_ADDITIONAL_FIELD_FOUND(code: Int = 400, message: String = "\(LangAndVersion). '<column>' appeared in record in the additional fields. Make sure each column in a record is unique.", value: String)
     case MISSING_TABLE_NAME_IN_USERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Missing 'table' key in upsert array at index <index>. Provide a valid 'table' key.", value: String)
-    case UPSERT_OPTION_CANNOT_BE_EMPTY(code: Int = 400, message: String = "\(LangAndVersion) Validation error. 'upsert' key cannot be an empty array in insert options. Make sure to add atleast one table column object in upsert array.")
+    case UPSERT_OPTION_CANNOT_BE_EMPTY(code: Int = 400, message: String = "\(LangAndVersion) Validation error. 'upsert' key cannot be an empty array in insert options. Make sure to add at least one table column object in upsert array.")
     case MISSING_COLUMN_NAME_IN_USERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Missing 'column' key in upsert array at index <index>. Provide a valid 'column' key.", value: String)
     case COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'table' key in upsert array at index <index>. Specify a value of type string instead.", value: String)
     case TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'table' key in upsert array at index <index>. Specify a value of type string instead.", value: String)
