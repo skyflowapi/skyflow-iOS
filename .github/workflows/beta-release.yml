@@ -20,8 +20,6 @@ jobs:
       with:
         fallback: 1.0.0
 
-    - name: Update json gem (CVE-2026-33210)
-      run: sudo gem update json
 
     - name: Deploy to Cocoapods
       run: |

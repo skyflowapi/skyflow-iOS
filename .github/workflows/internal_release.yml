@@ -48,8 +48,6 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_ACTIONS }}
 
-    - name: Update json gem (CVE-2026-33210)
-      run: sudo gem update json
 
     - name: Push updated spec file
       run: |
