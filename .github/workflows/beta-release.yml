@@ -9,7 +9,7 @@ jobs:
   deploy_public_beta_pod:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         token: ${{ secrets.PAT_ACTIONS }}
@@ -19,6 +19,9 @@ jobs:
       uses: WyriHaximus/github-action-get-previous-tag@v1
       with:
         fallback: 1.0.0
+
+    - name: Update json gem (CVE-2026-33210)
+      run: sudo gem update json
 
     - name: Deploy to Cocoapods
       run: |
