@@ -2,14 +2,15 @@ name: Public Release
 
 on:
   push:
-    tags: '*.*.*'
+    tags:
+      - '*.*.*'
 
 
 jobs:
   deploy_private_pod:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         ref: main
@@ -21,6 +22,7 @@ jobs:
       with:
         fallback: 1.0.0
     
+
     - name: Deploy to Cocoapods
       run: |
            set -eo pipefail

@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-import AEXML
+
 @testable import Skyflow
 
 class RevealSkyflowLabelViewTests: XCTestCase {
