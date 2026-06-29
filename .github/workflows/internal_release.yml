@@ -16,7 +16,7 @@ jobs:
   deploy_private_pod:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         token: ${{ secrets.PAT_ACTIONS }}
@@ -47,6 +47,7 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_ACTIONS }}
+
 
     - name: Push updated spec file
       run: |

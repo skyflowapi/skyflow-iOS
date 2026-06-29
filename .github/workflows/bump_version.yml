@@ -16,7 +16,7 @@ jobs:
   bump_version_spec:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         token: ${{ secrets.PAT_ACTIONS }}
