@@ -22,9 +22,9 @@ Pod::Spec.new do |spec|
 
   spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :tag => "1.25.1" }
 
-  spec.source_files  = "Sources/Skyflow/**/*.{swift}"
+  spec.source_files  = "Sources/SkyflowCore/**/*.{swift}", "Sources/Skyflow/**/*.{swift}"
 
-  spec.resource_bundles = {'Skyflow' => ['Sources/Skyflow/Resources/**/*.{xcassets}'] }
+  spec.resource_bundles = {'Skyflow' => ['Sources/SkyflowCore/Resources/**/*.{xcassets}'] }
 
 end
 

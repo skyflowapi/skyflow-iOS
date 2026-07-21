@@ -8,9 +8,7 @@
  */
 
 import Foundation
-
-public class RevealContainer: ContainerProtocol {
-}
+import SkyflowCore
 
 public extension Container {
     func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
@@ -36,24 +34,10 @@ public extension Container {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
-        if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
-            errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
-            callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
+        if let errorCode = RevealValidation.validateElements(self.revealElements) {
+            callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
             return
-        }
-        for element in self.revealElements {
-            if element.errorTriggered {
-                errorCode = .ERROR_TRIGGERED(value: element.triggeredErrorMessage)
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
-            }
-            if element.getToken().isEmpty {
-                errorCode = .EMPTY_TOKEN_ID()
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
-            }
         }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: tempContextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)

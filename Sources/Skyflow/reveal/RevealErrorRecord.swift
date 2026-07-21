@@ -5,6 +5,7 @@
 // Object that signifies error for reveal element
 
 import Foundation
+import SkyflowCore
 
 class RevealErrorRecord {
     var id: String

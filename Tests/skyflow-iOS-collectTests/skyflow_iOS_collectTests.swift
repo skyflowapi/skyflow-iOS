@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 final class skyflow_iOS_collectTests: XCTestCase {
@@ -198,16 +199,16 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let collectElement = container?.create(input: collectInput, options: options)
         
         
-        collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
+        collectElement?.on(eventName: EventName.CHANGE) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
+        collectElement?.on(eventName: EventName.BLUR) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
+        collectElement?.on(eventName: EventName.FOCUS) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.READY) { _ in
+        collectElement?.on(eventName: EventName.READY) { _ in
             onReadyCalled = true
         }
         sleep(1)
@@ -611,8 +612,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormatting(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": "[0-9]"])
+        let collectInputfieldInput = CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": "[0-9]"])
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -633,8 +634,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": ""])
+        let collectInputfieldInput = CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": ""])
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -655,8 +656,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY")
+        let collectInputfieldInput = CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY")
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -677,8 +678,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithoutCustomFormatting(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true)
+        let collectInputfieldInput = CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true)
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -699,8 +700,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.CARD_NUMBER )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "XXXX-XXXX-XXXX-XXXX")
+        let collectInputfieldInput = CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.CARD_NUMBER )
+        let requiredOption = CollectElementOptions(required: true, format: "XXXX-XXXX-XXXX-XXXX")
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 

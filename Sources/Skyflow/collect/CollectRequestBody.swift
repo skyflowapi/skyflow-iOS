@@ -5,6 +5,7 @@
 // Class for formatting the request body for collecting the data
 
 import Foundation
+import SkyflowCore
 
 internal class CollectRequestBody {
     static var tableSet: Set<String> = Set<String>()

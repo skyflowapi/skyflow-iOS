@@ -5,6 +5,7 @@
 // Object that describes the Options for Get
 
 import Foundation
+import SkyflowCore
 
 public struct GetOptions {
     var tokens: Bool

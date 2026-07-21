@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
+// Object that describes different type of Container
+
+import Foundation
+
+public class CollectContainer: ContainerProtocol {}
+public class RevealContainer: ContainerProtocol {}
+public class ComposableContainer: ContainerProtocol {}
+
+public class ContainerType {
+    public static var COLLECT = CollectContainer.self
+    public static var REVEAL = RevealContainer.self
+    public static var COMPOSABLE = ComposableContainer.self
+}

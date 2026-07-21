@@ -5,6 +5,7 @@
 // Used for generating request body for reveal api call
 
 import Foundation
+import SkyflowCore
 
 internal class RevealRequestBody {
     internal static func createRequestBody(elements: [Label]) -> [String: Any] {

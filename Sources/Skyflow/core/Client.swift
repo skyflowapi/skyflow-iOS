@@ -5,6 +5,7 @@
 // Implementation of Skyflow Client class
 
 import Foundation
+import SkyflowCore
 
 public class Client {
     var vaultID: String

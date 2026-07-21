@@ -9,6 +9,7 @@ import Foundation
 import XCTest
 
 @testable import Skyflow
+@testable import SkyflowCore
 
 class RevealSkyflowLabelViewTests: XCTestCase {
     
@@ -25,15 +26,15 @@ class RevealSkyflowLabelViewTests: XCTestCase {
     }
 
     func testSkyflowLabelViewUpdateValMethodWithFormatEmptyTranslation(){
-        let config = Skyflow.Configuration(vaultID: "vault id", vaultURL:"vault url", tokenProvider: DemoTokenProvider(), options: Skyflow.Options(env: Skyflow.Env.DEV))
+        let config = Skyflow.Configuration(vaultID: "vault id", vaultURL:"vault url", tokenProvider: DemoTokenProvider(), options: Options(env: Env.DEV))
 
         // Initialize skyflow client
         let skyflowClient = Skyflow.initialize(config)
 
         // Create a Reveal Container
-        let container = skyflowClient.container(type: Skyflow.ContainerType.REVEAL)
+        let container = skyflowClient.container(type: ContainerType.REVEAL)
         // Create Reveal Elements
-        let cardNumberInput = Skyflow.RevealElementInput(
+        let cardNumberInput = RevealElementInput(
             token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
             label: "cardnumber",
             altText: "XXXX XXXX XXXX XXXX"

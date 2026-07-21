@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 class skyflow_iOS_getTests: XCTestCase {
     var skyflow: Client!
@@ -44,14 +45,14 @@ class skyflow_iOS_getTests: XCTestCase {
                         "3"
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
                         "1"
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ]
             ]
         ]
@@ -88,14 +89,14 @@ class skyflow_iOS_getTests: XCTestCase {
                         "3"
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
                         "1"
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ]
             ]
         ]

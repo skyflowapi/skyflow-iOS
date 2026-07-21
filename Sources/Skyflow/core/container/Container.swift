@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import SkyflowCore
 
 public class Container<T: ContainerProtocol> {
     internal var skyflow: Client

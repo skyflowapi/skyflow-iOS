@@ -5,6 +5,7 @@
 // Object that describes the Options for Insert
 
 import Foundation
+import SkyflowCore
 
 public struct InsertOptions {
     var tokens: Bool

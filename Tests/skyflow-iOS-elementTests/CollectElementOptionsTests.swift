@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 class CollectElementOptionsTests: XCTestCase {
 

@@ -5,6 +5,7 @@
 // Implementation of callback for Reveal api
 
 import Foundation
+import SkyflowCore
 
 class RevealAPICallback: Callback {
     var apiClient: APIClient

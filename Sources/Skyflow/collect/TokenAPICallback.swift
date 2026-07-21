@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import SkyflowCore
 
 internal class TokenAPICallback: Callback {
     var callback: Callback

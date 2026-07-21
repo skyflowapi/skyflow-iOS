@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import Skyflow
+import SkyflowCore
 
 public class ConnectionTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {

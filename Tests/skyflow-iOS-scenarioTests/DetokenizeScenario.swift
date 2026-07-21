@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import Skyflow
+@testable import SkyflowCore
 
 class DetokenizeScenario {
     private var tokens: [String] = []

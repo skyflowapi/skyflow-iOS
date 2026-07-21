@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import SkyflowCore
 
 internal struct ICOptions {
     var tokens: Bool

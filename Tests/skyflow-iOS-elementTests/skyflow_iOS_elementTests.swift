@@ -6,6 +6,7 @@
 import XCTest
 import UIKit
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 class skyflow_iOS_elementTests: XCTestCase {

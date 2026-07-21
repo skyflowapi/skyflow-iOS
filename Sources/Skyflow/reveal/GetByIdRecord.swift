@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import SkyflowCore
 
 struct GetByIdRecord {
     var ids: [String]

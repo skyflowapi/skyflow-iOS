@@ -6,6 +6,7 @@
 // Class used for generating different type of requests, req body etc for API making an API call
 
 import Foundation
+import SkyflowCore
 
 internal class APIClient {
     var vaultID: String

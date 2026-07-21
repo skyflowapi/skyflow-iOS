@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 class skyflow_iOS_getByIdTests: XCTestCase {
@@ -49,14 +50,14 @@ class skyflow_iOS_getByIdTests: XCTestCase {
                         ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
                         ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ]
             ]
         ]

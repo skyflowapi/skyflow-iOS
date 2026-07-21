@@ -11,6 +11,7 @@
 
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 class Skyflow_iOS_generalErrorTests: XCTestCase {
@@ -104,7 +105,7 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
         XCTAssert(textRect.contains(CGPoint(x: 1, y: 2)))
         XCTAssert(placeholderRect.contains(CGPoint(x: 4, y: 3)))
         XCTAssert(editingRect.contains(CGPoint(x: 2, y: 4)))
-        XCTAssertEqual(textfield.description, "Skyflow.FormatTextField")
+        XCTAssertEqual(textfield.description, "SkyflowCore.FormatTextField")
     }
     
     func testState() {

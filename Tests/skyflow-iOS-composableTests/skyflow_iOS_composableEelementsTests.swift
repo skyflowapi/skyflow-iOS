@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 final class skyflow_iOS_composableEelementsTests: XCTestCase {
     var skyflow: Client!
@@ -142,20 +143,20 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         let collectElement = container?.create(input: collectInput, options: options)
         
         
-        collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
+        collectElement?.on(eventName: EventName.CHANGE) { state in
             print("state", state)
             onChangeCalled = true
         }
-        collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
+        collectElement?.on(eventName: EventName.BLUR) { state in
             print("state", state)
             onBlurCalled = true
             
         }
-        collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
+        collectElement?.on(eventName: EventName.FOCUS) { state in
             print("state", state)
             onFocusCalled = true
         }
-        collectElement?.on(eventName: Skyflow.EventName.READY) { _ in
+        collectElement?.on(eventName: EventName.READY) { _ in
             onReadyCalled = true
         }
         sleep(1)

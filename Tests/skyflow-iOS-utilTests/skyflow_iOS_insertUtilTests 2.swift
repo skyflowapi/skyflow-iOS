@@ -4,6 +4,7 @@
 
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 
 final class skyflow_iOS_insertUtilTests: XCTestCase {

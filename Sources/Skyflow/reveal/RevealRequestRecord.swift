@@ -5,6 +5,7 @@
 // Object that describes the reveal record in request body
 
 import Foundation
+import SkyflowCore
 
 struct RevealRequestRecord {
     var token: String

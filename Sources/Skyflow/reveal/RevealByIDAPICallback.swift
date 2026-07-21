@@ -5,6 +5,7 @@
 // Implementation of Callback used in API for revealing redacted data using id
 
 import Foundation
+import SkyflowCore
 
 class RevealByIDAPICallback: Callback {
     var apiClient: APIClient

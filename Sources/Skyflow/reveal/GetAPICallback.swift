@@ -5,6 +5,7 @@
 // Implementation of Callback used in API for revealing data by get method
 
 import Foundation
+import SkyflowCore
 
 class GetAPICallback: Callback {
     var apiClient: APIClient

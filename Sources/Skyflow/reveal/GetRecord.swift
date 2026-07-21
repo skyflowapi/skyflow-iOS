@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SkyflowCore
 
 struct GetRecord {
     var ids: [String]?

@@ -8,6 +8,7 @@
 import XCTest
 import Foundation
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 

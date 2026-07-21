@@ -5,6 +5,7 @@
 // Object that describes the response of reveal record
 
 import Foundation
+import SkyflowCore
 
 struct RevealSuccessRecord {
     var token_id: String

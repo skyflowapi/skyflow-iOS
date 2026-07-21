@@ -3,6 +3,7 @@
 */
 
 import Foundation
+import SkyflowCore
 
 internal class RevealValueCallback: Callback {
     var clientCallback: Callback

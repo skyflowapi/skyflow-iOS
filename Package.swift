@@ -10,6 +10,9 @@ let package = Package(
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
+        .library(
+            name: "SkyflowFlowVault",
+            targets: ["SkyflowFlowVault"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -19,29 +22,35 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "Skyflow",
+            name: "SkyflowCore",
             dependencies: [],
             resources: [
                    .process("Resources")
                  ]
             ),
+        .target(
+            name: "Skyflow",
+            dependencies: ["SkyflowCore"]),
+        .target(
+            name: "SkyflowFlowVault",
+            dependencies: ["SkyflowCore"]),
         .testTarget(
             name: "skyflow-iOS-collectTests",
-            dependencies: ["Skyflow"]),
+            dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-revealTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-errorTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-getByIdTests",
-                        dependencies: ["Skyflow"]),
+                        dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-elementTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-utilTests",
-                        dependencies: ["Skyflow"]),
+                        dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-scenarioTests",
-                            dependencies: ["Skyflow"]),
+                            dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-getTests",
-                   dependencies: ["Skyflow"]),
-        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["Skyflow"])
+                   dependencies: ["Skyflow", "SkyflowCore"]),
+        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["Skyflow", "SkyflowCore"])
     ]
 )

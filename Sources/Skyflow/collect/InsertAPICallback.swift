@@ -5,6 +5,7 @@
 // Callback used while API callback for Collect the elements
 
 import Foundation
+import SkyflowCore
 import UIKit
 
 internal class InsertAPICallback: Callback {

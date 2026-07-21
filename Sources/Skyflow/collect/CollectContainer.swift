@@ -5,9 +5,8 @@
 // Implementation of Container Interface for Collect the records
 
 import Foundation
+import SkyflowCore
 import UIKit
-
-public class CollectContainer: ContainerProtocol {}
 
 public extension Container {
      func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
@@ -33,30 +32,13 @@ public extension Container {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        var errors = ""
         var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
 
-        for element in self.elements {
-            errorCode = checkElement(element: element)
-            if errorCode != nil {
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
-            }
-
-
-            let state = element.getState()
-            let error = state["validationError"]
-            if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
-                errors += element.columnName + " is empty" + "\n"
-                element.updateErrorMessage()
-            }
-            if !(state["isValid"] as! Bool) {
-                errors += "for " + element.columnName + " " + (error as! String) + "\n"
-            }
-            if element.isFirstResponder {
-                element.resignFirstResponder()
-            }
+        let (elementError, errors) = CollectValidation.validateElements(self.elements)
+        if let elementError = elementError {
+            callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
+            return
         }
         if errors != "" {
             callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: errors]))
@@ -101,20 +83,6 @@ public extension Container {
             )
             self.skyflow.apiClient.postAndUpdate(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
-    }
-
-    private func checkElement(element: TextField) -> ErrorCodes? {
-        if element.collectInput.table.isEmpty {
-            return .EMPTY_TABLE_NAME_IN_COLLECT()
-        }
-        if element.collectInput.column.isEmpty {
-            return .EMPTY_COLUMN_NAME_IN_COLLECT()
-        }
-        if !element.isMounted() {
-            return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
-        }
-
-        return nil
     }
 
     private func checkRecord(record: [String: Any], index: Int) -> ErrorCodes? {

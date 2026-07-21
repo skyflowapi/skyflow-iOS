@@ -5,6 +5,7 @@
 // Configure Skyflow, implementation for Skyflow.Configuration
 
 import Foundation
+import SkyflowCore
 
 public struct Configuration {
     var vaultID: String
