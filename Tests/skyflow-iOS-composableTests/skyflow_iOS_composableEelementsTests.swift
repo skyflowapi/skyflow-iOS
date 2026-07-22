@@ -455,7 +455,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
     }
     func testInsertEmptyTableNameForUpsertOption() {
         _ = skyflow.container(type: ContainerType.COMPOSABLE)
-        let upsertOptions = [["column": "person"]]
+        let upsertOptions = [UpsertOption(table: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -471,7 +471,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
     func testCollectBadTableKeyAddionalFields() {
         let additionalFields = ["records": [["table": []]]]

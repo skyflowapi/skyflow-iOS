@@ -61,30 +61,20 @@ final class skyflow_iOS_utilTests: XCTestCase {
         textField.addAndFormatText(str)
         XCTAssertEqual(textField.secureText, "4111 1111 1111 1111")
     }
-    func testConstructRequestWithTokens() {
-        let apiClient = APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider())
-        let result = apiClient.constructBatchRequestBody(records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: ICOptions(tokens: true))
-        let record = result["records"] as! [[String: Any]]
-        let id = record[1]["ID"] as! String
-        let tokenization = record[1]["tokenization"] as! Bool
-        XCTAssertEqual(id, "$responses.0.records.0.skyflow_id")
-        XCTAssertTrue(tokenization)
+    func testConstructV2RequestBody() {
+        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(tokens: true))
+        XCTAssertEqual(result["vaultID"] as! String, "vault123")
+        let records = result["records"] as! [[String: Any]]
+        XCTAssertEqual(records[0]["tableName"] as! String, "table")
+        XCTAssertEqual(records[0]["data"] as! [String: String], ["field1": "value1"])
     }
-    
-    func testConstructUpdateRequestBody() {
-        let apiClient = APIClient(vaultID: "vault123", vaultURL: "https://example.com", tokenProvider: DemoTokenProvider())
-        
-        let updateRecords: [String: Any] = [
-            "update": [
-                ["table": "users", "fields": ["name": "John Doe", "email": "john.doe@example.com"], "skyflowID": "id123"],
-                ["table": "users", "fields": ["name": "Jane Doe", "email": "jane.doe@example.com"], "skyflowID": "id124"]
-            ]
-        ]
-        let singleUpdateRecord = ["table": "users", "fields": ["name": "John Doe", "email": "john.doe@example.com"], "skyflowID": "id123"] as [String : Any]
-        let result = apiClient.constructUpdateRequestBody(records: singleUpdateRecord, options: ICOptions(tokens: false))
-        let records = result["record"] as! [String: Any]
-        let tokenization = result["tokenization"] as! Bool
-        XCTAssertEqual(records as NSDictionary, ["fields": ["name": "John Doe", "email": "john.doe@example.com"]])
-        XCTAssertFalse(tokenization)
+
+    func testConstructV2RequestBodyWithUpsert() {
+        let upsert = [UpsertOption(table: "table", uniqueColumns: ["field1"], updateType: .REPLACE)]
+        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(tokens: true, upsert: upsert))
+        let records = result["records"] as! [[String: Any]]
+        let upsertPayload = records[0]["upsert"] as! [String: Any]
+        XCTAssertEqual(upsertPayload["uniqueColumns"] as! [String], ["field1"])
+        XCTAssertEqual(upsertPayload["updateType"] as! String, "REPLACE")
     }
 }

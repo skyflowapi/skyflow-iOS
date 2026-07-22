@@ -26,7 +26,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
-        let revealElementInput = RevealElementInput(token: "token", label: "RevealElement", redaction: .DEFAULT)
+        let revealElementInput = RevealElementInput(token: "token", label: "RevealElement")
         label = Label(input: revealElementInput, options: RevealElementOptions())
     }
     

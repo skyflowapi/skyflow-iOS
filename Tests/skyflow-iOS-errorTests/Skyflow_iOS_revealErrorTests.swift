@@ -48,26 +48,8 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         }
     }
 
-    func getByIDFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> String {
-        let expectRecords = XCTestExpectation(description: description)
-        let callback = DemoAPICallback(expectation: expectRecords)
-        skyflow.getById(records: records, callback: callback)
-
-        wait(for: [expectRecords], timeout: 10.0)
-        if callback.receivedResponse.isEmpty {
-            if callback.data["errors"] != nil {
-                return (callback.data["errors"] as! [NSError])[0].localizedDescription
-            } else {
-                return "ok"
-            }
-        } else {
-            return callback.receivedResponse
-        }
-    }
-
-
     func testDetokenizeNoRecords() {
-        let records = ["typo": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
+        let records = ["typo": [["token": revealTestId]]]
         let result = getDataFromClientWithExpectation(records: records)
         XCTAssertEqual(result,  ErrorCodes.RECORDS_KEY_ERROR().description)
     }
@@ -77,7 +59,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let result = getDataFromClientWithExpectation(records: records)
         XCTAssertEqual(result,  ErrorCodes.INVALID_RECORDS_TYPE().description)
     }
-    
+
     func testDetokenizeEmptyRecords() {
         let records = ["records": []]
         let result = getDataFromClientWithExpectation(records: records)
@@ -85,20 +67,15 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
     }
 
     func testDetokenizeNoTokens() {
-        let records = ["records": [["redaction": RedactionType.DEFAULT]]]
+        let records = ["records": [["foo": "bar"]]]
         let result = getDataFromClientWithExpectation(records: records)
         XCTAssertEqual(result,  ErrorCodes.ID_KEY_ERROR().description)
     }
 
     func testDetokenizeBadTokens() {
-        let records = ["records": [["token": [], "redaction": RedactionType.DEFAULT]]]
+        let records = ["records": [["token": []]]]
         let result = getDataFromClientWithExpectation(records: records)
         XCTAssertEqual(result,  ErrorCodes.INVALID_TOKEN_TYPE(value: "0").description)
-    }
-    func testDetokenizeInvalidRedaction() {
-        let records = ["records": [["token": "123233232", "redaction": "123"]]]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_REDACTION_TYPE().description)
     }
 
 
@@ -118,20 +95,6 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
         XCTAssertEqual(result, ErrorCodes.UNMOUNTED_REVEAL_ELEMENT(value: revealTestId).description)
     }
-    func testContainerRevealWithNoRedaction() { // when redaction is not specify plaintext will be applied
-        let window = UIWindow()
-        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
-
-        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        let styles = Styles(base: bstyle)
-
-        let revealElementInput = RevealElementInput(token: "232h3j23h2jh",inputStyles: styles, label: "RevealElement")
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
-
-        window.addSubview(revealElement!)
-        XCTAssertEqual(revealElement!.revealInput.redaction, .PLAIN_TEXT)
-    }
-
     func testContainerRevealWithEmptyToken() {
         let window = UIWindow()
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
@@ -139,7 +102,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
         let styles = Styles(base: bstyle)
 
-        let revealElementInput = RevealElementInput(inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
+        let revealElementInput = RevealElementInput(inputStyles: styles, label: "RevealElement")
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
         window.addSubview(revealElement!)
@@ -152,51 +115,4 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         XCTAssertEqual(result,  ErrorCodes.EMPTY_TOKEN_ID().description)
     }
 
-    func testGetByIdNoRecords() {
-        let records = ["ok": [["redaction": RedactionType.DEFAULT]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.EMPTY_RECORDS_OBJECT().description)
-    }
-
-    func testGetByIdInvalidRecords() {
-        let records = ["records": 12]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_RECORDS_TYPE().description)
-    }
-
-    func testGetByIdNoIds() {
-        let records = ["records": [["redaction": RedactionType.DEFAULT]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.MISSING_KEY_IDS(value: "0").description)
-    }
-
-    func testGetByIdInvalidIds() {
-        let records = ["records": [["ids": RedactionType.DEFAULT]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_IDS_TYPE().description)
-    }
-
-    func testGetByIdNoTable() {
-        let records = ["records": [["ids": ["abc"]]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.TABLE_KEY_ERROR(value: "0").description)
-    }
-
-    func testGetByIdInvalidTable() {
-        let records = ["records": [["ids": ["abc"], "table": ["abc"]]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").description)
-    }
-
-    func testGetByIdNoRedaction() {
-        let records = ["records": [["ids": ["abc"], "table": "table"]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.REDACTION_KEY_ERROR(value: "0").description)
-    }
-
-    func testGetByIdInvalidRedaction() {
-        let records = ["records": [["ids": ["abc"], "table": "table", "redaction": "DEFAULT"]]]
-        let result = getByIDFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_REDACTION_TYPE().description)
-    }
 }

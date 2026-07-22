@@ -69,14 +69,6 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     
-    func testGetByIDRecord() {
-        let record = GetByIdRecord(ids: ["id1", "id2"], table: "table", redaction: "DEFAULT")
-        
-        XCTAssertEqual(record.ids, ["id1", "id2"])
-        XCTAssertEqual("table", record.table)
-        XCTAssertEqual(record.redaction, "DEFAULT")
-    }
-    
     func testValidationSet() {
         let validationSet = ValidationSet(
             rules: [SkyflowValidateCardNumber(

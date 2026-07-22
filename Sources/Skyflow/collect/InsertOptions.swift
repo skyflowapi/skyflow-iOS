@@ -8,8 +8,8 @@ import Foundation
 
 public struct InsertOptions {
     var tokens: Bool
-    var upsert: [[String: Any]]?
-    public init(tokens: Bool = true, upsert: [[String:  Any]]? = nil) {
+    var upsert: [UpsertOption]?
+    public init(tokens: Bool = true, upsert: [UpsertOption]? = nil) {
         self.tokens = tokens
         self.upsert = upsert
     }

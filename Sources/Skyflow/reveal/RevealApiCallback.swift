@@ -54,10 +54,10 @@ class RevealAPICallback: Callback {
                 defer {
                     revealRequestGroup.leave()
                 }
-                
+
                 do {
                     let (success, failure) = try self.processResponse(record: record, data: data, response: response, error: error)
-                    
+
                     if success != nil {
                         list_success.append(success!)
                     }
@@ -89,7 +89,7 @@ class RevealAPICallback: Callback {
         let result = ["errors": [["error": errorObject]]]
         callback.onFailure(result)
     }
-    
+
     internal func getRequestSession() -> (URLRequest, URLSession){
         var jsonString = ""
 
@@ -107,29 +107,29 @@ class RevealAPICallback: Callback {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(("Bearer " + self.apiClient.token), forHTTPHeaderField: "Authorization")
         request.setValue(jsonString, forHTTPHeaderField: "sky-metadata")
-        
+
         return (request, URLSession(configuration: .default))
     }
-    
+
     internal func getRevealRequestBody(record: RevealRequestRecord) throws -> Data {
         let bodyObject: [String: Any] =
             [
                 "detokenizationParameters": [
                     [
                         "token": record.token,
-                        "redaction": record.redaction
+                        "redaction": "PLAIN_TEXT"
                     ]
                 ]
             ]
         return try JSONSerialization.data(withJSONObject: bodyObject)
     }
-    
+
     internal func processResponse(record: RevealRequestRecord, data: Data?, response: URLResponse?, error: Error?) throws -> (RevealSuccessRecord?, RevealErrorRecord?){
-        
+
         if error != nil || response == nil {
             throw error!
         }
-        
+
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
@@ -154,13 +154,13 @@ class RevealAPICallback: Callback {
             let receivedResponseArray: [Any] = (jsonData[keyPath: "records"] as! [Any])
             let records: [String: Any] = receivedResponseArray[0] as! [String: Any]
             let successRecord = RevealSuccessRecord(token_id: records["token"] as! String, value: records["value"] as! String)
-            
+
             return (successRecord, nil)
         }
-        
+
         return (nil, nil)
     }
-    
+
     func handleCallbacks(success: [RevealSuccessRecord], failure: [RevealErrorRecord], isSuccess: Bool, errorObject: Error!) {
         var records: [Any] = []
         for record in success {
@@ -183,7 +183,7 @@ class RevealAPICallback: Callback {
         if errors.count != 0 {
         modifiedResponse["errors"] = errors
         }
-        
+
         if isSuccess {
             if errors.isEmpty {
                 self.callback.onSuccess(modifiedResponse)
