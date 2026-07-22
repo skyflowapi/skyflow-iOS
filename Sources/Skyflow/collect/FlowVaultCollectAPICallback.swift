@@ -24,12 +24,12 @@ internal class FlowVaultCollectAPICallback: Callback {
 
     internal func onSuccess(_ responseBody: Any) {
         let insertRecords = records["records"] as? [[String: Any]] ?? []
-        let updatesByTable = self.groupUpdatesByTable(records["update"] as? [String: Any] ?? [:])
+        let updateRecords = self.flattenUpdates(records["update"] as? [String: Any] ?? [:])
         let hasInsert = !insertRecords.isEmpty
-        let hasUpdate = !updatesByTable.isEmpty
+        let hasUpdate = !updateRecords.isEmpty
 
         if !hasInsert && !hasUpdate {
-            self.callback.onSuccess(["records": [], "errors": []])
+            self.callback.onSuccess(["records": []])
             return
         }
 
@@ -51,7 +51,7 @@ internal class FlowVaultCollectAPICallback: Callback {
                         }
                         let errors = response["errors"] as? [[String: Any]] ?? []
                         if errors.isEmpty {
-                            self.callback.onSuccess(response)
+                            self.callback.onSuccess(["records": response["records"] as? [[String: Any]] ?? []])
                         } else {
                             self.callback.onFailure(response)
                         }
@@ -101,11 +101,11 @@ internal class FlowVaultCollectAPICallback: Callback {
             }
         }
 
-        for (tableName, tableRecords) in updatesByTable {
+        if hasUpdate {
             group.enter()
             let url = URL(string: self.apiClient.vaultURL + "v2/records/update")!
             do {
-                let (request, session) = try self.getUpdateRequestSession(url: url, tableName: tableName, records: tableRecords)
+                let (request, session) = try self.getUpdateRequestSession(url: url, records: updateRecords)
                 let task = session.dataTask(with: request) { data, response, error in
                     defer { group.leave() }
                     do {
@@ -128,11 +128,10 @@ internal class FlowVaultCollectAPICallback: Callback {
         }
 
         group.notify(queue: .main) {
-            let response: [String: Any] = ["records": mergedRecords, "errors": mergedErrors]
             if mergedErrors.isEmpty {
-                self.callback.onSuccess(response)
+                self.callback.onSuccess(["records": mergedRecords])
             } else {
-                self.callback.onFailure(response)
+                self.callback.onFailure(["records": mergedRecords, "errors": mergedErrors])
             }
         }
     }
@@ -141,16 +140,15 @@ internal class FlowVaultCollectAPICallback: Callback {
         self.callback.onFailure(error)
     }
 
-    internal func groupUpdatesByTable(_ updateDict: [String: Any]) -> [String: [[String: Any]]] {
-        var updatesByTable: [String: [[String: Any]]] = [:]
+    internal func flattenUpdates(_ updateDict: [String: Any]) -> [[String: Any]] {
+        var updateRecords: [[String: Any]] = []
         for (skyflowID, value) in updateDict {
             guard let entry = value as? [String: Any],
                   let tableName = entry["table"] as? String,
                   let fields = entry["fields"] as? [String: Any] else { continue }
-            let record: [String: Any] = ["skyflowID": skyflowID, "data": fields]
-            updatesByTable[tableName, default: []].append(record)
+            updateRecords.append(["skyflowID": skyflowID, "tableName": tableName, "data": fields])
         }
-        return updatesByTable
+        return updateRecords
     }
 
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
@@ -191,7 +189,7 @@ internal class FlowVaultCollectAPICallback: Callback {
 
     }
 
-    internal func getUpdateRequestSession(url: URL, tableName: String, records: [[String: Any]]) throws -> (URLRequest, URLSession) {
+    internal func getUpdateRequestSession(url: URL, records: [[String: Any]]) throws -> (URLRequest, URLSession) {
         var jsonString = ""
 
         do {
@@ -205,7 +203,7 @@ internal class FlowVaultCollectAPICallback: Callback {
         request.httpMethod = "POST"
 
         do {
-            let data = try JSONSerialization.data(withJSONObject: FlowVaultUpdateRequestBody.createRequestBody(vaultID: self.apiClient.vaultID, tableName: tableName, records: records))
+            let data = try JSONSerialization.data(withJSONObject: FlowVaultUpdateRequestBody.createRequestBody(vaultID: self.apiClient.vaultID, records: records))
             request.httpBody = data
         }
 
@@ -274,15 +272,16 @@ internal class FlowVaultCollectAPICallback: Callback {
                 if let httpCode = entry["httpCode"] { errorEntry["httpCode"] = httpCode }
                 errorRecords.append(errorEntry)
             } else {
-                var successEntry: [String: Any] = [:]
-                if let skyflowID = entry["skyflowID"] { successEntry["skyflowID"] = skyflowID }
-                if let tableName = entry["tableName"] { successEntry["tableName"] = tableName }
-                if let httpCode = entry["httpCode"] { successEntry["httpCode"] = httpCode }
-                if let data = entry["data"] as? [String: Any] { successEntry["data"] = self.buildFieldsDict(dict: data) }
-                if let hashedData = entry["hashedData"] as? [String: Any] { successEntry["hashedData"] = self.buildFieldsDict(dict: hashedData) }
+                var fields: [String: Any] = [:]
+                if let skyflowID = entry["skyflowID"] { fields["skyflow_id"] = skyflowID }
                 if self.options.tokens, let tokens = entry["tokens"] as? [String: Any] {
-                    successEntry["tokens"] = self.buildFieldsDict(dict: tokens)
+                    for (column, tokenValue) in self.buildFieldsDict(dict: tokens) {
+                        fields[column] = tokenValue
+                    }
                 }
+                var successEntry: [String: Any] = ["fields": fields]
+                if let tableName = entry["tableName"] { successEntry["table"] = tableName }
+                if let hashedData = entry["hashedData"] as? [String: Any] { successEntry["hashedData"] = self.buildFieldsDict(dict: hashedData) }
                 successRecords.append(successEntry)
             }
         }

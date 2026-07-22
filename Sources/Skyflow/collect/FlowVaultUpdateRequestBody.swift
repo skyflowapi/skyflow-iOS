@@ -7,7 +7,7 @@
 import Foundation
 
 internal class FlowVaultUpdateRequestBody {
-    internal static func createRequestBody(vaultID: String, tableName: String, records: [[String: Any]]) -> [String: Any] {
-        return ["vaultID": vaultID, "tableName": tableName, "records": records]
+    internal static func createRequestBody(vaultID: String, records: [[String: Any]]) -> [String: Any] {
+        return ["vaultID": vaultID, "records": records]
     }
 }

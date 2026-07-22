@@ -68,9 +68,10 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let errors = result["errors"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
-            XCTAssertEqual(records[0]["tableName"] as! String, "table")
-            XCTAssertNil(records[0]["tokens"])
+            XCTAssertEqual(records[0]["table"] as! String, "table")
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
+            XCTAssertNil(fields["tokens"])
             XCTAssertTrue(errors.isEmpty)
         } catch {
             XCTFail(error.localizedDescription)
@@ -78,7 +79,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
     }
 
     func testGetCollectResponseWithTokens() {
-        let response = ["records": [["skyflowID": "SID", "tableName": "table", "tokens": ["field": "value"]]]] as [String: Any]
+        let response = ["records": [["skyflowID": "SID", "tableName": "table", "tokens": ["field": [["token": "tok", "tokenGroupName": "group"]]]]]] as [String: Any]
         self.collectCallback.options = FlowVaultICOptions()
 
         do {
@@ -87,14 +88,17 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let records = result["records"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["tableName"] as! String, "table")
-            XCTAssertEqual(records[0]["tokens"] as! [String: String], ["field": "value"])
+            XCTAssertEqual(records[0]["table"] as! String, "table")
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
+            let fieldTokens = fields["field"] as! [[String: Any]]
+            XCTAssertEqual(fieldTokens[0]["token"] as? String, "tok")
         } catch {
             XCTFail(error.localizedDescription)
         }
     }
 
-    func testGetCollectResponseWithDataAndHashedDataAndHttpCode() {
+    func testGetCollectResponseWithHashedData() {
         let response: [String: Any] = ["records": [[
             "skyflowID": "SID",
             "tableName": "table",
@@ -110,8 +114,9 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let records = result["records"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["httpCode"] as? Int, 200)
-            XCTAssertEqual(records[0]["data"] as! [String: String], ["field": "value"])
+            XCTAssertNil(records[0]["httpCode"])
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertNil(fields["data"])
             XCTAssertEqual(records[0]["hashedData"] as! [String: String], ["field": "hashed-value"])
         } catch {
             XCTFail(error.localizedDescription)
@@ -127,8 +132,9 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
 
             let processedData = try self.collectCallback.processResponse(data: data, response: response, error: nil)
             let records = processedData["records"] as! [[String: Any]]
-            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
-            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["table"] as! String, "table")
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
 
         } catch {
             XCTFail(error.localizedDescription)
@@ -245,9 +251,10 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let errors = processedInsert["errors"] as! [[String: Any]]
 
             XCTAssertEqual(insertRecords.count, 1)
-            XCTAssertEqual(insertRecords[0]["skyflowID"] as? String, "SID")
-            let tokens = insertRecords[0]["tokens"] as? [String: String]
-            XCTAssertEqual(tokens?["field"], "value")
+            XCTAssertEqual(insertRecords[0]["table"] as? String, "table")
+            let fields = insertRecords[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as? String, "SID")
+            XCTAssertEqual(fields["field"] as? String, "value")
             XCTAssertTrue(errors.isEmpty)
         } catch {
             XCTFail("Insert scenario failed: \(error)")
@@ -368,7 +375,8 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let errors = processed["errors"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["skyflowID"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
             XCTAssertEqual(errors.count, 1)
             XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
         } catch {
@@ -407,11 +415,11 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
 
             XCTAssertTrue(errors.isEmpty)
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["skyflowID"] as? String, "f30c8ccf-7e86-46b4-be74-0b2db44e4b87")
-            let data = records[0]["data"] as! [String: Any]
-            XCTAssertEqual(data["name"] as? String, "sagar")
-            let tokens = records[0]["tokens"] as! [String: Any]
-            let nameTokens = tokens["name"] as! [[String: Any]]
+            XCTAssertEqual(records[0]["table"] as? String, "table1")
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as? String, "f30c8ccf-7e86-46b4-be74-0b2db44e4b87")
+            XCTAssertNil(fields["data"])
+            let nameTokens = fields["name"] as! [[String: Any]]
             XCTAssertEqual(nameTokens[0]["token"] as? String, "sagwm")
         } catch {
             XCTFail("Update success response should not throw: \(error)")
@@ -486,7 +494,8 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let errors = processed["errors"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["skyflowID"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
+            let fields = records[0]["fields"] as! [String: Any]
+            XCTAssertEqual(fields["skyflow_id"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
             XCTAssertEqual(errors.count, 1)
             XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
         } catch {
