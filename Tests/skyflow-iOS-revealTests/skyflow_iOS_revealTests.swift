@@ -59,6 +59,22 @@ class skyflow_iOS_revealTests: XCTestCase {
         XCTAssertEqual(revealElementInput.label, "RevealElement")
     }
 
+    func testRevealElementInputWithRedactionAndTokenGroupName() {
+        let revealElementInput = RevealElementInput(token: revealTestId, label: "RevealElement", redaction: "MASKED", tokenGroupName: "deterministic_string")
+
+        XCTAssertEqual(revealElementInput.redaction, "MASKED")
+        XCTAssertEqual(revealElementInput.tokenGroupName, "deterministic_string")
+    }
+
+    func testRevealElementCarriesRedactionAndTokenGroupNameThroughContainer() {
+        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
+        let revealElementInput = RevealElementInput(token: revealTestId, label: "RevealElement", redaction: "PLAIN_TEXT", tokenGroupName: "nondeterministic_string")
+        _ = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
+
+        XCTAssertEqual(revealContainer?.revealElements[0].revealInput.redaction, "PLAIN_TEXT")
+        XCTAssertEqual(revealContainer?.revealElements[0].revealInput.tokenGroupName, "nondeterministic_string")
+    }
+
     func testCreateSkyflowRevealContainer() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()

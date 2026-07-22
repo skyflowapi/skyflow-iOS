@@ -165,6 +165,63 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         }
     }
 
+    func testProcessResponseFullFailureWithNon2xxOuterStatus() {
+        let revealedResponse: [String: Any] = ["response": [
+            ["token": "dedwimm", "value": NSNull(), "tokenGroupName": NSNull(),
+             "error": "Detokenize failed. Token dedwimm is invalid. Specify a valid token.",
+             "httpCode": 404, "metadata": NSNull()],
+            ["token": "femwdmm", "value": NSNull(), "tokenGroupName": NSNull(),
+             "error": "Detokenize failed. Token femwdmm is invalid. Specify a valid token.",
+             "httpCode": 404, "metadata": NSNull()]
+        ]]
+        let httpResponse = HTTPURLResponse(url: URL(string: "https://www.example.org")!, statusCode: 404, httpVersion: "1.1", headerFields: nil)
+        do {
+            let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
+            let response = try self.revealApiCallback.processResponse(data: responseData, response: httpResponse, error: nil)
+            let records = response["records"] as! [[String: Any]]
+            let errors = response["errors"] as! [[String: Any]]
+
+            XCTAssertTrue(records.isEmpty)
+            XCTAssertEqual(errors.count, 2)
+            XCTAssertEqual(errors[0]["error"] as? String, "Detokenize failed. Token dedwimm is invalid. Specify a valid token.")
+            XCTAssertEqual(errors[0]["httpCode"] as? Int, 404)
+        } catch {
+            XCTFail("Full failure with 404 outer status should not throw: \(error)")
+        }
+    }
+
+    func testProcessResponseInvalidTokenGroupError() {
+        let revealedResponse: [String: Any] = ["error": [
+            "grpc_code": 3,
+            "http_code": 400,
+            "message": "Detokenize failed. Token group no is invalid. Specify a valid token group.",
+            "http_status": "Bad Request",
+            "details": []
+        ]]
+        let httpResponse = HTTPURLResponse(url: URL(string: "https://www.example.org")!, statusCode: 400, httpVersion: "1.1", headerFields: nil)
+        do {
+            let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
+            _ = try self.revealApiCallback.processResponse(data: responseData, response: httpResponse, error: nil)
+            XCTFail("Should throw on genuine top-level error (invalid token group)")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "Detokenize failed. Token group no is invalid. Specify a valid token group.")
+        }
+    }
+
+    func testConstructV2DetokenizeRequestBodyDedupesTokenGroupRedactions() {
+        let records = [RevealRequestRecord(token: "token1")]
+        let tokenGroupRedactions = [
+            TokenGroupRedaction(tokenGroupName: "group1", redaction: "MASKED"),
+            TokenGroupRedaction(tokenGroupName: "group1", redaction: "PLAIN_TEXT")
+        ]
+        let result = FlowVaultDetokenizeRequestBody.createRequestBody(vaultID: "vault123", records: records, tokenGroupRedactions: tokenGroupRedactions)
+
+        let redactions = result["tokenGroupRedactions"] as! [[String: Any]]
+        XCTAssertEqual(redactions.count, 1)
+        XCTAssertEqual(redactions[0]["tokenGroupName"] as? String, "group1")
+        XCTAssertEqual(redactions[0]["redaction"] as? String, "PLAIN_TEXT")
+    }
+
     func testGetTokensToErrors() {
         let errors = [["token": "1234"], ["token": "4321"]]
         

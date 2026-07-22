@@ -100,6 +100,15 @@ class FlowVaultRevealAPICallback: Callback {
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
             if range ~= httpResponse.statusCode {
+                // FlowDB returns a non-2xx status when every token in the batch fails to
+                // detokenize, but the body still has the same {"response": [...]} shape as a
+                // success/partial response (each entry carrying its own error/httpCode) - parse
+                // it as such instead of collapsing into a generic top-level error.
+                if let safeData = data,
+                   let jsonObject = try? JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as? [String: Any],
+                   jsonObject["response"] != nil {
+                    return try getDetokenizeResponseBody(data: safeData)
+                }
                 var description = "Detokenize call failed with the following status code " + String(httpResponse.statusCode)
                 if let safeData = data {
                     do {
