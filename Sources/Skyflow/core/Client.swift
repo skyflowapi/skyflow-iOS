@@ -22,7 +22,7 @@ public class Client {
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
-    public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
+    internal func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INSERT
         Log.info(message: .INSERT_TRIGGERED, contextOptions: tempContextOptions)
@@ -115,7 +115,7 @@ public class Client {
         return nil
     }
 
-    public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
+    internal func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
         func checkRecord(token: [String: Any], index: Int) -> ErrorCodes? {
@@ -164,13 +164,13 @@ public class Client {
                 onFailureHandler: {
                 }
             )
-            self.apiClient.get(records: list, tokenGroupRedactions: options?.tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
+            self.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
         } else {
             callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
 
-    public func getById(records: [String: Any], callback: Callback) {
+    internal func getById(records: [String: Any], callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GETBYID
         Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: tempContextOptions)
@@ -253,7 +253,7 @@ public class Client {
             callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
-    public func get(records: [String: Any], options: GetOptions = GetOptions(), callback: Callback){
+    internal func get(records: [String: Any], options: GetOptions = GetOptions(), callback: Callback){
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GET
         Log.info(message: .GET_TRIGGERED, contextOptions: tempContextOptions)

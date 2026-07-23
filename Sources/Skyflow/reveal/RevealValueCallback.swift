@@ -18,28 +18,17 @@ internal class RevealValueCallback: Callback {
     func onSuccess(_ responseBody: Any) {
         var tokens: [String: String] = [:]
 
-
-        let responseJson = responseBody as! [String: Any]
+        let responseJson = responseBody as? [String: Any] ?? [:]
         var response: [String: Any] = [:]
-        var tempSuccessResponses: [[String: String]] = []
+        var successResponses: [[String: Any]] = []
 
         if let records = responseJson["records"] as? [Any] {
             for record in records {
-                let dict = record as! [String: Any]
-                let token = dict["token"] as! String
+                guard let dict = record as? [String: Any], let token = dict["token"] as? String else { continue }
                 let value = dict["value"] as? String
                 tokens[token] = value ?? token
-                
-                var successEntry: [String: String] = [:]
-                successEntry["token"] = token
-                tempSuccessResponses.append(successEntry)
-            }
-        }
-        
-        var successResponses: [[String: String]] = []
-        for entry in tempSuccessResponses {
-            if let token = entry["token"] {
-                successResponses.append(entry)
+
+                successResponses.append(dict)
             }
         }
 
@@ -77,36 +66,24 @@ internal class RevealValueCallback: Callback {
     func onFailure(_ error: Any) {
         var response: [String: Any] = [:]
 
-        if error is [String: Any] {
+        if let responseJson = error as? [String: Any] {
             var tokens: [String: String] = [:]
-
-            let responseJson = error as! [String: Any]
-            var tempSuccessResponses: [[String: String]] = []
+            var successResponses: [[String: Any]] = []
 
             if let records = responseJson["records"] as? [Any] {
                 for record in records {
-                    let dict = record as! [String: Any]
-                    let token = dict["token"] as! String
+                    guard let dict = record as? [String: Any], let token = dict["token"] as? String else { continue }
                     let value = dict["value"] as? String
                     tokens[token] = value ?? token
-                    
-                    var successEntry: [String: String] = [:]
-                    successEntry["token"] = token
-                    tempSuccessResponses.append(successEntry)
-                }
-            }
-            
-            var successResponses: [[String: String]] = []
-            for entry in tempSuccessResponses {
-                if let token = entry["token"] {
-                    successResponses.append(entry)
+
+                    successResponses.append(dict)
                 }
             }
 
             if successResponses.count != 0 {
                 response["success"] = successResponses
             }
-            var errors =  [[:]] as [[String: Any]]
+            var errors = [] as [[String: Any]]
             if let responseErrors = responseJson["errors"] as? [[String: Any]] {
                 errors = responseErrors
             }

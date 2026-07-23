@@ -112,7 +112,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             let records = result["records"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertNil(records[0]["httpCode"])
+            XCTAssertEqual(records[0]["httpCode"] as? Int, 200)
             let fields = records[0]["fields"] as! [String: Any]
             XCTAssertNil(fields["data"])
             XCTAssertEqual(records[0]["hashedData"] as! [String: String], ["field": "hashed-value"])
@@ -140,16 +140,27 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
     }
 
     func testProcessResponseError() {
-        let response = ["records": [["skyflowID": "SID", "tableName": "table"]]]
+        // A genuine connection/network-level error (URLSession error, no HTTP response reached).
+        let networkError = NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "The Internet connection appears to be offline."])
 
         do {
-            let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
-            let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
-
-            _ = try self.collectCallback.processResponse(data: data, response: response, error: NSError(domain: "", code: 400, userInfo: nil))
+            _ = try self.collectCallback.processResponse(data: nil, response: nil, error: networkError)
             XCTFail("Should have thrown error")
-
         } catch {
+            XCTAssertEqual((error as NSError).code, -1009)
+        }
+    }
+
+    func testGetCollectResponseBodyWithMalformedTopLevelJSON() {
+        // A response body that parses as valid JSON but isn't a top-level object (e.g. a bare
+        // array or scalar) must not crash - it should fall back to an empty result.
+        do {
+            let arrayData = try JSONSerialization.data(withJSONObject: ["not", "an", "object"], options: .fragmentsAllowed)
+            let result = try self.collectCallback.getCollectResponseBody(data: arrayData)
+            XCTAssertEqual((result["records"] as? [[String: Any]])?.count, 0)
+            XCTAssertEqual((result["errors"] as? [[String: Any]])?.count, 0)
+        } catch {
+            XCTFail("Malformed top-level JSON should not throw or crash: \(error)")
         }
     }
 

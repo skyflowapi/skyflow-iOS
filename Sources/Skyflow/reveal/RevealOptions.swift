@@ -12,9 +12,5 @@
 import Foundation
 
 public struct RevealOptions {
-    public var tokenGroupRedactions: [TokenGroupRedaction]?
-
-    public init(tokenGroupRedactions: [TokenGroupRedaction]? = nil) {
-        self.tokenGroupRedactions = tokenGroupRedactions
-    }
+    public init() {}
 }

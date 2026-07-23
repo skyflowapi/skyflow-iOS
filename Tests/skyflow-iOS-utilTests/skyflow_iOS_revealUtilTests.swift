@@ -231,6 +231,148 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         XCTAssertEqual(result["4321"], "Invalid Token")
     }
     
+    func testRevealValueOnSuccessPureSuccess() {
+        // Every token revealed, zero errors - a genuine full-success scenario
+        // (as opposed to the mixed success+error fixtures used elsewhere in this file).
+        let token1 = "123"
+        let token2 = "456"
+        let response: [String: Any] = [
+            "records": [
+                ["token": token1, "value": "John"],
+                ["token": token2, "value": "Doe"]
+            ],
+            "errors": []
+        ]
+
+        let element1 = self.container.create(input: RevealElementInput(token: token1, label: "first"), options: RevealElementOptions())
+        let element2 = self.container.create(input: RevealElementInput(token: token2, label: "second"), options: RevealElementOptions())
+
+        self.revealValueCallback.revealElements = [element1, element2]
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+
+        XCTAssertNil(self.callback.data["errors"])
+        let records = self.callback.data["success"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 2)
+        XCTAssertEqual(element1.actualValue, "John")
+        XCTAssertEqual(element2.actualValue, "Doe")
+        XCTAssertEqual(element1.errorMessage.text, nil)
+        XCTAssertEqual(element2.errorMessage.text, nil)
+    }
+
+    func testRevealValueOnFailurePureFailure() {
+        // Every token invalid, zero successes - a genuine full-failure scenario.
+        let token1 = "123"
+        let token2 = "456"
+        let response: [String: Any] = [
+            "records": [],
+            "errors": [
+                ["token": token1, "error": "Invalid Token"],
+                ["token": token2, "error": "Invalid Token"]
+            ]
+        ]
+
+        let element1 = self.container.create(input: RevealElementInput(token: token1, label: "first"))
+        let element2 = self.container.create(input: RevealElementInput(token: token2, label: "second"))
+
+        self.revealValueCallback.revealElements = [element1, element2]
+        self.revealValueCallback.onFailure(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+
+        XCTAssertNil(self.callback.data["success"])
+        let errors = self.callback.data["errors"] as! [[String: Any]]
+        XCTAssertEqual(errors.count, 2)
+        XCTAssertEqual(element1.actualValue, nil)
+        XCTAssertEqual(element2.actualValue, nil)
+        XCTAssertEqual(element1.errorMessage.text, "Invalid Token")
+        XCTAssertEqual(element2.errorMessage.text, "Invalid Token")
+    }
+
+    func testRevealValueOnFailureNetworkErrorHasNoPerTokenErrors() {
+        // Simulates what FlowVaultRevealAPICallback.callRevealOnFailure produces for a genuine
+        // network/connection-level failure: no "records", and the error entry has no "token"
+        // (since the failure isn't scoped to any specific token). Elements should not crash and
+        // should not show a per-element error message (there's no token to match against), but
+        // the client callback should still receive the error.
+        let token1 = "123"
+        let networkError = NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "The Internet connection appears to be offline."])
+        let response: [String: Any] = [
+            "errors": [["error": networkError]]
+        ]
+
+        let element1 = self.container.create(input: RevealElementInput(token: token1, label: "first"))
+        self.revealValueCallback.revealElements = [element1]
+
+        self.revealValueCallback.onFailure(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+
+        XCTAssertNil(self.callback.data["success"])
+        let errors = self.callback.data["errors"] as! [[String: Any]]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual((errors[0]["error"] as? NSError)?.code, -1009)
+        // No token to match this error against, so the element shows no inline error.
+        XCTAssertEqual(element1.errorMessage.text, nil)
+        XCTAssertEqual(element1.actualValue, nil)
+    }
+
+    func testRevealValueOnFailureWithNonDictionaryError() {
+        // onFailure(_ error: Any) can in principle be called with something that isn't a
+        // dictionary at all (the Callback protocol accepts Any). Must not crash, and should
+        // report an empty response rather than propagating garbage.
+        let element1 = self.container.create(input: RevealElementInput(token: "123", label: "first"))
+        self.revealValueCallback.revealElements = [element1]
+
+        self.revealValueCallback.onFailure("not a dictionary")
+        wait(for: [self.expectation], timeout: 20.0)
+
+        XCTAssertNil(self.callback.data["success"])
+        XCTAssertNil(self.callback.data["errors"])
+    }
+
+    func testRevealValueOnSuccessWithNonDictionaryResponseBody() {
+        // Same defensive case for onSuccess: a non-dictionary responseBody must not crash.
+        let element1 = self.container.create(input: RevealElementInput(token: "123", label: "first"))
+        self.revealValueCallback.revealElements = [element1]
+
+        self.revealValueCallback.onSuccess(42)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+
+        XCTAssertNil(self.callback.data["success"])
+        XCTAssertNil(self.callback.data["errors"])
+        XCTAssertEqual(element1.actualValue, nil)
+    }
+
+    func testRevealValueOnSuccessSkipsMalformedRecords() {
+        // A record missing "token" (or not a dictionary at all) must be skipped, not crash
+        // the whole reveal for every other token in the same batch.
+        let goodToken = "123"
+        let response: [String: Any] = [
+            "records": [
+                ["token": goodToken, "value": "John"],
+                ["value": "no token here"],
+                "not even a dictionary",
+                ["token": 42, "value": "token is not a String"]
+            ],
+            "errors": []
+        ]
+
+        let goodElement = self.container.create(input: RevealElementInput(token: goodToken, label: "good"), options: RevealElementOptions())
+        self.revealValueCallback.revealElements = [goodElement]
+
+        self.revealValueCallback.onSuccess(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+
+        let records = self.callback.data["success"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["token"] as? String, goodToken)
+        XCTAssertEqual(goodElement.actualValue, "John")
+    }
+
     func testRevealValueOnFailure() {
         let successToken = "123"
         let failureToken = "1234"

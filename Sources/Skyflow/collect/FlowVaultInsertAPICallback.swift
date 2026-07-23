@@ -222,16 +222,16 @@ internal class FlowVaultInsertAPICallback: Callback {
                 var errorObject: Error = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
 
                 if let safeData = data {
-                    do {
-                        let desc = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-                        let error = desc["error"] as! [String: Any]
-                        description = error["message"] as! String
+                    if let desc = try? JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as? [String: Any],
+                       let errorDict = desc["error"] as? [String: Any],
+                       let message = errorDict["message"] as? String {
+                        description = message
                         if let requestId = httpResponse.allHeaderFields["x-request-id"] {
                             description += " - request-id: \(requestId)"
                         }
                         errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
-                    } catch {
-                        errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8)!).getErrorObject(contextOptions: self.contextOptions)
+                    } else {
+                        errorObject = ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8) ?? "Unknown error").getErrorObject(contextOptions: self.contextOptions)
                     }
                 }
                 throw errorObject
@@ -247,7 +247,7 @@ internal class FlowVaultInsertAPICallback: Callback {
     }
 
     func getCollectResponseBody(data: Data) throws -> [String: Any]{
-        let jsonData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
+        let jsonData = (try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]) ?? [:]
         var successRecords: [[String: Any]] = []
         var errorRecords: [[String: Any]] = []
 
@@ -270,6 +270,7 @@ internal class FlowVaultInsertAPICallback: Callback {
                 var successEntry: [String: Any] = ["fields": fields]
                 if let tableName = entry["tableName"] { successEntry["table"] = tableName }
                 if let hashedData = entry["hashedData"] as? [String: Any] { successEntry["hashedData"] = self.buildFieldsDict(dict: hashedData) }
+                if let httpCode = entry["httpCode"] { successEntry["httpCode"] = httpCode }
                 successRecords.append(successEntry)
             }
         }

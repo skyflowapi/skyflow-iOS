@@ -71,7 +71,6 @@ public extension Container {
                     tokenGroupRedactions.append(TokenGroupRedaction(tokenGroupName: tokenGroupName, redaction: redaction))
                 }
             }
-            tokenGroupRedactions.append(contentsOf: options?.tokenGroupRedactions ?? [])
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: tempContextOptions,
                 onSuccessHandler: {
                     Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
