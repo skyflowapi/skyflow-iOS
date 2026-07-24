@@ -115,4 +115,31 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         XCTAssertEqual(result,  ErrorCodes.EMPTY_TOKEN_ID().description)
     }
 
+    func testContainerRevealEmptyVaultURL() {
+        // Unlike Client.detokenize()/getById()/get(), RevealContainer.reveal() calls
+        // callback.onFailure directly with the raw NSError (no callRevealOnFailure wrapping).
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+        let revealContainer = clientWithEmptyURL.container(type: ContainerType.REVEAL, options: nil)
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Reveal with empty vaultURL should fail"))
+        revealContainer?.reveal(callback: callback)
+
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .REVEAL_CONTAINER)).localizedDescription)
+    }
+
+    func testDetokenizeEmptyVaultURL() {
+        // Client.detokenize()'s vault-level errors route through callRevealOnFailure, which
+        // wraps the NSError in {"errors": [errorObject]} rather than passing it through raw.
+        let expectation = XCTestExpectation(description: "Detokenize with empty vaultURL should fail")
+        let callback = DemoAPICallback(expectation: expectation)
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+
+        clientWithEmptyURL.detokenize(records: ["records": [["token": "sometoken"]]], callback: callback)
+
+        wait(for: [expectation], timeout: 10.0)
+        let errors = callback.data["errors"] as! [NSError]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0].localizedDescription, ErrorCodes.EMPTY_VAULT_URL().description)
+    }
+
 }

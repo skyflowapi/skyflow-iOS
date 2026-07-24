@@ -432,4 +432,15 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertEqual(entry["fields"] as! [String: String], ["card_number": ""])
     }
 
+    func testInsertEmptyVaultURL() {
+        let expectation = XCTestExpectation(description: "Insert with empty vaultURL should fail")
+        let callback = DemoAPICallback(expectation: expectation)
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+
+        clientWithEmptyURL.insert(records: ["records": [["table": "table", "fields": ["field": "value"]]]], callback: callback)
+
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .INSERT)).localizedDescription)
+    }
+
 }

@@ -485,6 +485,19 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
     }
+
+    func testComposableCollectEmptyVaultURL() {
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+        let container = clientWithEmptyURL.container(type: ContainerType.COMPOSABLE)
+
+        let expectation = XCTestExpectation()
+        let callback = DemoAPICallback(expectation: expectation)
+        container?.collect(callback: callback)
+
+        wait(for: [expectation], timeout: 20.0)
+
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
+    }
     func testCreateRows() {
         let elements = [1, 2]
         let numberOfRows = 2
