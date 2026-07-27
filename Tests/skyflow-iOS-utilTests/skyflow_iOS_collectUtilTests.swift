@@ -65,14 +65,12 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
             let result = try self.collectCallback.getCollectResponseBody(data: data)
             let records = result["records"] as! [[String: Any]]
-            let errors = result["errors"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["table"] as! String, "table")
+            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
             let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
             XCTAssertNil(fields["tokens"])
-            XCTAssertTrue(errors.isEmpty)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -88,9 +86,9 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let records = result["records"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["table"] as! String, "table")
+            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
             let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
             let fieldTokens = fields["field"] as! [[String: Any]]
             XCTAssertEqual(fieldTokens[0]["token"] as? String, "tok")
         } catch {
@@ -132,9 +130,8 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
 
             let processedData = try self.collectCallback.processResponse(data: data, response: response, error: nil)
             let records = processedData["records"] as! [[String: Any]]
-            XCTAssertEqual(records[0]["table"] as! String, "table")
-            let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
+            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
 
         } catch {
             XCTFail(error.localizedDescription)
@@ -162,7 +159,6 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let arrayData = try JSONSerialization.data(withJSONObject: ["not", "an", "object"], options: .fragmentsAllowed)
             let result = try self.collectCallback.getCollectResponseBody(data: arrayData)
             XCTAssertEqual((result["records"] as? [[String: Any]])?.count, 0)
-            XCTAssertEqual((result["errors"] as? [[String: Any]])?.count, 0)
         } catch {
             XCTFail("Malformed top-level JSON should not throw or crash: \(error)")
         }
@@ -262,14 +258,12 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         do {
             let processedInsert = try collectCallback.processResponse(data: insertResponseData, response: insertUrlResponse, error: nil)
             let insertRecords = processedInsert["records"] as! [[String: Any]]
-            let errors = processedInsert["errors"] as! [[String: Any]]
 
             XCTAssertEqual(insertRecords.count, 1)
-            XCTAssertEqual(insertRecords[0]["table"] as? String, "table")
+            XCTAssertEqual(insertRecords[0]["tableName"] as? String, "table")
+            XCTAssertEqual(insertRecords[0]["skyflowID"] as? String, "SID")
             let fields = insertRecords[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as? String, "SID")
             XCTAssertEqual(fields["field"] as? String, "value")
-            XCTAssertTrue(errors.isEmpty)
         } catch {
             XCTFail("Insert scenario failed: \(error)")
         }
@@ -302,12 +296,11 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         do {
             let processed = try collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(errors.count, 1)
-            XCTAssertEqual(errors[0]["error"] as? String, "insert failed")
-            XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
+            XCTAssertEqual(records.count, 2)
+            XCTAssertNil(records[0]["error"])
+            XCTAssertEqual(records[1]["error"] as? String, "insert failed")
+            XCTAssertEqual(records[1]["httpCode"] as? Int, 400)
         } catch {
             XCTFail("Partial insert failure scenario failed: \(error)")
         }
@@ -345,12 +338,10 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let processed = try collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
             XCTAssertNil(processed["error"], "Should not collapse into a generic top-level error when the body has a records array")
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertTrue(records.isEmpty)
-            XCTAssertEqual(errors.count, 2)
-            XCTAssertEqual(errors[0]["error"] as? String, "Invalid request. Table name table not present for record. Specify a valid table name.")
-            XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
+            XCTAssertEqual(records.count, 2)
+            XCTAssertEqual(records[0]["error"] as? String, "Invalid request. Table name table not present for record. Specify a valid table name.")
+            XCTAssertEqual(records[0]["httpCode"] as? Int, 400)
         } catch {
             XCTFail("Full failure scenario should not throw: \(error)")
         }
@@ -386,13 +377,10 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         do {
             let processed = try collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertEqual(records.count, 1)
-            let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
-            XCTAssertEqual(errors.count, 1)
-            XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
+            XCTAssertEqual(records.count, 2)
+            XCTAssertEqual(records[0]["skyflowID"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
+            XCTAssertEqual(records[1]["httpCode"] as? Int, 400)
         } catch {
             XCTFail("Partial (207) scenario should not throw: \(error)")
         }
@@ -425,13 +413,11 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         do {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertTrue(errors.isEmpty)
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["table"] as? String, "table1")
+            XCTAssertEqual(records[0]["tableName"] as? String, "table1")
+            XCTAssertEqual(records[0]["skyflowID"] as? String, "f30c8ccf-7e86-46b4-be74-0b2db44e4b87")
             let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as? String, "f30c8ccf-7e86-46b4-be74-0b2db44e4b87")
             XCTAssertNil(fields["data"])
             let nameTokens = fields["name"] as! [[String: Any]]
             XCTAssertEqual(nameTokens[0]["token"] as? String, "sagwm")
@@ -464,11 +450,9 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
             XCTAssertNil(processed["error"], "Should not collapse into a generic top-level error when the body has a records array")
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertTrue(records.isEmpty)
-            XCTAssertEqual(errors.count, 2)
-            XCTAssertEqual(errors[0]["error"] as? String, "Invalid request. Table name table not present for record. Specify a valid table name.")
+            XCTAssertEqual(records.count, 2)
+            XCTAssertEqual(records[0]["error"] as? String, "Invalid request. Table name table not present for record. Specify a valid table name.")
         } catch {
             XCTFail("Update full failure response should not throw: \(error)")
         }
@@ -505,13 +489,10 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         do {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertEqual(records.count, 1)
-            let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
-            XCTAssertEqual(errors.count, 1)
-            XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
+            XCTAssertEqual(records.count, 2)
+            XCTAssertEqual(records[0]["skyflowID"] as? String, "b187b5b6-28b4-4881-93fa-4ef10e30b20e")
+            XCTAssertEqual(records[1]["httpCode"] as? Int, 400)
         } catch {
             XCTFail("Update partial response should not throw: \(error)")
         }

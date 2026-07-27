@@ -21,10 +21,18 @@ internal class RevealValueCallback: Callback {
         let responseJson = responseBody as? [String: Any] ?? [:]
         var response: [String: Any] = [:]
         var successResponses: [[String: Any]] = []
+        var errors: [[String: Any]] = []
 
+        // Success and per-token failure entries now arrive together in one "records" array,
+        // each distinguished by the presence of an "error" key.
         if let records = responseJson["records"] as? [Any] {
             for record in records {
-                guard let dict = record as? [String: Any], let token = dict["token"] as? String else { continue }
+                guard let dict = record as? [String: Any] else { continue }
+                if dict["error"] != nil {
+                    errors.append(dict)
+                    continue
+                }
+                guard let token = dict["token"] as? String else { continue }
                 let value = dict["value"] as? String
                 tokens[token] = value ?? token
 
@@ -34,10 +42,6 @@ internal class RevealValueCallback: Callback {
 
         if successResponses.count != 0 {
             response["success"] = successResponses
-        }
-        var errors =  [] as [[String: Any]]
-        if let responseErrors = responseJson["errors"] as? [[String: Any]] {
-            errors = responseErrors
         }
         let tokensToErrors = getTokensToErrors(errors)
         if errors.count != 0 {

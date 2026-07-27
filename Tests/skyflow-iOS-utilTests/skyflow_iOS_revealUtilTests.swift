@@ -114,11 +114,10 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
             let response = try self.revealApiCallback.processResponse(data: responseData, response: httpResponse, error: nil)
             let records = response["records"] as! [[String: Any]]
-            let errors = response["errors"] as! [[String: Any]]
-            XCTAssertTrue(errors.isEmpty)
             XCTAssertEqual(records.count, 1)
             XCTAssertEqual(records[0]["token"] as? String, "token")
             XCTAssertEqual(records[0]["value"] as? String, "value")
+            XCTAssertNil(records[0]["error"])
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -154,12 +153,11 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
             let response = try self.revealApiCallback.processResponse(data: responseData, response: httpResponse, error: nil)
             let records = response["records"] as! [[String: Any]]
-            let errors = response["errors"] as! [[String: Any]]
-            XCTAssertEqual(records.count, 1)
+            XCTAssertEqual(records.count, 2)
             XCTAssertEqual(records[0]["token"] as? String, "token1")
-            XCTAssertEqual(errors.count, 1)
-            XCTAssertEqual(errors[0]["token"] as? String, "token2")
-            XCTAssertEqual(errors[0]["error"] as? String, "Invalid Token")
+            XCTAssertNil(records[0]["error"])
+            XCTAssertEqual(records[1]["token"] as? String, "token2")
+            XCTAssertEqual(records[1]["error"] as? String, "Invalid Token")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -179,12 +177,10 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             let responseData = try JSONSerialization.data(withJSONObject: revealedResponse, options: .fragmentsAllowed)
             let response = try self.revealApiCallback.processResponse(data: responseData, response: httpResponse, error: nil)
             let records = response["records"] as! [[String: Any]]
-            let errors = response["errors"] as! [[String: Any]]
 
-            XCTAssertTrue(records.isEmpty)
-            XCTAssertEqual(errors.count, 2)
-            XCTAssertEqual(errors[0]["error"] as? String, "Detokenize failed. Token dedwimm is invalid. Specify a valid token.")
-            XCTAssertEqual(errors[0]["httpCode"] as? Int, 404)
+            XCTAssertEqual(records.count, 2)
+            XCTAssertEqual(records[0]["error"] as? String, "Detokenize failed. Token dedwimm is invalid. Specify a valid token.")
+            XCTAssertEqual(records[0]["httpCode"] as? Int, 404)
         } catch {
             XCTFail("Full failure with 404 outer status should not throw: \(error)")
         }
@@ -409,8 +405,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "John"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "John"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions())
@@ -440,8 +435,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "4567890"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "4567890"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "XXX-XXX-X", translation: ["X": "[0-9]"]))
@@ -473,8 +467,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "12345678"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "12345678"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "XXX-XXX-XXX", translation: ["X": "[0-9]"]))
@@ -506,8 +499,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "12345678"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "12345678"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "XXX-XXX", translation: ["X": "[0-9]"]))
@@ -540,8 +532,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "12345678"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "12345678"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "+91 XXX-XXX", translation: ["X": "[0-9]"]))
@@ -573,8 +564,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "name"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "name"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "+91 XXX-XXX", translation: ["X": "[0-9]"]))
@@ -606,8 +596,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let successToken = "123"
         let failureToken = "1234"
         let response = [
-            "records": [["token": successToken, "value": "name"]],
-            "errors": [["token": failureToken, "error": "Invalid Token"]]
+            "records": [["token": successToken, "value": "name"], ["token": failureToken, "error": "Invalid Token"]]
         ]
         
         let successElement = self.container.create(input: RevealElementInput(token: successToken, label: "name"), options: RevealElementOptions(format: "+91 XXX-XXX", translation: ["Y": "[0-9]"]))

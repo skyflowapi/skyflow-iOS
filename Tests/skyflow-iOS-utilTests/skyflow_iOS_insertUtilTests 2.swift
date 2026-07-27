@@ -34,8 +34,9 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
         self.collectCallback.onSuccess("string")
         wait(for: [expectation], timeout: 20.0)
 
-        let result = callback.receivedResponse
-        XCTAssert(result.contains("unsupported URL"))
+        let errorObject = callback.data["error"] as! [String: Any]
+        let msg = errorObject["message"] as! String
+        XCTAssert(msg.contains("unsupported URL"))
     }
 
     func testGetRequestSession() {
@@ -64,13 +65,10 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
             let result = try self.collectCallback.getCollectResponseBody(data: data)
             let records = result["records"] as! [[String: Any]]
-            let errors = result["errors"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["table"] as! String, "table")
-            let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
-            XCTAssertTrue(errors.isEmpty)
+            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -86,9 +84,9 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             let records = result["records"] as! [[String: Any]]
 
             XCTAssertEqual(records.count, 1)
-            XCTAssertEqual(records[0]["table"] as! String, "table")
+            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
             let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
             let fieldTokens = fields["field"] as! [[String: Any]]
             XCTAssertEqual(fieldTokens[0]["token"] as? String, "tok")
         } catch {
@@ -130,9 +128,8 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
 
             let processedData = try self.collectCallback.processResponse(data: data, response: response, error: nil)
             let records = processedData["records"] as! [[String: Any]]
-            XCTAssertEqual(records[0]["table"] as! String, "table")
-            let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as! String, "SID")
+            XCTAssertEqual(records[0]["tableName"] as! String, "table")
+            XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
 
         } catch {
             XCTFail(error.localizedDescription)
@@ -140,14 +137,16 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
     }
 
     func testProcessResponseError() {
-        // A genuine connection/network-level error (URLSession error, no HTTP response reached).
+        // A genuine connection/network-level error (URLSession error, no HTTP response reached)
+        // should not throw - it returns a top-level {"error": {...}} dict directly.
         let networkError = NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "The Internet connection appears to be offline."])
 
         do {
-            _ = try self.collectCallback.processResponse(data: nil, response: nil, error: networkError)
-            XCTFail("Should have thrown error")
+            let processedData = try self.collectCallback.processResponse(data: nil, response: nil, error: networkError)
+            let errorDict = processedData["error"] as! [String: Any]
+            XCTAssertEqual(errorDict["message"] as? String, "The Internet connection appears to be offline.")
         } catch {
-            XCTAssertEqual((error as NSError).code, -1009)
+            XCTFail("Should not throw for a connection-level error: \(error)")
         }
     }
 
@@ -158,7 +157,6 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             let arrayData = try JSONSerialization.data(withJSONObject: ["not", "an", "object"], options: .fragmentsAllowed)
             let result = try self.collectCallback.getCollectResponseBody(data: arrayData)
             XCTAssertEqual((result["records"] as? [[String: Any]])?.count, 0)
-            XCTAssertEqual((result["errors"] as? [[String: Any]])?.count, 0)
         } catch {
             XCTFail("Malformed top-level JSON should not throw or crash: \(error)")
         }
@@ -170,11 +168,11 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
             let response = HTTPURLResponse(url: URL(string: "https://example.org")!, statusCode: 500, httpVersion: "1.1", headerFields: ["x-request-id": "RID"])
 
-            _ = try self.collectCallback.processResponse(data: data, response: response, error: nil)
-            XCTFail("Not throwing on Api Error")
-
+            let res = try self.collectCallback.processResponse(data: data, response: response, error: nil)
+            let message = (res["error"] as! [String: Any])["message"] as! String
+            XCTAssertEqual(message, "Internal Server Error - request-id: RID")
         } catch {
-            XCTAssertEqual(error.localizedDescription, "Internal Server Error - request-id: RID")
+            XCTFail("Should not throw on Api Error: \(error)")
         }
     }
 
@@ -255,9 +253,9 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             let insertRecords = processedInsert["records"] as! [[String: Any]]
 
             XCTAssertEqual(insertRecords.count, 1)
-            XCTAssertEqual(insertRecords[0]["table"] as? String, "table")
+            XCTAssertEqual(insertRecords[0]["tableName"] as? String, "table")
+            XCTAssertEqual(insertRecords[0]["skyflowID"] as? String, "SID")
             let fields = insertRecords[0]["fields"] as! [String: Any]
-            XCTAssertEqual(fields["skyflow_id"] as? String, "SID")
             XCTAssertEqual(fields["field"] as? String, "value")
         } catch {
             XCTFail("Insert scenario failed: \(error)")
@@ -291,13 +289,12 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
 
         do {
             let processed = try collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
+            XCTAssertNil(processed["error"], "Should not collapse into a generic top-level error when the body has a records array")
             let records = processed["records"] as! [[String: Any]]
-            let errors = processed["errors"] as! [[String: Any]]
 
-            XCTAssertTrue(records.isEmpty)
-            XCTAssertEqual(errors.count, 1)
-            XCTAssertEqual(errors[0]["error"] as? String, "Invalid request. Table name table not present for record. Specify a valid table name.")
-            XCTAssertEqual(errors[0]["httpCode"] as? Int, 400)
+            XCTAssertEqual(records.count, 1)
+            XCTAssertEqual(records[0]["error"] as? String, "Invalid request. Table name table not present for record. Specify a valid table name.")
+            XCTAssertEqual(records[0]["httpCode"] as? Int, 400)
         } catch {
             XCTFail("Full failure scenario should not throw: \(error)")
         }

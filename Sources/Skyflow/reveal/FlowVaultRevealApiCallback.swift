@@ -37,12 +37,7 @@ class FlowVaultRevealAPICallback: Callback {
             let task = session.dataTask(with: request) { data, response, error in
                 do {
                     let response = try self.processResponse(data: data, response: response, error: error)
-                    let errors = response["errors"] as? [[String: Any]] ?? []
-                    if errors.isEmpty {
-                        self.callback.onSuccess(response)
-                    } else {
-                        self.callback.onFailure(response)
-                    }
+                    self.callback.onSuccess(response)
                 } catch {
                     self.callRevealOnFailure(callback: self.callback, errorObject: error)
                 }
@@ -129,7 +124,7 @@ class FlowVaultRevealAPICallback: Callback {
         }
 
         guard let safeData = data else {
-            return ["records": [], "errors": []]
+            return ["records": []]
         }
 
         return try getDetokenizeResponseBody(data: safeData)
@@ -137,8 +132,7 @@ class FlowVaultRevealAPICallback: Callback {
 
     func getDetokenizeResponseBody(data: Data) throws -> [String: Any] {
         let jsonData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
-        var successRecords: [[String: Any]] = []
-        var errorRecords: [[String: Any]] = []
+        var records: [[String: Any]] = []
 
         let responseRecords = jsonData["response"] as? [[String: Any]] ?? []
         for entry in responseRecords {
@@ -146,7 +140,7 @@ class FlowVaultRevealAPICallback: Callback {
                 var errorEntry: [String: Any] = ["error": error]
                 if let token = entry["token"] { errorEntry["token"] = token }
                 if let httpCode = entry["httpCode"] { errorEntry["httpCode"] = httpCode }
-                errorRecords.append(errorEntry)
+                records.append(errorEntry)
             } else {
                 var successEntry: [String: Any] = [:]
                 if let token = entry["token"] { successEntry["token"] = token }
@@ -154,10 +148,10 @@ class FlowVaultRevealAPICallback: Callback {
                 if let tokenGroupName = entry["tokenGroupName"] { successEntry["tokenGroupName"] = tokenGroupName }
                 if let httpCode = entry["httpCode"] { successEntry["httpCode"] = httpCode }
                 if let metadata = entry["metadata"] as? [String: Any] { successEntry["metadata"] = metadata }
-                successRecords.append(successEntry)
+                records.append(successEntry)
             }
         }
 
-        return ["records": successRecords, "errors": errorRecords]
+        return ["records": records]
     }
 }

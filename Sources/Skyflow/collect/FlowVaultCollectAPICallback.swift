@@ -49,12 +49,7 @@ internal class FlowVaultCollectAPICallback: Callback {
                             self.callback.onFailure(response)
                             return
                         }
-                        let errors = response["errors"] as? [[String: Any]] ?? []
-                        if errors.isEmpty {
-                            self.callback.onSuccess(["records": response["records"] as? [[String: Any]] ?? []])
-                        } else {
-                            self.callback.onFailure(response)
-                        }
+                        self.callback.onSuccess(["records": response["records"] as? [[String: Any]] ?? []])
                     } catch {
                         self.callback.onFailure(error)
                     }
@@ -88,7 +83,6 @@ internal class FlowVaultCollectAPICallback: Callback {
                             mergedErrors.append(response)
                         } else {
                             mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
-                            mergedErrors.append(contentsOf: response["errors"] as? [[String: Any]] ?? [])
                         }
                     } catch {
                         mergedErrors.append(["error": error.localizedDescription])
@@ -114,7 +108,6 @@ internal class FlowVaultCollectAPICallback: Callback {
                             mergedErrors.append(response)
                         } else {
                             mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
-                            mergedErrors.append(contentsOf: response["errors"] as? [[String: Any]] ?? [])
                         }
                     } catch {
                         mergedErrors.append(["error": error.localizedDescription])
@@ -234,22 +227,31 @@ internal class FlowVaultCollectAPICallback: Callback {
                 var description = "Insert call failed with the following status code " + String(httpResponse.statusCode)
                 if let safeData = data {
                     guard let errorResponse = try? JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as? [String: Any] else {
-                        return ["error": ["message": String(data: safeData, encoding: .utf8) ?? "Unknown error", "code": httpResponse.statusCode]]
+                        return ["error": ["message": String(data: safeData, encoding: .utf8) ?? "Unknown error", "httpCode": httpResponse.statusCode]]
                     }
-                    if let errorDetails = errorResponse["error"] as? [String: Any],
-                       let message = errorDetails["message"] as? String {
-                        description = message
+                    // Pass the vault's structured error object (grpcCode/httpStatus/details) through
+                    // as-is, only patching in the request-id and defaulting httpCode when absent.
+                    if var errorDict = errorResponse["error"] as? [String: Any] {
+                        if let message = errorDict["message"] as? String {
+                            description = message
+                            if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                                description += " - request-id: \(requestId)"
+                            }
+                            errorDict["message"] = description
+                        }
+                        if errorDict["httpCode"] == nil { errorDict["httpCode"] = httpResponse.statusCode }
+                        return ["error": errorDict]
                     }
                     if let requestId = httpResponse.allHeaderFields["x-request-id"] {
                         description += " - request-id: \(requestId)"
                     }
                 }
-                return ["error": ["message": description, "code": httpResponse.statusCode]]
+                return ["error": ["message": description, "httpCode": httpResponse.statusCode]]
             }
         }
 
         guard let safeData = data else {
-            return ["records": [], "errors": []]
+            return ["records": []]
         }
 
         return try getCollectResponseBody(data: safeData)
@@ -258,8 +260,7 @@ internal class FlowVaultCollectAPICallback: Callback {
 
     func getCollectResponseBody(data: Data) throws -> [String: Any]{
         let jsonData = (try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]) ?? [:]
-        var successRecords: [[String: Any]] = []
-        var errorRecords: [[String: Any]] = []
+        var records: [[String: Any]] = []
 
         let responseRecords = jsonData["records"] as? [[String: Any]] ?? []
         for entry in responseRecords {
@@ -268,23 +269,24 @@ internal class FlowVaultCollectAPICallback: Callback {
                 if let skyflowID = entry["skyflowID"] { errorEntry["skyflowID"] = skyflowID }
                 if let tableName = entry["tableName"] { errorEntry["tableName"] = tableName }
                 if let httpCode = entry["httpCode"] { errorEntry["httpCode"] = httpCode }
-                errorRecords.append(errorEntry)
+                records.append(errorEntry)
             } else {
+                var successEntry: [String: Any] = [:]
+                if let skyflowID = entry["skyflowID"] { successEntry["skyflowID"] = skyflowID }
+                if let tableName = entry["tableName"] { successEntry["tableName"] = tableName }
                 var fields: [String: Any] = [:]
-                if let skyflowID = entry["skyflowID"] { fields["skyflow_id"] = skyflowID }
                 if self.options.tokens, let tokens = entry["tokens"] as? [String: Any] {
                     for (column, tokenValue) in self.buildFieldsDict(dict: tokens) {
                         fields[column] = tokenValue
                     }
                 }
-                var successEntry: [String: Any] = ["fields": fields]
-                if let tableName = entry["tableName"] { successEntry["table"] = tableName }
+                successEntry["fields"] = fields
                 if let hashedData = entry["hashedData"] as? [String: Any] { successEntry["hashedData"] = self.buildFieldsDict(dict: hashedData) }
                 if let httpCode = entry["httpCode"] { successEntry["httpCode"] = httpCode }
-                successRecords.append(successEntry)
+                records.append(successEntry)
             }
         }
 
-        return ["records": successRecords, "errors": errorRecords]
+        return ["records": records]
     }
 }
