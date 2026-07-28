@@ -22,7 +22,7 @@ public extension Container {
         return skyflowElement
     }
 
-    func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
+    func collect(callback: CollectCallback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
         if self.skyflow.vaultID.isEmpty {

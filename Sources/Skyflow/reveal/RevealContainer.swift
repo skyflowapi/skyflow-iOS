@@ -25,7 +25,7 @@ public extension Container {
         return revealElement
     }
 
-    func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
+    func reveal(callback: RevealCallback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
         if self.skyflow.vaultID.isEmpty {

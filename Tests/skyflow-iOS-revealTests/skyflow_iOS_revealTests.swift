@@ -177,7 +177,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         window.addSubview(revealElement!)
         
         let callback = DemoAPICallback(expectation: expectFailure)
-        revealContainer?.reveal(callback: callback)
+        revealContainer?.reveal(callback: callback.asRevealCallback)
         
         wait(for: [expectFailure], timeout: 10.0)
         

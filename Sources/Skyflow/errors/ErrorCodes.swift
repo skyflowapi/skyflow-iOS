@@ -133,14 +133,4 @@ internal enum ErrorCodes: CustomStringConvertible {
     }
 }
 
-public class SkyflowError: NSError {
-    var xml: String = ""
-
-    func setXML(xml: String) {
-        self.xml = xml
-    }
-
-    public func getXML() -> String {
-        return self.xml
-    }
-}
+public class SkyflowError: NSError {}

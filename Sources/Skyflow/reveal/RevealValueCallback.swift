@@ -20,33 +20,29 @@ internal class RevealValueCallback: Callback {
 
         let responseJson = responseBody as? [String: Any] ?? [:]
         var response: [String: Any] = [:]
-        var successResponses: [[String: Any]] = []
+        var records: [[String: Any]] = []
         var errors: [[String: Any]] = []
 
-        // Success and per-token failure entries now arrive together in one "records" array,
-        // each distinguished by the presence of an "error" key.
-        if let records = responseJson["records"] as? [Any] {
-            for record in records {
+        // Success and per-token failure entries arrive together in one "records" array (matching
+        // Collect's convention and the JS SDK's shape), each distinguished by an "error" key.
+        if let responseRecords = responseJson["records"] as? [Any] {
+            for record in responseRecords {
                 guard let dict = record as? [String: Any] else { continue }
                 if dict["error"] != nil {
                     errors.append(dict)
+                    records.append(dict)
                     continue
                 }
                 guard let token = dict["token"] as? String else { continue }
                 let value = dict["value"] as? String
                 tokens[token] = value ?? token
 
-                successResponses.append(dict)
+                records.append(dict)
             }
         }
 
-        if successResponses.count != 0 {
-            response["success"] = successResponses
-        }
+        response["records"] = records
         let tokensToErrors = getTokensToErrors(errors)
-        if errors.count != 0 {
-            response["errors"] = errors
-        }
 
         DispatchQueue.main.async {
             for revealElement in self.revealElements {
@@ -72,31 +68,27 @@ internal class RevealValueCallback: Callback {
 
         if let responseJson = error as? [String: Any] {
             var tokens: [String: String] = [:]
-            var successResponses: [[String: Any]] = []
+            var records: [[String: Any]] = []
 
-            if let records = responseJson["records"] as? [Any] {
-                for record in records {
+            if let responseRecords = responseJson["records"] as? [Any] {
+                for record in responseRecords {
                     guard let dict = record as? [String: Any], let token = dict["token"] as? String else { continue }
                     let value = dict["value"] as? String
                     tokens[token] = value ?? token
 
-                    successResponses.append(dict)
+                    records.append(dict)
                 }
             }
 
-            if successResponses.count != 0 {
-                response["success"] = successResponses
-            }
             var errors = [] as [[String: Any]]
             if let responseErrors = responseJson["errors"] as? [[String: Any]] {
                 errors = responseErrors
             }
-            
+            records.append(contentsOf: errors)
+
+            response["records"] = records
             let tokensToErrors = getTokensToErrors(errors)
-            if errors.count != 0 {
-                response["errors"] = errors
-            }
-            
+
             DispatchQueue.main.async {
                 for revealElement in self.revealElements {
                     if let v = tokens[revealElement.revealInput.token]{

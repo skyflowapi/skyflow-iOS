@@ -184,7 +184,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -219,7 +219,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -244,7 +244,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         

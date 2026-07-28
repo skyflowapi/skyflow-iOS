@@ -186,7 +186,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
 
         UIWindow().addSubview(element!)
 
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
 
         wait(for: [expectation], timeout: 20.0)
         XCTAssertTrue(callback.receivedResponse.contains("Token generated from 'getBearerToken' callback function is invalid"))

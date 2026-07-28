@@ -248,9 +248,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
 
-        XCTAssertNil(self.callback.data["errors"])
-        let records = self.callback.data["success"] as! [[String: Any]]
+        let records = self.callback.data["records"] as! [[String: Any]]
         XCTAssertEqual(records.count, 2)
+        XCTAssertTrue(records.allSatisfy { $0["error"] == nil })
         XCTAssertEqual(element1.actualValue, "John")
         XCTAssertEqual(element2.actualValue, "Doe")
         XCTAssertEqual(element1.errorMessage.text, nil)
@@ -277,9 +277,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
 
-        XCTAssertNil(self.callback.data["success"])
-        let errors = self.callback.data["errors"] as! [[String: Any]]
+        let errors = self.callback.data["records"] as! [[String: Any]]
         XCTAssertEqual(errors.count, 2)
+        XCTAssertTrue(errors.allSatisfy { $0["error"] != nil })
         XCTAssertEqual(element1.actualValue, nil)
         XCTAssertEqual(element2.actualValue, nil)
         XCTAssertEqual(element1.errorMessage.text, "Invalid Token")
@@ -305,8 +305,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
 
-        XCTAssertNil(self.callback.data["success"])
-        let errors = self.callback.data["errors"] as! [[String: Any]]
+        let errors = self.callback.data["records"] as! [[String: Any]]
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual((errors[0]["error"] as? NSError)?.code, -1009)
         // No token to match this error against, so the element shows no inline error.
@@ -363,7 +362,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
 
-        let records = self.callback.data["success"] as! [[String: Any]]
+        let records = self.callback.data["records"] as! [[String: Any]]
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records[0]["token"] as? String, goodToken)
         XCTAssertEqual(goodElement.actualValue, "John")
@@ -386,8 +385,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
                 
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -417,8 +417,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -447,8 +448,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -479,8 +481,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -511,8 +514,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -544,8 +548,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -576,8 +581,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -608,8 +614,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
         
-        let errors = self.callback.data["errors"] as! [[String: String]]
-        let records = self.callback.data["success"] as! [[String: String]]
+        let allRecords = self.callback.data["records"] as! [[String: String]]
+        let errors = allRecords.filter { $0["error"] != nil }
+        let records = allRecords.filter { $0["error"] == nil }
         
         XCTAssertEqual(errors.count, 1)
         XCTAssertEqual(errors[0]["token"], failureToken)
@@ -636,11 +643,11 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         
         UIWindow().addSubview(element!)
         
-        container?.reveal(callback: callback)
+        container?.reveal(callback: callback.asRevealCallback)
         
         wait(for: [expectation], timeout: 20.0)
         print(callback.data)
-        let errors = callback.data["errors"] as! [[String: NSError]]
+        let errors = callback.data["records"] as! [[String: NSError]]
         XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Token generated from 'getBearerToken' callback function is invalid"))
     }
     

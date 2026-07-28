@@ -89,7 +89,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
-        revealContainer?.reveal(callback: callback)
+        revealContainer?.reveal(callback: callback.asRevealCallback)
 
         let result = callback.receivedResponse
 
@@ -108,7 +108,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         window.addSubview(revealElement!)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should return reveal output"))
-        revealContainer?.reveal(callback: callback)
+        revealContainer?.reveal(callback: callback.asRevealCallback)
 
         let result = callback.receivedResponse
 
@@ -122,7 +122,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let revealContainer = clientWithEmptyURL.container(type: ContainerType.REVEAL, options: nil)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Reveal with empty vaultURL should fail"))
-        revealContainer?.reveal(callback: callback)
+        revealContainer?.reveal(callback: callback.asRevealCallback)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .REVEAL_CONTAINER)).localizedDescription)
     }
