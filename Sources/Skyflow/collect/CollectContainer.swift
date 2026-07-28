@@ -62,26 +62,16 @@ public extension Container {
             callback.onFailure(SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: errors]))
             return
         }
-        if options?.additionalFields != nil {
-            if options?.additionalFields!["records"] == nil {
-                errorCode = .MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
+        if let additionalFields = options?.additionalFields {
+            if additionalFields.records.isEmpty {
+                errorCode = .EMPTY_RECORDS_OBJECT()
                 return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             }
-            if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
-                if additionalFieldEntries.isEmpty {
-                    errorCode = .EMPTY_RECORDS_OBJECT()
+            for (index, record) in additionalFields.records.enumerated() {
+                errorCode = checkRecord(record: record, index: index)
+                if errorCode != nil {
                     return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 }
-                for (index, record) in additionalFieldEntries.enumerated() {
-                    errorCode = checkRecord(record: record, index: index)
-                    if errorCode != nil {
-                        return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                    }
-                }
-            } else {
-                errorCode = .INVALID_RECORDS_TYPE()
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
             }
         }
         let records = FlowVaultCollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
@@ -117,27 +107,13 @@ public extension Container {
         return nil
     }
 
-    private func checkRecord(record: [String: Any], index: Int) -> ErrorCodes? {
-        if record["table"] == nil {
-            return .TABLE_KEY_ERROR(value: "\(index)")
-        }
-        if !(record["table"] is String) {
-            return .INVALID_TABLE_NAME_TYPE(value: "\(index)")
-        }
-        if (record["table"] as? String == "") {
+    private func checkRecord(record: AdditionalFieldsRecord, index: Int) -> ErrorCodes? {
+        if record.table.isEmpty {
             return .EMPTY_TABLE_NAME()
         }
-        if record["fields"] == nil {
-            return .FIELDS_KEY_ERROR(value: "\(index)")
-        }
-        if !(record["fields"] is [String: Any]) {
-            return .INVALID_FIELDS_TYPE(value: "\(index)")
-        }
-        let fields = record["fields"] as! [String: Any]
-        if (fields.isEmpty){
+        if record.fields.isEmpty {
             return .EMPTY_FIELDS_KEY(value: "\(index)")
         }
-
         return nil
     }
 }

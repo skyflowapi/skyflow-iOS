@@ -54,7 +54,7 @@ internal class FlowVaultCollectRequestBody {
     
     internal static func createRequestBody(
         elements: [TextField],
-        additionalFields: [String: Any]? = nil,
+        additionalFields: AdditionalFields? = nil,
         callback: Callback,
         contextOptions: ContextOptions
     ) -> [String: Any]? {
@@ -65,16 +65,14 @@ internal class FlowVaultCollectRequestBody {
         self.breakFlag = false
         self.tableSet = Set<String>()
         var index: Int = 0
-        var inputPayload: [[String: Any]] = []
 
-        if additionalFields != nil {
-            inputPayload = additionalFields?["records"] as! [[String: Any]]
-            for entry in inputPayload {
-                let entryDict = entry
-                let tableName = entryDict["table"] as! String
-                let fields = entryDict["fields"] as! [String: Any]
-                if entryDict["skyflowId"] != nil {
-                    let skyflowId = entryDict["skyflowId"] as! String
+        if let additionalFields = additionalFields {
+            for entry in additionalFields.records {
+                let tableName = entry.table
+                let fields = entry.fields
+                // Matches the element-based check below: an empty string is treated the same as
+                // absent, falling back to a plain insert rather than an update targeting "".
+                if let skyflowId = entry.skyflowId, !skyflowId.isEmpty {
                     if updatePayload[skyflowId] != nil {
                         let temp = updatePayload[skyflowId] as! [String: Any]
                         var existingFields = temp["fields"] as! [String: Any]

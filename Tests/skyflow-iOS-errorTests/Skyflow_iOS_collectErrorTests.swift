@@ -290,21 +290,16 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
         let callback = DemoAPICallback(expectation: expectation)
         
-        let fields: [String: Any] = [
-            "records": [[
-                            "table": "persons",
-                            "fields": [
-                                "cvv": "123",
-                                "name": "John Doe"
-                            ]]
-            ]]
+        let fields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "persons", fields: ["cvv": "123", "name": "John Doe"])
+        ])
         FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
-        
+
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["cvv", "persons"]).description)
     }
-    
+
     func testCreateRequestBodyDuplicateInAdditionalFields() {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -321,22 +316,13 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
         let callback = DemoAPICallback(expectation: expectation)
         
-        let fields: [String: Any] = [
-            "records": [[
-                            "table": "persons",
-                            "fields": [
-                                "duplicate": "123",
-                                "name": "John Doe"
-                            ]],
-                        [
-                            "table": "persons",
-                            "fields": [
-                                "duplicate": "123",
-                            ]]
-            ]]
+        let fields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "persons", fields: ["duplicate": "123", "name": "John Doe"]),
+            AdditionalFieldsRecord(table: "persons", fields: ["duplicate": "123"])
+        ])
         FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
-        
+
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: "duplicate").description)
     }
@@ -356,25 +342,17 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Container insert call - All valid")
         let callback = DemoAPICallback(expectation: expectation)
         
-        let fields: [String: Any] = [
-            "records": [[
-                            "table": "persons",
-                            "fields": [
-                                "cvv": "123",
-                            ]],
-                        [
-                            "table": "persons",
-                            "fields": [
-                                "duplicate": "123",
-                            ]]
-            ]]
+        let fields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "persons", fields: ["cvv": "123"]),
+            AdditionalFieldsRecord(table: "persons", fields: ["duplicate": "123"])
+        ])
         FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
-        
+
         let responseData = callback.receivedResponse
         XCTAssertEqual(responseData,  ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: ["cvv", "persons"]).description)
     }
-    
+
     func testCreateRequestBodyWithOnlyInserts() {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -395,14 +373,36 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertEqual(requestBody?["records"] as! [NSDictionary], [
             ["table": "persons", "fields": ["card_number": "", "cvv": ""]]
         ])
+        // Every plain CollectElementInput defaults to skyflowId: "" (not nil) - confirms that
+        // default doesn't accidentally get treated as "update targeting an empty ID".
+        XCTAssertTrue((requestBody?["update"] as! [String: Any]).isEmpty)
+    }
+
+    func testCreateRequestBodyExplicitEmptyStringSkyflowIdOnElementFallsBackToInsert() {
+        let window = UIWindow()
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let options = CollectElementOptions(required: false)
+        let collectInput = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowId: "")
+        let cardNumber = container?.create(input: collectInput, options: options)
+        cardNumber?.textField.secureText = "4111 1111 1111 1111"
+        window.addSubview(cardNumber!)
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Explicit empty-string skyflowId falls back to insert"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!], callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let records = requestBody?["records"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["table"] as! String, "persons")
+
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertTrue(update.isEmpty)
     }
 
     func testCreateRequestBodyWithSkyflowIDInAdditionalFields() {
-        let additionalFields: [String: Any] = [
-            "records": [
-                ["table": "table1", "fields": ["column1": "value1"], "skyflowId": "id1"]
-            ]
-        ]
+        let additionalFields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "table1", fields: ["column1": "value1"], skyflowId: "id1")
+        ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Update via additionalFields"))
         let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
         XCTAssertNotNil(requestBody)
@@ -411,6 +411,44 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let entry = update["id1"] as! [String: Any]
         XCTAssertEqual(entry["table"] as! String, "table1")
         XCTAssertEqual(entry["fields"] as! [String: String], ["column1": "value1"])
+    }
+
+    func testCreateRequestBodyEmptyStringSkyflowIdOnAdditionalFieldsFallsBackToInsert() {
+        // Matches element-based skyflowId handling: an empty string is treated the same as
+        // absent (falls back to a plain insert), rather than creating an update targeting "".
+        let additionalFields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "table1", fields: ["column1": "value1"], skyflowId: "")
+        ])
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Empty skyflowId falls back to insert"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let records = requestBody?["records"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["table"] as! String, "table1")
+
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertTrue(update.isEmpty)
+    }
+
+    func testCreateRequestBodyMergesMultipleAdditionalFieldsSharingSkyflowId() {
+        // Two additionalFields entries that both target the same skyflowId should merge their
+        // fields into a single update payload entry, not clobber or duplicate it.
+        let additionalFields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "persons", fields: ["name": "John"], skyflowId: "id1"),
+            AdditionalFieldsRecord(table: "persons", fields: ["email": "john@example.com"], skyflowId: "id1")
+        ])
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Merge additionalFields sharing a skyflowId"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertEqual(update.count, 1)
+        let entry = update["id1"] as! [String: Any]
+        XCTAssertEqual(entry["table"] as! String, "persons")
+        let fields = entry["fields"] as! [String: String]
+        XCTAssertEqual(fields["name"], "John")
+        XCTAssertEqual(fields["email"], "john@example.com")
     }
 
     func testCreateRequestBodyWithSkyflowIDOnElement() {
@@ -430,6 +468,152 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let entry = update["id1"] as! [String: Any]
         XCTAssertEqual(entry["table"] as! String, "persons")
         XCTAssertEqual(entry["fields"] as! [String: String], ["card_number": ""])
+    }
+
+    func testCreateRequestBodyMixedInsertAndUpdateElements() {
+        // One plain element (no skyflowId) and one update-by-skyflowId element in the same
+        // collect() call - the plain one should land in "records", the tagged one in "update",
+        // without either bucket interfering with the other.
+        let window = UIWindow()
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let options = CollectElementOptions(required: false)
+
+        let insertInput = CollectElementInput(table: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let insertElement = container?.create(input: insertInput, options: options)
+        insertElement?.textField.secureText = "4111 1111 1111 1111"
+        window.addSubview(insertElement!)
+
+        let updateInput = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateElement = container?.create(input: updateInput, options: options)
+        updateElement?.textField.secureText = "John Doe"
+        window.addSubview(updateElement!)
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Mixed insert and update elements"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [insertElement!, updateElement!], callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let records = requestBody?["records"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["table"] as! String, "cards")
+
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertEqual(update.count, 1)
+        let updateEntry = update["id1"] as! [String: Any]
+        XCTAssertEqual(updateEntry["table"] as! String, "persons")
+    }
+
+    func testCreateRequestBodyPlainInsertViaAdditionalFieldsCombinedWithElement() {
+        // additionalFields without a skyflowId is a plain insert, same as a mounted element -
+        // both should end up in "records" together, none in "update".
+        let window = UIWindow()
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let options = CollectElementOptions(required: false)
+
+        let insertInput = CollectElementInput(table: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let insertElement = container?.create(input: insertInput, options: options)
+        insertElement?.textField.secureText = "4111 1111 1111 1111"
+        window.addSubview(insertElement!)
+
+        let additionalFields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "accounts", fields: ["status": "active"])
+        ])
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Element insert + additionalFields insert"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [insertElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let records = requestBody?["records"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 2)
+        XCTAssertTrue(records.contains { $0["table"] as? String == "cards" })
+        XCTAssertTrue(records.contains { $0["table"] as? String == "accounts" })
+
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertTrue(update.isEmpty)
+    }
+
+    func testCreateRequestBodyElementUpdateWithAdditionalFieldsInsert() {
+        // An update-by-skyflowId element combined with a plain-insert additionalFields record -
+        // "records" should only contain the additionalFields insert, "update" only the element.
+        let window = UIWindow()
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let options = CollectElementOptions(required: false)
+
+        let updateInput = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateElement = container?.create(input: updateInput, options: options)
+        updateElement?.textField.secureText = "John Doe"
+        window.addSubview(updateElement!)
+
+        let additionalFields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "accounts", fields: ["status": "active"])
+        ])
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Element update + additionalFields insert"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [updateElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let records = requestBody?["records"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records[0]["table"] as! String, "accounts")
+
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertEqual(update.count, 1)
+        XCTAssertEqual((update["id1"] as! [String: Any])["table"] as! String, "persons")
+    }
+
+    func testFullCombinationCollectUpdateUpsertAndAdditionalFields() {
+        // The kitchen-sink scenario: an insert element, an update-by-skyflowId element, an
+        // insert additionalFields record, and an update additionalFields record, all in one
+        // request - then upsert applied on top. Upsert only ever touches FlowVaultInsertRequestBody's
+        // "records" bucket (confirmed: FlowVaultUpdateRequestBody never reads options.upsert at
+        // all), so it should only decorate the matching insert record and leave "update" untouched.
+        let window = UIWindow()
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let options = CollectElementOptions(required: false)
+
+        let insertInput = CollectElementInput(table: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let insertElement = container?.create(input: insertInput, options: options)
+        insertElement?.textField.secureText = "4111 1111 1111 1111"
+        window.addSubview(insertElement!)
+
+        let updateInput = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateElement = container?.create(input: updateInput, options: options)
+        updateElement?.textField.secureText = "John Doe"
+        window.addSubview(updateElement!)
+
+        let additionalFields = AdditionalFields(records: [
+            AdditionalFieldsRecord(table: "accounts", fields: ["status": "active"]),
+            AdditionalFieldsRecord(table: "billing", fields: ["zip": "94105"], skyflowId: "id2")
+        ])
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Full combination"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [insertElement!, updateElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        XCTAssertNotNil(requestBody)
+
+        let records = requestBody?["records"] as! [[String: Any]]
+        XCTAssertEqual(records.count, 2)
+        XCTAssertTrue(records.contains { $0["table"] as? String == "cards" })
+        XCTAssertTrue(records.contains { $0["table"] as? String == "accounts" })
+
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertEqual(update.count, 2)
+        XCTAssertEqual((update["id1"] as! [String: Any])["table"] as! String, "persons")
+        XCTAssertEqual((update["id2"] as! [String: Any])["table"] as! String, "billing")
+
+        // Apply upsert on top, matching only the "cards" table.
+        let upsertOptions = [UpsertOption(table: "cards", uniqueColumns: ["card_number"], updateType: .UPDATE)]
+        let wireBody = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: requestBody!, options: FlowVaultICOptions(upsert: upsertOptions))
+        let wireRecords = wireBody["records"] as! [[String: Any]]
+
+        let cardsWireRecord = wireRecords.first { $0["tableName"] as? String == "cards" }
+        XCTAssertNotNil(cardsWireRecord?["upsert"])
+
+        let accountsWireRecord = wireRecords.first { $0["tableName"] as? String == "accounts" }
+        XCTAssertNil(accountsWireRecord?["upsert"])
+
+        // update bucket is a completely separate path (FlowVaultUpdateRequestBody) - upsert has
+        // no way to reach or affect it, confirmed structurally since FlowVaultInsertRequestBody
+        // only ever reads requestBody["records"].
+        XCTAssertEqual(update.count, 2)
     }
 
     func testInsertEmptyVaultURL() {

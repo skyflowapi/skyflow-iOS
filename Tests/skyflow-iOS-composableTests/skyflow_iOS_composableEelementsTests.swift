@@ -473,18 +473,6 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
-    func testCollectBadTableKeyAddionalFields() {
-        let additionalFields = ["records": [["table": []]]]
-        let container = skyflow.container(type: ContainerType.COMPOSABLE)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
-    }
 
     func testComposableCollectEmptyVaultURL() {
         let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))

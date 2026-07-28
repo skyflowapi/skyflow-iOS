@@ -7,12 +7,12 @@
 import Foundation
 
 internal struct FlowVaultICOptions {
-    var additionalFields: [String: Any]?
+    var additionalFields: AdditionalFields?
     var upsert: [UpsertOption]?
     var callback: Callback?
     var contextOptions: ContextOptions?
 
-    init(additionalFields: [String: Any]? = nil, upsert: [UpsertOption]? = nil, callback: Callback? = nil, contextOptions: ContextOptions? = nil) {
+    init(additionalFields: AdditionalFields? = nil, upsert: [UpsertOption]? = nil, callback: Callback? = nil, contextOptions: ContextOptions? = nil) {
         self.additionalFields = additionalFields
         self.upsert = upsert
         self.callback = callback

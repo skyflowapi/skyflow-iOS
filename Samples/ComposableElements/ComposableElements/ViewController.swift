@@ -188,11 +188,9 @@ class ViewController: UIViewController {
 
         // additionalFields: extra records submitted alongside whatever's collected from
         // the mounted elements, one entry per table.
-        let additionalFields: [String: Any] = [
-            "records": [
-                ["table": "credit_cards", "fields": ["billing_zip": "94105"]]
-            ]
-        ]
+        let additionalFields = Skyflow.AdditionalFields(records: [
+            Skyflow.AdditionalFieldsRecord(table: "credit_cards", fields: ["billing_zip": "94105"])
+        ])
 
         container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(additionalFields: additionalFields, upsert: upsertOptions))
     }

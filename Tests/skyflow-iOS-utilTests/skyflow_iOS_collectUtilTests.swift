@@ -497,4 +497,148 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             XCTFail("Update partial response should not throw: \(error)")
         }
     }
+
+    // The tests above all call processResponse(data:response:error:) directly, which only
+    // exercises parsing a single HTTP response body. When a request has BOTH inserts and
+    // updates, FlowVaultInsertAPICallback.onSuccess fires two REAL network calls (v2/records/insert
+    // and v2/records/update) and merges both results via a DispatchGroup - that merge logic can
+    // only be exercised by going through onSuccess with real URLSession dispatch, hence the
+    // URLProtocol mock here.
+    func testInsertAndUpdateResponsesMergeIntoOneCollectResponse() {
+        let mockConfiguration = URLSessionConfiguration.ephemeral
+        mockConfiguration.protocolClasses = [MockURLProtocol.self]
+        let originalConfiguration = FlowVaultInsertAPICallback.urlSessionConfiguration
+        FlowVaultInsertAPICallback.urlSessionConfiguration = mockConfiguration
+        defer { FlowVaultInsertAPICallback.urlSessionConfiguration = originalConfiguration }
+
+        MockURLProtocol.requestHandler = { request in
+            let url = request.url!.absoluteString
+            let body: [String: Any]
+            if url.contains("v2/records/insert") {
+                body = ["records": [["skyflowID": "insertedId", "tableName": "cards", "tokens": ["card_number": "value"], "httpCode": 200]]]
+            } else if url.contains("v2/records/update") {
+                body = ["records": [["skyflowID": "id1", "tableName": "persons", "tokens": [:], "httpCode": 200]]]
+            } else {
+                XCTFail("Unexpected URL: \(url)")
+                body = ["records": []]
+            }
+            let data = try! JSONSerialization.data(withJSONObject: body)
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "1.1", headerFields: nil)!
+            return (response, data)
+        }
+
+        let expectation = XCTestExpectation(description: "Merged insert+update response")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        let records: [String: Any] = [
+            "records": [["table": "cards", "fields": ["card_number": "4111"]]],
+            "update": ["id1": ["table": "persons", "fields": ["name": "John"]]]
+        ]
+
+        let insertApiCallback = FlowVaultInsertAPICallback(
+            callback: callback.asCollectCallback,
+            apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
+            records: records,
+            options: FlowVaultICOptions(),
+            contextOptions: ContextOptions()
+        )
+        // onSuccess's parameter here is the bearer token from TokenAPICallback - unused by this
+        // method's own logic (it reads self.records instead), so any value triggers the real flow.
+        insertApiCallback.onSuccess("dummy-token")
+
+        wait(for: [expectation], timeout: 10.0)
+
+        guard let collectResponse = callback.collectResponse else {
+            XCTFail("Expected a merged CollectResponse, got: receivedResponse=\(callback.receivedResponse) data=\(callback.data)")
+            return
+        }
+        XCTAssertEqual(collectResponse.records.count, 2)
+        XCTAssertTrue(collectResponse.records.contains { $0.tableName == "cards" && $0.skyflowID == "insertedId" })
+        XCTAssertTrue(collectResponse.records.contains { $0.tableName == "persons" && $0.skyflowID == "id1" })
+    }
+
+    func testInsertSucceedsButUpdateFailsSurfacesAsSkyflowError() {
+        // One side of the merge fails outright (not a per-record error, a whole-side failure) -
+        // the merge should surface a proper Skyflow.SkyflowError with the real message, not a
+        // stringified dump of the internal {"records", "errors"} merge container.
+        let mockConfiguration = URLSessionConfiguration.ephemeral
+        mockConfiguration.protocolClasses = [MockURLProtocol.self]
+        let originalConfiguration = FlowVaultInsertAPICallback.urlSessionConfiguration
+        FlowVaultInsertAPICallback.urlSessionConfiguration = mockConfiguration
+        defer { FlowVaultInsertAPICallback.urlSessionConfiguration = originalConfiguration }
+
+        MockURLProtocol.requestHandler = { request in
+            let url = request.url!.absoluteString
+            if url.contains("v2/records/insert") {
+                let body: [String: Any] = ["records": [["skyflowID": "insertedId", "tableName": "cards", "tokens": ["card_number": "value"], "httpCode": 200]]]
+                let data = try! JSONSerialization.data(withJSONObject: body)
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "1.1", headerFields: nil)!
+                return (response, data)
+            } else if url.contains("v2/records/update") {
+                let body: [String: Any] = ["error": ["message": "Update service unavailable", "httpCode": 503]]
+                let data = try! JSONSerialization.data(withJSONObject: body)
+                let response = HTTPURLResponse(url: request.url!, statusCode: 503, httpVersion: "1.1", headerFields: nil)!
+                return (response, data)
+            }
+            XCTFail("Unexpected URL: \(url)")
+            return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: "1.1", headerFields: nil)!, Data())
+        }
+
+        let expectation = XCTestExpectation(description: "Update-side failure surfaces as SkyflowError")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        let records: [String: Any] = [
+            "records": [["table": "cards", "fields": ["card_number": "4111"]]],
+            "update": ["id1": ["table": "persons", "fields": ["name": "John"]]]
+        ]
+
+        let insertApiCallback = FlowVaultInsertAPICallback(
+            callback: callback.asCollectCallback,
+            apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
+            records: records,
+            options: FlowVaultICOptions(),
+            contextOptions: ContextOptions()
+        )
+        insertApiCallback.onSuccess("dummy-token")
+
+        wait(for: [expectation], timeout: 10.0)
+
+        XCTAssertEqual(callback.receivedResponse, "Update service unavailable")
+    }
+
+    func testCollectRecordHttpCodeDefaultsToZeroWhenMissing() {
+        // httpCode is declared non-optional (Int, not Int?) - verify a dict lacking the key
+        // doesn't crash and just defaults to 0 instead.
+        let record = CollectRecord(["tableName": "persons", "skyflowID": "id1"])
+        XCTAssertEqual(record.httpCode, 0)
+        XCTAssertNil(record.error)
+        XCTAssertEqual(record.tableName, "persons")
+    }
+
+    func testCollectRecordErrorDiscriminatesSuccessFromFailure() {
+        let success = CollectRecord(["tableName": "persons", "httpCode": 200])
+        let failure = CollectRecord(["error": "Invalid request", "httpCode": 400])
+
+        XCTAssertNil(success.error)
+        XCTAssertEqual(failure.error, "Invalid request")
+        XCTAssertEqual(failure.httpCode, 400)
+    }
+
+    func testCollectResponseInitReturnsNilForMalformedBody() {
+        XCTAssertNil(CollectResponse("not a dictionary"))
+        XCTAssertNil(CollectResponse(["typo": []]))
+        XCTAssertNil(CollectResponse(["records": "not an array"]))
+    }
+
+    func testCollectResponseInitParsesValidBody() {
+        let response = CollectResponse([
+            "records": [
+                ["tableName": "persons", "skyflowID": "id1", "httpCode": 200],
+                ["error": "failed", "httpCode": 400]
+            ]
+        ])
+        XCTAssertEqual(response?.records.count, 2)
+        XCTAssertNil(response?.records[0].error)
+        XCTAssertEqual(response?.records[1].error, "failed")
+    }
 }

@@ -651,5 +651,78 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         // through onFailure as a Skyflow.SkyflowError rather than folding it into the records array.
         XCTAssertTrue(callback.receivedResponse.contains("Token generated from 'getBearerToken' callback function is invalid"))
     }
-    
+
+    func testRevealValueOnFailureMixedTokenScopedAndUnscopedErrorsRoutesToOnFailure() {
+        // Edge case: if a genuine network/API-level error (no "token") arrives in the same batch
+        // as per-token errors, the whole thing is treated as a whole-request failure - the
+        // per-token entries are discarded rather than partially surfaced via onSuccess. This
+        // documents that behavior explicitly, since it's not obvious from reading either branch
+        // in isolation.
+        let scopedToken = "123"
+        let networkError = NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "network down"])
+        let response: [String: Any] = [
+            "errors": [
+                ["token": scopedToken, "error": "Invalid Token"],
+                ["error": networkError]
+            ]
+        ]
+
+        let element1 = self.container.create(input: RevealElementInput(token: scopedToken, label: "first"))
+        self.revealValueCallback.revealElements = [element1]
+
+        self.revealValueCallback.onFailure(response)
+        wait(for: [self.expectation], timeout: 20.0)
+        waitForUIUpdates()
+
+        XCTAssertNil(self.callback.data["records"])
+        XCTAssertEqual(self.callback.receivedResponse, "network down")
+        XCTAssertEqual(element1.errorMessage.text, nil)
+    }
+
+    func testRevealRecordHttpCodeDefaultsToZeroWhenMissing() {
+        let record = RevealRecord(["token": "abc"])
+        XCTAssertEqual(record.httpCode, 0)
+        XCTAssertNil(record.error)
+    }
+
+    func testRevealRecordErrorDiscriminatesSuccessFromFailure() {
+        let success = RevealRecord(["token": "abc", "value": "1234", "httpCode": 200])
+        let failure = RevealRecord(["token": "xyz", "error": "Tokens not found", "httpCode": 404])
+
+        XCTAssertNil(success.error)
+        XCTAssertEqual(failure.error, "Tokens not found")
+        XCTAssertEqual(failure.httpCode, 404)
+    }
+
+    func testRevealResponseInitReturnsNilForMalformedBody() {
+        XCTAssertNil(RevealResponse("not a dictionary"))
+        XCTAssertNil(RevealResponse(["typo": []]))
+        XCTAssertNil(RevealResponse(["records": "not an array"]))
+    }
+
+    // Verifies the real end-to-end wiring for a whole-request failure through
+    // FlowVaultRevealAPICallback -> callRevealOnFailure -> LogCallback -> RevealCallback ->
+    // SkyflowError.wrap, using a token provider that fails immediately (no network mocking
+    // needed - TokenAPICallback's failure reaches the exact same callRevealOnFailure wrapping
+    // as a real dispatch failure would). This is the plumbing that had a real bug (SkyflowError.wrap
+    // losing the message entirely) until it was found and fixed earlier via a unit test on
+    // SkyflowError.wrap directly - this test instead confirms the full real call chain, not just
+    // the isolated function.
+    func testDetokenizeTokenProviderFailureSurfacesAsSkyflowErrorThroughRealCallChain() {
+        class FailingTokenProvider: TokenProvider {
+            func getBearerToken(_ apiCallback: Callback) {
+                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
+            }
+        }
+        let client = Client(Configuration(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: FailingTokenProvider()))
+        let expectation = XCTestExpectation(description: "TokenProvider failure surfaces as SkyflowError")
+        let callback = DemoAPICallback(expectation: expectation)
+
+        client.detokenize(records: ["records": [["token": "tok1"]]], callback: callback.asRevealCallback)
+
+        wait(for: [expectation], timeout: 10.0)
+
+        XCTAssertEqual(callback.receivedResponse, "TokenProvider error")
+    }
+
 }

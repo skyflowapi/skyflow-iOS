@@ -8,6 +8,10 @@ import Foundation
 import UIKit
 
 internal class FlowVaultInsertAPICallback: Callback {
+    // Overridable only for tests (e.g. injecting a URLProtocol mock via protocolClasses) - global
+    // URLProtocol.registerClass(_:) isn't reliably consulted for manually-created URLSession
+    // instances in every environment, so tests need a real seam here instead.
+    internal static var urlSessionConfiguration: URLSessionConfiguration = .default
     var apiClient: APIClient
     var records: [String: Any]
     var callback: Callback
@@ -177,7 +181,7 @@ internal class FlowVaultInsertAPICallback: Callback {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(jsonString, forHTTPHeaderField: "sky-metadata")
 
-        return (request, URLSession(configuration: .default))
+        return (request, URLSession(configuration: Self.urlSessionConfiguration))
 
     }
 
@@ -204,7 +208,7 @@ internal class FlowVaultInsertAPICallback: Callback {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(jsonString, forHTTPHeaderField: "sky-metadata")
 
-        return (request, URLSession(configuration: .default))
+        return (request, URLSession(configuration: Self.urlSessionConfiguration))
     }
 
     func processResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any] {

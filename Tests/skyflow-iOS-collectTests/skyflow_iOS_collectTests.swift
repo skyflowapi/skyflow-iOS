@@ -743,122 +743,42 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectBadTypeAddionalFields() {
-        let additionalFields = ["records": "records"]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    func testCollectNoRecordsInAddionalFields() {
-        let additionalFields = ["typo": []]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse,
-                       ErrorCodes.MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
-                        .getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
     func testCollectEmptyRecordsAddionalFields() {
-        let additionalFields = ["records": []]
+        let additionalFields = AdditionalFields(records: [])
         let container = skyflow.container(type: ContainerType.COLLECT)
-        
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
+
         wait(for: [expectation], timeout: 20.0)
-        
+
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
-    
-    func testCollectNoTableKeyAddionalFields() {
-        let additionalFields = ["records": [[:]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    func testCollectBadTableKeyAddionalFields() {
-        let additionalFields = ["records": [["table": []]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
+
     func testCollectEmptyTableAddionalFields() {
-        let additionalFields = ["records": [["table": ""]]]
+        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(table: "", fields: ["field": "value"])])
         let container = skyflow.container(type: ContainerType.COLLECT)
-        
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
+
         wait(for: [expectation], timeout: 20.0)
-        
+
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_TABLE_NAME().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
-    
-    func testCollectNoFieldsKeyAddionalFields() {
-        let additionalFields = ["records": [["table": "table"]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.FIELDS_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    func testCollectInvalidFieldsAddionalFields() {
-        let additionalFields = ["records": [["table": "table", "fields": "fields"]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_FIELDS_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
+
     func testCollectEmptyFieldsAddionalFields() {
-        let additionalFields = ["records": [["table": "table", "fields": [:]]]]
+        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(table: "table", fields: [:])])
         let container = skyflow.container(type: ContainerType.COLLECT)
-        
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
-        
+
         wait(for: [expectation], timeout: 20.0)
-        
+
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     

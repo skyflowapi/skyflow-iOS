@@ -384,7 +384,9 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = nil)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
@@ -446,7 +448,9 @@ let skyflowElement = container?.create(input: input, options: requiredOption)
 // Can interact with this object as a normal UIView Object and add to View
  
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
  
  //Upsert options
  let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
@@ -587,12 +591,14 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
  
 ### Step 4 :  Update data from Elements
 When the form is ready to submit, call the `collect(options?)` method on the container object. The `options` parameter takes a object of optional parameters as shown below:
-- `additionalFields`: Non-PCI elements data to update or insert into the vault which should be in the records object format.
+- `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to update or insert into the vault alongside whatever's collected from the mounted elements.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE", "skyflowId": "value"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"], skyflowId: "value")
+])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
@@ -654,7 +660,10 @@ let skyflowElement = container?.create(input: input, options: requiredOption)
 // Can interact with this object as a normal UIView Object and add to View
  
 // Non-PCI records
-let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"]], ["table": "cards", "fields": ["first_name": "Joe"], "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882"]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"]),
+    Skyflow.AdditionalFieldsRecord(table: "cards", fields: ["first_name": "Joe"], skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882")
+])
  
  //Upsert options
  let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
@@ -1169,12 +1178,14 @@ When you submit the form, call the `collect(options: Skyflow.CollectOptions? = n
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
-- `additionalFields`: Non-PCI elements data to insert into the vault, specified in the records object format.
+- `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
@@ -1265,7 +1276,9 @@ do {
 }
  
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
  
  //Upsert options
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
@@ -1633,12 +1646,14 @@ When you submit the form, call the `collect(options: Skyflow.CollectOptions? = n
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
-- `additionalFields`: Non-PCI elements data to insert into the vault, specified in the records object format.
+- `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
@@ -1732,7 +1747,9 @@ do {
 }
  
 // Non-PCI records
-let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"],"skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf"]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"], skyflowId: "77dc3caf-c452-49e1-8625-07219d7567bf")
+])
  
  //Upsert options
  let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]

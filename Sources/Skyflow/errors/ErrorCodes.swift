@@ -198,14 +198,25 @@ public class SkyflowError: NSError {
         // Recover the underlying NSError instead of stringifying the whole container dict.
         // (Container<RevealContainer>.reveal()'s equivalent failures are already unwrapped earlier,
         // by RevealValueCallback.onFailure.)
+        //
+        // A third shape reaches here too: FlowVaultInsertAPICallback's insert+update merge
+        // (group.notify in onSuccess) builds mergedErrors entries as {"error": {"message",
+        // "httpCode", ...}} - a JSON-decoded API error detail dict, not an NSError - so it's
+        // handled by trying SkyflowError(apiError:) on the entry itself, which expects exactly
+        // that {"error": {...}} shape.
         if let dict = error as? [String: Any], let errorsArray = dict["errors"] as? [Any] {
-            let firstError = errorsArray.compactMap { entry -> NSError? in
-                if let nsError = entry as? NSError { return nsError }
-                if let nested = entry as? [String: Any] { return nested["error"] as? NSError }
-                return nil
-            }.first
-            if let firstError = firstError {
-                return SkyflowError(domain: firstError.domain, code: firstError.code, userInfo: firstError.userInfo)
+            for entry in errorsArray {
+                if let nsError = entry as? NSError {
+                    return SkyflowError(domain: nsError.domain, code: nsError.code, userInfo: nsError.userInfo)
+                }
+                if let nested = entry as? [String: Any] {
+                    if let nsError = nested["error"] as? NSError {
+                        return SkyflowError(domain: nsError.domain, code: nsError.code, userInfo: nsError.userInfo)
+                    }
+                    if let apiError = SkyflowError(apiError: entry) {
+                        return apiError
+                    }
+                }
             }
         }
         return SkyflowError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "\(error)"])
