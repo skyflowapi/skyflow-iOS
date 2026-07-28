@@ -274,7 +274,7 @@ internal class FlowVaultInsertAPICallback: Callback {
                 if let skyflowID = entry["skyflowID"] { successEntry["skyflowID"] = skyflowID }
                 if let tableName = entry["tableName"] { successEntry["tableName"] = tableName }
                 var fields: [String: Any] = [:]
-                if self.options.tokens, let tokens = entry["tokens"] as? [String: Any] {
+                if let tokens = entry["tokens"] as? [String: Any] {
                     for (column, tokenValue) in self.buildFieldsDict(dict: tokens) {
                         fields[column] = tokenValue
                     }

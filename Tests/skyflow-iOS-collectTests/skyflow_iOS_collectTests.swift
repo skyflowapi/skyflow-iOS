@@ -386,7 +386,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert with invalid token")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: ["records": records], options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: ["records": records], options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -749,7 +749,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -762,7 +762,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -777,7 +777,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -790,7 +790,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -803,7 +803,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -816,7 +816,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -829,7 +829,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -842,7 +842,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -855,7 +855,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         
@@ -866,7 +866,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT)
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, upsert:[]))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:[]))
 
         wait(for: [expectation], timeout: 20.0)
 
@@ -878,7 +878,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let upsertOptions = [UpsertOption(table: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, upsert:upsertOptions))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
 
         wait(for: [expectation], timeout: 20.0)
 
@@ -890,7 +890,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let upsertOptions = [UpsertOption(table: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(tokens: true, upsert:upsertOptions))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
 
         wait(for: [expectation], timeout: 20.0)
 
@@ -910,7 +910,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: [])
+        let insertOptions = Skyflow.InsertOptions(upsert: [])
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
@@ -931,7 +931,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = Skyflow.InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
@@ -952,7 +952,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = Skyflow.InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 

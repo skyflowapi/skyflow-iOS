@@ -389,7 +389,7 @@ let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
 let insertCallback = Skyflow.CollectCallback(
     onSuccess: { response in print(response) },
@@ -452,12 +452,12 @@ let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
  let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
 // It parses onSuccess into a typed Skyflow.CollectResponse, and onFailure into a typed
-// Skyflow.SkyflowAPIError whenever the vault returns that structured shape (see below);
+// Skyflow.SkyflowError whenever the vault returns that structured shape (see below);
 // otherwise onFailure receives the raw error (e.g. a validation SkyflowError) unchanged.
 let insertCallback = Skyflow.CollectCallback(
     onSuccess: { response in
@@ -509,15 +509,10 @@ container?.collect(callback: insertCallback, options: collectOptions)
     }
 }
 ```
-When you use `Skyflow.CollectCallback`, `onFailure` delivers this shape as a typed `Skyflow.SkyflowAPIError` instead of a raw dictionary:
+`Skyflow.CollectCallback`/`Skyflow.RevealCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - this shape (and every other failure, including client-side validation) is always delivered as a `Skyflow.SkyflowError`, with `httpCode`, `message`, `grpcCode`, `httpStatus`, and `details` all available as direct properties (`grpcCode`/`httpStatus`/`details` are only populated for this whole-request-failure shape - `nil` for validation failures):
 ```swift
-onFailure: { error in
-    if let apiError = error as? Skyflow.SkyflowAPIError {
-        print(apiError.error.grpcCode, apiError.error.httpCode, apiError.error.message, apiError.error.httpStatus, apiError.error.details)
-    } else {
-        // Any other failure (e.g. a validation SkyflowError) is passed through unchanged.
-        print(error)
-    }
+onFailure: { (skyflowError: Skyflow.SkyflowError) in
+    print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
 }
 ```
 
@@ -547,7 +542,7 @@ let collectElementInput = Skyflow.CollectElementInput(
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
     validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    skyflowID: String,       // The skyflow_id of the record to be updated.
+    skyflowId: String,       // The skyflow_id of the record to be updated.
 )
 ```
 
@@ -592,18 +587,17 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
  
 ### Step 4 :  Update data from Elements
 When the form is ready to submit, call the `collect(options?)` method on the container object. The `options` parameter takes a object of optional parameters as shown below:
-- `tokens`: indicates whether tokens for the collected data should be returned or not. Defaults to 'true'
 - `additionalFields`: Non-PCI elements data to update or insert into the vault which should be in the records object format.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE", "skyflowID": "value"]]]
+let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE", "skyflowId": "value"]]]
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
 let insertCallback = Skyflow.CollectCallback(
     onSuccess: { response in print(response) },
@@ -612,7 +606,7 @@ let insertCallback = Skyflow.CollectCallback(
 container?.collect(callback: insertCallback, options: options)
 ```
 
-**Note:** `skyflowID` is required if you want to update the data. If `skyflowID` isn't specified, the `collect(options?)` method creates a new record in the vault.
+**Note:** `skyflowId` is required if you want to update the data. If `skyflowId` isn't specified, the `collect(options?)` method creates a new record in the vault.
 
 ### End to end example of updating data with Skyflow Elements
 ```swift
@@ -648,7 +642,7 @@ let input = Skyflow.CollectElementInput(
     label: "card number",
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
  
 // Create an option to require the element.
@@ -660,17 +654,17 @@ let skyflowElement = container?.create(input: input, options: requiredOption)
 // Can interact with this object as a normal UIView Object and add to View
  
 // Non-PCI records
-let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"]], ["table": "cards", "fields": ["first_name": "Joe"], "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882"]]
+let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"]], ["table": "cards", "fields": ["first_name": "Joe"], "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882"]]
  
  //Upsert options
  let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
-// See "If the entire request fails" above for how onFailure surfaces a typed Skyflow.SkyflowAPIError.
+// See "If the entire request fails" above for how onFailure surfaces a typed Skyflow.SkyflowError.
 let insertCallback = Skyflow.CollectCallback(
     onSuccess: { response in
         print(response)
@@ -1185,7 +1179,7 @@ let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
 let insertCallback = Skyflow.CollectCallback(
     onSuccess: { response in print(response) },
@@ -1277,7 +1271,7 @@ let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
@@ -1586,7 +1580,7 @@ let composableElementInput = Skyflow.CollectElementInput(
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
     validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    skyflowID: String,          // The skyflow_id of the record to be updated.
+    skyflowId: String,          // The skyflow_id of the record to be updated.
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
@@ -1649,7 +1643,7 @@ let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
 // Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
 let insertCallback = Skyflow.CollectCallback(
     onSuccess: { response in print(response) },
@@ -1691,7 +1685,7 @@ let cardHolderNameElementInput = Skyflow.CollectElementInput(
     label: "first name",
     placeholder: "first name",
     type: Skyflow.ElementType.CARDHOLDER_NAME,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
 // Create an option to require the element.
 let requiredOption = Skyflow.CollectElementOptions(required: true) 
@@ -1709,7 +1703,7 @@ let cardNumberElementInput = Skyflow.CollectElementInput(
     label: "card number",
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
  
 let cardNumberElement = container?.create(input: cardNumberElementInput, options: requiredOption)
@@ -1723,7 +1717,7 @@ let cvvElementInput = Skyflow.CollectElementInput(
     label: "cvv",
     placeholder: "cvv",
     type: Skyflow.ElementType.CVV,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
  
 let cvvElement = container?.create(input: cvvElementInput, options: requiredOption)
@@ -1738,13 +1732,13 @@ do {
 }
  
 // Non-PCI records
-let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"],"skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf"]]
+let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"],"skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf"]]
  
  //Upsert options
  let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
 let insertCallback = Skyflow.CollectCallback(

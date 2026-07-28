@@ -25,56 +25,23 @@ public struct RevealResponse {
     }
 }
 
-// Each entry in "records" is either a successfully revealed RevealRecordSuccess or a
-// RevealRecordError describing why that token failed - the vault returns both together in the
-// same array, each tagged with its own httpCode.
-public enum RevealRecord {
-    case success(RevealRecordSuccess)
-    case failure(RevealRecordError)
-
-    init(_ dict: [String: Any]) {
-        if let error = dict["error"] as? String {
-            self = .failure(RevealRecordError(dict, error: error))
-        } else {
-            self = .success(RevealRecordSuccess(dict))
-        }
-    }
-
-    public var record: RevealRecordSuccess? {
-        if case .success(let record) = self { return record }
-        return nil
-    }
-
-    public var error: RevealRecordError? {
-        if case .failure(let error) = self { return error }
-        return nil
-    }
-}
-
-public struct RevealRecordSuccess {
+// Each entry in "records" is either a successfully revealed token (error is nil) or a failed one
+// (error is non-nil) - the vault returns both together in the same array, each tagged with its
+// own httpCode.
+public struct RevealRecord {
     public let token: String?
     public let tokenGroupName: String?
     // Keyed by whatever fields the vault includes (e.g. "skyflowID", "tableName").
     public let metadata: [String: Any]?
-    public let httpCode: Int?
+    public let httpCode: Int
+    public let error: String?
 
     init(_ dict: [String: Any]) {
         self.token = dict["token"] as? String
         self.tokenGroupName = dict["tokenGroupName"] as? String
         self.metadata = dict["metadata"] as? [String: Any]
-        self.httpCode = dict["httpCode"] as? Int
-    }
-}
-
-public struct RevealRecordError {
-    public let error: String
-    public let token: String?
-    public let httpCode: Int?
-
-    init(_ dict: [String: Any], error: String) {
-        self.error = error
-        self.token = dict["token"] as? String
-        self.httpCode = dict["httpCode"] as? Int
+        self.httpCode = dict["httpCode"] as? Int ?? 0
+        self.error = dict["error"] as? String
     }
 }
 
@@ -84,27 +51,26 @@ public struct RevealRecordError {
 // RevealResponse type used for Client.detokenize() applies here too.
 public class RevealCallback: Callback {
     private let successHandler: (RevealResponse) -> Void
-    private let failureHandler: (Any) -> Void
+    private let failureHandler: (SkyflowError) -> Void
 
-    public init(onSuccess: @escaping (RevealResponse) -> Void, onFailure: @escaping (Any) -> Void) {
+    public init(onSuccess: @escaping (RevealResponse) -> Void, onFailure: @escaping (SkyflowError) -> Void) {
         self.successHandler = onSuccess
         self.failureHandler = onFailure
     }
 
     public func onSuccess(_ responseBody: Any) {
         guard let response = RevealResponse(responseBody) else {
-            failureHandler(responseBody)
+            failureHandler(SkyflowError.wrap(responseBody))
             return
         }
         successHandler(response)
     }
 
     // Delivered when the entire request fails (e.g. vault not found, network error) rather
-    // than a per-token failure inside RevealResponse.records, as a raw dictionary matching
-    // SkyflowAPIError's shape - construct one yourself via SkyflowAPIError(error) if needed.
-    // Note: RevealContainer.reveal()'s validation errors (empty vaultID, unmounted element,
-    // etc.) are raw NSError, not this shape.
+    // than a per-token failure inside RevealResponse.records, and for client-side validation
+    // failures (empty vaultID, unmounted element, etc.). Always normalized into a
+    // Skyflow.SkyflowError - see SkyflowError.wrap.
     public func onFailure(_ error: Any) {
-        failureHandler(error)
+        failureHandler(SkyflowError.wrap(error))
     }
 }

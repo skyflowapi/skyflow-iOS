@@ -133,4 +133,81 @@ internal enum ErrorCodes: CustomStringConvertible {
     }
 }
 
-public class SkyflowError: NSError {}
+public class SkyflowError: NSError {
+    // Only populated for a whole-request API failure (see init(apiError:)) - nil for
+    // client-side validation failures, which only have httpCode/message.
+    public let grpcCode: Int?
+    public let httpStatus: String?
+    public let details: [Any]?
+
+    // Aliases for NSError's own code/localizedDescription, matching the API error JSON's key names.
+    public var httpCode: Int { self.code }
+    public var message: String { self.localizedDescription }
+
+    public init(domain: String, code: Int, userInfo: [String: Any]? = nil,
+                grpcCode: Int? = nil, httpStatus: String? = nil, details: [Any]? = nil) {
+        self.grpcCode = grpcCode
+        self.httpStatus = httpStatus
+        self.details = details
+        super.init(domain: domain, code: code, userInfo: userInfo)
+    }
+
+    public required init?(coder: NSCoder) {
+        self.grpcCode = coder.decodeObject(forKey: "grpcCode") as? Int
+        self.httpStatus = coder.decodeObject(forKey: "httpStatus") as? String
+        self.details = coder.decodeObject(forKey: "details") as? [Any]
+        super.init(coder: coder)
+    }
+
+    // Builds a SkyflowError out of a whole-request API failure of the shape
+    // {"error": {"grpcCode", "httpCode", "message", "httpStatus", "details"}} - returns nil if
+    // apiError isn't in that shape (e.g. it's already a SkyflowError from client-side validation).
+    // httpCode maps to NSError's own `code`, and message maps to localizedDescription/NSLocalizedDescriptionKey.
+    public convenience init?(apiError: Any) {
+        guard let dict = apiError as? [String: Any],
+              let detail = dict["error"] as? [String: Any] else { return nil }
+        self.init(
+            domain: "",
+            code: detail["httpCode"] as? Int ?? 0,
+            userInfo: [NSLocalizedDescriptionKey: detail["message"] as? String ?? ""],
+            grpcCode: detail["grpcCode"] as? Int,
+            httpStatus: detail["httpStatus"] as? String,
+            details: detail["details"] as? [Any]
+        )
+    }
+
+    // Normalizes any Callback.onFailure payload into a SkyflowError, so CollectCallback/RevealCallback
+    // can type onFailure as (SkyflowError) -> Void instead of (Any) -> Void.
+    internal static func wrap(_ error: Any) -> SkyflowError {
+        if let skyflowError = error as? SkyflowError {
+            return skyflowError
+        }
+        if let apiError = SkyflowError(apiError: error) {
+            return apiError
+        }
+        if let nsError = error as? NSError {
+            return SkyflowError(domain: nsError.domain, code: nsError.code, userInfo: nsError.userInfo)
+        }
+        // Client.detokenize() bypasses RevealValueCallback entirely, so whole-request failures
+        // arrive here still wrapped in an "errors" array instead of a raw NSError. Two shapes are
+        // possible depending on where the failure originated:
+        // - Client.swift's own pre-network validation (empty vaultID/vaultURL/records key): each
+        //   entry in "errors" IS the NSError directly.
+        // - FlowVaultRevealAPICallback's post-dispatch failures (invalid bearer token, network
+        //   error, invalid URL, etc.): each entry is {"error": <NSError>}.
+        // Recover the underlying NSError instead of stringifying the whole container dict.
+        // (Container<RevealContainer>.reveal()'s equivalent failures are already unwrapped earlier,
+        // by RevealValueCallback.onFailure.)
+        if let dict = error as? [String: Any], let errorsArray = dict["errors"] as? [Any] {
+            let firstError = errorsArray.compactMap { entry -> NSError? in
+                if let nsError = entry as? NSError { return nsError }
+                if let nested = entry as? [String: Any] { return nested["error"] as? NSError }
+                return nil
+            }.first
+            if let firstError = firstError {
+                return SkyflowError(domain: firstError.domain, code: firstError.code, userInfo: firstError.userInfo)
+            }
+        }
+        return SkyflowError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "\(error)"])
+    }
+}

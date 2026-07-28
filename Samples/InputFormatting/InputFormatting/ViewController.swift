@@ -209,16 +209,16 @@ class ViewController: UIViewController {
     }
     @objc func submitForm() {
         let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
-        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(tokens: true))
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions())
     }
     internal func updateSuccess(_ response: Skyflow.CollectResponse) {
         print(response)
         for result in response.records {
-            if let recordError = result.error {
-                print("Record failed:", recordError.error, "httpCode:", recordError.httpCode ?? -1)
+            if let error = result.error {
+                print("Record failed:", error, "httpCode:", result.httpCode)
             }
         }
-        if let fields = response.records.first?.record?.fields {
+        if let fields = response.records.first?.fields {
             updateRevealInputs(tokens: fields)
         }
         print("Successfully got response:", response)

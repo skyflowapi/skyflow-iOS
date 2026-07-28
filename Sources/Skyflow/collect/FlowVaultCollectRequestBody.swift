@@ -73,24 +73,24 @@ internal class FlowVaultCollectRequestBody {
                 let entryDict = entry
                 let tableName = entryDict["table"] as! String
                 let fields = entryDict["fields"] as! [String: Any]
-                if entryDict["skyflowID"] != nil {
-                    let skyflowID = entryDict["skyflowID"] as! String
-                    if updatePayload[skyflowID] != nil {
-                        let temp = updatePayload[skyflowID] as! [String: Any]
+                if entryDict["skyflowId"] != nil {
+                    let skyflowId = entryDict["skyflowId"] as! String
+                    if updatePayload[skyflowId] != nil {
+                        let temp = updatePayload[skyflowId] as! [String: Any]
                         var existingFields = temp["fields"] as! [String: Any]
                         for (key, val) in fields {
                             existingFields[key] = val
                         }
                         var updatedTemp = temp
                         updatedTemp["fields"] = existingFields
-                        updatePayload[skyflowID] = updatedTemp
+                        updatePayload[skyflowId] = updatedTemp
                     } else {
                         let temp: [String: Any] = [
                             "table": tableName,
                             "fields": fields,
-                            "skyflowID": skyflowID
+                            "skyflowId": skyflowId
                         ]
-                        updatePayload[skyflowID] = temp
+                        updatePayload[skyflowId] = temp
                     }
                     continue
                 }
@@ -123,11 +123,11 @@ internal class FlowVaultCollectRequestBody {
             let tableName = element.tableName!
             let columnName = element.columnName!
             let value = element.getValue()
-            let skyflowID = element.skyflowID // Assumes TextField has this property
+            let skyflowId = element.skyflowId // Assumes TextField has this property
 
-            if let skyflowID = skyflowID, !skyflowID.isEmpty {
-                if updatePayload[skyflowID] != nil {
-                    var temp = updatePayload[skyflowID] as! [String: Any]
+            if let skyflowId = skyflowId, !skyflowId.isEmpty {
+                if updatePayload[skyflowId] != nil {
+                    var temp = updatePayload[skyflowId] as! [String: Any]
                     var existingFields = temp["fields"] as! [String: Any]
                     if existingFields[columnName] != nil {
                         var hasElementValueMatchRule: Bool = false
@@ -147,14 +147,14 @@ internal class FlowVaultCollectRequestBody {
                         existingFields[columnName] = value
                     }
                     temp["fields"] = existingFields
-                    updatePayload[skyflowID] = temp
+                    updatePayload[skyflowId] = temp
                 } else {
                     let temp: [String: Any] = [
                         "table": tableName,
                         "fields": [columnName: value],
-                        "skyflowID": skyflowID
+                        "skyflowId": skyflowId
                     ]
-                    updatePayload[skyflowID] = temp
+                    updatePayload[skyflowId] = temp
                 }
             } else {
                 // Only add to payload

@@ -467,7 +467,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = Skyflow.InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
@@ -479,7 +479,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
+        container?.collect(callback: callback, options: CollectOptions(additionalFields: additionalFields))
         
         wait(for: [expectation], timeout: 20.0)
         

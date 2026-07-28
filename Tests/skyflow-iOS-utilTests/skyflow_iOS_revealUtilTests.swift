@@ -305,9 +305,10 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         wait(for: [self.expectation], timeout: 20.0)
         waitForUIUpdates()
 
-        let errors = self.callback.data["records"] as! [[String: Any]]
-        XCTAssertEqual(errors.count, 1)
-        XCTAssertEqual((errors[0]["error"] as? NSError)?.code, -1009)
+        // Not scoped to any specific token, so it's delivered via onFailure (not folded into the
+        // records array) rather than a per-record error.
+        XCTAssertNil(self.callback.data["records"])
+        XCTAssertEqual(self.callback.receivedResponse, "The Internet connection appears to be offline.")
         // No token to match this error against, so the element shows no inline error.
         XCTAssertEqual(element1.errorMessage.text, nil)
         XCTAssertEqual(element1.actualValue, nil)
@@ -646,9 +647,9 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         container?.reveal(callback: callback.asRevealCallback)
         
         wait(for: [expectation], timeout: 20.0)
-        print(callback.data)
-        let errors = callback.data["records"] as! [[String: NSError]]
-        XCTAssertTrue(errors[0]["error"]!.localizedDescription.contains("Token generated from 'getBearerToken' callback function is invalid"))
+        // Invalid bearer token isn't scoped to any specific token, so RevealValueCallback routes it
+        // through onFailure as a Skyflow.SkyflowError rather than folding it into the records array.
+        XCTAssertTrue(callback.receivedResponse.contains("Token generated from 'getBearerToken' callback function is invalid"))
     }
     
 }

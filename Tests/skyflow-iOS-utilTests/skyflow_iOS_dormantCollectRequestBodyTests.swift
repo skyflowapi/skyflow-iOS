@@ -39,7 +39,7 @@ final class skyflow_iOS_dormantCollectRequestBodyTests: XCTestCase {
     func testCreateRequestBodyWithSkyflowIDInAdditionalFields() {
         let additionalFields: [String: Any] = [
             "records": [
-                ["table": "table1", "fields": ["column1": "value1"], "skyflowID": "id1"]
+                ["table": "table1", "fields": ["column1": "value1"], "skyflowId": "id1"]
             ]
         ]
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Update via additionalFields"))
@@ -58,7 +58,7 @@ final class skyflow_iOS_dormantCollectRequestBodyTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", type: .CARD_NUMBER, skyflowID: "id1")
+        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", type: .CARD_NUMBER, skyflowId: "id1")
         let cardNumber = container?.create(input: cardNumberInput, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)

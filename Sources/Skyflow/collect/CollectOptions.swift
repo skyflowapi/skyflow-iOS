@@ -7,11 +7,9 @@
 import Foundation
 
 public struct CollectOptions {
-    var tokens: Bool
     var additionalFields: [String: Any]?
     var upsert: [UpsertOption]?
-    public init(tokens: Bool = true, additionalFields: [String: Any]? = nil, upsert: [UpsertOption]? = nil) {
-        self.tokens = tokens
+    public init(additionalFields: [String: Any]? = nil, upsert: [UpsertOption]? = nil) {
         self.additionalFields = additionalFields
         self.upsert = upsert
     }

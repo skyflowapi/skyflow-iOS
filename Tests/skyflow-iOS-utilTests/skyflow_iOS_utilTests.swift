@@ -62,7 +62,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
         XCTAssertEqual(textField.secureText, "4111 1111 1111 1111")
     }
     func testConstructV2RequestBody() {
-        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(tokens: true))
+        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions())
         XCTAssertEqual(result["vaultID"] as! String, "vault123")
         let records = result["records"] as! [[String: Any]]
         XCTAssertEqual(records[0]["tableName"] as! String, "table")
@@ -71,7 +71,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
 
     func testConstructV2RequestBodyWithUpsert() {
         let upsert = [UpsertOption(table: "table", uniqueColumns: ["field1"], updateType: .REPLACE)]
-        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(tokens: true, upsert: upsert))
+        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(upsert: upsert))
         let records = result["records"] as! [[String: Any]]
         let upsertPayload = records[0]["upsert"] as! [String: Any]
         XCTAssertEqual(upsertPayload["uniqueColumns"] as! [String], ["field1"])

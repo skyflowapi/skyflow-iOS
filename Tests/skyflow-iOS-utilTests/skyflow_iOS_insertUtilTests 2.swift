@@ -14,7 +14,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
         self.collectCallback = FlowVaultInsertAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
                                                   apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
                                                   records: defaultRecord,
-                                                  options: FlowVaultICOptions(tokens: false, additionalFields: nil),
+                                                  options: FlowVaultICOptions(additionalFields: nil),
                                                   contextOptions: ContextOptions())
     }
 
@@ -238,7 +238,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": [insertRecord]],
-            options: FlowVaultICOptions(tokens: true, additionalFields: nil),
+            options: FlowVaultICOptions(additionalFields: nil),
             contextOptions: ContextOptions()
         )
 
@@ -275,7 +275,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": [insertRecord]],
-            options: FlowVaultICOptions(tokens: true, additionalFields: nil),
+            options: FlowVaultICOptions(additionalFields: nil),
             contextOptions: ContextOptions()
         )
 

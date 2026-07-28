@@ -34,7 +34,7 @@ public class Client {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        let icOptions = FlowVaultICOptions(tokens: options.tokens, upsert: options.upsert, callback: callback, contextOptions: tempContextOptions)
+        let icOptions = FlowVaultICOptions(upsert: options.upsert, callback: callback, contextOptions: tempContextOptions)
         var errorCode: ErrorCodes?
 
         if records["records"] == nil {

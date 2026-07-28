@@ -269,7 +269,7 @@ public extension Container {
                 }
             }
             let records = FlowVaultCollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
-            let icOptions = FlowVaultICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
+            let icOptions = FlowVaultICOptions(additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
             if options?.upsert != nil {
                 if icOptions.validateUpsert() {
                     return;

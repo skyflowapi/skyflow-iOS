@@ -60,7 +60,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert call")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
@@ -74,7 +74,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert call")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
@@ -92,7 +92,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert call")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
@@ -112,7 +112,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert call")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
@@ -131,7 +131,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert call")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
@@ -151,7 +151,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert call")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         let responseData = callback.receivedResponse.utf8
@@ -400,7 +400,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
     func testCreateRequestBodyWithSkyflowIDInAdditionalFields() {
         let additionalFields: [String: Any] = [
             "records": [
-                ["table": "table1", "fields": ["column1": "value1"], "skyflowID": "id1"]
+                ["table": "table1", "fields": ["column1": "value1"], "skyflowId": "id1"]
             ]
         ]
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Update via additionalFields"))
@@ -417,7 +417,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowID: "id1")
+        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowId: "id1")
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
@@ -441,6 +441,31 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .INSERT)).localizedDescription)
+    }
+
+    func testCollectCallbackOnFailureParsesStructuredAPIError() {
+        let wholeRequestFailure: [String: Any] = [
+            "error": [
+                "grpcCode": 13,
+                "httpCode": 500,
+                "message": "Skyflow services experienced an internal error. Contact Skyflow support with request ID 2db2c594-b9a5-48db-a220-f936e12a43e9 for more information.",
+                "httpStatus": "Internal Server Error",
+                "details": []
+            ]
+        ]
+        var receivedError: SkyflowError?
+        let collectCallback = CollectCallback(
+            onSuccess: { _ in XCTFail("onSuccess should not be called") },
+            onFailure: { error in receivedError = error }
+        )
+
+        collectCallback.onFailure(wholeRequestFailure)
+
+        XCTAssertEqual(receivedError?.httpCode, 500)
+        XCTAssertEqual(receivedError?.message, "Skyflow services experienced an internal error. Contact Skyflow support with request ID 2db2c594-b9a5-48db-a220-f936e12a43e9 for more information.")
+        XCTAssertEqual(receivedError?.grpcCode, 13)
+        XCTAssertEqual(receivedError?.httpStatus, "Internal Server Error")
+        XCTAssertEqual(receivedError?.details?.count, 0)
     }
 
 }

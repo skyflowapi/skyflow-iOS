@@ -16,7 +16,7 @@ public class SkyflowElement: UIView {
     internal var fieldType: ElementType!
     internal var columnName: String!
     internal var tableName: String?
-    internal var skyflowID: String?
+    internal var skyflowId: String?
     internal var horizontalConstraints = [NSLayoutConstraint]()
     internal var verticalConstraint = [NSLayoutConstraint]()
     internal var collectInput: CollectElementInput!
@@ -64,7 +64,7 @@ public class SkyflowElement: UIView {
             columnName = collectInput.column
             fieldType = collectInput.type
             isRequired = options.required
-            skyflowID = collectInput.skyflowID
+            skyflowId = collectInput.skyflowId
       }
 
     internal func getOutput() -> String? {

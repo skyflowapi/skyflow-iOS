@@ -14,7 +14,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         self.collectCallback = FlowVaultCollectAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
                                                   apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
                                                   records: defaultRecord,
-                                                  options: FlowVaultICOptions(tokens: false, additionalFields: nil),
+                                                  options: FlowVaultICOptions(additionalFields: nil),
                                                   contextOptions: ContextOptions())
     }
 
@@ -245,7 +245,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": [insertRecord]],
-            options: FlowVaultICOptions(tokens: true, additionalFields: nil),
+            options: FlowVaultICOptions(additionalFields: nil),
             contextOptions: ContextOptions()
         )
 
@@ -282,7 +282,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": insertRecords],
-            options: FlowVaultICOptions(tokens: true, additionalFields: nil),
+            options: FlowVaultICOptions(additionalFields: nil),
             contextOptions: ContextOptions()
         )
 
@@ -319,7 +319,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": insertRecords],
-            options: FlowVaultICOptions(tokens: true, additionalFields: nil),
+            options: FlowVaultICOptions(additionalFields: nil),
             contextOptions: ContextOptions()
         )
 
@@ -360,7 +360,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": insertRecords],
-            options: FlowVaultICOptions(tokens: true, additionalFields: nil),
+            options: FlowVaultICOptions(additionalFields: nil),
             contextOptions: ContextOptions()
         )
 
@@ -408,7 +408,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         """
         let responseData = json.data(using: .utf8)!
         let urlResponse = HTTPURLResponse(url: URL(string: "https://example.org/v2/records/update")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
-        self.collectCallback.options = FlowVaultICOptions(tokens: true)
+        self.collectCallback.options = FlowVaultICOptions()
 
         do {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
@@ -484,7 +484,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         """
         let responseData = json.data(using: .utf8)!
         let urlResponse = HTTPURLResponse(url: URL(string: "https://example.org/v2/records/update")!, statusCode: 207, httpVersion: "1.1", headerFields: nil)
-        self.collectCallback.options = FlowVaultICOptions(tokens: true)
+        self.collectCallback.options = FlowVaultICOptions()
 
         do {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
