@@ -164,12 +164,17 @@ class ViewController: UIViewController {
     }
 
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: Skyflow.CollectOptions(tokens: true))
+        let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(tokens: true))
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: Skyflow.CollectResponse) {
         print(response)
         retryCount = 0
+        for result in response.records {
+            if let recordError = result.error {
+                print("Record failed:", recordError.error, "httpCode:", recordError.httpCode ?? -1)
+            }
+        }
         print("Successfully got response:", response)
     }
     internal func updateFailure(error: Any) {

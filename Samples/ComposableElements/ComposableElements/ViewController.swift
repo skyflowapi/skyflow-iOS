@@ -170,16 +170,43 @@ class ViewController: UIViewController {
         }
     }
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        let revealCallback = Skyflow.RevealCallback(
+            onSuccess: { response in print("reveal success:", response) },
+            onFailure: { error in print("reveal failure:", error) }
+        )
+        self.revealContainer?.reveal(callback: revealCallback)
     }
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: Skyflow.CollectOptions(tokens: true))
+        let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
+
+        // Upsert example: insert-or-update credit_cards records, matching on card_number.
+        // If a record with a matching card_number already exists, its fields are merged
+        // in (updateType: .UPDATE) instead of creating a duplicate row.
+        let upsertOptions = [
+            Skyflow.UpsertOption(table: "credit_cards", uniqueColumns: ["card_number"], updateType: .UPDATE)
+        ]
+
+        // additionalFields: extra records submitted alongside whatever's collected from
+        // the mounted elements, one entry per table.
+        let additionalFields: [String: Any] = [
+            "records": [
+                ["table": "credit_cards", "fields": ["billing_zip": "94105"]]
+            ]
+        ]
+
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(tokens: true, additionalFields: additionalFields, upsert: upsertOptions))
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: Skyflow.CollectResponse) {
         print(response)
         retryCount = 0
-        updateRevealInputs(tokens: response.records[0].fields)
+        for result in response.records {
+            if let recordError = result.error {
+                print("Record failed:", recordError.error, "httpCode:", recordError.httpCode ?? -1)
+            }
+        }
+        if let fields = response.records.first?.record?.fields {
+            updateRevealInputs(tokens: fields)
+        }
         print("Successfully got response:", response)
     }
     internal func updateFailure(error: Any) {
@@ -189,7 +216,12 @@ class ViewController: UIViewController {
         }
         print("Failed Operation", error)
     }
-    internal func updateRevealInputs(tokens: Fields) {
+    // fields is [String: Any] - column name -> array of {"token","tokenGroupName"} dicts.
+    internal func firstToken(_ fields: [String: Any], column: String) -> (token: String, tokenGroupName: String?) {
+        guard let entries = fields[column] as? [[String: Any]], let first = entries.first else { return ("", nil) }
+        return (first["token"] as? String ?? "", first["tokenGroupName"] as? String)
+    }
+    internal func updateRevealInputs(tokens: [String: Any]) {
         let revealBaseStyle = Skyflow.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -206,39 +238,42 @@ class ViewController: UIViewController {
                 self.revealed = true
             }
             let revealCardNumberInput = Skyflow.RevealElementInput(
-                token: tokens.card_number,
+                token: self.firstToken(tokens, column: "card_number").token ?? "",
                 inputStyles: revealStyles,
                 label: "Card Number",
-                redaction: .REDACTED
+                redaction: "REDACTED",
+                tokenGroupName: self.firstToken(tokens, column: "card_number").tokenGroupName
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
                 options: Skyflow.RevealElementOptions()
             )
             let revealCVVtInput = Skyflow.RevealElementInput(
-                token: tokens.cvv,
+                token: self.firstToken(tokens, column: "cvv").token ?? "",
                 inputStyles: revealStyles,
                 label: "CVV",
-                redaction: .MASKED
+                redaction: "MASKED",
+                tokenGroupName: self.firstToken(tokens, column: "cvv").tokenGroupName
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = Skyflow.RevealElementInput(
-                token: tokens.cardholder_name,
+                token: self.firstToken(tokens, column: "cardholder_name").token ?? "",
                 inputStyles: revealStyles,
                 label: "Card Holder Name",
-                redaction: .DEFAULT
-
+                redaction: "DEFAULT",
+                tokenGroupName: self.firstToken(tokens, column: "cardholder_name").tokenGroupName
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = Skyflow.RevealElementInput(
-                token: tokens.expiry_month,
+                token: self.firstToken(tokens, column: "expiry_month").token ?? "",
                 inputStyles: revealStyles,
                 label: "Expiration Month",
-                redaction: .PLAIN_TEXT                
+                redaction: "PLAIN_TEXT",
+                tokenGroupName: self.firstToken(tokens, column: "expiry_month").tokenGroupName
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = Skyflow.RevealElementInput(
-                token: tokens.expiry_year,
+                token: self.firstToken(tokens, column: "expiry_year").token ?? "",
                 inputStyles: revealStyles,
                 label: "Expiration Year"
             )
