@@ -152,8 +152,16 @@ class ViewController: UIViewController {
 
     @objc func revealForm() {
         let revealCallback = Skyflow.RevealCallback(
-            onSuccess: { response in print("reveal success:", response) },
-            onFailure: { error in print("reveal failure:", error) }
+            onSuccess: { (response: Skyflow.RevealResponse) in
+                for record in response.records {
+                    if let error = record.error {
+                        print("reveal failed:", error, "httpCode:", record.httpCode)
+                    } else {
+                        print("revealed:", record.token ?? "", record.tokenGroupName ?? "", record.metadata ?? [:])
+                    }
+                }
+            },
+            onFailure: { (error: Skyflow.SkyflowError) in print("reveal failure:", error.httpCode, error.message) }
         )
         let revealOptions = Skyflow.RevealOptions(tokenGroupRedactions: self.tokenGroupRedactions.isEmpty ? nil : self.tokenGroupRedactions)
         self.revealContainer?.reveal(callback: revealCallback, options: revealOptions)
@@ -178,8 +186,8 @@ class ViewController: UIViewController {
         print("Successfully got response:", response)
     }
 
-    internal func updateFailure(error: Any) {
-        print("Failed Operation", error)
+    internal func updateFailure(error: Skyflow.SkyflowError) {
+        print("Failed Operation", error.httpCode, error.message, error.grpcCode ?? "", error.httpStatus ?? "", error.details ?? "")
     }
 
     // fields is [String: Any] - column name -> array of {"token","tokenGroupName"} dicts.

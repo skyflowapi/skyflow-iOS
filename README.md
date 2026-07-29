@@ -395,8 +395,18 @@ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardN
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in print(response) },
-    onFailure: { error in print(error) }
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
 )
 container?.collect(callback: insertCallback, options: options)
 
@@ -465,11 +475,17 @@ let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, ups
 // Skyflow.SkyflowError whenever the vault returns that structured shape (see below);
 // otherwise onFailure receives the raw error (e.g. a validation SkyflowError) unchanged.
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in
-        print(response)
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
     },
-    onFailure: { error in
-        print(error)
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
     }
 )
  
@@ -628,8 +644,18 @@ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardN
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in print(response) },
-    onFailure: { error in print(error) }
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
 )
 container?.collect(callback: insertCallback, options: options)
 ```
@@ -697,11 +723,17 @@ let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, ups
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
 // See "If the entire request fails" above for how onFailure surfaces a typed Skyflow.SkyflowError.
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in
-        print(response)
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
     },
-    onFailure: { error in
-        print(error)
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
     }
 )
  
@@ -1251,8 +1283,18 @@ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardN
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in print(response) },
-    onFailure: { error in print(error) }
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
 )
 container?.collect(callback: insertCallback, options: options)
 ```
@@ -1347,11 +1389,17 @@ let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, ups
  
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in
-        print(response)
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
     },
-    onFailure: { error in
-        print(error)
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
     }
 )
  
@@ -1742,8 +1790,18 @@ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardN
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in print(response) },
-    onFailure: { error in print(error) }
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
 )
 container?.collect(callback: insertCallback, options: options)
 ```
@@ -1840,11 +1898,17 @@ let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, ups
  
 // Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
 let insertCallback = Skyflow.CollectCallback(
-    onSuccess: { response in
-        print(response)
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
     },
-    onFailure: { error in
-        print(error)
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
     }
 )
  
@@ -2019,8 +2083,18 @@ Elements used for revealing data are mounted to the screen the same way as Eleme
 When the sensitive data is ready to be retrieved and revealed, call the `reveal()` method on the container as shown below:
 ```swift
 let revealCallback = Skyflow.RevealCallback(
-    onSuccess: { response in print(response) },
-    onFailure: { error in print(error) }
+    onSuccess: { (response: Skyflow.RevealResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("revealed:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
 )
 container.reveal(callback: revealCallback)
 ```
@@ -2114,11 +2188,17 @@ cvvElement!.resetError()
 
 // Initialize a Skyflow.RevealCallback - required by RevealContainer's reveal(callback:options:).
 let revealCallback = Skyflow.RevealCallback(
-    onSuccess: { response in
-        print(response)
+    onSuccess: { (response: Skyflow.RevealResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("revealed:", record)
+            }
+        }
     },
-    onFailure: { error in
-        print(error)
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
     }
 )
 
