@@ -175,7 +175,7 @@ let collectElementInput = Skyflow.CollectElementInput(
 The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
 **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
--  `table` and `column` are optional only if the element is being used in invokeConnection()
+
  
 The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
  
@@ -390,7 +390,7 @@ let nonPCIRecords = Skyflow.AdditionalFields(records: [
 ])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
@@ -500,19 +500,41 @@ container?.collect(callback: insertCallback, options: collectOptions)
     ]
 }
 ```
-**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode` - see the [partial error response example](#sample-partial-error-response) below.
+**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
 
-#### If the entire request fails (for example, the vault itself can't be found):
+#### Sample partial error response:
+Successful and failed records are both returned together in the same `records` array, each carrying its own `httpCode`:
 ```json
 {
-    "error": {
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
+        }
+    ]
+}
+```
+
+#### If the entire request fails (for example, the vault itself can't be found):
+This is the API's raw wire-format error - `onFailure` doesn't hand you this dictionary as-is, it's normalized into a `Skyflow.SkyflowError` object with these same fields as flat properties (no `error` wrapper key):
+```json
+{
         "grpcCode": 5,
         "httpCode": 404,
         "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
         "httpStatus": "Not Found",
         "details": []
     }
-}
 ```
 `Skyflow.CollectCallback`/`Skyflow.RevealCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - this shape (and every other failure, including client-side validation) is always delivered as a `Skyflow.SkyflowError`, with `httpCode`, `message`, `grpcCode`, `httpStatus`, and `details` all available as direct properties (`grpcCode`/`httpStatus`/`details` are only populated for this whole-request-failure shape - `nil` for validation failures):
 ```swift
@@ -555,7 +577,6 @@ The `table` and `column` fields indicate which table and column in the vault the
 
 **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
--  `table` and `column` are optional only if the element is being used in invokeConnection()
 
 Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
  
@@ -602,7 +623,7 @@ let nonPCIRecords = Skyflow.AdditionalFields(records: [
 ])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
@@ -713,6 +734,42 @@ container?.collect(callback: insertCallback, options: collectOptions)
     ]
 }
 ```
+**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+
+#### Sample partial error response:
+```json
+{
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
+        }
+    ]
+}
+```
+
+#### If the entire request fails 
+This is the API's error - `onFailure` doesn't hand you this dictionary as-is, it's normalized into a `Skyflow.SkyflowError` object with these same fields as flat properties (no `error` wrapper key):
+```json
+{
+        "grpcCode": 5,
+        "httpCode": 404,
+        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
+        "httpStatus": "Not Found",
+        "details": []
+}
+```
+`Skyflow.CollectCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - see [If the entire request fails](#if-the-entire-request-fails-for-example-the-vault-itself-cant-be-found) above for how to read the properties on `Skyflow.SkyflowError`.
 
 ## Validations
  
@@ -1175,7 +1232,7 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 }
 ```
 ### Step 4: Collect data from elements
-When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. 
+When you submit the form, call the `collect(callback: Skyflow.Callback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
@@ -1189,7 +1246,7 @@ let nonPCIRecords = Skyflow.AdditionalFields(records: [
 ])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
@@ -1321,6 +1378,29 @@ container?.collect(callback: insertCallback, options: collectOptions)
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
+        }
+    ]
+}
+```
+**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+
+#### Sample partial error response:
+```json
+{
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
         }
     ]
 }
@@ -1521,7 +1601,7 @@ let lengthRule = LengthMatchRule(
 // Update validations and placeholder property on cardHolderName.
 cardHolderName.update(update: CollectElementInput(
     placeholder: "cardHolderName",
-    validations: ValidationSet(rules: [lengthRule]))
+    validations: ValidationSet(rules: [lengthRule])
 ))
 ```
 
@@ -1559,7 +1639,7 @@ do {
 // Subscribing to the `SUBMIT` event, which gets triggered when the user hits `enter` key in any container element input.
 composableContainer?.on(eventName: .SUBMIT){
     // Your implementation when the SUBMIT(enter) event occurs.
-    print('Submit Event Listener is being Triggered.')
+    print("Submit Event Listener is being Triggered.")
 }
 
 ```
@@ -1643,7 +1723,7 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 }
 ```
 ### Step 4: Update data from Elements 
-When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. 
+When you submit the form, call the `collect(callback: Skyflow.Callback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
@@ -1657,7 +1737,7 @@ let nonPCIRecords = Skyflow.AdditionalFields(records: [
 ])
 // Upsert
 let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
 let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
@@ -1821,17 +1901,16 @@ Successful and failed records are both returned together in the same `records` a
 }
 ```
 
-If the entire request fails (for example, the vault itself can't be found), `onFailure` receives a single structured error instead of a `records` array:
+If the entire request fails (for example, the vault itself can't be found), `onFailure` receives a single structured `Skyflow.SkyflowError` instead of a `records` array. 
+Below is the API's error that `SkyflowError` is built from - the object itself exposes these as flat properties (`grpcCode`, `httpCode`, `message`, `httpStatus`, `details`):
 ```json
-{
-    "error": {
+
         "grpcCode": 5,
         "httpCode": 404,
         "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
         "httpStatus": "Not Found",
         "details": []
     }
-}
 ```
 
 # Securely revealing data client-side
@@ -1862,7 +1941,6 @@ let revealElementInput = Skyflow.RevealElementInput(
 )
 ```
 `Note`: 
-- `token` is optional only if it is being used in invokeConnection()
 - To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. Supported redaction values are `PLAIN_TEXT`, `MASKED`, `REDACTED` and `DEFAULT`.
 
  
@@ -2056,21 +2134,45 @@ container?.reveal(callback: revealCallback, options: revealOptions)
 
 ```
  
-The response below shows that some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed.
- 
 #### Sample Response:
 ```json
 {
     "records": [
         {
             "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
-            "value": "4111111111111111",
-            "tokenGroupName": "deterministic_string"
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
         },
         {
             "token": "89024714-6a26-4256-b9d4-55ad69aa4047",
-            "value": "123",
-            "tokenGroupName": "deterministic_string"
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
+        }
+    ]
+}
+```
+
+#### Sample Partial Error Response:
+Some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed - both are returned together in the same `records` array, each carrying its own `httpCode`. A successful record carries `metadata` (e.g. `skyflowId`, `tableName`), a failed one carries `error` instead:
+```json
+{
+    "records": [
+        {
+            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
         },
         {
             "token": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
@@ -2080,7 +2182,6 @@ The response below shows that some tokens assigned to the reveal elements get re
     ]
 }
 ```
-**Note:** Successful and failed tokens are both returned in the same `records` array, each entry distinguished by the presence of an `error` key.
  
 ## Reporting a Vulnerability
  
