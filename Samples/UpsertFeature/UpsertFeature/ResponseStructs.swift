@@ -2,19 +2,6 @@
  * Copyright (c) 2022 Skyflow
  */
 
-import Foundation
-
-struct SuccessResponse: Codable {
-    let records: [Records]
-}
-
-struct Records: Codable {
-    let fields: Fields
-    let table: String
-}
-
-struct Fields: Codable {
-    let cardnumber: String
-    let cvv: String
-    let skyflow_id: String
-}
+// No longer needed - the SDK now provides typed responses directly
+// (Skyflow.CollectResponse / Skyflow.RevealResponse), so this sample no longer
+// needs to declare its own local response structs.

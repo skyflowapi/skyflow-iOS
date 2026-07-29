@@ -15,13 +15,14 @@ public class Client {
     
     public init(_ skyflowConfig: Configuration) {
         self.vaultID = skyflowConfig.vaultID
-        self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
-        self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: self.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
+        let normalizedBaseURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL : skyflowConfig.vaultURL + "/"
+        self.vaultURL = normalizedBaseURL + "v2/vaults/"
+        self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: normalizedBaseURL, tokenProvider: skyflowConfig.tokenProvider)
         self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel, env: skyflowConfig.options!.env, interface: .CLIENT)
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
-    public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
+    internal func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INSERT
         Log.info(message: .INSERT_TRIGGERED, contextOptions: tempContextOptions)
@@ -29,11 +30,11 @@ public class Client {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.vaultURL == "/v1/vaults/"  {
+        if self.vaultURL == "/v2/vaults/"  {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        let icOptions = ICOptions(tokens: options.tokens, upsert: options.upsert, callback: callback, contextOptions: tempContextOptions)
+        let icOptions = FlowVaultICOptions(upsert: options.upsert, callback: callback, contextOptions: tempContextOptions)
         var errorCode: ErrorCodes?
 
         if records["records"] == nil {
@@ -114,15 +115,10 @@ public class Client {
         return nil
     }
 
-    public func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
+    internal func detokenize(records: [String: Any], options: RevealOptions? = RevealOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
         func checkRecord(token: [String: Any], index: Int) -> ErrorCodes? {
-               if token["redaction"] != nil {
-                   guard let _ = token["redaction"] as? RedactionType else {
-                       return .INVALID_REDACTION_TYPE()
-                   }
-               }
                 if token["token"] == nil {
                     return .ID_KEY_ERROR()
                 } else {
@@ -138,7 +134,7 @@ public class Client {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.vaultURL == "/v1/vaults/"  {
+        if self.vaultURL == "/v2/vaults/"  {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
@@ -156,11 +152,7 @@ public class Client {
             for (index,token) in tokens.enumerated() {
                 let errorCode = checkRecord(token: token, index: index)
                 if errorCode == nil, let id = token["token"] as? String {
-                    if token["redaction"] == nil{
-                        list.append(RevealRequestRecord(token: id, redaction: RedactionType.PLAIN_TEXT.rawValue))
-                    } else if let redaction = token["redaction"] as? RedactionType{
-                        list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
-                    }
+                    list.append(RevealRequestRecord(token: id))
                 } else {
                     return callRevealOnFailure(callback: callback, errorObject: errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 }
@@ -172,13 +164,13 @@ public class Client {
                 onFailureHandler: {
                 }
             )
-            self.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
+            self.apiClient.get(records: list, tokenGroupRedactions: options?.tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
         } else {
             callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
 
-    public func getById(records: [String: Any], callback: Callback) {
+    internal func getById(records: [String: Any], callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GETBYID
         Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: tempContextOptions)
@@ -186,7 +178,7 @@ public class Client {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.vaultURL == "/v1/vaults/"  {
+        if self.vaultURL == "/v2/vaults/"  {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
@@ -261,7 +253,7 @@ public class Client {
             callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }
     }
-    public func get(records: [String: Any], options: GetOptions = GetOptions(), callback: Callback){
+    internal func get(records: [String: Any], options: GetOptions = GetOptions(), callback: Callback){
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GET
         Log.info(message: .GET_TRIGGERED, contextOptions: tempContextOptions)
@@ -269,12 +261,12 @@ public class Client {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.vaultURL == "/v1/vaults/"  {
+        if self.vaultURL == "/v2/vaults/"  {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         Log.info(message: .VALIDATE_GET_INPUT, contextOptions: tempContextOptions)
-        
+
         if records["records"] == nil {
             return callRevealOnFailure(callback: callback, errorObject: ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: tempContextOptions))
         }
@@ -305,7 +297,7 @@ public class Client {
             let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions, onSuccessHandler: {
                 Log.info(message: .GET_SUCCESS, contextOptions: tempContextOptions)
             }, onFailureHandler: {
-                
+
             })
             self.apiClient.getRecord(records: list, callback: logCallback, getOptions: options, contextOptions: tempContextOptions)
         } else {
@@ -343,7 +335,7 @@ public class Client {
         if( getOptions.tokens == true ){
             if (entry["columnName"] != nil || entry["columnValues"] != nil){
                 return .TOKENS_GET_COLUMN_NOT_SUPPPORTED()
-                
+
             }
             if (entry["redaction"] as? RedactionType) != nil {
                 return .REDACTION_WITH_TOKEN_NOT_SUPPORTED()
@@ -355,7 +347,7 @@ public class Client {
                 return .INVALID_REDACTION_TYPE()
             }
         }
-                
+
         if(entry["columnName"] == nil){
             if ((entry["ids"] == nil) && (entry["columnValues"] == nil)){
                 return .MISSING_IDS_OR_COLUMN_VALUES_IN_GET()
@@ -389,24 +381,13 @@ public class Client {
                 return .EMPTY_COLUMN_NAME()
             }
         }
-        
+
         return nil
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
         let result = ["errors": [errorObject]]
         callback.onFailure(result)
-    }
-    
-    internal func createDetokenizeRecords(_ IDsToTokens: [String: String]) -> [String: [[String: String]]]{
-        var records = [] as [[String : String]]
-        var index = 0
-        for (_, token) in IDsToTokens {
-            records.append(["token": token])
-            index += 1
-        }
-        
-        return ["records": records]
     }
 }
 

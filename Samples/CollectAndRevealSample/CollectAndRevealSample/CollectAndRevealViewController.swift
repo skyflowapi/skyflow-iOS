@@ -22,6 +22,7 @@ class CollectAndRevealViewController: UIViewController {
     private var revealButton: UIButton!
 
     private var revealed = false
+    private var tokenGroupRedactions: [Skyflow.TokenGroupRedaction] = []
 
 
     override func viewDidLoad() {
@@ -127,23 +128,23 @@ class CollectAndRevealViewController: UIViewController {
             stackView.addArrangedSubview(collectExpMonth!)
             stackView.addArrangedSubview(collectExpYear!)
             stackView.addArrangedSubview(collectButton)
-  
+
             stackView.axis = .vertical
             stackView.distribution = .fill
             stackView.spacing = 5
             stackView.alignment = .fill
             stackView.translatesAutoresizingMaskIntoConstraints = false
-            
+
             let scrollView = UIScrollView(frame: .zero)
             scrollView.isScrollEnabled = true
             scrollView.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(scrollView)
-            
+
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2).isActive = true
             scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 2).isActive = true
             scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-            
+
             scrollView.addSubview(stackView)
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -10).isActive = true
             stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
@@ -153,26 +154,51 @@ class CollectAndRevealViewController: UIViewController {
         }
     }
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        let revealCallback = Skyflow.RevealCallback(
+            onSuccess: { (response: Skyflow.RevealResponse) in
+                for record in response.records {
+                    if let error = record.error {
+                        print("reveal failed:", error, "httpCode:", record.httpCode)
+                    } else {
+                        print("revealed:", record.token ?? "", record.tokenGroupName ?? "", record.metadata ?? [:])
+                    }
+                }
+            },
+            onFailure: { (error: Skyflow.SkyflowError) in print("reveal failure:", error.httpCode, error.message) }
+        )
+        let revealOptions = Skyflow.RevealOptions(tokenGroupRedactions: self.tokenGroupRedactions.isEmpty ? nil : self.tokenGroupRedactions)
+        self.revealContainer?.reveal(callback: revealCallback, options: revealOptions)
     }
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: Skyflow.CollectOptions(tokens: true))
+        let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions())
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: Skyflow.CollectResponse) {
         print(response)
         retryCount = 0
-        updateRevealInputs(tokens: response.records[0].fields)
+        for result in response.records {
+            if let error = result.error {
+                print("Record failed:", error, "httpCode:", result.httpCode)
+            }
+        }
+        if let fields = response.records.first?.fields {
+            updateRevealInputs(tokens: fields)
+        }
         print("Successfully got response:", response)
     }
-    internal func updateFailure(error: Any) {
-        if((error as AnyObject).contains("Invalid Bearer token") && retryCount <= 2){ // To do, it will be replaced with error code in the future
+    internal func updateFailure(error: Skyflow.SkyflowError) {
+        if(error.message.contains("Invalid Bearer token") && retryCount <= 2){ // To do, it will be replaced with error code in the future
             retryCount += 1
             submitForm()
         }
-        print("Failed Operation", error)
+        print("Failed Operation", error.httpCode, error.message, error.grpcCode ?? "", error.httpStatus ?? "", error.details ?? "")
     }
-    internal func updateRevealInputs(tokens: Fields) {
+    // fields is [String: Any] - column name -> array of {"token","tokenGroupName"} dicts.
+    internal func firstToken(_ fields: [String: Any], column: String) -> (token: String, tokenGroupName: String?) {
+        guard let entries = fields[column] as? [[String: Any]], let first = entries.first else { return ("", nil) }
+        return (first["token"] as? String ?? "", first["tokenGroupName"] as? String)
+    }
+    internal func updateRevealInputs(tokens: [String: Any]) {
         let revealBaseStyle = Skyflow.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -188,40 +214,48 @@ class CollectAndRevealViewController: UIViewController {
             } else {
                 self.revealed = true
             }
+            // tokenGroupRedactions: request-level redaction per token group, applied when
+            // reveal() is called (see revealForm()) - not per reveal element.
+            self.tokenGroupRedactions = []
+            func addTokenGroupRedaction(_ redaction: String, forColumn column: String) {
+                if let tokenGroupName = self.firstToken(tokens, column: column).tokenGroupName {
+                    self.tokenGroupRedactions.append(Skyflow.TokenGroupRedaction(tokenGroupName: tokenGroupName, redaction: redaction))
+                }
+            }
+            addTokenGroupRedaction("REDACTED", forColumn: "card_number")
+            addTokenGroupRedaction("MASKED", forColumn: "cvv")
+            addTokenGroupRedaction("DEFAULT", forColumn: "cardholder_name")
+            addTokenGroupRedaction("PLAIN_TEXT", forColumn: "expiry_month")
+
             let revealCardNumberInput = Skyflow.RevealElementInput(
-                token: tokens.card_number,
+                token: self.firstToken(tokens, column: "card_number").token,
                 inputStyles: revealStyles,
-                label: "Card Number",
-                redaction: .REDACTED
+                label: "Card Number"
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
                 options: Skyflow.RevealElementOptions()
             )
             let revealCVVtInput = Skyflow.RevealElementInput(
-                token: tokens.cvv,
+                token: self.firstToken(tokens, column: "cvv").token,
                 inputStyles: revealStyles,
-                label: "CVV",
-                redaction: .MASKED
+                label: "CVV"
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = Skyflow.RevealElementInput(
-                token: tokens.cardholder_name,
+                token: self.firstToken(tokens, column: "cardholder_name").token,
                 inputStyles: revealStyles,
-                label: "Card Holder Name",
-                redaction: .DEFAULT
-
+                label: "Card Holder Name"
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = Skyflow.RevealElementInput(
-                token: tokens.expiry_month,
+                token: self.firstToken(tokens, column: "expiry_month").token,
                 inputStyles: revealStyles,
-                label: "Expiration Month",
-                redaction: .PLAIN_TEXT
+                label: "Expiration Month"
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = Skyflow.RevealElementInput(
-                token: tokens.expiry_year,
+                token: self.firstToken(tokens, column: "expiry_year").token,
                 inputStyles: revealStyles,
                 label: "Expiration Year"
             )

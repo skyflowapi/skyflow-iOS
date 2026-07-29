@@ -30,7 +30,6 @@ internal enum ErrorCodes: CustomStringConvertible {
     case INVALID_FIELDS_TYPE(code: Int = 400, message: String = "\(LangAndVersion) Validation error.invaid 'fields' key value in record at index <index>. Specify a value of type array for 'fields' key.", value: String)
     case INVALID_RECORDS_TYPE(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'records' key found. Specify a value of type array instead.")
     case INVALID_BEARER_TOKEN_FORMAT(code: Int = 400, message: String = "\(LangAndVersion) Token generated from 'getBearerToken' callback function is invalid. Make sure the implementation of 'getBearerToken' is correct.")
-    case MISSING_RECORDS_ARRAY(code: Int = 404, message: String = "\(LangAndVersion) Validation error.'records' key not found in additionalFields. Specify a 'records' key in addtionalFields.")
     case MISSING_RECORDS_IN_ADDITIONAL_FIELDS(code: Int = 404, message: String = "\(LangAndVersion) Validation error.'records' object cannot be empty within additionalFields. Specify a non-empty value instead.")
     case EMPTY_RECORDS_OBJECT(code: Int = 404, message: String = "\(LangAndVersion) Validation error. 'records' key cannot be empty. Provide a non-empty value instead.")
     case MISSING_RECORDS_IN_GETBYID(code: Int = 404, message: String = "\(LangAndVersion) Validation error. 'records' key cannot be empty. Provide a non-empty value instead.")
@@ -69,18 +68,19 @@ internal enum ErrorCodes: CustomStringConvertible {
     case UPSERT_OPTION_CANNOT_BE_EMPTY(code: Int = 400, message: String = "\(LangAndVersion) Validation error. 'upsert' key cannot be an empty array in insert options. Make sure to add atleast one table column object in upsert array.")
     case MISSING_COLUMN_NAME_IN_USERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Missing 'column' key in upsert array at index <index>. Provide a valid 'column' key.", value: String)
     case COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'table' key in upsert array at index <index>. Specify a value of type string instead.", value: String)
+    case UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. 'uniqueColumns' cannot be empty in upsert option at index <index>. Specify at least one column.", value: String)
     case TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid 'table' key in upsert array at index <index>. Specify a value of type string instead.", value: String)
     case MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(code: Int = 400, message: String = "\(LangAndVersion) Mount failed. Invalid layout array values. Make sure all values in the layout array are positive numbers.")
     var code: Int {
         switch self {
             // No Formatting required
             // swiftlint:disable:next line_length
-        case .EMPTY_TABLE_NAME(let code, _), .EMPTY_VAULT_ID(let code, _),  .EMPTY_VAULT_URL(let code, _),.RECORDS_KEY_ERROR( let code, _),.EMPTY_TOKEN_ID(let code, _), .ID_KEY_ERROR(let code, _), .INVALID_RECORDS_TYPE(let code, _), .EMPTY_COLUMN_NAME(let code, _), .INVALID_BEARER_TOKEN_FORMAT(let code, _), .MISSING_RECORDS_ARRAY(let code, _), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS(let code, _), .EMPTY_RECORDS_OBJECT(let code, _), .MISSING_RECORDS_IN_GETBYID(let code, _),.INVALID_URL(let code, _), .INVALID_IDS_TYPE(let code, _),.REDACTION_WITH_TOKEN_NOT_SUPPORTED(let code, _), .TOKENS_GET_COLUMN_NOT_SUPPPORTED(let code, _), .MISSING_COLUMN_NAME(let code,_), .UPSERT_OPTION_CANNOT_BE_EMPTY(let code, _),.INVALID_REDACTION_TYPE(let code, _),.EMPTY_COLUMN_NAME_IN_COLLECT(let code, _), .EMPTY_TABLE_NAME_IN_COLLECT(let code, _), .REGEX_MATCH_FAILED(let code, _),.SKYFLOW_IDS_AND_COLUMN_NAME_BOTH_SPECIFIED(let code, _),.MISSING_IDS_OR_COLUMN_VALUES_IN_GET(let code, _), .MISSING_RECORD_COLUMN_VALUE(let code, _), .INVALID_COLUMN_VALUES_IN_GET(let code, _), .EMPTY_COMPOSABLE_LAYOUT_ARRAY(let code, _), .MISSING_COMPOSABLE_LAYOUT_KEY(let code, _), .MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(let code, _),.MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: let code, message: _):
+        case .EMPTY_TABLE_NAME(let code, _), .EMPTY_VAULT_ID(let code, _),  .EMPTY_VAULT_URL(let code, _),.RECORDS_KEY_ERROR( let code, _),.EMPTY_TOKEN_ID(let code, _), .ID_KEY_ERROR(let code, _), .INVALID_RECORDS_TYPE(let code, _), .EMPTY_COLUMN_NAME(let code, _), .INVALID_BEARER_TOKEN_FORMAT(let code, _), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS(let code, _), .EMPTY_RECORDS_OBJECT(let code, _), .MISSING_RECORDS_IN_GETBYID(let code, _),.INVALID_URL(let code, _), .INVALID_IDS_TYPE(let code, _),.REDACTION_WITH_TOKEN_NOT_SUPPORTED(let code, _), .TOKENS_GET_COLUMN_NOT_SUPPPORTED(let code, _), .MISSING_COLUMN_NAME(let code,_), .UPSERT_OPTION_CANNOT_BE_EMPTY(let code, _),.INVALID_REDACTION_TYPE(let code, _),.EMPTY_COLUMN_NAME_IN_COLLECT(let code, _), .EMPTY_TABLE_NAME_IN_COLLECT(let code, _), .REGEX_MATCH_FAILED(let code, _),.SKYFLOW_IDS_AND_COLUMN_NAME_BOTH_SPECIFIED(let code, _),.MISSING_IDS_OR_COLUMN_VALUES_IN_GET(let code, _), .MISSING_RECORD_COLUMN_VALUE(let code, _), .INVALID_COLUMN_VALUES_IN_GET(let code, _), .EMPTY_COMPOSABLE_LAYOUT_ARRAY(let code, _), .MISSING_COMPOSABLE_LAYOUT_KEY(let code, _), .MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(let code, _),.MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: let code, message: _):
             return code
             // Single value formatting
             // swiftlint:disable:next line_length
             // Multi value formatting
-        case  .EMPTY_IDS(let code, _, _), .EMPTY_ID_VALUE(let code, _, _), .TABLE_KEY_ERROR(let code, _, _), .FIELDS_KEY_ERROR(let code, _, _), .EMPTY_FIELDS_KEY(let code, _, _), .REDACTION_KEY_ERROR(let code, _, _), .MISSING_KEY_IDS(let code, _, _), .INVALID_TABLE_NAME_TYPE(let code, _, _), .INVALID_FIELDS_TYPE(let code, _, _), .INVALID_TOKEN_TYPE(let code, _, _), .MISSING_TABLE_NAME_IN_USERT_OPTION(let code, _, _),.MISSING_COLUMN_NAME_IN_USERT_OPTION(let code, _, _), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _, _), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _, _), .APIError(let code, _), .INVALID_COLUMN_NAME(let code, _, _), .UNMOUNTED_COLLECT_ELEMENT(let code, _, _), .UNMOUNTED_REVEAL_ELEMENT(let code, _, _), .ERROR_TRIGGERED(let code, _, _), .DUPLICATE_ADDITIONAL_FIELD_FOUND(let code, _, _), .EMPTY_RECORD_COLUMN_VALUES(code: let code, message: _, value: _), .EMPTY_COLUMN_VALUE(code: let code, message: _, value: _),.DUPLICATE_ELEMENT_FOUND(let code, _, _) :
+        case  .EMPTY_IDS(let code, _, _), .EMPTY_ID_VALUE(let code, _, _), .TABLE_KEY_ERROR(let code, _, _), .FIELDS_KEY_ERROR(let code, _, _), .EMPTY_FIELDS_KEY(let code, _, _), .REDACTION_KEY_ERROR(let code, _, _), .MISSING_KEY_IDS(let code, _, _), .INVALID_TABLE_NAME_TYPE(let code, _, _), .INVALID_FIELDS_TYPE(let code, _, _), .INVALID_TOKEN_TYPE(let code, _, _), .MISSING_TABLE_NAME_IN_USERT_OPTION(let code, _, _), .MISSING_COLUMN_NAME_IN_USERT_OPTION(let code, _, _), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _, _), .UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _, _), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(let code, _, _), .APIError(let code, _), .INVALID_COLUMN_NAME(let code, _, _), .UNMOUNTED_COLLECT_ELEMENT(let code, _, _), .UNMOUNTED_REVEAL_ELEMENT(let code, _, _), .ERROR_TRIGGERED(let code, _, _), .DUPLICATE_ADDITIONAL_FIELD_FOUND(let code, _, _), .EMPTY_RECORD_COLUMN_VALUES(code: let code, message: _, value: _), .EMPTY_COLUMN_VALUE(code: let code, message: _, value: _),.DUPLICATE_ELEMENT_FOUND(let code, _, _) :
             return code
 
         }
@@ -90,11 +90,11 @@ internal enum ErrorCodes: CustomStringConvertible {
         switch self {
             // No Formatting required
             // swiftlint:disable:next line_length
-        case .APIError(_, let message), .INVALID_REDACTION_TYPE( _, let message), .EMPTY_COLUMN_NAME_IN_COLLECT( _, let message), .EMPTY_TABLE_NAME_IN_COLLECT( _, let message), .REGEX_MATCH_FAILED( _, let message), .EMPTY_TABLE_NAME( _, let message), .EMPTY_VAULT_ID( _, let message), .EMPTY_VAULT_URL( _, let message), .RECORDS_KEY_ERROR( _, let message),.INVALID_RECORDS_TYPE( _, let message), .EMPTY_COLUMN_NAME( _, let message), .INVALID_BEARER_TOKEN_FORMAT( _, let message), .MISSING_RECORDS_ARRAY( _, let message), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS( _, let message), .EMPTY_RECORDS_OBJECT( _, let message), .MISSING_RECORDS_IN_GETBYID( _, let message),.INVALID_URL( _, let message),.SKYFLOW_IDS_AND_COLUMN_NAME_BOTH_SPECIFIED( _, let message), .MISSING_IDS_OR_COLUMN_VALUES_IN_GET( _, let message), .MISSING_RECORD_COLUMN_VALUE( _, let message), .UPSERT_OPTION_CANNOT_BE_EMPTY( _, let message),.INVALID_COLUMN_VALUES_IN_GET( _, let message),.MISSING_COMPOSABLE_LAYOUT_KEY(_, let message), .MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(_, let message),.EMPTY_TOKEN_ID( _, let message), .ID_KEY_ERROR( _, let message),.REDACTION_WITH_TOKEN_NOT_SUPPORTED( _, let message), .TOKENS_GET_COLUMN_NOT_SUPPPORTED( _, let message),.MISSING_COLUMN_NAME( _, let message),.EMPTY_COMPOSABLE_LAYOUT_ARRAY(_, let message), .INVALID_IDS_TYPE( _, let message),.MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: _, message: let message):
+        case .APIError(_, let message), .INVALID_REDACTION_TYPE( _, let message), .EMPTY_COLUMN_NAME_IN_COLLECT( _, let message), .EMPTY_TABLE_NAME_IN_COLLECT( _, let message), .REGEX_MATCH_FAILED( _, let message), .EMPTY_TABLE_NAME( _, let message), .EMPTY_VAULT_ID( _, let message), .EMPTY_VAULT_URL( _, let message), .RECORDS_KEY_ERROR( _, let message),.INVALID_RECORDS_TYPE( _, let message), .EMPTY_COLUMN_NAME( _, let message), .INVALID_BEARER_TOKEN_FORMAT( _, let message), .MISSING_RECORDS_IN_ADDITIONAL_FIELDS( _, let message), .EMPTY_RECORDS_OBJECT( _, let message), .MISSING_RECORDS_IN_GETBYID( _, let message),.INVALID_URL( _, let message),.SKYFLOW_IDS_AND_COLUMN_NAME_BOTH_SPECIFIED( _, let message), .MISSING_IDS_OR_COLUMN_VALUES_IN_GET( _, let message), .MISSING_RECORD_COLUMN_VALUE( _, let message), .UPSERT_OPTION_CANNOT_BE_EMPTY( _, let message),.INVALID_COLUMN_VALUES_IN_GET( _, let message),.MISSING_COMPOSABLE_LAYOUT_KEY(_, let message), .MISMATCH_ELEMENT_COUNT_LAYOUT_SUM(_, let message),.EMPTY_TOKEN_ID( _, let message), .ID_KEY_ERROR( _, let message),.REDACTION_WITH_TOKEN_NOT_SUPPORTED( _, let message), .TOKENS_GET_COLUMN_NOT_SUPPPORTED( _, let message),.MISSING_COLUMN_NAME( _, let message),.EMPTY_COMPOSABLE_LAYOUT_ARRAY(_, let message), .INVALID_IDS_TYPE( _, let message),.MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: _, message: let message):
              return message
             // Single value formatting
             // swiftlint:disable:next line_length
-        case .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value), .EMPTY_IDS( _, let message, let value), .EMPTY_ID_VALUE( _, let message, let value),  .TABLE_KEY_ERROR( _, let message, let value), .FIELDS_KEY_ERROR( _, let message, let value), .EMPTY_FIELDS_KEY( _, let message, let value), .REDACTION_KEY_ERROR( _, let message, let value), .MISSING_KEY_IDS( _, let message, let value), .INVALID_TABLE_NAME_TYPE( _, let message, let value), .INVALID_FIELDS_TYPE( _, let message, let value), .INVALID_TOKEN_TYPE( _, let message, let value), .MISSING_TABLE_NAME_IN_USERT_OPTION( _, let message, let value), .MISSING_COLUMN_NAME_IN_USERT_OPTION( _, let message, let value), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_, let message, let value), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION( _, let message, let value),  .EMPTY_RECORD_COLUMN_VALUES( _, let message, let value), .EMPTY_COLUMN_VALUE( _, let message, let value), .INVALID_COLUMN_NAME( _, let message, let value), .DUPLICATE_ADDITIONAL_FIELD_FOUND( _, let message, let value), .ERROR_TRIGGERED( _, let message, let value):
+        case .UNMOUNTED_COLLECT_ELEMENT( _, let message, let value), .UNMOUNTED_REVEAL_ELEMENT( _, let message, let value), .EMPTY_IDS( _, let message, let value), .EMPTY_ID_VALUE( _, let message, let value),  .TABLE_KEY_ERROR( _, let message, let value), .FIELDS_KEY_ERROR( _, let message, let value), .EMPTY_FIELDS_KEY( _, let message, let value), .REDACTION_KEY_ERROR( _, let message, let value), .MISSING_KEY_IDS( _, let message, let value), .INVALID_TABLE_NAME_TYPE( _, let message, let value), .INVALID_FIELDS_TYPE( _, let message, let value), .INVALID_TOKEN_TYPE( _, let message, let value), .MISSING_TABLE_NAME_IN_USERT_OPTION( _, let message, let value), .MISSING_COLUMN_NAME_IN_USERT_OPTION( _, let message, let value), .COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_, let message, let value), .UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(_, let message, let value), .TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION( _, let message, let value),  .EMPTY_RECORD_COLUMN_VALUES( _, let message, let value), .EMPTY_COLUMN_VALUE( _, let message, let value), .INVALID_COLUMN_NAME( _, let message, let value), .DUPLICATE_ADDITIONAL_FIELD_FOUND( _, let message, let value), .ERROR_TRIGGERED( _, let message, let value):
             return formatMessage(message, [value])
             // Multi value formatting
         case .DUPLICATE_ELEMENT_FOUND( _, let message, let values):
@@ -121,7 +121,7 @@ internal enum ErrorCodes: CustomStringConvertible {
                 } else {
                     result += values[valuesIndex]
                 }
-                
+
                 valuesIndex += 1
             } else {
                 result += word
@@ -134,13 +134,91 @@ internal enum ErrorCodes: CustomStringConvertible {
 }
 
 public class SkyflowError: NSError {
-    var xml: String = ""
-    
-    func setXML(xml: String) {
-        self.xml = xml
+    // Only populated for a whole-request API failure (see init(apiError:)) - nil for
+    // client-side validation failures, which only have httpCode/message.
+    public let grpcCode: Int?
+    public let httpStatus: String?
+    public let details: [Any]?
+
+    // Aliases for NSError's own code/localizedDescription, matching the API error JSON's key names.
+    public var httpCode: Int { self.code }
+    public var message: String { self.localizedDescription }
+
+    public init(domain: String, code: Int, userInfo: [String: Any]? = nil,
+                grpcCode: Int? = nil, httpStatus: String? = nil, details: [Any]? = nil) {
+        self.grpcCode = grpcCode
+        self.httpStatus = httpStatus
+        self.details = details
+        super.init(domain: domain, code: code, userInfo: userInfo)
     }
-    
-    public func getXML() -> String {
-        return self.xml
+
+    public required init?(coder: NSCoder) {
+        self.grpcCode = coder.decodeObject(forKey: "grpcCode") as? Int
+        self.httpStatus = coder.decodeObject(forKey: "httpStatus") as? String
+        self.details = coder.decodeObject(forKey: "details") as? [Any]
+        super.init(coder: coder)
+    }
+
+    // Builds a SkyflowError out of a whole-request API failure of the shape
+    // {"error": {"grpcCode", "httpCode", "message", "httpStatus", "details"}} - returns nil if
+    // apiError isn't in that shape (e.g. it's already a SkyflowError from client-side validation).
+    // httpCode maps to NSError's own `code`, and message maps to localizedDescription/NSLocalizedDescriptionKey.
+    public convenience init?(apiError: Any) {
+        guard let dict = apiError as? [String: Any],
+              let detail = dict["error"] as? [String: Any] else { return nil }
+        self.init(
+            domain: "",
+            code: detail["httpCode"] as? Int ?? 0,
+            userInfo: [NSLocalizedDescriptionKey: detail["message"] as? String ?? ""],
+            grpcCode: detail["grpcCode"] as? Int,
+            httpStatus: detail["httpStatus"] as? String,
+            details: detail["details"] as? [Any]
+        )
+    }
+
+    // Normalizes any Callback.onFailure payload into a SkyflowError, so CollectCallback/RevealCallback
+    // can type onFailure as (SkyflowError) -> Void instead of (Any) -> Void.
+    internal static func wrap(_ error: Any) -> SkyflowError {
+        if let skyflowError = error as? SkyflowError {
+            return skyflowError
+        }
+        if let apiError = SkyflowError(apiError: error) {
+            return apiError
+        }
+        if let nsError = error as? NSError {
+            return SkyflowError(domain: nsError.domain, code: nsError.code, userInfo: nsError.userInfo)
+        }
+        // Client.detokenize() bypasses RevealValueCallback entirely, so whole-request failures
+        // arrive here still wrapped in an "errors" array instead of a raw NSError. Two shapes are
+        // possible depending on where the failure originated:
+        // - Client.swift's own pre-network validation (empty vaultID/vaultURL/records key): each
+        //   entry in "errors" IS the NSError directly.
+        // - FlowVaultRevealAPICallback's post-dispatch failures (invalid bearer token, network
+        //   error, invalid URL, etc.): each entry is {"error": <NSError>}.
+        // Recover the underlying NSError instead of stringifying the whole container dict.
+        // (Container<RevealContainer>.reveal()'s equivalent failures are already unwrapped earlier,
+        // by RevealValueCallback.onFailure.)
+        //
+        // A third shape reaches here too: FlowVaultInsertAPICallback's insert+update merge
+        // (group.notify in onSuccess) builds mergedErrors entries as {"error": {"message",
+        // "httpCode", ...}} - a JSON-decoded API error detail dict, not an NSError - so it's
+        // handled by trying SkyflowError(apiError:) on the entry itself, which expects exactly
+        // that {"error": {...}} shape.
+        if let dict = error as? [String: Any], let errorsArray = dict["errors"] as? [Any] {
+            for entry in errorsArray {
+                if let nsError = entry as? NSError {
+                    return SkyflowError(domain: nsError.domain, code: nsError.code, userInfo: nsError.userInfo)
+                }
+                if let nested = entry as? [String: Any] {
+                    if let nsError = nested["error"] as? NSError {
+                        return SkyflowError(domain: nsError.domain, code: nsError.code, userInfo: nsError.userInfo)
+                    }
+                    if let apiError = SkyflowError(apiError: entry) {
+                        return apiError
+                    }
+                }
+            }
+        }
+        return SkyflowError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "\(error)"])
     }
 }

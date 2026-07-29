@@ -1,6 +1,6 @@
 # skyflow-iOS
 ---
-Skyflow’s iOS SDK can be used to securely collect, tokenize, and display sensitive data in the mobile without exposing your front-end infrastructure to sensitive data. 
+Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensitive data in the mobile without exposing your front-end infrastructure to sensitive data. 
  
 [![CI](https://img.shields.io/static/v1?label=CI&message=passing&color=green?style=plastic&logo=github)](https://github.com/skyflowapi/skyflow-ios/actions)
 [![GitHub release](https://img.shields.io/github/v/release/skyflowapi/skyflow-ios.svg)](https://github.com/skyflowapi/skyflow-ios/releases)
@@ -136,7 +136,6 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
  
 ---
 # Securely collecting data client-side
--  [**Inserting data into the vault**](#insert-data-into-the-vault)
 -  [**Using Skyflow Elements to collect data**](#using-skyflow-elements-to-collect-data)
 -  [**Using Skyflow Elements to update data**](#using-skyflow-elements-to-update-data)
 -  [**Using validations on Collect Elements**](#validations)
@@ -144,75 +143,6 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 -  [**UI Error for Collect Elements**](#ui-error-for-collect-elements)
 -  [**Set and Clear value for Collect Elements (DEV ENV ONLY)**](#set-and-clear-value-for-collect-elements-dev-env-only)
  
-## Insert data into the vault
- 
- To insert data into your vault, use the `skyflowClient.insert()` method. 
- ```swift
- insert(records: [String: Any], options: InsertOptions?= InsertOptions() , callback: Skyflow.Callback) 
- ```
- The `insert()` method requires a records parameter. 
- The `records` parameter takes an array of records to insert into the vault.
- 
-#### Insert call example
- ```swift
- let insertCallback = InsertCallback()     //A Custom callback using Skyflow.Callback
- skyflowClient.insert(
-    records: [
-        "records": [
-            [
-                "table": "cards",
-                "fields": [
-                    "cardNumber": "41111111111",
-                    "cvv": "123",
-                ]
-            ]
-        ]
-    ],
-    callback: insertCallback
-)
-```
-Skyflow returns tokens for the record you just inserted.
-```json
-{
-    "records": [ {
-        "table": "cards",
-        "fields": {
-            "cardNumber": "f37186-e7e2-466f-91e5-48e12c2bcbc1",
-            "cvv": "1989cb56-63da-4482-a2df-1f74cd0dd1a5"
-        }
-    }]
-}
-```
- 
- The `options` parameter takes a Skyflow.InsertOptions object.
- 
- InsertOptions includes a `tokens` boolean that controls whether you receive tokens after inserting a record into the vault.
-
-InsertOptions also supports the **upsert** feature, that lets you conditionally insert or update an existing record by specifying the unique column to use as the unique value.
-
-For example, if you specify the ‘customer_id’ column to use for upsert, and the same customer_id  already exists, the existing record will update. If the customer_id doesn't exist, the vault creates a new record.
-
-#### Insert call example
-```swift
-let records = [
-    "records" : [
-        [
-            "table": "customers",  //The table where you are inserting the record.
-            "fields": [                         
-                "name" : "Francis",
-                "customer_id" : "12345"
-            ]
-        ]
-    ]
-]
-
-let upsertOptions = [["table": "customers", "column": "customer_id"]] as [[String : Any]]
-let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
-let insertCallback = InsertCallback()  //Custom callback - implementation of Skyflow.Callback
-
-skyflowClient.insert(records: records, options: insertOptions, callback: insertCallback)
-```
-
 ## Using Skyflow Elements to collect data
  
 **Skyflow Elements** provide developers with pre-built form elements to securely collect sensitive data client-side. This reduces your PCI compliance scope by not exposing your front-end application to sensitive data. Follow the steps below to securely collect data with Skyflow Elements in your application.
@@ -242,9 +172,10 @@ let collectElementInput = Skyflow.CollectElementInput(
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
 )
 ```
-The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. **Note**: 
+The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
+**Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
--  `table` and `column` are optional only if the element is being used in invokeConnection()
+
  
 The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
  
@@ -451,18 +382,32 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 ```
  
 #### Step 4 :  Collect data from Elements
-When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
+When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = nil)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
 // Upsert
-let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
-//Custom callback - implementation of Skyflow.callback
-let insertCallback = InsertCallback() 
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
 container?.collect(callback: insertCallback, options: options)
 
 ```
@@ -514,47 +459,103 @@ let skyflowElement = container?.create(input: input, options: requiredOption)
 // Can interact with this object as a normal UIView Object and add to View
  
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
  
  //Upsert options
- let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
-//Implement a custom Skyflow.Callback to call on Insertion success/failure.
-public class InsertCallback: Skyflow.Callback {
-  public func onSuccess(_ responseBody: Any) {
-      print(responseBody)
-  }
-   public func onFailure(_ error: Any) {
-      print(error)
-  }
-}
- 
-
-// Initialize custom Skyflow.Callback.
-let insertCallback = InsertCallback()
+// Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
+// It parses onSuccess into a typed Skyflow.CollectResponse, and onFailure into a typed
+// Skyflow.SkyflowError whenever the vault returns that structured shape (see below);
+// otherwise onFailure receives the raw error (e.g. a validation SkyflowError) unchanged.
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
  
 // Call collect method on CollectContainer.
 container?.collect(callback: insertCallback, options: collectOptions)
 ```
 
 #### Skyflow returns tokens for the record you just inserted:
-```
+```json
 {
-    "records": [ {
-        "table": "cards",
-        "fields": {
-            "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1"
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "tableName": "persons",
+            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
+            "fields": {
+                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
         }
-    }, {
-        "table": "persons",
-        "fields": {
-            "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
+    ]
+}
+```
+**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+
+#### Sample partial error response:
+Successful and failed records are both returned together in the same `records` array, each carrying its own `httpCode`:
+```json
+{
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
         }
-    }]
+    ]
+}
+```
+
+#### If the entire request fails (for example, the vault itself can't be found):
+This is the API's raw wire-format error - `onFailure` doesn't hand you this dictionary as-is, it's normalized into a `Skyflow.SkyflowError` object with these same fields as flat properties (no `error` wrapper key):
+```json
+{
+        "grpcCode": 5,
+        "httpCode": 404,
+        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
+        "httpStatus": "Not Found",
+        "details": []
+    }
+```
+`Skyflow.CollectCallback`/`Skyflow.RevealCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - this shape (and every other failure, including client-side validation) is always delivered as a `Skyflow.SkyflowError`, with `httpCode`, `message`, `grpcCode`, `httpStatus`, and `details` all available as direct properties (`grpcCode`/`httpStatus`/`details` are only populated for this whole-request-failure shape - `nil` for validation failures):
+```swift
+onFailure: { (skyflowError: Skyflow.SkyflowError) in
+    print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
 }
 ```
 
@@ -584,7 +585,7 @@ let collectElementInput = Skyflow.CollectElementInput(
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
     validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    skyflowID: String,       // The skyflow_id of the record to be updated.
+    skyflowId: String,       // The skyflow_id of the record to be updated.
 )
 ```
 
@@ -592,7 +593,6 @@ The `table` and `column` fields indicate which table and column in the vault the
 
 **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
--  `table` and `column` are optional only if the element is being used in invokeConnection()
 
 Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
  
@@ -629,25 +629,38 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
  
 ### Step 4 :  Update data from Elements
 When the form is ready to submit, call the `collect(options?)` method on the container object. The `options` parameter takes a object of optional parameters as shown below:
-- `tokens`: indicates whether tokens for the collected data should be returned or not. Defaults to 'true'
-- `additionalFields`: Non-PCI elements data to update or insert into the vault which should be in the records object format.
-- `upsert`: To support upsert operations while collecting data from Skyflow elements, pass the table and column marked as unique in the table.
+- `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to update or insert into the vault alongside whatever's collected from the mounted elements.
+- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE", "skyflowID": "value"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"], skyflowId: "value")
+])
 // Upsert
-let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords)
  
-//Custom callback - implementation of Skyflow.callback
-let insertCallback = InsertCallback() 
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
 container?.collect(callback: insertCallback, options: options)
 ```
 
-**Note:** `skyflowID` is required if you want to update the data. If `skyflowID` isn't specified, the `collect(options?)` method creates a new record in the vault.
+**Note:** `skyflowId` is required if you want to update the data. If `skyflowId` isn't specified, the `collect(options?)` method creates a new record in the vault.
 
 ### End to end example of updating data with Skyflow Elements
 ```swift
@@ -683,7 +696,7 @@ let input = Skyflow.CollectElementInput(
     label: "card number",
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
  
 // Create an option to require the element.
@@ -695,28 +708,34 @@ let skyflowElement = container?.create(input: input, options: requiredOption)
 // Can interact with this object as a normal UIView Object and add to View
  
 // Non-PCI records
-let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"]], ["table": "cards", "fields": ["first_name": "Joe"], "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882"]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"]),
+    Skyflow.AdditionalFieldsRecord(table: "cards", fields: ["first_name": "Joe"], skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882")
+])
  
  //Upsert options
- let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
-//Implement a custom Skyflow.Callback to call on Insertion success/failure.
-public class InsertCallback: Skyflow.Callback {
-  public func onSuccess(_ responseBody: Any) {
-      print(responseBody)
-  }
-   public func onFailure(_ error: Any) {
-      print(error)
-  }
-}
- 
-
-// Initialize custom Skyflow.Callback.
-let insertCallback = InsertCallback()
+// Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
+// See "If the entire request fails" above for how onFailure surfaces a typed Skyflow.SkyflowError.
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
  
 // Call collect method on CollectContainer.
 container?.collect(callback: insertCallback, options: collectOptions)
@@ -728,23 +747,61 @@ container?.collect(callback: insertCallback, options: collectOptions)
 {
     "records": [
         {
-            "table": "persons",
+            "tableName": "persons",
+            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "fields": {
-                "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
-                "skyflow_id": "77dc3caf-c452-49e1-8625-07219d7567bf"
-            }
+                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
         },
         {
-            "table": "cards",
+            "tableName": "cards",
+            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
-                "skyflow_id": "431eaa6c-5c15-4513-aa15-29f50babe882",
-                "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-                "first_name": "131e70dc-6f76-4319-bdd3-96281e051051"
-            }
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
+                "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
         }
     ]
 }
 ```
+**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+
+#### Sample partial error response:
+```json
+{
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
+        }
+    ]
+}
+```
+
+#### If the entire request fails 
+This is the API's error - `onFailure` doesn't hand you this dictionary as-is, it's normalized into a `Skyflow.SkyflowError` object with these same fields as flat properties (no `error` wrapper key):
+```json
+{
+        "grpcCode": 5,
+        "httpCode": 404,
+        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
+        "httpStatus": "Not Found",
+        "details": []
+}
+```
+`Skyflow.CollectCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - see [If the entire request fails](#if-the-entire-request-fails-for-example-the-vault-itself-cant-be-found) above for how to read the properties on `Skyflow.SkyflowError`.
 
 ## Validations
  
@@ -1207,24 +1264,38 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 }
 ```
 ### Step 4: Collect data from elements
-When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. 
+When you submit the form, call the `collect(callback: Skyflow.Callback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
-- `additionalFields`: Non-PCI elements data to insert into the vault, specified in the records object format.
-- `upsert`: To support upsert operations, the table containing the data and a column marked as unique in that table.
+- `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
+- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
 // Upsert
-let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
-//Custom callback - implementation of Skyflow.callback
-let insertCallback = InsertCallback() 
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
 container?.collect(callback: insertCallback, options: options)
 ```
 End to end example of collecting data with Composable Elements
@@ -1305,46 +1376,81 @@ do {
 }
  
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
  
  //Upsert options
-let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
  
-//Implement a custom Skyflow.Callback to call on Insertion success/failure.
-public class InsertCallback: Skyflow.Callback {
-  public func onSuccess(_ responseBody: Any) {
-      print(responseBody)
-  }
-   public func onFailure(_ error: Any) {
-      print(error)
-  }
-}
-
-// Initialize custom Skyflow.Callback.
-let insertCallback = InsertCallback()
+// Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
  
 // Call collect method on CollectContainer.
 container?.collect(callback: insertCallback, options: collectOptions)
 ```
 ### Sample Response:
 
-```
+```json
 {
-    "records": [ {
-        "table": "cards",
-        "fields": {
-            "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1"
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "tableName": "persons",
+            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
+            "fields": {
+                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
         }
-    }, {
-        "table": "persons",
-        "fields": {
-            "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
+    ]
+}
+```
+**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+
+#### Sample partial error response:
+```json
+{
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "fields": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
         }
-    }]
+    ]
 }
 ```
 [For information on validations, see validations.](#validations)
@@ -1543,7 +1649,7 @@ let lengthRule = LengthMatchRule(
 // Update validations and placeholder property on cardHolderName.
 cardHolderName.update(update: CollectElementInput(
     placeholder: "cardHolderName",
-    validations: ValidationSet(rules: [lengthRule]))
+    validations: ValidationSet(rules: [lengthRule])
 ))
 ```
 
@@ -1581,7 +1687,7 @@ do {
 // Subscribing to the `SUBMIT` event, which gets triggered when the user hits `enter` key in any container element input.
 composableContainer?.on(eventName: .SUBMIT){
     // Your implementation when the SUBMIT(enter) event occurs.
-    print('Submit Event Listener is being Triggered.')
+    print("Submit Event Listener is being Triggered.")
 }
 
 ```
@@ -1616,7 +1722,7 @@ let composableElementInput = Skyflow.CollectElementInput(
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
     validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    skyflowID: String,          // The skyflow_id of the record to be updated.
+    skyflowId: String,          // The skyflow_id of the record to be updated.
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
@@ -1665,24 +1771,38 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 }
 ```
 ### Step 4: Update data from Elements 
-When you submit the form, call the `collect(options: Skyflow.CollectOptions? = nil, callback: Skyflow.Callback)` method on the container object. 
+When you submit the form, call the `collect(callback: Skyflow.Callback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
-- `additionalFields`: Non-PCI elements data to insert into the vault, specified in the records object format.
-- `upsert`: To support upsert operations, the table containing the data and a column marked as unique in that table.
+- `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
+- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `table`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
 ```swift
 // Non-PCI records
-let nonPCIRecords = ["table": "persons", "fields": [["gender": "MALE"]]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"])
+])
 // Upsert
-let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
-// Send the non-PCI records as additionalFields of InsertOptions (optional) and apply upsert using `upsert` field of InsertOptions (optional)
+let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
+// Send the non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using `upsert` field of CollectOptions (optional)
 
-let options = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions)
+let options = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions)
  
-//Custom callback - implementation of Skyflow.callback
-let insertCallback = InsertCallback() 
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
 container?.collect(callback: insertCallback, options: options)
 ```
 End to end example of collecting data with Composable Elements
@@ -1719,7 +1839,7 @@ let cardHolderNameElementInput = Skyflow.CollectElementInput(
     label: "first name",
     placeholder: "first name",
     type: Skyflow.ElementType.CARDHOLDER_NAME,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
 // Create an option to require the element.
 let requiredOption = Skyflow.CollectElementOptions(required: true) 
@@ -1737,7 +1857,7 @@ let cardNumberElementInput = Skyflow.CollectElementInput(
     label: "card number",
     placeholder: "card number",
     type: Skyflow.ElementType.CARD_NUMBER,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
  
 let cardNumberElement = container?.create(input: cardNumberElementInput, options: requiredOption)
@@ -1751,7 +1871,7 @@ let cvvElementInput = Skyflow.CollectElementInput(
     label: "cvv",
     placeholder: "cvv",
     type: Skyflow.ElementType.CVV,
-    skyflowID: "431eaa6c-5c15-4513-aa15-29f50babe882"
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882"
 )
  
 let cvvElement = container?.create(input: cvvElementInput, options: requiredOption)
@@ -1766,26 +1886,31 @@ do {
 }
  
 // Non-PCI records
-let nonPCIRecords = [["table": "persons", "fields": ["gender": "MALE"],"skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf"]]
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(table: "persons", fields: ["gender": "MALE"], skyflowId: "77dc3caf-c452-49e1-8625-07219d7567bf")
+])
  
  //Upsert options
- let upsertOptions = [["table": "cards", "column": "cardNumber"]] as [[String : Any]]
+ let upsertOptions = [Skyflow.UpsertOption(table: "cards", uniqueColumns: ["cardNumber"], updateType: .UPDATE)]
  
 // Send the Non-PCI records as additionalFields of CollectOptions (optional) and apply upsert using optional field `upsert` of CollectOptions.
-let collectOptions = Skyflow.CollectOptions(tokens: true, additionalFields: nonPCIRecords, upsert: upsertOptions) 
+let collectOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: upsertOptions) 
  
-//Implement a custom Skyflow.Callback to call on Insertion success/failure.
-public class InsertCallback: Skyflow.Callback {
-  public func onSuccess(_ responseBody: Any) {
-      print(responseBody)
-  }
-   public func onFailure(_ error: Any) {
-      print(error)
-  }
-}
-
-// Initialize custom Skyflow.Callback.
-let insertCallback = InsertCallback()
+// Initialize a Skyflow.CollectCallback - required by CollectContainer's collect(callback:options:).
+let insertCallback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("success:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
  
 // Call collect method on CollectContainer.
 container?.collect(callback: insertCallback, options: collectOptions)
@@ -1795,249 +1920,68 @@ container?.collect(callback: insertCallback, options: collectOptions)
 {
     "records": [
         {
-            "table": "persons",
+            "tableName": "persons",
+            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "fields": {
-                "gender": "12f670af-6c7d-4837-83fb-30365fbc0b1e",
-                "skyflow_id": "77dc3caf-c452-49e1-8625-07219d7567bf"
-            }
+                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
         },
         {
-            "table": "cards",
+            "tableName": "cards",
+            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
-                "skyflow_id": "431eaa6c-5c15-4513-aa15-29f50babe882",
-                "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-                "first_name": "131e70dc-6f76-4319-bdd3-96281e051051",
-                "cvv": "098834fe-de99-4fc8-abdf-88c18a28a2cf"
-            }
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
+                "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
+                "cvv": [{"token": "098834fe-de99-4fc8-abdf-88c18a28a2cf", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
         }
     ]
 }
 ```
 ### Sample Partial Error Response:
+Successful and failed records are both returned together in the same `records` array, each carrying its own `httpCode`:
 ```json
 {
     "records": [
         {
-            "table": "cards",
+            "tableName": "cards",
+            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
-                "skyflow_id": "431eaa6c-5c15-4513-aa15-29f50babe882",
-                "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-                "first_name": "131e70dc-6f76-4319-bdd3-96281e051051",
-                "cvv": "098834fe-de99-4fc8-abdf-88c18a28a2cf"
-            }
-        }
-    ],
-    "errors": [
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
+                "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
+                "cvv": [{"token": "098834fe-de99-4fc8-abdf-88c18a28a2cf", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
         {
-            "error": {
-                "code": 400,
-                "message": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs. - request-id: cb397-8521-42c2-870c-92dbeec"
-            }
+            "error": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
+            "skyflowID": null,
+            "tableName": "",
+            "httpCode": 400
         }
     ]
 }
 ```
 
+If the entire request fails (for example, the vault itself can't be found), `onFailure` receives a single structured `Skyflow.SkyflowError` instead of a `records` array. 
+Below is the API's error that `SkyflowError` is built from - the object itself exposes these as flat properties (`grpcCode`, `httpCode`, `message`, `httpStatus`, `details`):
+```json
+
+        "grpcCode": 5,
+        "httpCode": 404,
+        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
+        "httpStatus": "Not Found",
+        "details": []
+    }
+```
+
 # Securely revealing data client-side
--  [**Retrieving data from the vault**](#retrieving-data-from-the-vault)
 -  [**Using Skyflow Elements to reveal data**](#using-skyflow-elements-to-reveal-data)
 -  [**UI Error for Reveal Elements**](#ui-error-for-reveal-elements)
 -  [**Set token for Reveal Elements**](#set-token-for-reveal-elements)
 -  [**Set and clear altText for Reveal Elements**](#set-and-clear-alttext-for-reveal-elements)
- 
-## Retrieving data from the vault
-For non-PCI use-cases, retrieving data from the vault and revealing it in the mobile can be done either using the SkyflowID's or tokens as described below
- 
-- ### Using Skyflow tokens
-    To retrieve record data using tokens, use the `detokenize(records)` method. The records parameter takes a Dictionary object that contains tokens for `record` values to fetch
-    ```swift
-    [
-      "records": [
-        [
-          "token": String,
-          "redaction": Skyflow.RedactionType // Optional. Redaction to apply for retrieved data.     
-        ]
-      ]
-    ]
-   ```
-  Note: `redaction` defaults to [RedactionType.PLAIN_TEXT](#redaction-types).
- 
-The following example code makes a detokenize call to reveal the masked value of a token:
-
-```swift
-  let getCallback = GetCallback()   // Custom callback - implementation of Skyflow.Callback
- 
-  let records = [
-                  "records": [
-                    [
-                      "token": "45012507-f72b-4f5c-9bf9-86b133bae719",
-                    ],
-                    [
-                      "token": "1r434532-6f76-4319-bdd3-96281e051051",
-                      "redaction": Skyflow.RedactionType.MASKED
-                    ]
-                  ]
-                ] as [String: Any]
- 
-  skyflowClient.detokenize(records: records, callback: getCallback)
-  ```
-  The sample response:
-  ```json
-  {
-    "records": [
-      {
-        "token": "131e70dc-6f76-4319-bdd3-96281e051051",
-        "value": "1990-01-01"
-      },
-      {
-        "token": "1r434532-6f76-4319-bdd3-96281e051051",
-        "value": "xxxxxxer",
-      }
-     ]
-  }
-  ```
- 
-- ### Using Skyflow ID's or Unique Column Values
-    For retrieving data from the vault, use the `get(records: JSONObject, options: GetOptions? = GetOptions(), callback: Skyflow.Callback)` method.
-    The `records` parameter takes a Dictionary object that contains `records` to be fetched as shown below. Each object inside array should contain:
-
-    - Either an array of Skyflow IDs to fetch
-    - Or a column name and an array of column values
-    
-    The second parameter, `options`, is a `GetOptions` object that retrieves tokens of Skyflow IDs.
-
-  Notes:
-  - You can use either Skyflow IDs or unique values to retrieve records. You can't use both at the same time.
-  - GetOptions parameter is applicable only for retrieving tokens using Skyflow ID.
-  - You can't pass GetOptions along with the redaction type.
-  - tokens defaults to false.
-
- ```swift
-    [
-      "records": [
-        [
-          "ids": ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
-          "table": String,                      // Name of table holding the above skyflow_id's
-          "redaction": Skyflow.RedactionType    // Redaction to be applied to retrieved data
-        ],
-        [
-          "columnValues": ArrayList<String>(),     // Array of column values of the records to be fetched
-          "table": String,                         // Name of table holding the above skyflow_id's
-          "columnName": String,                    // A unique column name
-          "redaction": Skyflow.RedactionType       // Redaction to be applied to retrieved data
-        ],
-      ]
-    ]
- ```
- ### Redaction Types
-  There are 4 accepted values in Skyflow.RedactionTypes:  
-  - `PLAIN_TEXT`
-  - `MASKED`
-  - `REDACTED`
-  - `DEFAULT`  
-  
- An example of get call to fetch records:
-  ```swift
-  let getCallback = GetCallback() // Custom callback - implementation of Skyflow.Callback
- 
-  let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"]
-  let record = ["ids": skyflowIDs, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
-  
-  let columnValues = ["12345"]
-  let columnRecord = ["columnValues": columnValues,"columnName": "card_pin", "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
-  
-  let invalidID = ["invalid skyflow ID"]
-  let badRecord = ["ids": invalidID, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
- 
-  let records = ["records": [record,columnRecord, badRecord]]
- 
-  skyflowClient.get(records: records, callback: getCallback)
-  ```
- 
-  The sample response:
-  ```json
-  {
-    "records": [{
-        "fields": {
-            "card_number": "4111111111111111",
-            "cvv": "127",
-            "expiry_date": "11/35",
-            "fullname": "myname",
-            "id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
-          },
-          "table": "cards"
-      },{
-        "fields": {
-            "card_number": "4111111111111111",
-            "cvv": "345",
-            "card_pin":"12345"
-            "expiry_date": "12/29",
-            "fullname": "joey",
-            "id": "ed2e7851-9f84-4d70-9e5d-182f6d8d4fa3"
-          },
-        "table": "cards"
-      }
-    ],
-    "errors": [ {
-       "error": {
-          "code": "404",
-          "description": "No Records Found"
-        },
-        "ids": ["invalid skyflow id"]
-    }]
-  }
- ```
-  
-  An example of get call to fetch tokens:
-
-  ```swift
-  let getCallback = GetCallback() // Custom callback - implementation of Skyflow.Callback
- 
-  let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9", "da26de53-95d5-4bdb-99db-8d8c66a35ff9"]
-  let record = ["ids": skyflowIDs, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
-   
-  let invalidID = ["invalid skyflow ID"]
-  let badRecord = ["ids": invalidID, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
- 
-  let records = ["records": [record, badRecord]]
- 
-  skyflowClient.get(records: records, options: GetOptions(tokens: true), callback: getCallback)
-  ```
- The sample Response:
-  ```json
-  {
-  "records": [
-    {
-      "fields": {
-        "card_number": "9802-3257-3113-0294",
-        "expiry_date": "45012507-f72b-4f5c-9bf9-86b133bae719",
-        "fullname": "131e2507-f72b-4f5c-9bf9-86b133bae719",
-        "id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
-      },
-      "table": "cards"
-    },
-    {
-      "fields": {
-        "card_number": "0294-3213-3157-9802",
-        "expiry_date": "131e2507-f72b-4f5c-9bf9-86b133bae719",
-        "fullname": "45012507-f72b-4f5c-9bf9-86b133bae719",
-        "id": "ed2e7851-9f84-4d70-9e5d-182f6d8d4fa3"
-      },
-      "table": "cards"
-    }
-  ],
-  "errors": [
-    {
-      "error": {
-        "code": "404",
-        "description": "No Records Found"
-      },
-      "ids": ["invalid skyflow id"]
-    }
-  ]
-}
-  ```
-
  
 ## Using Skyflow Elements to reveal data
 Skyflow Elements can be used to securely reveal data in an application without exposing your front end to the sensitive data. This is great for use-cases like card issuance where you may want to reveal the card number to a user without increasing your PCI compliance scope.
@@ -2058,12 +2002,10 @@ let revealElementInput = Skyflow.RevealElementInput(
     errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
     label: "cardNumber",                 // optional, label for the element,
     altText: "XXXX XXXX XXXX XXXX",      // optional, string that is shown before reveal, will show token if it is not provided
-    redaction: Skyflow.RedactionType,    // optional. Redaction to apply for retrieved data. E.g. RedactionType.MASKED
 )
 ```
 `Note`: 
-- `token` is optional only if it is being used in invokeConnection()
-- `redaction` defaults to [`RedactionType.PLAIN_TEXT`](#redaction-types).
+- To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. Supported redaction values are `PLAIN_TEXT`, `MASKED`, `REDACTED` and `DEFAULT`.
 
  
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
@@ -2140,9 +2082,33 @@ Elements used for revealing data are mounted to the screen the same way as Eleme
 ### Step 4: Reveal data
 When the sensitive data is ready to be retrieved and revealed, call the `reveal()` method on the container as shown below:
 ```swift
-let revealCallback = RevealCallback()  // Custom callback - implementation of Skyflow.Callback
+let revealCallback = Skyflow.RevealCallback(
+    onSuccess: { (response: Skyflow.RevealResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("revealed:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+    }
+)
 container.reveal(callback: revealCallback)
 ```
+
+To apply a redaction to one or more token groups as part of the detokenize call, pass `tokenGroupRedactions` via `Skyflow.RevealOptions`:
+```swift
+let revealOptions = Skyflow.RevealOptions(
+    tokenGroupRedactions: [
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
+    ]
+)
+container.reveal(callback: revealCallback, options: revealOptions)
+```
+This is a request-level setting - the redaction applies to every token in the named group, not to individual reveal elements.
  
 ### UI Error for Reveal Elements
  
@@ -2188,8 +2154,7 @@ let cardNumberInput = Skyflow.RevealElementInput(
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
     label: "cardnumber",
-    altText: "XXXX XXXX XXXX XXXX",
-    redaction: SKyflow.RedactionType.MASKED
+    altText: "XXXX XXXX XXXX XXXX"
 )
 
 let cardNumberElement = container?.create(input: cardNumberInput)
@@ -2221,42 +2186,80 @@ cvvElement!.setError("custom error")
 // reset error to the element
 cvvElement!.resetError()
 
-// Implement a custom Skyflow.Callback to be called on Reveal success/failure
-public class RevealCallback: Skyflow.Callback {
-    public func onSuccess(_ responseBody: Any) {
-        print(responseBody)
+// Initialize a Skyflow.RevealCallback - required by RevealContainer's reveal(callback:options:).
+let revealCallback = Skyflow.RevealCallback(
+    onSuccess: { (response: Skyflow.RevealResponse) in
+        for record in response.records {
+            if let error = record.error {
+                print("failed:", error, "httpCode:", record.httpCode)
+            } else {
+                print("revealed:", record)
+            }
+        }
+    },
+    onFailure: { (skyflowError: Skyflow.SkyflowError) in
+        print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
     }
-    public func onFailure(_ error: Any) {
-        print(error)
-    }
-}
+)
 
-// Initialize custom Skyflow.Callback
-let revealCallback = RevealCallback()
+// Optional: apply a redaction to a token group as part of the detokenize call
+let revealOptions = Skyflow.RevealOptions(
+    tokenGroupRedactions: [
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
+    ]
+)
 
 // Call reveal method on RevealContainer
-container?.reveal(callback: revealCallback)
+container?.reveal(callback: revealCallback, options: revealOptions)
 
 ```
- 
-The response below shows that some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed.
  
 #### Sample Response:
 ```json
 {
-    "success": [ {
-        "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75"
-    },
-    {
-        "token": "89024714-6a26-4256-b9d4-55ad69aa4047"
-    }],
-    "errors": [ {
-        "id": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
-        "error": {
-            "code": 404,
-            "description": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047"
+    "records": [
+        {
+            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
+        },
+        {
+            "token": "89024714-6a26-4256-b9d4-55ad69aa4047",
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
         }
-    }]
+    ]
+}
+```
+
+#### Sample Partial Error Response:
+Some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed - both are returned together in the same `records` array, each carrying its own `httpCode`. A successful record carries `metadata` (e.g. `skyflowId`, `tableName`), a failed one carries `error` instead:
+```json
+{
+    "records": [
+        {
+            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
+        },
+        {
+            "token": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
+            "error": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047",
+            "httpCode": 404
+        }
+    ]
 }
 ```
  

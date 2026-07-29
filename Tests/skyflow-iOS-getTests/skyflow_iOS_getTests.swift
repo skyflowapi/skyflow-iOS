@@ -108,6 +108,20 @@ class skyflow_iOS_getTests: XCTestCase {
         print(callback.receivedResponse)
         XCTAssertTrue(callback.data.description.contains(ErrorCodes.REDACTION_WITH_TOKEN_NOT_SUPPORTED().description))
     }
-    
-    
+
+    func testGetEmptyVaultURL() {
+        // Client.get()'s vault-level errors route through callRevealOnFailure, which wraps
+        // the NSError in {"errors": [errorObject]} rather than passing it through raw.
+        let expectation = XCTestExpectation(description: "get with empty vaultURL should fail")
+        let callback = DemoAPICallback(expectation: expectation)
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+
+        clientWithEmptyURL.get(records: ["records": [["ids": ["id1"], "table": "persons"]]], callback: callback)
+
+        wait(for: [expectation], timeout: 10.0)
+        let errors = callback.data["errors"] as! [NSError]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0].localizedDescription, ErrorCodes.EMPTY_VAULT_URL().description)
+    }
+
 }

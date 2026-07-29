@@ -69,7 +69,7 @@ class ViewController: UIViewController {
                 label: "Card Number",
                 placeholder: "4111-1111-1111-1111",
                 type: Skyflow.ElementType.CARD_NUMBER,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
 
             )
             let collectNameInput = Skyflow.CollectElementInput(
@@ -79,7 +79,7 @@ class ViewController: UIViewController {
                 label: "Card Holder Name",
                 placeholder: "John Doe",
                 type: Skyflow.ElementType.CARDHOLDER_NAME,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
             )
             let collectCVVInput = Skyflow.CollectElementInput(
                 table: "credit_cards",
@@ -88,7 +88,7 @@ class ViewController: UIViewController {
                 label: "CVV",
                 placeholder: "***",
                 type: .CVV,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
             )
             let collectExpMonthInput = Skyflow.CollectElementInput(
                 table: "credit_cards",
@@ -97,7 +97,7 @@ class ViewController: UIViewController {
                 label: "Expiration Month",
                 placeholder: "MM",
                 type: .EXPIRATION_MONTH,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
 
             )
             let collectExpYearInput = Skyflow.CollectElementInput(
@@ -107,7 +107,7 @@ class ViewController: UIViewController {
                 label: "Expiration Year",
                 placeholder: "YYYY",
                 type: .EXPIRATION_YEAR,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
 
             )
             let requiredOption = Skyflow.CollectElementOptions(required: true)
@@ -164,12 +164,17 @@ class ViewController: UIViewController {
     }
 
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: Skyflow.CollectOptions(tokens: true))
+        let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions())
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: Skyflow.CollectResponse) {
         print(response)
         retryCount = 0
+        for result in response.records {
+            if let error = result.error {
+                print("Record failed:", error, "httpCode:", result.httpCode)
+            }
+        }
         print("Successfully got response:", response)
     }
     internal func updateFailure(error: Any) {

@@ -76,7 +76,7 @@ internal enum Message {
         case .INSERT_TRIGGERED: return "Insert method triggered."
         case .DETOKENIZE_TRIGGERED: return "Detokenize method triggered."
         case .GET_BY_ID_TRIGGERED: return "Get by ID triggered."
-            
+
         //Used in tests
         case .CLIENT_CONNECTION: return "client connection not established" // A
         case .CANNOT_CHANGE_ELEMENT: return "Element can't be changed" // A

@@ -41,13 +41,19 @@ public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
+    var collectResponse: Skyflow.CollectResponse?
+    var revealResponse: Skyflow.RevealResponse?
 
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
 
     public func onSuccess(_ responseBody: Any) {
-        if responseBody is String {
+        if let response = responseBody as? Skyflow.CollectResponse {
+            self.collectResponse = response
+        } else if let response = responseBody as? Skyflow.RevealResponse {
+            self.revealResponse = response
+        } else if responseBody is String {
             self.receivedResponse = responseBody as! String
         }
         else {
@@ -65,5 +71,16 @@ public class DemoAPICallback: Callback {
             self.data = (error as! [String: Any])
         }
         expectation.fulfill()
+    }
+
+    // CollectContainer.collect(callback:)/RevealContainer.reveal(callback:) require the
+    // concrete Skyflow.CollectCallback/RevealCallback types - these wrap self so existing
+    // DemoAPICallback call sites only need a one-word change (.asCollectCallback/.asRevealCallback).
+    var asCollectCallback: Skyflow.CollectCallback {
+        Skyflow.CollectCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
+    }
+
+    var asRevealCallback: Skyflow.RevealCallback {
+        Skyflow.RevealCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
     }
 }

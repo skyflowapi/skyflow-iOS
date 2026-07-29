@@ -25,14 +25,14 @@ public extension Container {
         return revealElement
     }
 
-    func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
+    func reveal(callback: RevealCallback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
         if self.skyflow.vaultID.isEmpty {
             let errorCode = ErrorCodes.EMPTY_VAULT_ID()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        if self.skyflow.vaultURL == "/v1/vaults/"  {
+        if self.skyflow.vaultURL == "/v2/vaults/"  {
             let errorCode = ErrorCodes.EMPTY_VAULT_URL()
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
@@ -61,8 +61,8 @@ public extension Container {
         if let tokens = records["records"] as? [[String: Any]] {
             var list: [RevealRequestRecord] = []
             for token in tokens {
-                if let redaction = token["redaction"] as? RedactionType, let id = token["token"] as? String {
-                    list.append(RevealRequestRecord(token: id, redaction: redaction.rawValue))
+                if let id = token["token"] as? String {
+                    list.append(RevealRequestRecord(token: id))
                 }
             }
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: tempContextOptions,
@@ -72,7 +72,7 @@ public extension Container {
                 onFailureHandler: {
                 }
             )
-            self.skyflow.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
+            self.skyflow.apiClient.get(records: list, tokenGroupRedactions: options?.tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
         }
     }
 }
