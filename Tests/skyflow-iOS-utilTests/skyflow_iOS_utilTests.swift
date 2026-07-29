@@ -78,6 +78,18 @@ final class skyflow_iOS_utilTests: XCTestCase {
         XCTAssertEqual(upsertPayload["updateType"] as! String, "REPLACE")
     }
 
+    // Not exercised by any current call site (UpsertOption always supplies a concrete
+    // updateType today), but the nil default is part of the public API - confirms
+    // "updateType" is omitted from the wire payload rather than serialized as null.
+    func testConstructV2RequestBodyWithUpsertAndNilUpdateType() {
+        let upsert = [UpsertOption(table: "table", uniqueColumns: ["field1"])]
+        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(upsert: upsert))
+        let records = result["records"] as! [[String: Any]]
+        let upsertPayload = records[0]["upsert"] as! [String: Any]
+        XCTAssertEqual(upsertPayload["uniqueColumns"] as! [String], ["field1"])
+        XCTAssertNil(upsertPayload["updateType"])
+    }
+
     // Dormant v1 PDB helpers on APIClient (untyped upsert), kept for potential future PDB reuse.
 
     func testGetUniqueColumn() {

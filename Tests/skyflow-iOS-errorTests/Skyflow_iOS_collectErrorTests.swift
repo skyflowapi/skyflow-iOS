@@ -616,6 +616,40 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertEqual(update.count, 2)
     }
 
+    // Not currently reachable from any documented flow (README only shows ElementValueMatchRule
+    // used to allow a duplicate plain/insert element, not two update-by-skyflowId elements), but
+    // the code path exists in FlowVaultCollectRequestBody's update branch too - covering it now
+    // in case a future update UI (e.g. confirm-password-style re-entry on an editable field) relies on it.
+    func testCreateRequestBodyElementValueMatchRuleBypassesUpdateDuplicate() {
+        let window = UIWindow()
+        let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
+        let options = CollectElementOptions(required: false)
+
+        let updateInput1 = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateElement1 = container?.create(input: updateInput1, options: options)
+        updateElement1?.textField.secureText = "John"
+        updateElement1?.textFieldDidEndEditing(updateElement1!.textField)
+        window.addSubview(updateElement1!)
+
+        var vs = ValidationSet()
+        vs.add(rule: ElementValueMatchRule(element: updateElement1!, error: "ELEMENT NOT MATCHING"))
+        let updateInput2 = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, validations: vs, skyflowId: "id1")
+        let updateElement2 = container?.create(input: updateInput2, options: options)
+        updateElement2?.textField.secureText = "Jane"
+        updateElement2?.textFieldDidEndEditing(updateElement2!.textField)
+        window.addSubview(updateElement2!)
+
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should not fail"))
+        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [updateElement1!, updateElement2!], callback: callback, contextOptions: ContextOptions())
+
+        XCTAssertNotNil(requestBody)
+        let update = requestBody?["update"] as! [String: Any]
+        XCTAssertEqual(update.count, 1)
+        let entry = update["id1"] as! [String: Any]
+        // Second element's value is skipped (continue), not merged over the first's.
+        XCTAssertEqual((entry["fields"] as! [String: String])["name"], "John")
+    }
+
     func testInsertEmptyVaultURL() {
         let expectation = XCTestExpectation(description: "Insert with empty vaultURL should fail")
         let callback = DemoAPICallback(expectation: expectation)
