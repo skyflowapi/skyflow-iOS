@@ -7,10 +7,8 @@
 import Foundation
 
 public struct InsertOptions {
-    var tokens: Bool
-    var upsert: [[String: Any]]?
-    public init(tokens: Bool = true, upsert: [[String:  Any]]? = nil) {
-        self.tokens = tokens
+    var upsert: [UpsertOption]?
+    public init(upsert: [UpsertOption]? = nil) {
         self.upsert = upsert
     }
 }

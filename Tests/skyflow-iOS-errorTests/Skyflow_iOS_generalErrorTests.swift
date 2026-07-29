@@ -69,14 +69,6 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     }
     
     
-    func testGetByIDRecord() {
-        let record = GetByIdRecord(ids: ["id1", "id2"], table: "table", redaction: "DEFAULT")
-        
-        XCTAssertEqual(record.ids, ["id1", "id2"])
-        XCTAssertEqual("table", record.table)
-        XCTAssertEqual(record.redaction, "DEFAULT")
-    }
-    
     func testValidationSet() {
         let validationSet = ValidationSet(
             rules: [SkyflowValidateCardNumber(
@@ -146,8 +138,63 @@ class Skyflow_iOS_generalErrorTests: XCTestCase {
     func testIsTokenValid() {
         let apiClient = APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider())
         let expectation = XCTestExpectation(description: "should get token")
-        
+
         XCTAssertEqual(false, apiClient.isTokenValid())
+    }
+
+    func testSkyflowErrorWrapReturnsExistingInstanceUnchanged() {
+        let original = SkyflowError(domain: "TestDomain", code: 123, userInfo: [NSLocalizedDescriptionKey: "original message"])
+        let wrapped = SkyflowError.wrap(original)
+        XCTAssertTrue(wrapped === original)
+    }
+
+    func testSkyflowErrorWrapPreservesPlainNSError() {
+        let nsError = NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "The Internet connection appears to be offline."])
+        let wrapped = SkyflowError.wrap(nsError)
+
+        XCTAssertEqual(wrapped.domain, "NSURLErrorDomain")
+        XCTAssertEqual(wrapped.httpCode, -1009)
+        XCTAssertEqual(wrapped.message, "The Internet connection appears to be offline.")
+        XCTAssertNil(wrapped.grpcCode)
+        XCTAssertNil(wrapped.httpStatus)
+        XCTAssertNil(wrapped.details)
+    }
+
+    func testSkyflowErrorWrapFallsBackForOpaqueValue() {
+        // Anything that isn't a SkyflowError, the structured {"error": {...}} API shape, an
+        // NSError, or the internal {"errors": [...]} wrapping still needs to produce *something*
+        // usable rather than crash.
+        let wrapped = SkyflowError.wrap("just a plain string, not an error at all")
+        XCTAssertEqual(wrapped.httpCode, 0)
+        XCTAssertTrue(wrapped.message.contains("just a plain string"))
+    }
+
+    func testSkyflowAPIErrorInitMissingOptionalFields() {
+        let apiError: [String: Any] = [
+            "error": ["httpCode": 500, "message": "Internal error"]
+        ]
+        let skyflowError = SkyflowError(apiError: apiError)
+
+        XCTAssertEqual(skyflowError?.httpCode, 500)
+        XCTAssertEqual(skyflowError?.message, "Internal error")
+        XCTAssertNil(skyflowError?.grpcCode)
+        XCTAssertNil(skyflowError?.httpStatus)
+        XCTAssertNil(skyflowError?.details)
+    }
+
+    func testSkyflowAPIErrorInitReturnsNilForMalformedInput() {
+        XCTAssertNil(SkyflowError(apiError: "not a dictionary"))
+        XCTAssertNil(SkyflowError(apiError: ["message": "no nested error key"]))
+    }
+
+    func testSkyflowErrorWrapRecoversNSErrorFromNestedErrorsArray() {
+        // Mirrors what FlowVaultRevealAPICallback.callRevealOnFailure produces for a
+        // whole-request failure reaching Client.detokenize() directly (no RevealValueCallback
+        // in between to unwrap it first).
+        let underlying = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid bearer token"])
+        let wrapped = SkyflowError.wrap(["errors": [["error": underlying]]])
+        XCTAssertEqual(wrapped.httpCode, 400)
+        XCTAssertEqual(wrapped.message, "Invalid bearer token")
     }
 }
 

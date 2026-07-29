@@ -455,7 +455,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
     }
     func testInsertEmptyTableNameForUpsertOption() {
         _ = skyflow.container(type: ContainerType.COMPOSABLE)
-        let upsertOptions = [["column": "person"]]
+        let upsertOptions = [UpsertOption(table: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -467,23 +467,24 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = Skyflow.InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
-    func testCollectBadTableKeyAddionalFields() {
-        let additionalFields = ["records": [["table": []]]]
-        let container = skyflow.container(type: ContainerType.COMPOSABLE)
-        
+
+    func testComposableCollectEmptyVaultURL() {
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+        let container = clientWithEmptyURL.container(type: ContainerType.COMPOSABLE)
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
+        container?.collect(callback: callback)
+
         wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
+
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
     }
     func testCreateRows() {
         let elements = [1, 2]

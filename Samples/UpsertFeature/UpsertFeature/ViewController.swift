@@ -40,7 +40,7 @@ class ViewController: UIViewController {
                 textAlignment: .left,
                 textColor: .blue
             )
-            let focusStyle = Skyflow.Style(borderColor: .blue) ̰
+            let focusStyle = Skyflow.Style(borderColor: .blue)
             let completedStyle = Skyflow.Style(borderColor: UIColor.green, textColor: UIColor.green)
             let invalidStyle = Skyflow.Style(borderColor: UIColor.red, textColor: UIColor.red)
             let styles = Skyflow.Styles(
@@ -150,25 +150,43 @@ class ViewController: UIViewController {
     }
 
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        let revealCallback = Skyflow.RevealCallback(
+            onSuccess: { response in print("reveal success:", response) },
+            onFailure: { error in print("reveal failure:", error) }
+        )
+        self.revealContainer?.reveal(callback: revealCallback)
     }
 
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        let upsertOptions = [["table": "persons", "column": "cardnumber"]] as [[String: Any]]
-        container!.collect(callback: exampleAPICallback, options: Skyflow.CollectOptions(tokens: true))
+        let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
+        let upsertOptions = [Skyflow.UpsertOption(table: "persons", uniqueColumns: ["cardnumber"], updateType: .UPDATE)]
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(upsert: upsertOptions))
     }
 
-    internal func updateSuccess(_ response: SuccessResponse) {
-        updateRevealInputs(tokens: response.records[0].fields)
+    internal func updateSuccess(_ response: Skyflow.CollectResponse) {
+        print(response)
+        for result in response.records {
+            if let error = result.error {
+                print("Record failed:", error, "httpCode:", result.httpCode)
+            }
+        }
+        if let fields = response.records.first?.fields {
+            updateRevealInputs(tokens: fields)
+        }
         print("Successfully got response:", response)
     }
 
-    internal func updateFailure() {
-        print("Failed Operation")
+    internal func updateFailure(error: Any) {
+        print("Failed Operation", error)
     }
 
-    internal func updateRevealInputs(tokens: Fields) {
+    // fields is [String: Any] - column name -> array of {"token","tokenGroupName"} dicts.
+    internal func firstToken(_ fields: [String: Any], column: String) -> (token: String, tokenGroupName: String?) {
+        guard let entries = fields[column] as? [[String: Any]], let first = entries.first else { return ("", nil) }
+        return (first["token"] as? String ?? "", first["tokenGroupName"] as? String)
+    }
+
+    internal func updateRevealInputs(tokens: [String: Any]) {
         let revealBaseStyle = Skyflow.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -185,20 +203,22 @@ class ViewController: UIViewController {
                 self.revealed = true
             }
             let revealCardNumberInput = Skyflow.RevealElementInput(
-                token: tokens.cardnumber,
+                token: firstToken(tokens, column: "cardnumber").token,
                 inputStyles: revealStyles,
                 label: "Card Number",
-                redaction: .DEFAULT
+                redaction: "DEFAULT",
+                tokenGroupName: firstToken(tokens, column: "cardnumber").tokenGroupName
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
                 options: Skyflow.RevealElementOptions()
             )
             let revealCvvInput = Skyflow.RevealElementInput(
-                token: tokens.cvv,
+                token: firstToken(tokens, column: "cvv").token,
                 inputStyles: revealStyles,
                 label: "Cvv",
-                redaction: .DEFAULT
+                redaction: "DEFAULT",
+                tokenGroupName: firstToken(tokens, column: "cvv").tokenGroupName
             )
             self.revealCvv = self.revealContainer?.create(
                 input: revealCvvInput,
