@@ -172,7 +172,8 @@ let collectElementInput = Skyflow.CollectElementInput(
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
 )
 ```
-The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. **Note**: 
+The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
+**Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
 -  `table` and `column` are optional only if the element is being used in invokeConnection()
  
@@ -1858,13 +1859,11 @@ let revealElementInput = Skyflow.RevealElementInput(
     errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
     label: "cardNumber",                 // optional, label for the element,
     altText: "XXXX XXXX XXXX XXXX",      // optional, string that is shown before reveal, will show token if it is not provided
-    redaction: String,                   // optional. Redaction to apply for the element's token group. E.g. "MASKED"
-    tokenGroupName: String,              // optional. Name of the token group the token belongs to.
 )
 ```
 `Note`: 
 - `token` is optional only if it is being used in invokeConnection()
-- `redaction` and `tokenGroupName` work together: when both are provided, the redaction is applied to that token group as part of the detokenize call. If not provided, the vault-configured default redaction is applied. Supported redaction values are `PLAIN_TEXT`, `MASKED`, `REDACTED` and `DEFAULT`.
+- To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. Supported redaction values are `PLAIN_TEXT`, `MASKED`, `REDACTED` and `DEFAULT`.
 
  
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
@@ -1947,6 +1946,17 @@ let revealCallback = Skyflow.RevealCallback(
 )
 container.reveal(callback: revealCallback)
 ```
+
+To apply a redaction to one or more token groups as part of the detokenize call, pass `tokenGroupRedactions` via `Skyflow.RevealOptions`:
+```swift
+let revealOptions = Skyflow.RevealOptions(
+    tokenGroupRedactions: [
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
+    ]
+)
+container.reveal(callback: revealCallback, options: revealOptions)
+```
+This is a request-level setting - the redaction applies to every token in the named group, not to individual reveal elements.
  
 ### UI Error for Reveal Elements
  
@@ -1992,9 +2002,7 @@ let cardNumberInput = Skyflow.RevealElementInput(
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
     label: "cardnumber",
-    altText: "XXXX XXXX XXXX XXXX",
-    redaction: "MASKED",
-    tokenGroupName: "deterministic_string"
+    altText: "XXXX XXXX XXXX XXXX"
 )
 
 let cardNumberElement = container?.create(input: cardNumberInput)
@@ -2036,8 +2044,15 @@ let revealCallback = Skyflow.RevealCallback(
     }
 )
 
+// Optional: apply a redaction to a token group as part of the detokenize call
+let revealOptions = Skyflow.RevealOptions(
+    tokenGroupRedactions: [
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
+    ]
+)
+
 // Call reveal method on RevealContainer
-container?.reveal(callback: revealCallback)
+container?.reveal(callback: revealCallback, options: revealOptions)
 
 ```
  

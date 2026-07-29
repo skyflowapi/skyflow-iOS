@@ -13,17 +13,13 @@ public struct RevealElementInput {
     internal var errorTextStyles: Styles?
     internal var label: String
     internal var altText: String
-    internal var redaction: String?
-    internal var tokenGroupName: String?
 
-    public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, altText: String = "", redaction: String? = nil, tokenGroupName: String? = nil) {
+    public init(token: String = "", inputStyles: Styles = Styles(), labelStyles: Styles = Styles(), errorTextStyles: Styles = Styles(), label: String, altText: String = "") {
         self.token = token
         self.inputStyles = inputStyles
         self.labelStyles = labelStyles
         self.errorTextStyles = errorTextStyles
         self.label = label
         self.altText = altText
-        self.redaction = redaction
-        self.tokenGroupName = tokenGroupName
     }
 }

@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     private var revealButton: UIButton!
 
     private var revealed = false
+    private var tokenGroupRedactions: [Skyflow.TokenGroupRedaction] = []
 
     override func loadView() {
         let view = UIView()
@@ -174,7 +175,8 @@ class ViewController: UIViewController {
             onSuccess: { response in print("reveal success:", response) },
             onFailure: { error in print("reveal failure:", error) }
         )
-        self.revealContainer?.reveal(callback: revealCallback)
+        let revealOptions = Skyflow.RevealOptions(tokenGroupRedactions: self.tokenGroupRedactions.isEmpty ? nil : self.tokenGroupRedactions)
+        self.revealContainer?.reveal(callback: revealCallback, options: revealOptions)
     }
     @objc func submitForm() {
         let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
@@ -235,12 +237,23 @@ class ViewController: UIViewController {
             } else {
                 self.revealed = true
             }
+            // tokenGroupRedactions: request-level redaction per token group, applied when
+            // reveal() is called (see revealForm()) - not per reveal element.
+            self.tokenGroupRedactions = []
+            func addTokenGroupRedaction(_ redaction: String, forColumn column: String) {
+                if let tokenGroupName = self.firstToken(tokens, column: column).tokenGroupName {
+                    self.tokenGroupRedactions.append(Skyflow.TokenGroupRedaction(tokenGroupName: tokenGroupName, redaction: redaction))
+                }
+            }
+            addTokenGroupRedaction("REDACTED", forColumn: "card_number")
+            addTokenGroupRedaction("MASKED", forColumn: "cvv")
+            addTokenGroupRedaction("DEFAULT", forColumn: "cardholder_name")
+            addTokenGroupRedaction("PLAIN_TEXT", forColumn: "expiry_month")
+
             let revealCardNumberInput = Skyflow.RevealElementInput(
                 token: self.firstToken(tokens, column: "card_number").token ?? "",
                 inputStyles: revealStyles,
-                label: "Card Number",
-                redaction: "REDACTED",
-                tokenGroupName: self.firstToken(tokens, column: "card_number").tokenGroupName
+                label: "Card Number"
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
@@ -249,25 +262,19 @@ class ViewController: UIViewController {
             let revealCVVtInput = Skyflow.RevealElementInput(
                 token: self.firstToken(tokens, column: "cvv").token ?? "",
                 inputStyles: revealStyles,
-                label: "CVV",
-                redaction: "MASKED",
-                tokenGroupName: self.firstToken(tokens, column: "cvv").tokenGroupName
+                label: "CVV"
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = Skyflow.RevealElementInput(
                 token: self.firstToken(tokens, column: "cardholder_name").token ?? "",
                 inputStyles: revealStyles,
-                label: "Card Holder Name",
-                redaction: "DEFAULT",
-                tokenGroupName: self.firstToken(tokens, column: "cardholder_name").tokenGroupName
+                label: "Card Holder Name"
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = Skyflow.RevealElementInput(
                 token: self.firstToken(tokens, column: "expiry_month").token ?? "",
                 inputStyles: revealStyles,
-                label: "Expiration Month",
-                redaction: "PLAIN_TEXT",
-                tokenGroupName: self.firstToken(tokens, column: "expiry_month").tokenGroupName
+                label: "Expiration Month"
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = Skyflow.RevealElementInput(

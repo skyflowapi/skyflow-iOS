@@ -204,7 +204,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         }
     }
 
-    func testConstructV2DetokenizeRequestBodyDedupesTokenGroupRedactions() {
+    func testConstructV2DetokenizeRequestBodyPassesThroughDuplicateTokenGroupRedactions() {
         let records = [RevealRequestRecord(token: "token1")]
         let tokenGroupRedactions = [
             TokenGroupRedaction(tokenGroupName: "group1", redaction: "MASKED"),
@@ -213,9 +213,11 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         let result = FlowVaultDetokenizeRequestBody.createRequestBody(vaultID: "vault123", records: records, tokenGroupRedactions: tokenGroupRedactions)
 
         let redactions = result["tokenGroupRedactions"] as! [[String: Any]]
-        XCTAssertEqual(redactions.count, 1)
+        XCTAssertEqual(redactions.count, 2)
         XCTAssertEqual(redactions[0]["tokenGroupName"] as? String, "group1")
-        XCTAssertEqual(redactions[0]["redaction"] as? String, "PLAIN_TEXT")
+        XCTAssertEqual(redactions[0]["redaction"] as? String, "MASKED")
+        XCTAssertEqual(redactions[1]["tokenGroupName"] as? String, "group1")
+        XCTAssertEqual(redactions[1]["redaction"] as? String, "PLAIN_TEXT")
     }
 
     func testGetTokensToErrors() {

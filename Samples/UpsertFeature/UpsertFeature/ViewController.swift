@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     private var revealCvv: Label?
     private var revealButton: UIButton!
     private var revealed = false
+    private var tokenGroupRedactions: [Skyflow.TokenGroupRedaction] = []
 
     override func loadView() {
         let view = UIView()
@@ -154,7 +155,8 @@ class ViewController: UIViewController {
             onSuccess: { response in print("reveal success:", response) },
             onFailure: { error in print("reveal failure:", error) }
         )
-        self.revealContainer?.reveal(callback: revealCallback)
+        let revealOptions = Skyflow.RevealOptions(tokenGroupRedactions: self.tokenGroupRedactions.isEmpty ? nil : self.tokenGroupRedactions)
+        self.revealContainer?.reveal(callback: revealCallback, options: revealOptions)
     }
 
     @objc func submitForm() {
@@ -202,12 +204,21 @@ class ViewController: UIViewController {
             } else {
                 self.revealed = true
             }
+            // tokenGroupRedactions: request-level redaction per token group, applied when
+            // reveal() is called (see revealForm()) - not per reveal element.
+            self.tokenGroupRedactions = []
+            func addTokenGroupRedaction(_ redaction: String, forColumn column: String) {
+                if let tokenGroupName = firstToken(tokens, column: column).tokenGroupName {
+                    self.tokenGroupRedactions.append(Skyflow.TokenGroupRedaction(tokenGroupName: tokenGroupName, redaction: redaction))
+                }
+            }
+            addTokenGroupRedaction("DEFAULT", forColumn: "cardnumber")
+            addTokenGroupRedaction("DEFAULT", forColumn: "cvv")
+
             let revealCardNumberInput = Skyflow.RevealElementInput(
                 token: firstToken(tokens, column: "cardnumber").token,
                 inputStyles: revealStyles,
-                label: "Card Number",
-                redaction: "DEFAULT",
-                tokenGroupName: firstToken(tokens, column: "cardnumber").tokenGroupName
+                label: "Card Number"
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
@@ -216,9 +227,7 @@ class ViewController: UIViewController {
             let revealCvvInput = Skyflow.RevealElementInput(
                 token: firstToken(tokens, column: "cvv").token,
                 inputStyles: revealStyles,
-                label: "Cvv",
-                redaction: "DEFAULT",
-                tokenGroupName: firstToken(tokens, column: "cvv").tokenGroupName
+                label: "Cvv"
             )
             self.revealCvv = self.revealContainer?.create(
                 input: revealCvvInput,

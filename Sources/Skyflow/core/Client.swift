@@ -164,7 +164,7 @@ public class Client {
                 onFailureHandler: {
                 }
             )
-            self.apiClient.get(records: list, callback: logCallback, contextOptions: tempContextOptions)
+            self.apiClient.get(records: list, tokenGroupRedactions: options?.tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
         } else {
             callRevealOnFailure(callback: callback, errorObject: ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: tempContextOptions))
         }

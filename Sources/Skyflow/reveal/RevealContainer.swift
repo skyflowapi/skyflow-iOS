@@ -65,12 +65,6 @@ public extension Container {
                     list.append(RevealRequestRecord(token: id))
                 }
             }
-            var tokenGroupRedactions: [TokenGroupRedaction] = []
-            for element in self.revealElements {
-                if let tokenGroupName = element.revealInput.tokenGroupName, let redaction = element.revealInput.redaction {
-                    tokenGroupRedactions.append(TokenGroupRedaction(tokenGroupName: tokenGroupName, redaction: redaction))
-                }
-            }
             let logCallback = LogCallback(clientCallback: revealValueCallback, contextOptions: tempContextOptions,
                 onSuccessHandler: {
                     Log.info(message: .REVEAL_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
@@ -78,7 +72,7 @@ public extension Container {
                 onFailureHandler: {
                 }
             )
-            self.skyflow.apiClient.get(records: list, tokenGroupRedactions: tokenGroupRedactions.isEmpty ? nil : tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
+            self.skyflow.apiClient.get(records: list, tokenGroupRedactions: options?.tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
         }
     }
 }
