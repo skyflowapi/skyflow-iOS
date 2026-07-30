@@ -165,11 +165,13 @@ let collectElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
+    validations: ValidationSet,      // optional set of validations for the input element
+    skyflowId: String,               // optional, the skyflow_id of the record to update
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
@@ -218,7 +220,7 @@ let styles = Skyflow.Styles(
     empty: style,                   // optional
     focus: style,                   // optional
     invalid: style,                 // optional
-    requiredAsterisk: style        // optional 
+    requiredAstrisk: style        // optional 
 )
 ```
  
@@ -226,7 +228,7 @@ The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyfl
  
 The states that are available for `labelStyles` are `base` and `focus`.
 
-`requiredAsterisk`: Styles applied for the Asterisk symbol in the label. Defaults to red.
+`requiredAstrisk`: Styles applied for the Asterisk symbol in the label. Defaults to red.
 
 The state that is available for `errorTextStyles` is only the `base` state, it shows up when there is some error in the collect element.
  
@@ -238,7 +240,7 @@ The parameters in `Skyflow.Style` object that are respected for `label` and `err
  
 Other parameters in the `Skyflow.Style` object are ignored for `label` and `errorText` text views.
  
-Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the appropriate regex and validations to the form element. There are currently 5 types:
+Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the appropriate regex and validations to the form element. There are currently 8 types:
 - `INPUT_FIELD`
 - `CARDHOLDER_NAME`
 - `CARD_NUMBER`
@@ -342,11 +344,13 @@ let collectElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
+    validations: ValidationSet,      // optional set of validations for the input element
+    skyflowId: String,               // optional, the skyflow_id of the record to update
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
@@ -382,7 +386,7 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 ```
  
 #### Step 4 :  Collect data from Elements
-When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = nil)` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
+When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 ```swift
 // Non-PCI records
 let nonPCIRecords = Skyflow.AdditionalFields(records: [
@@ -500,7 +504,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -508,7 +512,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
-            "fields": {
+            "tokens": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -526,7 +530,7 @@ Successful and failed records are both returned together in the same `records` a
         {
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -749,7 +753,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
-            "fields": {
+            "tokens": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -757,7 +761,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
                 "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}]
             },
@@ -775,7 +779,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -882,7 +886,7 @@ element!.on(eventName: Skyflow.EventName) { _ in
 }
 ```
  
-There are 4 events in `Skyflow.EventName`
+4 of `Skyflow.EventName`'s events apply to an individual Element's `.on(eventName:)` listener:
 - `CHANGE`  
   Change event is triggered when the Element's value changes.
 - `READY`   
@@ -891,6 +895,9 @@ There are 4 events in `Skyflow.EventName`
  Focus event is triggered when the Element gains focus
 - `BLUR`    
   Blur event is triggered when the Element loses focus.
+
+`Skyflow.EventName` has a 5th case, `SUBMIT`, but it's a no-op on an individual Element's `.on(eventName:)` - it only fires on a Composable **container's** `.on(eventName:)`, see [Set an event listener on a composable container](#set-an-event-listener-on-a-composable-container).
+
 The handler ```(state: [String: Any]) -> Void``` is a callback function you provide, that will be called when the event is fired with the state object as shown below. 
  
 ```swift
@@ -1106,11 +1113,13 @@ let composableElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
+    validations: ValidationSet,      // optional set of validations for the input element
+    skyflowId: String,               // optional, the skyflow_id of the record to update
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
@@ -1193,6 +1202,8 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
+  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  cardMetaData: [String: [Skyflow.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
 )
 ```
 - `required`: Indicates whether the field is marked as required or not. Default is `false`.
@@ -1224,11 +1235,13 @@ let composableElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
+    validations: ValidationSet,      // optional set of validations for the input element
+    skyflowId: String,               // optional, the skyflow_id of the record to update
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
@@ -1414,7 +1427,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -1422,7 +1435,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
-            "fields": {
+            "tokens": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -1439,7 +1452,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -1466,12 +1479,14 @@ element!.on(eventName: Skyflow.EventName) { _ in
 }
 ```
 
-The SDK supports four events:
+4 of `Skyflow.EventName`'s events apply to an individual Element's `.on(eventName:)` listener:
 
 - CHANGE: Triggered when the Element's value changes.
 - READY: Triggered when the Element is fully rendered.
 - FOCUS: Triggered when the Element gains focus.
 - BLUR: Triggered when the Element loses focus.
+
+`Skyflow.EventName` has a 5th case, `SUBMIT`, but it's a no-op on an individual Element's `.on(eventName:)` - it only fires on a Composable **container's** `.on(eventName:)`, see [Set an event listener on a composable container](#set-an-event-listener-on-a-composable-container) below.
 
 The handler ```(state: [String: Any]) -> Void``` is a callback function you provide, that will be called when the event is fired with the state object as shown below. 
 
@@ -1717,12 +1732,13 @@ let composableElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    validations: ValidationSet,      // optional set of validations for the input element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    skyflowId: String,          // The skyflow_id of the record to be updated.
+    validations: ValidationSet,      // optional set of validations for the input element
+    skyflowId: String,               // The skyflow_id of the record to be updated.
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
@@ -1922,7 +1938,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
-            "fields": {
+            "tokens": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
@@ -1930,7 +1946,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         {
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
                 "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
                 "cvv": [{"token": "098834fe-de99-4fc8-abdf-88c18a28a2cf", "tokenGroupName": "deterministic_string"}]
@@ -1948,7 +1964,7 @@ Successful and failed records are both returned together in the same `records` a
         {
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
-            "fields": {
+            "tokens": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
                 "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
                 "cvv": [{"token": "098834fe-de99-4fc8-abdf-88c18a28a2cf", "tokenGroupName": "deterministic_string"}]
@@ -2000,7 +2016,7 @@ let revealElementInput = Skyflow.RevealElementInput(
     inputStyles: Skyflow.Styles(),       // optional, styles to be applied to the element
     labelStyles: Skyflow.Styles(),       // optional, styles to be applied to the label of the reveal element
     errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
-    label: "cardNumber",                 // optional, label for the element,
+    label: "cardNumber",                 // required, label for the element,
     altText: "XXXX XXXX XXXX XXXX",      // optional, string that is shown before reveal, will show token if it is not provided
 )
 ```
