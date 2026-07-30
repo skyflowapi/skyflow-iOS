@@ -68,8 +68,8 @@ internal class FlowVaultCollectRequestBody {
 
         if let additionalFields = additionalFields {
             for entry in additionalFields.records {
-                let tableName = entry.table
-                let fields = entry.fields
+                let tableName = entry.tableName
+                let fields = entry.data
                 // Matches the element-based check below: an empty string is treated the same as
                 // absent, falling back to a plain insert rather than an update targeting "".
                 if let skyflowId = entry.skyflowId, !skyflowId.isEmpty {

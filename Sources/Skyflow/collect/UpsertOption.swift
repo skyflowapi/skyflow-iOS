@@ -12,12 +12,12 @@ public enum UpdateType: String {
 }
 
 public struct UpsertOption {
-    public let table: String
+    public let tableName: String
     public let uniqueColumns: [String]
     public let updateType: UpdateType?
 
-    public init(table: String, uniqueColumns: [String], updateType: UpdateType? = nil) {
-        self.table = table
+    public init(tableName: String, uniqueColumns: [String], updateType: UpdateType? = nil) {
+        self.tableName = tableName
         self.uniqueColumns = uniqueColumns
         self.updateType = updateType
     }

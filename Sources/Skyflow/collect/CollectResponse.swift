@@ -21,7 +21,7 @@ public struct CollectRecord {
     public let tableName: String?
     public let skyflowId: String?
     // Keyed by column name, e.g. "card_number": [{"token": "...", "tokenGroupName": "..."}].
-    public let fields: [String: Any]?
+    public let tokens: [String: Any]?
     // Keyed by column name, e.g. "card_number": [{"data": "...", "hashName": "..."}].
     public let hashedData: [String: Any]?
     public let httpCode: Int
@@ -32,7 +32,9 @@ public struct CollectRecord {
         // Wire key is intentionally left as "skyflowID" here - only the public Swift-facing
         // property name changed, not the response dict this reads from.
         self.skyflowId = dict["skyflowID"] as? String
-        self.fields = dict["fields"] as? [String: Any]
+        // Dict key is intentionally left as "fields" here - only the public Swift-facing
+        // property name changed, not the response dict this reads from.
+        self.tokens = dict["fields"] as? [String: Any]
         self.hashedData = dict["hashedData"] as? [String: Any]
         self.httpCode = dict["httpCode"] as? Int ?? 0
         self.error = dict["error"] as? String

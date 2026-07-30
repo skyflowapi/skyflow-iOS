@@ -193,13 +193,13 @@ class ViewController: UIViewController {
         // If a record with a matching card_number already exists, its fields are merged
         // in (updateType: .UPDATE) instead of creating a duplicate row.
         let upsertOptions = [
-            Skyflow.UpsertOption(table: "credit_cards", uniqueColumns: ["card_number"], updateType: .UPDATE)
+            Skyflow.UpsertOption(tableName: "credit_cards", uniqueColumns: ["card_number"], updateType: .UPDATE)
         ]
 
         // additionalFields: extra records submitted alongside whatever's collected from
         // the mounted elements, one entry per table.
         let additionalFields = Skyflow.AdditionalFields(records: [
-            Skyflow.AdditionalFieldsRecord(table: "credit_cards", fields: ["billing_zip": "94105"])
+            Skyflow.AdditionalFieldsRecord(tableName: "credit_cards", data: ["billing_zip": "94105"])
         ])
 
         container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(additionalFields: additionalFields, upsert: upsertOptions))
@@ -212,8 +212,8 @@ class ViewController: UIViewController {
                 print("Record failed:", error, "httpCode:", result.httpCode)
             }
         }
-        if let fields = response.records.first?.fields {
-            updateRevealInputs(tokens: fields)
+        if let tokens = response.records.first?.tokens {
+            updateRevealInputs(tokens: tokens)
         }
         print("Successfully got response:", response)
     }

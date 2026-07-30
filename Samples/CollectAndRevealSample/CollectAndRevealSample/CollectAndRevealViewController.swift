@@ -181,8 +181,8 @@ class CollectAndRevealViewController: UIViewController {
                 print("Record failed:", error, "httpCode:", result.httpCode)
             }
         }
-        if let fields = response.records.first?.fields {
-            updateRevealInputs(tokens: fields)
+        if let tokens = response.records.first?.tokens {
+            updateRevealInputs(tokens: tokens)
         }
         print("Successfully got response:", response)
     }

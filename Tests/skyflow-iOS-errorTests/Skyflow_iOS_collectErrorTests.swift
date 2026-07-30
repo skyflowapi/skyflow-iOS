@@ -291,7 +291,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let callback = DemoAPICallback(expectation: expectation)
         
         let fields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "persons", fields: ["cvv": "123", "name": "John Doe"])
+            AdditionalFieldsRecord(tableName: "persons", data: ["cvv": "123", "name": "John Doe"])
         ])
         FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
@@ -317,8 +317,8 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let callback = DemoAPICallback(expectation: expectation)
         
         let fields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "persons", fields: ["duplicate": "123", "name": "John Doe"]),
-            AdditionalFieldsRecord(table: "persons", fields: ["duplicate": "123"])
+            AdditionalFieldsRecord(tableName: "persons", data: ["duplicate": "123", "name": "John Doe"]),
+            AdditionalFieldsRecord(tableName: "persons", data: ["duplicate": "123"])
         ])
         FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
@@ -343,8 +343,8 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let callback = DemoAPICallback(expectation: expectation)
         
         let fields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "persons", fields: ["cvv": "123"]),
-            AdditionalFieldsRecord(table: "persons", fields: ["duplicate": "123"])
+            AdditionalFieldsRecord(tableName: "persons", data: ["cvv": "123"]),
+            AdditionalFieldsRecord(tableName: "persons", data: ["duplicate": "123"])
         ])
         FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
@@ -401,7 +401,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
 
     func testCreateRequestBodyWithSkyflowIDInAdditionalFields() {
         let additionalFields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "table1", fields: ["column1": "value1"], skyflowId: "id1")
+            AdditionalFieldsRecord(tableName: "table1", data: ["column1": "value1"], skyflowId: "id1")
         ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Update via additionalFields"))
         let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
@@ -417,7 +417,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         // Matches element-based skyflowId handling: an empty string is treated the same as
         // absent (falls back to a plain insert), rather than creating an update targeting "".
         let additionalFields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "table1", fields: ["column1": "value1"], skyflowId: "")
+            AdditionalFieldsRecord(tableName: "table1", data: ["column1": "value1"], skyflowId: "")
         ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Empty skyflowId falls back to insert"))
         let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
@@ -435,8 +435,8 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         // Two additionalFields entries that both target the same skyflowId should merge their
         // fields into a single update payload entry, not clobber or duplicate it.
         let additionalFields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "persons", fields: ["name": "John"], skyflowId: "id1"),
-            AdditionalFieldsRecord(table: "persons", fields: ["email": "john@example.com"], skyflowId: "id1")
+            AdditionalFieldsRecord(tableName: "persons", data: ["name": "John"], skyflowId: "id1"),
+            AdditionalFieldsRecord(tableName: "persons", data: ["email": "john@example.com"], skyflowId: "id1")
         ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Merge additionalFields sharing a skyflowId"))
         let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
@@ -515,7 +515,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(insertElement!)
 
         let additionalFields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "accounts", fields: ["status": "active"])
+            AdditionalFieldsRecord(tableName: "accounts", data: ["status": "active"])
         ])
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Element insert + additionalFields insert"))
@@ -544,7 +544,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(updateElement!)
 
         let additionalFields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "accounts", fields: ["status": "active"])
+            AdditionalFieldsRecord(tableName: "accounts", data: ["status": "active"])
         ])
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Element update + additionalFields insert"))
@@ -581,8 +581,8 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(updateElement!)
 
         let additionalFields = AdditionalFields(records: [
-            AdditionalFieldsRecord(table: "accounts", fields: ["status": "active"]),
-            AdditionalFieldsRecord(table: "billing", fields: ["zip": "94105"], skyflowId: "id2")
+            AdditionalFieldsRecord(tableName: "accounts", data: ["status": "active"]),
+            AdditionalFieldsRecord(tableName: "billing", data: ["zip": "94105"], skyflowId: "id2")
         ])
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Full combination"))
@@ -600,7 +600,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertEqual((update["id2"] as! [String: Any])["table"] as! String, "billing")
 
         // Apply upsert on top, matching only the "cards" table.
-        let upsertOptions = [UpsertOption(table: "cards", uniqueColumns: ["card_number"], updateType: .UPDATE)]
+        let upsertOptions = [UpsertOption(tableName: "cards", uniqueColumns: ["card_number"], updateType: .UPDATE)]
         let wireBody = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: requestBody!, options: FlowVaultICOptions(upsert: upsertOptions))
         let wireRecords = wireBody["records"] as! [[String: Any]]
 

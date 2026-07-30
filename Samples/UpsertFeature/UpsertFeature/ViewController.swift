@@ -169,7 +169,7 @@ class ViewController: UIViewController {
 
     @objc func submitForm() {
         let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
-        let upsertOptions = [Skyflow.UpsertOption(table: "persons", uniqueColumns: ["cardnumber"], updateType: .UPDATE)]
+        let upsertOptions = [Skyflow.UpsertOption(tableName: "persons", uniqueColumns: ["cardnumber"], updateType: .UPDATE)]
         container!.collect(callback: collectCallback, options: Skyflow.CollectOptions(upsert: upsertOptions))
     }
 
@@ -180,8 +180,8 @@ class ViewController: UIViewController {
                 print("Record failed:", error, "httpCode:", result.httpCode)
             }
         }
-        if let fields = response.records.first?.fields {
-            updateRevealInputs(tokens: fields)
+        if let tokens = response.records.first?.tokens {
+            updateRevealInputs(tokens: tokens)
         }
         print("Successfully got response:", response)
     }

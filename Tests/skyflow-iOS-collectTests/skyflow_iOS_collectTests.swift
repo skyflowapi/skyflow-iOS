@@ -757,7 +757,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testCollectEmptyTableAddionalFields() {
-        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(table: "", fields: ["field": "value"])])
+        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(tableName: "", data: ["field": "value"])])
         let container = skyflow.container(type: ContainerType.COLLECT)
 
         let expectation = XCTestExpectation()
@@ -770,7 +770,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     }
 
     func testCollectEmptyFieldsAddionalFields() {
-        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(table: "table", fields: [:])])
+        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(tableName: "table", data: [:])])
         let container = skyflow.container(type: ContainerType.COLLECT)
 
         let expectation = XCTestExpectation()
@@ -795,7 +795,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testCollectEmptyUniqueColumnsUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(table: "card1", uniqueColumns: [])]
+        let upsertOptions = [UpsertOption(tableName: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
@@ -807,7 +807,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testCollectEmptyTableNameUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(table: "", uniqueColumns: ["person"])]
+        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
@@ -839,7 +839,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testInsertEmptyUniqueColumnsUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(table: "card1", uniqueColumns: [])]
+        let upsertOptions = [UpsertOption(tableName: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -860,7 +860,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testInsertEmptyTableNameUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(table: "", uniqueColumns: ["person"])]
+        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
