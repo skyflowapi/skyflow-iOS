@@ -1264,7 +1264,7 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 }
 ```
 ### Step 4: Collect data from elements
-When you submit the form, call the `collect(callback: Skyflow.Callback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
+When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
@@ -1771,7 +1771,7 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 }
 ```
 ### Step 4: Update data from Elements 
-When you submit the form, call the `collect(callback: Skyflow.Callback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
+When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
