@@ -28,7 +28,7 @@ internal struct FlowVaultICOptions {
             }
 
             for (index, currUpsertOption) in self.upsert!.enumerated() {
-                if currUpsertOption.table == "" {
+                if currUpsertOption.tableName == "" {
                     let errorCode = ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "\(index)")
                     self.callback!.onFailure(errorCode.getErrorObject(contextOptions: self.contextOptions!))
                     return true

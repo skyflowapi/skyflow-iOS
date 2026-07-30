@@ -70,7 +70,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
     }
 
     func testConstructV2RequestBodyWithUpsert() {
-        let upsert = [UpsertOption(table: "table", uniqueColumns: ["field1"], updateType: .REPLACE)]
+        let upsert = [UpsertOption(tableName: "table", uniqueColumns: ["field1"], updateType: .REPLACE)]
         let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(upsert: upsert))
         let records = result["records"] as! [[String: Any]]
         let upsertPayload = records[0]["upsert"] as! [String: Any]
@@ -82,7 +82,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
     // updateType today), but the nil default is part of the public API - confirms
     // "updateType" is omitted from the wire payload rather than serialized as null.
     func testConstructV2RequestBodyWithUpsertAndNilUpdateType() {
-        let upsert = [UpsertOption(table: "table", uniqueColumns: ["field1"])]
+        let upsert = [UpsertOption(tableName: "table", uniqueColumns: ["field1"])]
         let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(upsert: upsert))
         let records = result["records"] as! [[String: Any]]
         let upsertPayload = records[0]["upsert"] as! [String: Any]

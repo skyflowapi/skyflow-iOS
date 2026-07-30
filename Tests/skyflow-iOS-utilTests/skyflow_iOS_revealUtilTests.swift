@@ -696,6 +696,32 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         XCTAssertEqual(failure.httpCode, 404)
     }
 
+    // The vault sends metadata's skyflowId field as "skyflowID" on the wire - RevealRecord
+    // normalizes it to "skyflowId" so it's consistent with Skyflow.CollectRecord.skyflowId,
+    // rather than exposing the raw wire casing to consumers.
+    func testRevealRecordNormalizesSkyflowIDKeyInMetadata() {
+        let record = RevealRecord(["token": "abc", "httpCode": 200, "metadata": ["skyflowID": "SID", "tableName": "table"]])
+        let metadata = record.metadata!
+        XCTAssertEqual(metadata["skyflowId"] as? String, "SID")
+        XCTAssertNil(metadata["skyflowID"])
+        XCTAssertEqual(metadata["tableName"] as? String, "table")
+    }
+
+    // Exact metadata shape reported from a real device run: {"skyflowID": "426279b9-...",
+    // "tableName": "table5"}.
+    func testRevealRecordNormalizesSkyflowIDKeyInMetadataWithReportedRealWorldValues() {
+        let record = RevealRecord([
+            "token": "abc",
+            "httpCode": 200,
+            "metadata": ["skyflowID": "426279b9-efe0-44df-bc39-16839bc86e86", "tableName": "table5"]
+        ])
+        print("metadata:", record.metadata as Any)
+        let metadata = record.metadata!
+        XCTAssertEqual(metadata["skyflowId"] as? String, "426279b9-efe0-44df-bc39-16839bc86e86")
+        XCTAssertNil(metadata["skyflowID"])
+        XCTAssertEqual(metadata["tableName"] as? String, "table5")
+    }
+
     func testRevealResponseInitReturnsNilForMalformedBody() {
         XCTAssertNil(RevealResponse("not a dictionary"))
         XCTAssertNil(RevealResponse(["typo": []]))

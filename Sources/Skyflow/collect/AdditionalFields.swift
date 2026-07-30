@@ -8,14 +8,14 @@
 import Foundation
 
 public struct AdditionalFieldsRecord {
-    public let table: String
-    public let fields: [String: Any]
+    public let tableName: String
+    public let data: [String: Any]
     // Present to update an existing record, absent to insert a new one.
     public let skyflowId: String?
 
-    public init(table: String, fields: [String: Any], skyflowId: String? = nil) {
-        self.table = table
-        self.fields = fields
+    public init(tableName: String, data: [String: Any], skyflowId: String? = nil) {
+        self.tableName = tableName
+        self.data = data
         self.skyflowId = skyflowId
     }
 }

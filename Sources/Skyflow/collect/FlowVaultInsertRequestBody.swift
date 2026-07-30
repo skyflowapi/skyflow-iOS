@@ -14,7 +14,7 @@ internal class FlowVaultInsertRequestBody {
             temp["data"] = record["fields"]
             if let tableName = record["table"] as? String {
                 temp["tableName"] = tableName
-                if let upsertOptions = options.upsert, let match = upsertOptions.first(where: { $0.table == tableName }) {
+                if let upsertOptions = options.upsert, let match = upsertOptions.first(where: { $0.tableName == tableName }) {
                     var upsertPayload: [String: Any] = ["uniqueColumns": match.uniqueColumns]
                     if let updateType = match.updateType {
                         upsertPayload["updateType"] = updateType.rawValue

@@ -108,10 +108,10 @@ public extension Container {
     }
 
     private func checkRecord(record: AdditionalFieldsRecord, index: Int) -> ErrorCodes? {
-        if record.table.isEmpty {
+        if record.tableName.isEmpty {
             return .EMPTY_TABLE_NAME()
         }
-        if record.fields.isEmpty {
+        if record.data.isEmpty {
             return .EMPTY_FIELDS_KEY(value: "\(index)")
         }
         return nil

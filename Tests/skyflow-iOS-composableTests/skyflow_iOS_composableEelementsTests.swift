@@ -455,7 +455,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
     }
     func testInsertEmptyTableNameForUpsertOption() {
         _ = skyflow.container(type: ContainerType.COMPOSABLE)
-        let upsertOptions = [UpsertOption(table: "", uniqueColumns: ["person"])]
+        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
