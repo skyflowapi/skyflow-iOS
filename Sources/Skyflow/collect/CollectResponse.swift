@@ -19,7 +19,7 @@ public struct CollectResponse {
 // with its own httpCode.
 public struct CollectRecord {
     public let tableName: String?
-    public let skyflowID: String?
+    public let skyflowId: String?
     // Keyed by column name, e.g. "card_number": [{"token": "...", "tokenGroupName": "..."}].
     public let fields: [String: Any]?
     // Keyed by column name, e.g. "card_number": [{"data": "...", "hashName": "..."}].
@@ -29,7 +29,9 @@ public struct CollectRecord {
 
     init(_ dict: [String: Any]) {
         self.tableName = dict["tableName"] as? String
-        self.skyflowID = dict["skyflowID"] as? String
+        // Wire key is intentionally left as "skyflowID" here - only the public Swift-facing
+        // property name changed, not the response dict this reads from.
+        self.skyflowId = dict["skyflowID"] as? String
         self.fields = dict["fields"] as? [String: Any]
         self.hashedData = dict["hashedData"] as? [String: Any]
         self.httpCode = dict["httpCode"] as? Int ?? 0

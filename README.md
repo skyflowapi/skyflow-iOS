@@ -499,7 +499,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     "records": [
         {
             "tableName": "cards",
-            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
@@ -507,7 +507,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         },
         {
             "tableName": "persons",
-            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
+            "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "fields": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
@@ -525,7 +525,7 @@ Successful and failed records are both returned together in the same `records` a
     "records": [
         {
             "tableName": "cards",
-            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
@@ -533,7 +533,7 @@ Successful and failed records are both returned together in the same `records` a
         },
         {
             "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
-            "skyflowID": null,
+            "skyflowId": null,
             "tableName": "",
             "httpCode": 400
         }
@@ -748,7 +748,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     "records": [
         {
             "tableName": "persons",
-            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
+            "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "fields": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
@@ -756,7 +756,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         },
         {
             "tableName": "cards",
-            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
+            "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
                 "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}]
@@ -774,7 +774,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     "records": [
         {
             "tableName": "cards",
-            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
+            "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
@@ -782,7 +782,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         },
         {
             "error": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
-            "skyflowID": null,
+            "skyflowId": null,
             "tableName": "",
             "httpCode": 400
         }
@@ -1413,7 +1413,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     "records": [
         {
             "tableName": "cards",
-            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
@@ -1421,7 +1421,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         },
         {
             "tableName": "persons",
-            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
+            "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "fields": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
@@ -1438,7 +1438,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     "records": [
         {
             "tableName": "cards",
-            "skyflowID": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
             },
@@ -1446,7 +1446,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         },
         {
             "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
-            "skyflowID": null,
+            "skyflowId": null,
             "tableName": "",
             "httpCode": 400
         }
@@ -1921,7 +1921,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     "records": [
         {
             "tableName": "persons",
-            "skyflowID": "77dc3caf-c452-49e1-8625-07219d7567bf",
+            "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "fields": {
                 "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
             },
@@ -1929,7 +1929,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
         },
         {
             "tableName": "cards",
-            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
+            "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
                 "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
@@ -1947,7 +1947,7 @@ Successful and failed records are both returned together in the same `records` a
     "records": [
         {
             "tableName": "cards",
-            "skyflowID": "431eaa6c-5c15-4513-aa15-29f50babe882",
+            "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "fields": {
                 "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
                 "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
@@ -1957,7 +1957,7 @@ Successful and failed records are both returned together in the same `records` a
         },
         {
             "error": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
-            "skyflowID": null,
+            "skyflowId": null,
             "tableName": "",
             "httpCode": 400
         }

@@ -553,8 +553,8 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             return
         }
         XCTAssertEqual(collectResponse.records.count, 2)
-        XCTAssertTrue(collectResponse.records.contains { $0.tableName == "cards" && $0.skyflowID == "insertedId" })
-        XCTAssertTrue(collectResponse.records.contains { $0.tableName == "persons" && $0.skyflowID == "id1" })
+        XCTAssertTrue(collectResponse.records.contains { $0.tableName == "cards" && $0.skyflowId == "insertedId" })
+        XCTAssertTrue(collectResponse.records.contains { $0.tableName == "persons" && $0.skyflowId == "id1" })
     }
 
     func testInsertSucceedsButUpdateFailsSurfacesAsSkyflowError() {
