@@ -7,18 +7,109 @@ Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensiti
 [![License](https://img.shields.io/github/license/skyflowapi/skyflow-ios)](https://github.com/skyflowapi/skyflow-ios/blob/main/LICENSE)
  
 # Table of Contents
+- [Upgrading from PDB to FlowDB](#upgrading-from-pdb-to-flowdb)
+- [Quick Start](#quick-start)
+    - [Collect data](#collect-data)
+    - [Reveal data](#reveal-data)
 - [Installation](#installation)
     - [Requirements](#requirements)
     - [Configuration](#configuration)
 - [Initializing Skyflow-iOS](#initializing-skyflow-ios)
 - [Securely collecting data client-side](#securely-collecting-data-client-side)
+    - [Using Skyflow Elements to collect data](#using-skyflow-elements-to-collect-data)
+    - [Using Skyflow Elements to update data](#using-skyflow-elements-to-update-data)
+    - [Validations](#validations)
+    - [Event Listener on Collect Elements](#event-listener-on-collect-elements)
+    - [UI Error for Collect Elements](#ui-error-for-collect-elements)
+    - [Set and Clear value for Collect Elements (DEV ENV ONLY)](#set-and-clear-value-for-collect-elements-dev-env-only)
 - [Securely collecting data client-side using Composable Elements](#securely-collecting-data-client-side-using-composable-elements)
+    - [When to use Composable vs. Basic Elements](#when-to-use-composable-vs-basic-elements)
+    - [Using Skyflow Composable Elements to collect data](#using-skyflow-composable-elements-to-collect-data)
+    - [Using Skyflow Composable Elements to update data](#using-skyflow-composable-elements-to-update-data)
 - [Securely revealing data client-side](#securely-revealing-data-client-side)
- 
+    - [Using Skyflow Elements to reveal data](#using-skyflow-elements-to-reveal-data)
+- [Error Handling Reference](#error-handling-reference)
+- [Reporting a Vulnerability](#reporting-a-vulnerability)
+# Upgrading from PDB to FlowDB
+Starting in **v1.26.0-beta.1**, Collect and Reveal run on Skyflow's FlowDB backend. If you're upgrading from an earlier version, a few things changed:
+
+- **`CollectElementInput.altText` is deprecated and now a no-op** - it's accepted but never read or stored. Use `placeholder` instead.
+- **`CollectOptions.tokens` (`Bool`) was removed** - tokens are always returned now; there's no way to opt out.
+- **`CollectRecord`/`RevealRecord` field names changed**: `fields` → `tokens`, and `skyflowID` (capital `ID`) → `skyflowId`.
+- **New, typed `CollectCallback`/`RevealCallback`** are now the recommended way to call `collect()`/`reveal()`, replacing the old untyped `Callback` protocol - `onSuccess`/`onFailure` now hand you typed `CollectResponse`/`RevealResponse`/`SkyflowError` objects instead of raw `Any`. See the [Error Handling Reference](#error-handling-reference) for the new `SkyflowError` shape.
+- **Reveal redaction moved off `RevealElementInput`** onto `Skyflow.RevealOptions.tokenGroupRedactions` - the old per-element `redaction`/`tokenGroupName` parameters are gone.
+- **New, purely additive support** for update-by-id and upsert: `skyflowId` on `CollectElementInput`, and `Skyflow.AdditionalFields`/`Skyflow.UpsertOption` on `CollectOptions`. Nothing to change if you don't use them.
+
+# Quick Start
+
+### Collect data
+Collect a card number and get back a token:
+
+```swift
+import Skyflow
+
+// 1. Configure and initialize the client
+let config = Skyflow.Configuration(
+    vaultID: "<VAULT_ID>",
+    vaultURL: "<VAULT_URL>",
+    tokenProvider: myTokenProvider // your Skyflow.TokenProvider implementation - see below
+)
+let skyflowClient = Skyflow.initialize(config)
+
+// 2. Create a container and a Collect Element for the card number
+let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+let cardNumberInput = Skyflow.CollectElementInput(
+    tableName: "cards",
+    column: "card_number",
+    type: Skyflow.ElementType.CARD_NUMBER
+)
+let cardNumberElement = container?.create(input: cardNumberInput)
+stackView.addArrangedSubview(cardNumberElement!) // it's a UIView - mount it like any other
+
+// 3. Collect the value and get back a token
+let callback = Skyflow.CollectCallback(
+    onSuccess: { (response: Skyflow.CollectResponse) in
+        print(response.records) 
+    },
+    onFailure: { (error: Skyflow.SkyflowError) in
+        print(error.message)
+    }
+)
+container?.collect(callback: callback)
+```
+
+### Reveal data
+Reveal a token back to its real value (using the same `skyflowClient` from above):
+
+```swift
+// 1. Create a container and a Reveal Element for the token
+let revealContainer = skyflowClient.container(type: Skyflow.ContainerType.REVEAL)
+let cardNumberReveal = Skyflow.RevealElementInput(
+    token: "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
+    label: "Card Number"
+)
+let revealElement = revealContainer?.create(input: cardNumberReveal)
+stackView.addArrangedSubview(revealElement!) // shows the real value once revealed
+
+// 2. Reveal it
+let revealCallback = Skyflow.RevealCallback(
+    onSuccess: { (response: Skyflow.RevealResponse) in
+        print(response.records)
+    },
+    onFailure: { (error: Skyflow.SkyflowError) in
+        print(error.message)
+    }
+)
+revealContainer?.reveal(callback: revealCallback)
+```
+
+That's the whole round trip both ways - no card data ever touches your app code on the way in, and it's only ever displayed, never returned to your code, on the way out. Everything below covers this in depth: installation, `TokenProvider`, styling, validation, updates, upsert, and more.
+
+
 # Installation
  
 ## Requirements
-- iOS 15.0 and above
+- iOS 13.0 and above
  
 ## Configuration
 ---
@@ -49,7 +140,7 @@ let config = Skyflow.Configuration(
     vaultURL: <VAULT_URL>,
     tokenProvider: demoTokenProvider,
     options: Skyflow.Options(
-      logLevel: Skyflow.LogLevel,    // optional, if not specified default is ERROR 
+      logLevel: Skyflow.LogLevel.INFO,    // optional — DEBUG < INFO < WARN < ERROR, default ERROR
       env: Skyflow.Env              // optional, if not specified default is PROD
     ) 
 )
@@ -131,7 +222,12 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
  
 `Note`:
   - since `env` is optional, by default the env will be  `PROD`.
-  - Use `env` option with caution, make sure the env is set to `PROD` when using `skyflow-iOS` in production. 
+
+> **Security warning: never ship a build with `env: .DEV` to production.** `DEV` doesn't just relax a validation check - it unlocks two things that must never reach a real user:
+> - The **raw, unmasked field value** becomes readable inside the `CHANGE`/`FOCUS`/`BLUR` [event listener](#event-listener-on-collect-elements) state. In `PROD`, that same state only ever contains an empty string (or, for `CARD_NUMBER`, a partially masked value) - never the full value.
+> - [`setValue`/`clearValue`](#set-and-clear-value-for-collect-elements-dev-env-only) become callable and actually take effect.
+>
+> Both fail **silently** - no crash, no thrown error, either way. If `DEV` ships by accident, the raw PAN/CVV/etc. is simply there, with nothing to flag it. Always confirm `env` is `PROD` (or omitted) before release.
  
  
 ---
@@ -171,13 +267,13 @@ let collectElementInput = Skyflow.CollectElementInput(
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
     validations: ValidationSet,      // optional set of validations for the input element
-    skyflowId: String,               // optional, the skyflow_id of the record to update
+    skyflowId: String,               // optional, the skyflowId of the record to update
 )
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
 **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
-
+- `altText` (marked `(DEPRECATED)` in the signature) is dead: `CollectElementInput` accepts it but never reads or stores it, so passing a value has zero effect. `placeholder` is the real, supported way to set initial/placeholder text on a collect element. This should not be confused with `Skyflow.RevealElementInput.altText` (used when [revealing elements](#step-2-create-a-reveal-element)), which shares the same name but is a distinct, fully supported property with no associated deprecation.
  
 The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
  
@@ -261,8 +357,8 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Bool,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: Any]?      // Optional, metadata to control card number element behavior (values are cast to [Skyflow.CardType] internally; only applicable for CARD_NUMBER ElementType).
+  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  cardMetaData: [String: [Skyflow.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
 )
 ```
     
@@ -350,7 +446,7 @@ let collectElementInput = Skyflow.CollectElementInput(
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
     type: Skyflow.ElementType,       // Skyflow.ElementType enum
     validations: ValidationSet,      // optional set of validations for the input element
-    skyflowId: String,               // optional, the skyflow_id of the record to update
+    skyflowId: String,               // optional, the skyflowId of the record to update
 )
 
 let collectElementOptions = Skyflow.CollectElementOptions(
@@ -520,10 +616,9 @@ container?.collect(callback: insertCallback, options: collectOptions)
     ]
 }
 ```
-**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+**Note:** See the [Error Handling Reference](#error-handling-reference) for how successful and failed records are distinguished in this array, and how whole-request failures are shaped.
 
 #### Sample partial error response:
-Successful and failed records are both returned together in the same `records` array, each carrying its own `httpCode`:
 ```json
 {
     "records": [
@@ -546,92 +641,22 @@ Successful and failed records are both returned together in the same `records` a
 ```
 
 #### If the entire request fails (for example, the vault itself can't be found):
-This is the API's raw wire-format error - `onFailure` doesn't hand you this dictionary as-is, it's normalized into a `Skyflow.SkyflowError` object with these same fields as flat properties (no `error` wrapper key):
-```json
-{
-        "grpcCode": 5,
-        "httpCode": 404,
-        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
-        "httpStatus": "Not Found",
-        "details": []
-    }
-```
-`Skyflow.CollectCallback`/`Skyflow.RevealCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - this shape (and every other failure, including client-side validation) is always delivered as a `Skyflow.SkyflowError`, with `httpCode`, `message`, `grpcCode`, `httpStatus`, and `details` all available as direct properties (`grpcCode`/`httpStatus`/`details` are only populated for this whole-request-failure shape - `nil` for validation failures):
-```swift
-onFailure: { (skyflowError: Skyflow.SkyflowError) in
-    print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
-}
-```
+See the [Error Handling Reference](#error-handling-reference) for the whole-request `Skyflow.SkyflowError` shape and how to read its properties.
 
 ## Using Skyflow Elements to update data
-You can update the data in a vault with Skyflow Elements. Use the following steps to securely update data. 
- 
-### Step 1: Create a container
- 
-First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
- 
-```swift
-let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
-```
- 
-### Step 2: Create a collect Element
-To create a collect Element, we must first construct a Skyflow.CollectElementInput object defined as shown below:
- 
+Updating a record uses the exact same container setup, `CollectElementInput`, `Styles`/`Style`, `CollectElementOptions`, and mounting as [collecting data](#using-skyflow-elements-to-collect-data) - see that section for the full walkthrough of all of those. The only difference for an update: pass `skyflowId` when constructing `CollectElementInput` to target an existing record instead of creating a new one.
+
 ```swift
 let collectElementInput = Skyflow.CollectElementInput(
-    tableName: String,                  // optional, the table this data belongs to
-    column: String,                 // optional, the column into which this data should be inserted
-    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
-    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
-    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
-    label: String,                   // optional label for the form element
-    placeholder: String,             // optional placeholder for the form element
-    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    validations: ValidationSet,      // optional set of validations for the input element
-    type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    skyflowId: String,       // The skyflow_id of the record to be updated.
+    tableName: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882" // targets an existing record for update instead of creating a new one
 )
+let element = container?.create(input: collectElementInput)
 ```
 
-The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
-
-**Note**: 
--  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
-
-Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
- 
-```swift
-Skyflow.CollectElementOptions(
-  required: Boolean,               // Indicates whether the field is marked as required. Defaults to 'false'
-  enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
-  format: String,                  // Format for the element 
-  translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Bool,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: Any]?      // Optional, metadata to control card number element behavior (values are cast to [Skyflow.CardType] internally; only applicable for CARD_NUMBER ElementType).
-)
-```
- 
-### Step 3: Mount Elements to the Screen
- 
-To specify where the Elements will be rendered on the screen, create a parent UIView (like UIStackView, etc) and you can add it as a subview programmatically.
- 
-```swift
-let stackView = UIStackView()
-stackView.addArrangedSubview(element)
-```
- 
-The Skyflow Element is an implementation of the UIView so it can be used/mounted similarly. Alternatively, you can use the `unmount` method to reset any collect element to it's initial state
- 
-``` swift
-func clearFieldsOnSubmit(_ elements: [TextField]) {
-    // resets all elements in the array
-    for element in elements {
-        element.unmount()
-    }
-}
-```
- 
-### Step 4 :  Update data from Elements
+### Update data from Elements
 When the form is ready to submit, call the `collect(options?)` method on the container object. The `options` parameter takes a object of optional parameters as shown below:
 - `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to update or insert into the vault alongside whatever's collected from the mounted elements.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
@@ -665,6 +690,27 @@ container?.collect(callback: insertCallback, options: options)
 ```
 
 **Note:** `skyflowId` is required if you want to update the data. If `skyflowId` isn't specified, the `collect(options?)` method creates a new record in the vault.
+
+#### Full-row overwrite with `.REPLACE`
+`UpdateType.UPDATE` (used above) only merges the fields present in this request into the matched record - every other column on that record is left untouched. `UpdateType.REPLACE` instead overwrites the entire matched record: any column not included in this request's fields/`additionalFields` is cleared, not just left alone. Use `.REPLACE` when a stale value from a previous update can't be allowed to survive - for example, resetting a record to exactly what this request contains rather than layering it on top of whatever's already there.
+
+```swift
+// Mounted element - its collected value becomes part of the replaced row, same as any
+// other collect element.
+let cardNumberInput = Skyflow.CollectElementInput(tableName: "cards", column: "cardNumber", type: Skyflow.ElementType.CARD_NUMBER)
+
+let cardNumberElement = container?.create(input: cardNumberInput)
+
+// REPLACE example: the matched "cards" record ends up with exactly cardNumber (from the element above) + cvv (from additionalFields) - any other column that record had before (e.g. a stale "expiry_date") is cleared.
+let nonPCIRecords = Skyflow.AdditionalFields(records: [
+    Skyflow.AdditionalFieldsRecord(tableName: "cards", data: ["cvv": "123"])
+])
+let replaceUpsertOptions = [Skyflow.UpsertOption(tableName: "cards", uniqueColumns: ["cardNumber"], updateType: .REPLACE)]
+
+let replaceOptions = Skyflow.CollectOptions(additionalFields: nonPCIRecords, upsert: replaceUpsertOptions)
+
+container?.collect(callback: insertCallback, options: replaceOptions)
+```
 
 ### End to end example of updating data with Skyflow Elements
 ```swift
@@ -770,7 +816,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     ]
 }
 ```
-**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+**Note:** See the [Error Handling Reference](#error-handling-reference) for how successful and failed records are distinguished in this array, and how whole-request failures are shaped.
 
 #### Sample partial error response:
 ```json
@@ -794,18 +840,8 @@ container?.collect(callback: insertCallback, options: collectOptions)
 }
 ```
 
-#### If the entire request fails 
-This is the API's error - `onFailure` doesn't hand you this dictionary as-is, it's normalized into a `Skyflow.SkyflowError` object with these same fields as flat properties (no `error` wrapper key):
-```json
-{
-        "grpcCode": 5,
-        "httpCode": 404,
-        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
-        "httpStatus": "Not Found",
-        "details": []
-}
-```
-`Skyflow.CollectCallback`'s `onFailure` is typed `(Skyflow.SkyflowError) -> Void` - see [If the entire request fails](#if-the-entire-request-fails-for-example-the-vault-itself-cant-be-found) above for how to read the properties on `Skyflow.SkyflowError`.
+#### If the entire request fails
+See the [Error Handling Reference](#error-handling-reference) for the whole-request `Skyflow.SkyflowError` shape and how to read its properties.
 
 ## Validations
  
@@ -814,7 +850,7 @@ Skyflow-iOS provides two types of validations on Collect Elements
 #### 1. Default Validations:
 Every Collect Element except of type `INPUT_FIELD` has a set of default validations listed below:
 - `CARD_NUMBER`: Card number validation with checkSum algorithm(Luhn algorithm), available card lengths for defined card types
-- `CARDHOLDER_NAME`: Name should be 2 or more symbols, valid characters should match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
+- `CARD_HOLDER_NAME`: Name should be 2 or more symbols, valid characters should match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
 - `CVV`: Card CVV can have 3-4 digits
 - `EXPIRATION_DATE`: Any date starting from current month. By default valid expiration date should be in short year format - `MM/YY`
 - `PIN`: Can have 4-12 digits
@@ -995,7 +1031,7 @@ cardHolderName.on(eventName: Skyflow.EventName.CHANGE) { state in
  
 Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
  
-`setError(_ error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
  
 `resetError()` method is used to clear the custom error message that is set using `setError`.
  
@@ -1036,7 +1072,7 @@ cardNumber.resetError()
  
 `clearValue()` method is used to reset the value of the element.
  
-`Note:` These methods are intended for testing/developmental purposes in DEV env only. They remain callable in PROD env, but silently no-op (logging a warning) instead of setting/clearing the value, so they MUST NOT be relied on outside DEV env.
+`Note:` This methods are only available in DEV env for testing/developmental purposes and MUST NOT be used in PROD env.
  
 ##### Sample code snippet for setValue and clearValue
  
@@ -1073,6 +1109,11 @@ cardNumber.clearValue()
 - [Using Skyflow Composable Elements to collect data](#using-skyflow-composable-elements-to-collect-data)
 - [Using Skyflow Composable Elements to update data](#using-skyflow-composable-elements-to-update-data)
 
+## When to use Composable vs. Basic Elements
+Use **Composable Elements** when you want multiple fields laid out together in a shared row - for example, expiration month and year, or expiration date and CVV, side by side in the same visual container. Use **Basic Elements** (the [section above](#securely-collecting-data-client-side)) when each field is its own standalone view that you place and style individually.
+
+Beyond layout, the two are functionally the same: `CollectElementInput`, `CollectElementOptions`, `collect()`, and `Skyflow.CollectOptions` (`additionalFields`, `upsert`) all work identically for both. Composable Elements just add a `ContainerOptions.layout` array to group elements into rows, plus a `getComposableView()` call to mount the whole group at once instead of mounting each element separately.
+
 ## Using Skyflow Composable Elements to collect data
 Composable Elements combine multiple Skyflow Elements in a single row. The following steps create a composable element and securely collect data through it.
 
@@ -1104,86 +1145,7 @@ var containerOptions = ContainerOptions(
                         )
 ```
 ### Step 2: Create Composable Elements
-Composable Elements use the following schema:
-
-```swift
-let composableElementInput = Skyflow.CollectElementInput(
-    tableName: String,                  // optional, the table this data belongs to
-    column: String,                 // optional, the column into which this data should be inserted
-    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
-    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
-    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
-    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
-    label: String,                   // optional label for the form element
-    placeholder: String,             // optional placeholder for the form element
-    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    validations: ValidationSet,      // optional set of validations for the input element
-    skyflowId: String,               // optional, the skyflow_id of the record to update
-)
-```
-The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
-**Note**: 
--   Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
- 
-The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
- 
-- `base`: all other variants inherit from these styles
-- `complete`: applied when the Element has valid input
-- `empty`: applied when the Element has no input
-- `focus`: applied when the Element has focus
-- `invalid`: applied when the Element has invalid input
- 
-Each Style object accepts the following properties, please note that each property is optional:
- 
-```swift
-let style = Skyflow.Style(
-    borderColor: UIColor,            // optional
-    cornerRadius: CGFloat,           // optional
-    padding: UIEdgeInsets,           // optional
-    borderWidth: CGFloat,            // optional
-    font: UIFont,                   // optional
-    textAlignment: NSTextAlignment,  // optional
-    textColor: UIColor,              // optional
-    boxShadow: CALayer,               // optional
-    backgroundColor: UIColor,         // optional
-    minWidth: CGFloat,                // optional
-    maxWidth: CGFloat,                // optional
-    minHeight: CGFloat,               // optional
-    maxHeight: CGFloat,               // optional
-    cursorColor: UIColor,             // optional
-    width: CGFloat,                   // optional, used by the composable layout engine to size each row's child view
-    height: CGFloat,                  // optional, used by the composable layout engine to size each row's child view
-    placeholderColor: UIColor,        // optional
-    cardIconAlignment: CardIconAlignment // optional, Skyflow.CardIconAlignment enum, default is .left
-)
-```
-An example Skyflow.Styles object
-```swift
-let styles = Skyflow.Styles(
-    base: style,                    // optional
-    complete: style,                // optional
-    empty: style,                   // optional
-    focus: style,                   // optional
-    invalid: style                  // optional
-)
-```
- 
-The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyflow.Styles` object which are applied to the `label` and `errorText` text views respectively.
- 
-The states that are available for `labelStyles` are `base` and `focus`.
- 
-The state that is available for `errorTextStyles` is only the `base` state, it shows up when there is some error in the composable element.
- 
-The parameters in `Skyflow.Style` object that are respected for `label` and `errorText` text views are
-- padding
-- font
-- textColor
-- textAlignment
- 
-Other parameters in the `Skyflow.Style` object are ignored for `label` and `errorText` text views.
- 
-Finally, the `type` parameter takes a Skyflow.ElementType. Each type applies the appropriate regex and validations to the form element. 
+Composable Elements use the same `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` schema as [basic Collect Elements](#step-2-create-a-collect-element) - see that section for the full parameter list, the `Styles`/`Style` walkthrough, and `CollectElementOptions` (including `cardMetaData`/`Skyflow.CardType` and the `format`/`translation` tables).
 
 The iOS SDK supports the following composable elements:
 
@@ -1203,63 +1165,16 @@ The iOS SDK supports the following composable elements:
 - `EXPIRATION_MONTH`
 - `EXPIRATION_YEAR`
 
-The `INPUT_FIELD` type is a custom UI element without any built-in validations. See the section on [validations](#validations) for more information on validations.
- 
-Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
- 
-```swift
-Skyflow.CollectElementOptions(
-  required: Boolean,               // Indicates whether the field is marked as required. Defaults to 'false'
-  enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
-  format: String,                  // Format for the element 
-  translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Bool,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: Any]?      // Optional, metadata to control card number element behavior (values are cast to [Skyflow.CardType] internally; only applicable for CARD_NUMBER ElementType).
-)
-```
-- `required`: Indicates whether the field is marked as required or not. Default is `false`.
-- `enableCardIcon`: Indicates whether the icon is visible for the CARD_NUMBER element. Default is `true`.
-- `format`:  A string value that indicates the format pattern applicable to the element type. Only applicable to EXPIRATION_DATE, CARD_NUMBER, EXPIRATION_YEAR, and INPUT_FIELD elements.
-   For INPUT_FIELD elements,
-     -  the length of `format` determines the expected length of the user input.
-     - if `translation` isn't specified, the `format` value is considered a string literal.
-- `translation`: A dictionary of key/value pairs, where the key is a character that appears in `format` and the value is a regex pattern of acceptable inputs for that character. Each key can only appear once. Only applicable for INPUT_FIELD elements.
-
-The accepted EXPIRATION_DATE values are
-
-- `mm/yy` (default)
-- `mm/yyyy`
-- `yy/mm`
-- `yyyy/mm`
-
-The accepted EXPIRATION_YEAR values are
-
-- `yy`
-- `yyyy` (default - `CollectElementOptions`'s global default `format` is `"mm/yy"`, which isn't a recognized year format, so it falls back to `yyyy`; pass `format: "yy"` explicitly if you want the 2-digit year)
-
-Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
+Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below:
  
 ```swift
 let composableElementInput = Skyflow.CollectElementInput(
-    tableName: String,                  // the table this data belongs to
-    column: String,                 // the column into which this data should be inserted
-    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
-    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
-    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
-    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
-    label: String,                   // optional label for the form element
-    placeholder: String,             // optional placeholder for the form element
-    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    validations: ValidationSet,      // optional set of validations for the input element
-    skyflowId: String,               // optional, the skyflow_id of the record to update
+    tableName: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER
 )
 
-let collectElementOptions = Skyflow.CollectElementOptions(
-    required: false,  // indicates whether the field is marked as required. Defaults to 'false',
-    enableCardIcon: true, // indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
-    format: "mm/yy" // Format for the element
-)
+let collectElementOptions = Skyflow.CollectElementOptions(required: true)
 
 let element = container?.create(input: composableElementInput, options: collectElementOptions)
 ```
@@ -1292,7 +1207,7 @@ When you submit the form, call the `collect(callback: Skyflow.CollectCallback, o
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
-- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
+- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it - see [Full-row overwrite with `.REPLACE`](#full-row-overwrite-with-replace) for a worked example).
 
 ```swift
 // Non-PCI records
@@ -1453,7 +1368,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
     ]
 }
 ```
-**Note:** Successful and failed records are both returned in the same `records` array, each carrying its own `httpCode`.
+**Note:** See the [Error Handling Reference](#error-handling-reference) for how successful and failed records are distinguished in this array, and how whole-request failures are shaped.
 
 #### Sample partial error response:
 ```json
@@ -1506,9 +1421,7 @@ let state = [
     "isEmpty": Bool ,
     "isFocused": Bool,
     "isValid": Bool,
-    "value": String,
-    "isCustomRuleFailed": Bool,
-    "selectedCardScheme": String // only for CARD_NUMBER element type
+    "value": String
 ]
 ```
 
@@ -1612,7 +1525,6 @@ let updateElement =  Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
-    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -1621,7 +1533,9 @@ let updateElement =  Skyflow.CollectElementInput(
 ```
 Only include the properties that you want to update for the specified composable element.
 
-`tableName`, `column`, `label`, and `validations` are only applied if you provide a non-empty value - omitting them leaves the element's current value untouched. `placeholder`, however, is always applied as given, including its default of `""` - if you don't explicitly pass a `placeholder`, calling `update` will clear the element's existing placeholder.
+Properties your provided when you created the element remain the same until you explicitly update them.
+
+**Note:** `altText` above is a no-op, same as on `CollectElementInput` - see [Step 2: Create a collect Element](#step-2-create-a-collect-element) for why, and what to use instead.
 
 `Note`: You can't update the type property of an element.
 
@@ -1721,90 +1635,24 @@ composableContainer?.on(eventName: .SUBMIT){
 ```
 
 ## Using Skyflow Composable Elements to update data
-Composable Elements combine multiple Skyflow Elements in a single row. The following steps create a composable element and securely update data through it.
-
-### Step 1: Create a composable container
-First create a **container** for the form elements using the ```skyflowClient.container(type: Skyflow.ContainerType)``` method as show below
-
-```swift
-var containerOptions = ContainerOptions(
-                        layout: [1,1,2],               // required
-                        styles: Skyflow.Styles,        // optional
-                        errorTextStyles: Skyflow.Styles //optional
-                        )
-let container = skyflowClient.container(type: Skyflow.ContainerType.COMPOSABLE,  options: ContainerOptions)
-```
-
-### Step 2: Create Composable Elements
-Composable Elements use the following schema:
+Updating with Composable Elements uses the exact same container setup, `CollectElementInput`, `CollectElementOptions`, and mounting as [collecting data with Composable Elements](#using-skyflow-composable-elements-to-collect-data) - see that section for the full walkthrough. The only difference for an update: pass `skyflowId` when constructing `CollectElementInput` to target an existing record instead of creating a new one.
 
 ```swift
 let composableElementInput = Skyflow.CollectElementInput(
-    tableName: String,                  // optional, the table this data belongs to
-    column: String,                 // optional, the column into which this data should be inserted
-    inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
-    labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
-    errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
-    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
-    label: String,                   // optional label for the form element
-    placeholder: String,             // optional placeholder for the form element
-    altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
-    type: Skyflow.ElementType,       // Skyflow.ElementType enum
-    validations: ValidationSet,      // optional set of validations for the input element
-    skyflowId: String,               // The skyflow_id of the record to be updated.
+    tableName: "cards",
+    column: "cardNumber",
+    type: Skyflow.ElementType.CARD_NUMBER,
+    skyflowId: "431eaa6c-5c15-4513-aa15-29f50babe882" // targets an existing record for update instead of creating a new one
 )
-```
-The `table` and `column` fields indicate which table and column in the vault the Element correspond to.
-**Note**: 
--   Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
-  
-Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
- 
-```swift
-Skyflow.CollectElementOptions(
-  required: Boolean,               // Indicates whether the field is marked as required. Defaults to 'false'
-  enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
-  format: String,                  // Format for the element 
-  translation: [Character: String] // Indicates the allowed data type value for format.
-)
+let element = container?.create(input: composableElementInput)
 ```
 
-
-Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
-
- ```swift
-let element = container?.create(input: composableElementInput, options: collectElementOptions)
-```
-### Step 3: Mount Elements to the Screen
-
-To specify where the Elements will be rendered on the screen, create a parent UIView (like UIStackView, etc) and you can add composable elements view using `container?.getComposableView()`, it as a subview programmatically.
- 
-```swift
-let stackView = UIStackView()
-do {
-    let composableView = try container?.getComposableView()
-    stackView.addArrangedSubview(composableView)
-} catch {
-    print(error)
-}
-```
- 
-The Skyflow Element is an implementation of the UIView so it can be used/mounted similarly. Alternatively, you can use the `unmount` method to reset any collect element to it's initial state
- 
-``` swift
-func clearFieldsOnSubmit(_ elements: [TextField]) {
-    // resets all elements in the array
-    for element in elements {
-        element.unmount()
-    }
-}
-```
-### Step 4: Update data from Elements 
+### Update data from Elements 
 When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
 - `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
-- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
+- `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it - see [Full-row overwrite with `.REPLACE`](#full-row-overwrite-with-replace) for a worked example).
 
 ```swift
 // Non-PCI records
@@ -1969,7 +1817,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
 }
 ```
 ### Sample Partial Error Response:
-Successful and failed records are both returned together in the same `records` array, each carrying its own `httpCode`:
+See the [Error Handling Reference](#error-handling-reference) for how successful and failed records are distinguished in this array, and how whole-request failures are shaped.
 ```json
 {
     "records": [
@@ -1984,7 +1832,7 @@ Successful and failed records are both returned together in the same `records` a
             "httpCode": 200
         },
         {
-            "error": "Update failed. skyflow_ids [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
+            "error": "Update failed. skyflowIds [77dc3caf-c452-49e1-8625-07219d7567bf] are invalid. Specify valid Skyflow IDs.",
             "skyflowId": null,
             "tableName": "",
             "httpCode": 400
@@ -1993,17 +1841,7 @@ Successful and failed records are both returned together in the same `records` a
 }
 ```
 
-If the entire request fails (for example, the vault itself can't be found), `onFailure` receives a single structured `Skyflow.SkyflowError` instead of a `records` array. 
-Below is the API's error that `SkyflowError` is built from - the object itself exposes these as flat properties (`grpcCode`, `httpCode`, `message`, `httpStatus`, `details`):
-```json
-
-        "grpcCode": 5,
-        "httpCode": 404,
-        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
-        "httpStatus": "Not Found",
-        "details": []
-    }
-```
+If the entire request fails (for example, the vault itself can't be found), `onFailure` receives a single structured `Skyflow.SkyflowError` instead of a `records` array - see the [Error Handling Reference](#error-handling-reference) for that shape.
 
 # Securely revealing data client-side
 -  [**Using Skyflow Elements to reveal data**](#using-skyflow-elements-to-reveal-data)
@@ -2033,7 +1871,7 @@ let revealElementInput = Skyflow.RevealElementInput(
 )
 ```
 `Note`: 
-- To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. 
+- To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. Supported redaction values are `PLAIN_TEXT`, `MASKED`, `REDACTED` and `DEFAULT`.
 
  
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
@@ -2064,7 +1902,7 @@ Along with `RevealElementInput`, you can define other options in the `RevealElem
 Skyflow.RevealElementOptions(
   format: String, // Format for the element.
   translation: [Character: String] // Indicates the allowed data type value for format
-  enableCopy: Bool?, // Indicates whether to enable the copy icon in reveal elements to copy text to clipboard. Defaults to 'false'
+  enableCopy: Boolean, // Indicates whether to enable the copy icon in reveal elements to copy text to clipboard. Defaults to 'false'
 )
 ```
 - `format`: A string value that indicates how the  element should display the value, including placeholder characters that map to keys `translation` If `translation` isn't specified, the `format` value is considered a string literal.
@@ -2131,7 +1969,7 @@ To apply a redaction to one or more token groups as part of the detokenize call,
 ```swift
 let revealOptions = Skyflow.RevealOptions(
     tokenGroupRedactions: [
-        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "mask")
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
     ]
 )
 container.reveal(callback: revealCallback, options: revealOptions)
@@ -2142,17 +1980,17 @@ This is a request-level setting - the redaction applies to every token in the na
  
 Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
  
-`setError(_ error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
  
 `resetError()` method is used to clear the custom error message that is set using `setError`.
  
 ### Set token for Reveal Elements
  
-The `setToken(_ token: String)` method can be used to set the token of the Reveal Element. If no altText is set, the set token will be displayed on the UI as well. If altText is set, then there will be no change in the UI but the token of the element will be internally updated.
+The `setToken(value: String)` method can be used to set the token of the Reveal Element. If no altText is set, the set token will be displayed on the UI as well. If altText is set, then there will be no change in the UI but the token of the element will be internally updated.
  
 ### Set and Clear altText for Reveal Elements
  
-The `setAltText(_ altText: String)` method can be used to set the altText of the Reveal Element. This will cause the altText to be displayed in the UI regardless of whether the token or value is currently being displayed.
+The `setAltText(value: String)` method can be used to set the altText of the Reveal Element. This will cause the altText to be displayed in the UI regardless of whether the token or value is currently being displayed.
  
 `clearAltText()` method can be used to clear the altText, this will cause the element to display the token or actual value of the element. If the element has no token, the element will be empty.
  
@@ -2233,7 +2071,7 @@ let revealCallback = Skyflow.RevealCallback(
 // Optional: apply a redaction to a token group as part of the detokenize call
 let revealOptions = Skyflow.RevealOptions(
     tokenGroupRedactions: [
-        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "mask")
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
     ]
 )
 
@@ -2269,7 +2107,7 @@ container?.reveal(callback: revealCallback, options: revealOptions)
 ```
 
 #### Sample Partial Error Response:
-Some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed - both are returned together in the same `records` array, each carrying its own `httpCode`. A successful record carries `metadata` (e.g. `skyflowId`, `tableName`), a failed one carries `error` instead:
+Some tokens assigned to the reveal elements get revealed successfully, while others fail and remain unrevealed. See the [Error Handling Reference](#error-handling-reference) for how successful and failed records are distinguished in this array, and how whole-request failures are shaped:
 ```json
 {
     "records": [
@@ -2291,8 +2129,89 @@ Some tokens assigned to the reveal elements get revealed successfully, while oth
 }
 ```
  
+## Error Handling Reference
+
+Collect and Reveal both share the same two failure shapes. They're described once here rather than repeated at every call site - the Collect/Reveal sections above link back to this section instead of re-explaining it.
+
+### Per-record failures
+
+`collect()`/`reveal()` never split successes and failures into separate arrays or separate callbacks - every record (or token) comes back together in the same `records` array passed to `onSuccess`, each entry carrying its own `httpCode`. A successful entry carries the flow's data field (`tokens` for Collect, `metadata` for Reveal); a failed entry carries `error` instead, and omits the data field entirely. Check for the presence of `error` to tell the two apart - don't rely on `httpCode` alone.
+
+Collect shape:
+```json
+{
+    "records": [
+        {
+            "tableName": "cards",
+            "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
+            "tokens": {
+                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+            },
+            "httpCode": 200
+        },
+        {
+            "error": "Invalid request. Table name table not present for record. Specify a valid table name.",
+            "skyflowId": null,
+            "tableName": "",
+            "httpCode": 400
+        }
+    ]
+}
+```
+
+Reveal shape:
+```json
+{
+    "records": [
+        {
+            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "tokenGroupName": "deterministic_string",
+            "metadata": {
+                "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
+                "tableName": "cards"
+            },
+            "httpCode": 200
+        },
+        {
+            "token": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
+            "error": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047",
+            "httpCode": 404
+        }
+    ]
+}
+```
+
+`Skyflow.CollectRecord`/`Skyflow.RevealRecord` expose all of the above as typed properties (`tableName`/`skyflowId`/`tokens`/`hashedData`/`httpCode`/`error` and `token`/`tokenGroupName`/`metadata`/`httpCode`/`error` respectively) - you don't need to read the raw dictionary shown above yourself.
+
+### Whole-request failures (`Skyflow.SkyflowError`)
+
+If the *entire* request fails - vault not found, network error, invalid bearer token - or a client-side validation failure occurs (empty `vaultID`, unmounted element, etc.) - `onFailure` is called instead of `onSuccess`, with a single `Skyflow.SkyflowError` rather than a `records` array.
+
+The vault's wire format for a whole-request failure is:
+```json
+{
+    "error": {
+        "grpcCode": 5,
+        "httpCode": 404,
+        "message": "Invalid request. Vault not found for vaultID: sd0ff0b064c04faabd4d392512b2e5. Specify a valid vaultID. - request-id: cb397-8521-42c2-870c-92dbeec",
+        "httpStatus": "Not Found",
+        "details": []
+    }
+}
+```
+
+`onFailure` never hands you this dictionary as-is - it's always normalized into a `Skyflow.SkyflowError` (an `NSError` subclass) with these same fields exposed as flat properties, not nested under an `error` key:
+```swift
+onFailure: { (skyflowError: Skyflow.SkyflowError) in
+    print(skyflowError.httpCode, skyflowError.message, skyflowError.grpcCode ?? "", skyflowError.httpStatus ?? "", skyflowError.details ?? "")
+}
+```
+`grpcCode`, `httpStatus`, and `details` are only populated for this whole-request-failure shape - they're `nil` for client-side validation failures (empty `vaultID`, unmounted element, missing required field, etc.), which only populate `httpCode` and `message`:
+- `httpCode` is a client-assigned code describing the kind of problem (typically `400`, sometimes `404` for a "not found"-shaped issue like an empty records array) - it was never returned by an actual HTTP response, so don't treat it as a real server status.
+- `message` is a description prefixed with the SDK name and version, e.g. `"iOS SDK v1.26.0-beta.1 Validation error.'table' key not found in collect element. Specify a valid value for 'table' key."`
+
+In short: if `grpcCode`/`httpStatus`/`details` are all `nil`, you're looking at a client-side validation failure (bad input, caught before any network call) - use `message` to see which check failed. If they're populated, the vault itself rejected or couldn't process the request.
+
 ## Reporting a Vulnerability
  
 If you discover a potential security issue in this project, please reach out to us at security@skyflow.com. Please do not create public GitHub issues or Pull Requests, as malicious actors could potentially view them.
-
-
