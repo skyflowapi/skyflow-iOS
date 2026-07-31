@@ -378,7 +378,9 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertTrue((requestBody?["update"] as! [String: Any]).isEmpty)
     }
 
-    func testCreateRequestBodyExplicitEmptyStringSkyflowIdOnElementFallsBackToInsert() {
+    func testCreateRequestBodyExplicitEmptyStringSkyflowIdOnElementIsRejected() {
+        // An explicit empty-string skyflowId is rejected client-side (see
+        // skyflow_iOS_emptySkyflowIdValidationTests) rather than silently falling back to insert.
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
@@ -387,16 +389,11 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
 
-        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Explicit empty-string skyflowId falls back to insert"))
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Explicit empty-string skyflowId is rejected"))
         let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!], callback: callback, contextOptions: ContextOptions())
 
-        XCTAssertNotNil(requestBody)
-        let records = requestBody?["records"] as! [[String: Any]]
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records[0]["table"] as! String, "persons")
-
-        let update = requestBody?["update"] as! [String: Any]
-        XCTAssertTrue(update.isEmpty)
+        XCTAssertNil(requestBody)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "element with column 'card_number'").description)
     }
 
     func testCreateRequestBodyWithSkyflowIDInAdditionalFields() {
@@ -413,22 +410,17 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertEqual(entry["fields"] as! [String: String], ["column1": "value1"])
     }
 
-    func testCreateRequestBodyEmptyStringSkyflowIdOnAdditionalFieldsFallsBackToInsert() {
-        // Matches element-based skyflowId handling: an empty string is treated the same as
-        // absent (falls back to a plain insert), rather than creating an update targeting "".
+    func testCreateRequestBodyEmptyStringSkyflowIdOnAdditionalFieldsIsRejected() {
+        // An explicit empty-string skyflowId is rejected client-side (see
+        // skyflow_iOS_emptySkyflowIdValidationTests) rather than silently falling back to insert.
         let additionalFields = AdditionalFields(records: [
             AdditionalFieldsRecord(tableName: "table1", data: ["column1": "value1"], skyflowId: "")
         ])
-        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Empty skyflowId falls back to insert"))
+        let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Empty skyflowId is rejected"))
         let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
-        XCTAssertNotNil(requestBody)
-        let records = requestBody?["records"] as! [[String: Any]]
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records[0]["table"] as! String, "table1")
-
-        let update = requestBody?["update"] as! [String: Any]
-        XCTAssertTrue(update.isEmpty)
+        XCTAssertNil(requestBody)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index 0").description)
     }
 
     func testCreateRequestBodyMergesMultipleAdditionalFieldsSharingSkyflowId() {

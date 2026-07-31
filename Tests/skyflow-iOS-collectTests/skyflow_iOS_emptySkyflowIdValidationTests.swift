@@ -25,6 +25,9 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
         let input = CollectElementInput(tableName: "persons", column: "name", type: .CARDHOLDER_NAME, skyflowId: skyflowId)
         let element = container!.create(input: input, options: CollectElementOptions(required: false))
         element.textField.secureText = "John Doe"
+        // secureText's setter doesn't sync actualValue on its own - that normally happens via
+        // the textFieldDidChange delegate hook, which a direct assignment here bypasses.
+        element.updateActualValue()
         return element
     }
 
