@@ -160,7 +160,7 @@ To create a collect Element, we must first construct a Skyflow.CollectElementInp
  
 ```swift
 let collectElementInput = Skyflow.CollectElementInput(
-    table: String,                  // optional, the table this data belongs to
+    tableName: String,                  // optional, the table this data belongs to
     column: String,                 // optional, the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
@@ -261,8 +261,8 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: [Skyflow.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
+  enableCopy: Bool,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  cardMetaData: [String: Any]?      // Optional, metadata to control card number element behavior (values are cast to [Skyflow.CardType] internally; only applicable for CARD_NUMBER ElementType).
 )
 ```
     
@@ -339,7 +339,7 @@ Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objec
  
 ```swift
 let collectElementInput = Skyflow.CollectElementInput(
-    table: String,                  // the table this data belongs to
+    tableName: String,                  // the table this data belongs to
     column: String,                 // the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
@@ -443,7 +443,7 @@ let iconStyles = Skyflow.Styles(base: Style(cardIconAlignment: .left))
  
 // Create a CollectElementInput.
 let input = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -579,7 +579,7 @@ To create a collect Element, we must first construct a Skyflow.CollectElementInp
  
 ```swift
 let collectElementInput = Skyflow.CollectElementInput(
-    table: String,                  // optional, the table this data belongs to
+    tableName: String,                  // optional, the table this data belongs to
     column: String,                 // optional, the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
@@ -606,8 +606,8 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: [Skyflow.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
+  enableCopy: Bool,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  cardMetaData: [String: Any]?      // Optional, metadata to control card number element behavior (values are cast to [Skyflow.CardType] internally; only applicable for CARD_NUMBER ElementType).
 )
 ```
  
@@ -691,7 +691,7 @@ let iconStyles = Skyflow.Styles(base: Style(cardIconAlignment: .left))
  
 // Create a CollectElementInput.
 let input = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -814,7 +814,7 @@ Skyflow-iOS provides two types of validations on Collect Elements
 #### 1. Default Validations:
 Every Collect Element except of type `INPUT_FIELD` has a set of default validations listed below:
 - `CARD_NUMBER`: Card number validation with checkSum algorithm(Luhn algorithm), available card lengths for defined card types
-- `CARD_HOLDER_NAME`: Name should be 2 or more symbols, valid characters should match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
+- `CARDHOLDER_NAME`: Name should be 2 or more symbols, valid characters should match pattern -  `^([a-zA-Z\\ \\,\\.\\-\\']{2,})$`
 - `CVV`: Card CVV can have 3-4 digits
 - `EXPIRATION_DATE`: Any date starting from current month. By default valid expiration date should be in short year format - `MM/YY`
 - `PIN`: Can have 4-12 digits
@@ -930,12 +930,12 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
 
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER,
     )
 let cardHolderNameInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardHolderName",
     type: Skyflow.ElementType.CARDHOLDER_NAME,
     )    
@@ -995,7 +995,7 @@ cardHolderName.on(eventName: Skyflow.EventName.CHANGE) { state in
  
 Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
  
-`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+`setError(_ error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
  
 `resetError()` method is used to clear the custom error message that is set using `setError`.
  
@@ -1016,7 +1016,7 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
 
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER
 )
@@ -1036,7 +1036,7 @@ cardNumber.resetError()
  
 `clearValue()` method is used to reset the value of the element.
  
-`Note:` This methods are only available in DEV env for testing/developmental purposes and MUST NOT be used in PROD env.
+`Note:` These methods are intended for testing/developmental purposes in DEV env only. They remain callable in PROD env, but silently no-op (logging a warning) instead of setting/clearing the value, so they MUST NOT be relied on outside DEV env.
  
 ##### Sample code snippet for setValue and clearValue
  
@@ -1055,7 +1055,7 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
 
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER
 )
@@ -1108,7 +1108,7 @@ Composable Elements use the following schema:
 
 ```swift
 let composableElementInput = Skyflow.CollectElementInput(
-    table: String,                  // optional, the table this data belongs to
+    tableName: String,                  // optional, the table this data belongs to
     column: String,                 // optional, the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
@@ -1144,7 +1144,18 @@ let style = Skyflow.Style(
     borderWidth: CGFloat,            // optional
     font: UIFont,                   // optional
     textAlignment: NSTextAlignment,  // optional
-    textColor: UIColor               // optional
+    textColor: UIColor,              // optional
+    boxShadow: CALayer,               // optional
+    backgroundColor: UIColor,         // optional
+    minWidth: CGFloat,                // optional
+    maxWidth: CGFloat,                // optional
+    minHeight: CGFloat,               // optional
+    maxHeight: CGFloat,               // optional
+    cursorColor: UIColor,             // optional
+    width: CGFloat,                   // optional, used by the composable layout engine to size each row's child view
+    height: CGFloat,                  // optional, used by the composable layout engine to size each row's child view
+    placeholderColor: UIColor,        // optional
+    cardIconAlignment: CardIconAlignment // optional, Skyflow.CardIconAlignment enum, default is .left
 )
 ```
 An example Skyflow.Styles object
@@ -1202,8 +1213,8 @@ Skyflow.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: [Skyflow.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
+  enableCopy: Bool,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
+  cardMetaData: [String: Any]?      // Optional, metadata to control card number element behavior (values are cast to [Skyflow.CardType] internally; only applicable for CARD_NUMBER ElementType).
 )
 ```
 - `required`: Indicates whether the field is marked as required or not. Default is `false`.
@@ -1223,14 +1234,14 @@ The accepted EXPIRATION_DATE values are
 
 The accepted EXPIRATION_YEAR values are
 
-- `yy` (default)
-- `yyyy`
+- `yy`
+- `yyyy` (default - `CollectElementOptions`'s global default `format` is `"mm/yy"`, which isn't a recognized year format, so it falls back to `yyyy`; pass `format: "yy"` explicitly if you want the 2-digit year)
 
 Once the `Skyflow.CollectElementInput` and `Skyflow.CollectElementOptions` objects are defined, add to the container using the ```create(input: CollectElementInput, options: CollectElementOptions)``` method as shown below. The `input` param takes a `Skyflow.CollectElementInput` object as defined above and the `options` parameter takes an `Skyflow.CollectElementOptions` object as described below:
  
 ```swift
 let composableElementInput = Skyflow.CollectElementInput(
-    table: String,                  // the table this data belongs to
+    tableName: String,                  // the table this data belongs to
     column: String,                 // the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
@@ -1280,7 +1291,6 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
-- `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
 - `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
@@ -1337,7 +1347,7 @@ let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
 // Create Composable Elements.
 
 let cardHolderNameElementInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "first_name",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -1354,7 +1364,7 @@ let cardHolderNameElement = container?.create(input: cardHolderNameElementInput,
  
  
 let cardNumberElementInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -1367,7 +1377,7 @@ let cardNumberElementInput = Skyflow.CollectElementInput(
 let cardNumberElement = container?.create(input: cardNumberElementInput, options: requiredOption)
 
 let cvvElementInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cvv",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -1496,7 +1506,9 @@ let state = [
     "isEmpty": Bool ,
     "isFocused": Bool,
     "isValid": Bool,
-    "value": String
+    "value": String,
+    "isCustomRuleFailed": Bool,
+    "selectedCardScheme": String // only for CARD_NUMBER element type
 ]
 ```
 
@@ -1522,12 +1534,12 @@ let container = self.skyflow?.container(type: Skyflow.ContainerType.COMPOSABLE, 
 
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER,
     )
 let cardHolderNameInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardHolderName",
     type: Skyflow.ElementType.CARDHOLDER_NAME,
     )    
@@ -1595,11 +1607,12 @@ You can update composable element properties with the `update` interface.
 The `update` interface takes the below object:
 ```swift
 let updateElement =  Skyflow.CollectElementInput(
-    table: String,                   // optional the table this data belongs to
+    tableName: String,                   // optional the table this data belongs to
     column: String,                  // optional the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -1608,7 +1621,7 @@ let updateElement =  Skyflow.CollectElementInput(
 ```
 Only include the properties that you want to update for the specified composable element.
 
-Properties your provided when you created the element remain the same until you explicitly update them.
+`tableName`, `column`, `label`, and `validations` are only applied if you provide a non-empty value - omitting them leaves the element's current value untouched. `placeholder`, however, is always applied as given, including its default of `""` - if you don't explicitly pass a `placeholder`, calling `update` will clear the element's existing placeholder.
 
 `Note`: You can't update the type property of an element.
 
@@ -1630,12 +1643,12 @@ let container = self.skyflow?.container(type: Skyflow.ContainerType.COMPOSABLE, 
 
 // Create a CollectElementInput
 let cardNumberInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER,
     )
 let cardHolderNameInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardHolderName",
     type: Skyflow.ElementType.CARDHOLDER_NAME,
     )    
@@ -1652,7 +1665,7 @@ do {
 }
 // Update table, column, inputStyles properties on cardNumber.
 cardNumber.update(update: CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardHolderName",
     inputStyles: Skyflow.Styles(base: Style(borderColor: UIColor.red))
 ))
@@ -1685,7 +1698,7 @@ let composableContainer = self.skyflow?.container(type: Skyflow.ContainerType.CO
 
 // Creating the element.
 let cardNumberInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     type: Skyflow.ElementType.CARD_NUMBER,
     )
@@ -1727,7 +1740,7 @@ Composable Elements use the following schema:
 
 ```swift
 let composableElementInput = Skyflow.CollectElementInput(
-    table: String,                  // optional, the table this data belongs to
+    tableName: String,                  // optional, the table this data belongs to
     column: String,                 // optional, the column into which this data should be inserted
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
@@ -1790,7 +1803,6 @@ func clearFieldsOnSubmit(_ elements: [TextField]) {
 When you submit the form, call the `collect(callback: Skyflow.CollectCallback, options: Skyflow.CollectOptions? = Skyflow.CollectOptions())` method on the container object. 
 The options parameter takes a `Skyflow.CollectOptions` object as shown below:
 
-- `tokens`: Whether or not tokens for the collected data are returned. Defaults to 'true'
 - `additionalFields`: A `Skyflow.AdditionalFields` object - non-PCI records to insert into the vault alongside whatever's collected from the mounted elements.
 - `upsert`: An array of `Skyflow.UpsertOption` objects to support upsert while collecting data from Skyflow elements. Each option specifies the `tableName`, the `uniqueColumns` used to match existing records, and an optional `updateType` (`UpdateType.UPDATE` merges the new fields into the matched record, `UpdateType.REPLACE` replaces it).
 
@@ -1847,7 +1859,7 @@ let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
 // Create Composable Elements.
 
 let cardHolderNameElementInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "first_name",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -1865,7 +1877,7 @@ let cardHolderNameElement = container?.create(input: cardHolderNameElementInput,
  
  
 let cardNumberElementInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cardNumber",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -1879,7 +1891,7 @@ let cardNumberElementInput = Skyflow.CollectElementInput(
 let cardNumberElement = container?.create(input: cardNumberElementInput, options: requiredOption)
 
 let cvvElementInput = Skyflow.CollectElementInput(
-    table: "cards",
+    tableName: "cards",
     column: "cvv",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
@@ -2021,7 +2033,7 @@ let revealElementInput = Skyflow.RevealElementInput(
 )
 ```
 `Note`: 
-- To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. Supported redaction values are `PLAIN_TEXT`, `MASKED`, `REDACTED` and `DEFAULT`.
+- To apply a redaction to a token group as part of the detokenize call, use `tokenGroupRedactions` on `Skyflow.RevealOptions` (passed to `reveal(callback:options:)`) rather than on the individual `RevealElementInput` - see [Step 4: Reveal data](#step-4-reveal-data). If not provided, the vault-configured default redaction is applied. 
 
  
 The `inputStyles` parameter accepts a styles object as described in the [previous section](#step-2-create-a-collect-element) for collecting data but the only state available for a reveal element is the base state. 
@@ -2052,7 +2064,7 @@ Along with `RevealElementInput`, you can define other options in the `RevealElem
 Skyflow.RevealElementOptions(
   format: String, // Format for the element.
   translation: [Character: String] // Indicates the allowed data type value for format
-  enableCopy: Boolean, // Indicates whether to enable the copy icon in reveal elements to copy text to clipboard. Defaults to 'false'
+  enableCopy: Bool?, // Indicates whether to enable the copy icon in reveal elements to copy text to clipboard. Defaults to 'false'
 )
 ```
 - `format`: A string value that indicates how the  element should display the value, including placeholder characters that map to keys `translation` If `translation` isn't specified, the `format` value is considered a string literal.
@@ -2119,7 +2131,7 @@ To apply a redaction to one or more token groups as part of the detokenize call,
 ```swift
 let revealOptions = Skyflow.RevealOptions(
     tokenGroupRedactions: [
-        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "mask")
     ]
 )
 container.reveal(callback: revealCallback, options: revealOptions)
@@ -2130,17 +2142,17 @@ This is a request-level setting - the redaction applies to every token in the na
  
 Helps to display custom error messages on the Skyflow Elements through the methods `setError` and `resetError` on the elements.
  
-`setError(error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
+`setError(_ error: String)` method is used to set the error text for the element, when this method is trigerred, all the current errors present on the element will be overridden with the custom error message passed. This error will be displayed on the element until `resetError()` is trigerred on the same element.
  
 `resetError()` method is used to clear the custom error message that is set using `setError`.
  
 ### Set token for Reveal Elements
  
-The `setToken(value: String)` method can be used to set the token of the Reveal Element. If no altText is set, the set token will be displayed on the UI as well. If altText is set, then there will be no change in the UI but the token of the element will be internally updated.
+The `setToken(_ token: String)` method can be used to set the token of the Reveal Element. If no altText is set, the set token will be displayed on the UI as well. If altText is set, then there will be no change in the UI but the token of the element will be internally updated.
  
 ### Set and Clear altText for Reveal Elements
  
-The `setAltText(value: String)` method can be used to set the altText of the Reveal Element. This will cause the altText to be displayed in the UI regardless of whether the token or value is currently being displayed.
+The `setAltText(_ altText: String)` method can be used to set the altText of the Reveal Element. This will cause the altText to be displayed in the UI regardless of whether the token or value is currently being displayed.
  
 `clearAltText()` method can be used to clear the altText, this will cause the element to display the token or actual value of the element. If the element has no token, the element will be empty.
  
@@ -2221,7 +2233,7 @@ let revealCallback = Skyflow.RevealCallback(
 // Optional: apply a redaction to a token group as part of the detokenize call
 let revealOptions = Skyflow.RevealOptions(
     tokenGroupRedactions: [
-        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")
+        Skyflow.TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "mask")
     ]
 )
 
