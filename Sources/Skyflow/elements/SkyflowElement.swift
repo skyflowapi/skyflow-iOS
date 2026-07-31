@@ -60,7 +60,7 @@ public class SkyflowElement: UIView {
 
   /// Field Configuration
     internal func setupField() {
-            tableName = collectInput.table
+            tableName = collectInput.tableName
             columnName = collectInput.column
             fieldType = collectInput.type
             isRequired = options.required

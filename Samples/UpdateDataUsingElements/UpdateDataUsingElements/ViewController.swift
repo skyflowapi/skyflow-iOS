@@ -63,7 +63,7 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
@@ -73,7 +73,7 @@ class ViewController: UIViewController {
 
             )
             let collectNameInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
@@ -82,7 +82,7 @@ class ViewController: UIViewController {
                 skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
             )
             let collectCVVInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
@@ -91,7 +91,7 @@ class ViewController: UIViewController {
                 skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowId if you want to test update with elements functionality, otherwise you can remove skyflowId field from input
             )
             let collectExpMonthInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
@@ -101,7 +101,7 @@ class ViewController: UIViewController {
 
             )
             let collectExpYearInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",

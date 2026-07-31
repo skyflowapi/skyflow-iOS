@@ -181,7 +181,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
         let callback = DemoAPICallback(expectation: expectation)
         let client = Client(Configuration(vaultID: "id", vaultURL: "https://www.skyflow.com", tokenProvider: DemoTokenProvider()))
         let container = client.container(type: ContainerType.COLLECT)
-        let input = CollectElementInput(table: "table", column: "column", type: .EXPIRATION_YEAR)
+        let input = CollectElementInput(tableName: "table", column: "column", type: .EXPIRATION_YEAR)
         let element = container?.create(input: input)
 
         UIWindow().addSubview(element!)

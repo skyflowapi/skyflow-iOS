@@ -33,7 +33,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -57,7 +57,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -85,7 +85,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -107,7 +107,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -127,7 +127,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -144,7 +144,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -160,7 +160,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -177,7 +177,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         
@@ -193,7 +193,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let collectElement = container?.create(input: collectInput, options: options)
         
@@ -225,7 +225,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -254,7 +254,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -264,7 +264,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -294,7 +294,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -302,7 +302,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -329,7 +329,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: true)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -405,7 +405,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -428,7 +428,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         
         let window = UIWindow()
@@ -451,7 +451,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         
         let window = UIWindow()
@@ -474,7 +474,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
@@ -500,7 +500,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         
         let window = UIWindow()
@@ -523,14 +523,14 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
         var vs = ValidationSet()
         vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
         
         let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
@@ -554,14 +554,14 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
         var vs = ValidationSet()
         vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN, validations: vs)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN, validations: vs)
         
         let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
@@ -591,7 +591,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValue(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvvElement = container?.create(input: collectInput)
         
@@ -611,7 +611,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormatting(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let collectInputfieldInput = Skyflow.CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
         let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": "[0-9]"])
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
@@ -633,7 +633,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let collectInputfieldInput = Skyflow.CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
         let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": ""])
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
@@ -655,7 +655,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let collectInputfieldInput = Skyflow.CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
         let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY")
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
@@ -677,7 +677,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithoutCustomFormatting(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
+        let collectInputfieldInput = Skyflow.CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
         let requiredOption = Skyflow.CollectElementOptions(required: true)
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
@@ -699,7 +699,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.CARD_NUMBER )
+        let collectInputfieldInput = Skyflow.CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.CARD_NUMBER )
         let requiredOption = Skyflow.CollectElementOptions(required: true, format: "XXXX-XXXX-XXXX-XXXX")
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
@@ -953,7 +953,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: Styles(base: Style(cursorColor: .orange)), placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: Styles(base: Style(cursorColor: .orange)), placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -966,7 +966,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false, enableCopy: true)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -989,7 +989,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false, enableCopy: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -1010,7 +1010,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false, enableCopy: true)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         

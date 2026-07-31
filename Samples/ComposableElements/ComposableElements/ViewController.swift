@@ -74,7 +74,7 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
@@ -82,7 +82,7 @@ class ViewController: UIViewController {
                 type: Skyflow.ElementType.CARD_NUMBER
             )
             let collectNameInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
@@ -90,7 +90,7 @@ class ViewController: UIViewController {
                 type: Skyflow.ElementType.CARDHOLDER_NAME
             )
             let collectCVVInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
@@ -98,7 +98,7 @@ class ViewController: UIViewController {
                 type: .CVV
             )
             let collectExpMonthInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
@@ -106,7 +106,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_MONTH
             )
             let collectExpYearInput = Skyflow.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",

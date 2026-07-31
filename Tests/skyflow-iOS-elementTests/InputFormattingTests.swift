@@ -27,7 +27,7 @@ class InputFormattingTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let cardNumberInput = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: cardNumberInput, options: options)
         window.addSubview(cardNumber!)
@@ -43,7 +43,7 @@ class InputFormattingTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let expiryDateInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_DATE)
+        let expiryDateInput = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_DATE)
         
         let expiryDate = container?.create(input: expiryDateInput, options: options)
         window.addSubview(expiryDate!)
@@ -59,7 +59,7 @@ class InputFormattingTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let expiryDateInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_MONTH)
+        let expiryDateInput = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_MONTH)
         
         let expiryDate = container?.create(input: expiryDateInput, options: options)
         window.addSubview(expiryDate!)

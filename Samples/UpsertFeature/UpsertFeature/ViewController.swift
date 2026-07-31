@@ -86,7 +86,7 @@ class ViewController: UIViewController {
             )
             // keep card number as unique column for testing upsert feature
             let collectCardNumberInput = Skyflow.CollectElementInput(
-                table: "persons",
+                tableName: "persons",
                 column: "cardnumber",
                 inputStyles: styles,
                 labelStyles: labelStyles,
@@ -98,7 +98,7 @@ class ViewController: UIViewController {
             let requiredOption = Skyflow.CollectElementOptions(required: true)
             let collectCardNumber = container?.create(input: collectCardNumberInput, options: requiredOption)
             let collectCvvInput = Skyflow.CollectElementInput(
-                table: "persons",
+                tableName: "persons",
                 column: "cvv",
                 inputStyles: styles,
                 label: "Cvv",

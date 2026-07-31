@@ -278,7 +278,7 @@ public extension Container {
     }
         
         private func checkElement(element: TextField) -> ErrorCodes? {
-            if element.collectInput.table.isEmpty {
+            if element.collectInput.tableName.isEmpty {
                 return .EMPTY_TABLE_NAME_IN_COLLECT()
             }
             if element.collectInput.column.isEmpty {

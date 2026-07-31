@@ -173,7 +173,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -200,7 +200,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -208,7 +208,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -233,7 +233,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -256,12 +256,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "card_number", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
@@ -278,12 +278,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
@@ -304,12 +304,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
@@ -330,12 +330,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
@@ -357,12 +357,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         let cvv = container?.create(input: collectInput2, options: options)
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
@@ -382,7 +382,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowId: "")
+        let collectInput = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowId: "")
         let cardNumber = container?.create(input: collectInput, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
@@ -455,7 +455,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
-        let collectInput1 = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowId: "id1")
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER, skyflowId: "id1")
         let cardNumber = container?.create(input: collectInput1, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
@@ -478,12 +478,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let insertInput = CollectElementInput(table: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let insertInput = CollectElementInput(tableName: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let insertElement = container?.create(input: insertInput, options: options)
         insertElement?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(insertElement!)
 
-        let updateInput = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateInput = CollectElementInput(tableName: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
         let updateElement = container?.create(input: updateInput, options: options)
         updateElement?.textField.secureText = "John Doe"
         window.addSubview(updateElement!)
@@ -509,7 +509,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let insertInput = CollectElementInput(table: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let insertInput = CollectElementInput(tableName: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let insertElement = container?.create(input: insertInput, options: options)
         insertElement?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(insertElement!)
@@ -538,7 +538,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let updateInput = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateInput = CollectElementInput(tableName: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
         let updateElement = container?.create(input: updateInput, options: options)
         updateElement?.textField.secureText = "John Doe"
         window.addSubview(updateElement!)
@@ -570,12 +570,12 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let insertInput = CollectElementInput(table: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let insertInput = CollectElementInput(tableName: "cards", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         let insertElement = container?.create(input: insertInput, options: options)
         insertElement?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(insertElement!)
 
-        let updateInput = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateInput = CollectElementInput(tableName: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
         let updateElement = container?.create(input: updateInput, options: options)
         updateElement?.textField.secureText = "John Doe"
         window.addSubview(updateElement!)
@@ -625,7 +625,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let updateInput1 = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
+        let updateInput1 = CollectElementInput(tableName: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, skyflowId: "id1")
         let updateElement1 = container?.create(input: updateInput1, options: options)
         updateElement1?.textField.secureText = "John"
         updateElement1?.textFieldDidEndEditing(updateElement1!.textField)
@@ -633,7 +633,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
 
         var vs = ValidationSet()
         vs.add(rule: ElementValueMatchRule(element: updateElement1!, error: "ELEMENT NOT MATCHING"))
-        let updateInput2 = CollectElementInput(table: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, validations: vs, skyflowId: "id1")
+        let updateInput2 = CollectElementInput(tableName: "persons", column: "name", placeholder: "name", type: .CARDHOLDER_NAME, validations: vs, skyflowId: "id1")
         let updateElement2 = container?.create(input: updateInput2, options: options)
         updateElement2?.textField.secureText = "Jane"
         updateElement2?.textFieldDidEndEditing(updateElement2!.textField)

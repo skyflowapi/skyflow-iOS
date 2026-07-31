@@ -208,8 +208,8 @@ public class TextField: SkyflowElement, Element, BaseElement {
         if update.column.isEmpty != true {
             collectInput.column = update.column
         }
-        if update.table.isEmpty != true {
-            collectInput.table = update.table
+        if update.tableName.isEmpty != true {
+            collectInput.tableName = update.tableName
         }
         if update.column.isEmpty != true {
             collectInput.column = update.column

@@ -22,7 +22,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
 
     private func makeNameElement(skyflowId: String? = nil) -> TextField {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
-        let input = CollectElementInput(table: "persons", column: "name", type: .CARDHOLDER_NAME, skyflowId: skyflowId)
+        let input = CollectElementInput(tableName: "persons", column: "name", type: .CARDHOLDER_NAME, skyflowId: skyflowId)
         let element = container!.create(input: input, options: CollectElementOptions(required: false))
         element.textField.secureText = "John Doe"
         return element
@@ -80,7 +80,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
     }
 
     func testCollectElementInputSkyflowIdDefaultsToNil() {
-        let input = CollectElementInput(table: "persons", column: "name", type: .CARDHOLDER_NAME)
+        let input = CollectElementInput(tableName: "persons", column: "name", type: .CARDHOLDER_NAME)
         XCTAssertNil(input.skyflowId)
     }
 

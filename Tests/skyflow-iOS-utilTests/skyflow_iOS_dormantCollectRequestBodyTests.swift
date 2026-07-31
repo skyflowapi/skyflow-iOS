@@ -20,7 +20,7 @@ final class skyflow_iOS_dormantCollectRequestBodyTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", type: .CARD_NUMBER)
+        let cardNumberInput = CollectElementInput(tableName: "persons", column: "card_number", type: .CARD_NUMBER)
         let cardNumber = container?.create(input: cardNumberInput, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)
@@ -58,7 +58,7 @@ final class skyflow_iOS_dormantCollectRequestBodyTests: XCTestCase {
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         let options = CollectElementOptions(required: false)
 
-        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", type: .CARD_NUMBER, skyflowId: "id1")
+        let cardNumberInput = CollectElementInput(tableName: "persons", column: "card_number", type: .CARD_NUMBER, skyflowId: "id1")
         let cardNumber = container?.create(input: cardNumberInput, options: options)
         cardNumber?.textField.secureText = "4111 1111 1111 1111"
         window.addSubview(cardNumber!)

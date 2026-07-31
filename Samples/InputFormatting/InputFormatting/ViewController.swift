@@ -77,7 +77,7 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
@@ -85,7 +85,7 @@ class ViewController: UIViewController {
                 type: Skyflow.ElementType.CARD_NUMBER
             )
             let collectNameInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
@@ -93,7 +93,7 @@ class ViewController: UIViewController {
                 type: Skyflow.ElementType.CARDHOLDER_NAME
             )
             let collectCVVInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
@@ -101,7 +101,7 @@ class ViewController: UIViewController {
                 type: .CVV
             )
             let collectExpMonthInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
@@ -109,7 +109,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_MONTH
             )
             let collectExpYearInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",
@@ -117,7 +117,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_YEAR
             )
             let collectSSNInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "ssn",
                 inputStyles: styles,
                 label: "SSN",
@@ -125,7 +125,7 @@ class ViewController: UIViewController {
                 type: .INPUT_FIELD
             )
             let collectPhoneNumberInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "phone_number",
                 inputStyles: styles,
                 label: "Phone Number",
@@ -133,7 +133,7 @@ class ViewController: UIViewController {
                 type: .INPUT_FIELD
             )
             let collectLicenseNumberInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "license_number",
                 inputStyles: styles,
                 label: "License Number",
