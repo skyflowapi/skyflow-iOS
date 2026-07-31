@@ -67,11 +67,15 @@ internal class FlowVaultCollectRequestBody {
         var index: Int = 0
 
         if let additionalFields = additionalFields {
-            for entry in additionalFields.records {
+            for (recordIndex, entry) in additionalFields.records.enumerated() {
                 let tableName = entry.tableName
                 let fields = entry.data
-                // Matches the element-based check below: an empty string is treated the same as
-                // absent, falling back to a plain insert rather than an update targeting "".
+                // An explicit empty-string skyflowId is a caller bug — reject it rather than
+                // silently inserting a new row where an update was intended.
+                if let skyflowId = entry.skyflowId, skyflowId.isEmpty {
+                    self.callback?.onFailure(ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index \(recordIndex)").getErrorObject(contextOptions: contextOptions))
+                    return nil
+                }
                 if let skyflowId = entry.skyflowId, !skyflowId.isEmpty {
                     if updatePayload[skyflowId] != nil {
                         let temp = updatePayload[skyflowId] as! [String: Any]
@@ -123,6 +127,12 @@ internal class FlowVaultCollectRequestBody {
             let value = element.getValue()
             let skyflowId = element.skyflowId // Assumes TextField has this property
 
+            // Same guard as additionalFields above: CollectElementInput now defaults
+            // skyflowId to nil, so an empty string can only be an explicit caller mistake.
+            if let skyflowId = skyflowId, skyflowId.isEmpty {
+                self.callback?.onFailure(ErrorCodes.EMPTY_SKYFLOW_ID(value: "element with column '\(columnName)'").getErrorObject(contextOptions: contextOptions))
+                return nil
+            }
             if let skyflowId = skyflowId, !skyflowId.isEmpty {
                 if updatePayload[skyflowId] != nil {
                     var temp = updatePayload[skyflowId] as! [String: Any]

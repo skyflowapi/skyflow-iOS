@@ -55,6 +55,20 @@ public extension Container {
                 return
             }
         }
+        // Mirrors the JS SDK's validateRevealOptions: every redaction entry must have a
+        // non-empty tokenGroupName and redaction. Whitespace-only values are rejected
+        // too — stricter than JS, which only checks !== ''. (The JS array/string type
+        // checks are enforced by Swift's type system and don't need porting.)
+        if let redactions = options?.tokenGroupRedactions {
+            for (index, entry) in redactions.enumerated() {
+                if entry.tokenGroupName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    || entry.redaction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    errorCode = .INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: String(index))
+                    callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
+                    return
+                }
+            }
+        }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: tempContextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
 
