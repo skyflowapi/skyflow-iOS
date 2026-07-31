@@ -77,7 +77,7 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
@@ -85,7 +85,7 @@ class ViewController: UIViewController {
                 type: Skyflow.ElementType.CARD_NUMBER
             )
             let collectNameInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
@@ -93,7 +93,7 @@ class ViewController: UIViewController {
                 type: Skyflow.ElementType.CARDHOLDER_NAME
             )
             let collectCVVInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
@@ -101,7 +101,7 @@ class ViewController: UIViewController {
                 type: .CVV
             )
             let collectExpMonthInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
@@ -109,7 +109,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_MONTH
             )
             let collectExpYearInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",
@@ -117,7 +117,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_YEAR
             )
             let collectSSNInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "ssn",
                 inputStyles: styles,
                 label: "SSN",
@@ -125,7 +125,7 @@ class ViewController: UIViewController {
                 type: .INPUT_FIELD
             )
             let collectPhoneNumberInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "phone_number",
                 inputStyles: styles,
                 label: "Phone Number",
@@ -133,7 +133,7 @@ class ViewController: UIViewController {
                 type: .INPUT_FIELD
             )
             let collectLicenseNumberInput = Skyflow.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "license_number",
                 inputStyles: styles,
                 label: "License Number",
@@ -201,21 +201,37 @@ class ViewController: UIViewController {
         }
     }
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        let revealCallback = Skyflow.RevealCallback(
+            onSuccess: { response in print("reveal success:", response) },
+            onFailure: { error in print("reveal failure:", error) }
+        )
+        self.revealContainer?.reveal(callback: revealCallback)
     }
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: Skyflow.CollectOptions(tokens: true))
+        let collectCallback = Skyflow.CollectCallback(onSuccess: updateSuccess, onFailure: updateFailure)
+        container!.collect(callback: collectCallback, options: Skyflow.CollectOptions())
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: Skyflow.CollectResponse) {
         print(response)
-        updateRevealInputs(tokens: response.records[0].fields)
+        for result in response.records {
+            if let error = result.error {
+                print("Record failed:", error, "httpCode:", result.httpCode)
+            }
+        }
+        if let tokens = response.records.first?.tokens {
+            updateRevealInputs(tokens: tokens)
+        }
         print("Successfully got response:", response)
     }
     internal func updateFailure(error: Any) {
         print("Failed Operation", error)
     }
-    internal func updateRevealInputs(tokens: Fields) {
+    // fields is [String: Any] - column name -> array of {"token","tokenGroupName"} dicts.
+    internal func firstToken(_ fields: [String: Any], column: String) -> (token: String, tokenGroupName: String?) {
+        guard let entries = fields[column] as? [[String: Any]], let first = entries.first else { return ("", nil) }
+        return (first["token"] as? String ?? "", first["tokenGroupName"] as? String)
+    }
+    internal func updateRevealInputs(tokens: [String: Any]) {
         let revealBaseStyle = Skyflow.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -232,7 +248,7 @@ class ViewController: UIViewController {
                 self.revealed = true
             }
             let revealCardNumberInput = Skyflow.RevealElementInput(
-                token: tokens.card_number,
+                token: firstToken(tokens, column: "card_number").token ?? "",
                 inputStyles: revealStyles,
                 label: "Card Number"
             )
@@ -241,43 +257,43 @@ class ViewController: UIViewController {
                 options: Skyflow.RevealElementOptions(format: "XXXX-XXXX-XXXX-XXXX-XXX", translation: ["X": "[0-9]"])
             )
             let revealCVVtInput = Skyflow.RevealElementInput(
-                token: tokens.cvv,
+                token: firstToken(tokens, column: "cvv").token ?? "",
                 inputStyles: revealStyles,
                 label: "CVV"
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = Skyflow.RevealElementInput(
-                token: tokens.cardholder_name,
+                token: firstToken(tokens, column: "cardholder_name").token ?? "",
                 inputStyles: revealStyles,
                 label: "Card Holder Name"
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = Skyflow.RevealElementInput(
-                token: tokens.expiry_month,
+                token: firstToken(tokens, column: "expiry_month").token ?? "",
                 inputStyles: revealStyles,
                 label: "Expiration Month"
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = Skyflow.RevealElementInput(
-                token: tokens.expiry_year,
+                token: firstToken(tokens, column: "expiry_year").token ?? "",
                 inputStyles: revealStyles,
                 label: "Expiration Year"
             )
             self.revealExpirationYear = self.revealContainer?.create(input: revealExpirationYearInput)
             let revealSSNInput = Skyflow.RevealElementInput(
-                token: tokens.ssn,
+                token: firstToken(tokens, column: "ssn").token ?? "",
                 inputStyles: revealStyles,
                 label: "SSN"
             )
             self.revealSSN = self.revealContainer?.create(input: revealSSNInput, options: Skyflow.RevealElementOptions(format: "XXX XX XXXX", translation: ["X": "[0-9]"]))
             let revealPhoneNumberInput = Skyflow.RevealElementInput(
-                token: tokens.phone_number,
+                token: firstToken(tokens, column: "phone_number").token ?? "",
                 inputStyles: revealStyles,
                 label: "Phone Number"
             )
             self.revealPhoneNumber = self.revealContainer?.create(input: revealPhoneNumberInput, options: Skyflow.RevealElementOptions(format: "+91 XXXX-XX-XXXX", translation: ["X": "[0-9]"]))
             let revealLicenseNumberInput = Skyflow.RevealElementInput(
-                token: tokens.phone_number,
+                token: firstToken(tokens, column: "phone_number").token ?? "",
                 inputStyles: revealStyles,
                 label: "License Number"
             )

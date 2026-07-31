@@ -20,13 +20,13 @@ class skyflow_iOS_elementTests: XCTestCase {
         
         self.collectOptions = CollectElementOptions(required: false)
         
-        self.collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        self.collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         
         skyflowElement = SkyflowElement(input: collectInput!, options: collectOptions!, contextOptions: ContextOptions(), elements: [] )
         
         textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
-        let revealElementInput = RevealElementInput(token: "token", label: "RevealElement", redaction: .DEFAULT)
+        let revealElementInput = RevealElementInput(token: "token", label: "RevealElement")
         label = Label(input: revealElementInput, options: RevealElementOptions())
     }
     
@@ -131,7 +131,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let myRules = ValidationSet(rules: [myRegexRule])
         
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
         textField.textField.secureText = "invalid"
@@ -146,7 +146,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let myRules = ValidationSet(rules: [myRandomRule, myRegexRule])
         
         
-        let collectInput = CollectElementInput(table: "tablename", column: "column", placeholder: "John Doe", type: .INPUT_FIELD, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "tablename", column: "column", placeholder: "John Doe", type: .INPUT_FIELD, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
 
@@ -169,7 +169,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         let myRules = ValidationSet(rules: [myRegexRule])
         
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
         textField.textField.secureText = "4111111111111111"
@@ -180,7 +180,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     func testTriggerError() {
         let errorStyle = Style(textColor: .red)
         let inputStyle = Styles(invalid: errorStyle)
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
         textField.textField.secureText = "invalid"
@@ -195,7 +195,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     func testResetError() {
         let errorStyle = Style(textColor: .red)
         let inputStyle = Styles(invalid: errorStyle)
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", inputStyles: inputStyle, placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
 
         textField.textField.secureText = "invalid"
@@ -318,20 +318,20 @@ class skyflow_iOS_elementTests: XCTestCase {
 
     }
     func getElementForDropDownTesting()-> TextField {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111"
 
         return textField
     }
     func getElementForDropDownTestingRightIcon()-> TextField {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: true, enableCopy: true), contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111"
         return textField
     }
     func getElementOfOtherType()-> TextField {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CVV)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CVV)
         let textField = TextField(input: collectInput, options: CollectElementOptions(enableCopy: true), contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "1234"
         return textField
@@ -442,7 +442,7 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
 
     func getElementForDropDownTestingWindow() -> TextField {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: collectOptions, contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111"
         return textField
@@ -471,14 +471,14 @@ class skyflow_iOS_elementTests: XCTestCase {
     }
     
     func testDisableCardIconWhenEnableCopyTrue(){
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: false, enableCopy: true), contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111"
         textField.textFieldDidEndEditing(textField.textField)
         XCTAssertTrue(textField.cardIconContainerView.isHidden)
     }
     func testDisableCardIconWhenEnableCopyFalse(){
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: false, enableCopy: false), contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111"
         textField.textFieldDidEndEditing(textField.textField)
@@ -552,7 +552,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         }
     }
     func testGetDropDownIconSetsUpButtonLeftView() {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .left)),placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .left)),placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: true, enableCopy: true), contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111"
         
@@ -571,7 +571,7 @@ class skyflow_iOS_elementTests: XCTestCase {
         }
     }
     func testGetDropDownIconSetsUpButtonRightViewEnableCopyFalse() {
-        let collectInput = CollectElementInput(table: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardNumber", iconStyles: Styles(base: Style(cardIconAlignment: .right)),placeholder: "card number", type: .CARD_NUMBER)
         let textField = TextField(input: collectInput, options: CollectElementOptions(enableCardIcon: true, enableCopy: false), contextOptions: ContextOptions(), elements: [])
         textField.textField.secureText = "4111111111111111";        textField.textFieldDidEndEditing(textField.textField)
         textField.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [CardType.AMEX]]))

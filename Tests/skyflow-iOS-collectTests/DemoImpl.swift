@@ -42,12 +42,24 @@ public class DemoAPICallback: Callback {
     var receivedResponse: String = "default"
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
+    var collectResponse: Skyflow.CollectResponse?
+    var revealResponse: Skyflow.RevealResponse?
 
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
     }
 
     public func onSuccess(_ responseBody: Any) {
+        if let response = responseBody as? Skyflow.CollectResponse {
+            self.collectResponse = response
+            expectation.fulfill()
+            return
+        }
+        if let response = responseBody as? Skyflow.RevealResponse {
+            self.revealResponse = response
+            expectation.fulfill()
+            return
+        }
         do {
             let dataString = String(data: try JSONSerialization.data(withJSONObject: responseBody), encoding: .utf8)
             if let unwrapped = dataString {
@@ -67,5 +79,16 @@ public class DemoAPICallback: Callback {
             self.receivedResponse = (error as! Error).localizedDescription
         }
         expectation.fulfill()
+    }
+
+    // CollectContainer.collect(callback:)/RevealContainer.reveal(callback:) require the
+    // concrete Skyflow.CollectCallback/RevealCallback types - these wrap self so existing
+    // DemoAPICallback call sites only need a one-word change (.asCollectCallback/.asRevealCallback).
+    var asCollectCallback: Skyflow.CollectCallback {
+        Skyflow.CollectCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
+    }
+
+    var asRevealCallback: Skyflow.RevealCallback {
+        Skyflow.RevealCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
     }
 }

@@ -38,15 +38,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         let istyle = Style(textColor: .red)
         let styles = Styles(base: bstyle, invalid: istyle)
 
-        let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement", redaction: .DEFAULT)
-
-        return revealElementInput
-    }
-    func getRevealElementInputNoRedaction() -> RevealElementInput {
-        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
-        let istyle = Style(textColor: .red)
-        let styles = Styles(base: bstyle, invalid: istyle)
-
         let revealElementInput = RevealElementInput(token: revealTestId, inputStyles: styles, label: "RevealElement")
 
         return revealElementInput
@@ -65,8 +56,21 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealElementInput = getRevealElementInput()
 
         XCTAssertEqual(revealElementInput.token, revealTestId)
-        XCTAssertEqual(revealElementInput.redaction, .DEFAULT)
         XCTAssertEqual(revealElementInput.label, "RevealElement")
+    }
+
+    func testRevealOptionsCarriesTokenGroupRedactions() {
+        let options = RevealOptions(tokenGroupRedactions: [TokenGroupRedaction(tokenGroupName: "deterministic_string", redaction: "MASKED")])
+
+        XCTAssertEqual(options.tokenGroupRedactions?.count, 1)
+        XCTAssertEqual(options.tokenGroupRedactions?.first?.tokenGroupName, "deterministic_string")
+        XCTAssertEqual(options.tokenGroupRedactions?.first?.redaction, "MASKED")
+    }
+
+    func testRevealOptionsDefaultsToNilTokenGroupRedactions() {
+        let options = RevealOptions()
+
+        XCTAssertNil(options.tokenGroupRedactions)
     }
 
     func testCreateSkyflowRevealContainer() {
@@ -104,22 +108,11 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
-        
+
         let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: Any]]]
-        
-        let result: [String: [[String: Any]]] = ["records": [["token": revealTestId, "redaction": RedactionType.DEFAULT]]]
-        
-        XCTAssertTrue(compareDictionaries(dict1: result, dict2: requestBody))
-    }
-    func testCreateRevealRequestBodyWithNoRedaction() {
-        let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
-        let revealElementInput = getRevealElementInputNoRedaction()
-        let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
-        
-        let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: Any]]]
-        
-        let result: [String: [[String: Any]]] = ["records": [["token": revealTestId, "redaction": RedactionType.PLAIN_TEXT]]]
-        
+
+        let result: [String: [[String: Any]]] = ["records": [["token": revealTestId]]]
+
         XCTAssertTrue(compareDictionaries(dict1: result, dict2: requestBody))
     }
     
@@ -182,7 +175,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         window.addSubview(revealElement!)
         
         let callback = DemoAPICallback(expectation: expectFailure)
-        revealContainer?.reveal(callback: callback)
+        revealContainer?.reveal(callback: callback.asRevealCallback)
         
         wait(for: [expectFailure], timeout: 10.0)
         

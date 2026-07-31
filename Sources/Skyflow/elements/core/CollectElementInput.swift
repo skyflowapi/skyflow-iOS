@@ -7,7 +7,7 @@
 import Foundation
 
 public struct CollectElementInput {
-    var table: String
+    var tableName: String
     var column: String
     var inputStyles: Styles
     var labelStyles: Styles
@@ -17,12 +17,12 @@ public struct CollectElementInput {
     var placeholder: String
     var type: ElementType?
     var validations: ValidationSet
-    var skyflowID: String
+    var skyflowId: String?
 
-    public init(table: String = "", column: String = "",
+    public init(tableName: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
-                placeholder: String? = "", validations: ValidationSet=ValidationSet(), skyflowID: String? = "") {
-        self.table = table
+                placeholder: String? = "", validations: ValidationSet=ValidationSet(), skyflowId: String? = nil) {
+        self.tableName = tableName
         self.column = column
         self.inputStyles = inputStyles!
         self.labelStyles = labelStyles!
@@ -31,13 +31,13 @@ public struct CollectElementInput {
         self.label = label!
         self.placeholder = placeholder!
         self.validations = validations
-        self.skyflowID = skyflowID!
+        self.skyflowId = skyflowId
     }
 
-    public init(table: String = "", column: String = "",
+    public init(tableName: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
-                placeholder: String? = "", type: ElementType?, validations: ValidationSet=ValidationSet(), skyflowID: String? = "") {
-        self.table = table
+                placeholder: String? = "", type: ElementType?, validations: ValidationSet=ValidationSet(), skyflowId: String? = nil) {
+        self.tableName = tableName
         self.column = column
         self.inputStyles = inputStyles!
         self.labelStyles = labelStyles!
@@ -47,14 +47,14 @@ public struct CollectElementInput {
         self.placeholder = placeholder!
         self.type = type
         self.validations = validations
-        self.skyflowID = skyflowID!
+        self.skyflowId = skyflowId
     }
     
     @available(*, deprecated, message: "altText param is deprecated")
-    public init(table: String = "", column: String = "",
+    public init(tableName: String = "", column: String = "",
             inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
-            placeholder: String? = "", altText: String? = "", type: ElementType?, validations: ValidationSet=ValidationSet(), skyflowID: String? = "") {
-        self.table = table
+            placeholder: String? = "", altText: String? = "", type: ElementType?, validations: ValidationSet=ValidationSet(), skyflowId: String? = nil) {
+        self.tableName = tableName
         self.column = column
         self.inputStyles = inputStyles!
         self.labelStyles = labelStyles!
@@ -64,6 +64,6 @@ public struct CollectElementInput {
         self.placeholder = placeholder!
         self.type = type
         self.validations = validations
-        self.skyflowID = skyflowID!
+        self.skyflowId = skyflowId
     }
 }
