@@ -24,6 +24,11 @@ class CollectAndRevealViewController: UIViewController {
     private var revealed = false
     private var tokenGroupRedactions: [Skyflow.TokenGroupRedaction] = []
 
+    // Manual/visual check for the mock-CVV feature: shows the CVV token straight from
+    // collect()'s response so you can see it's a short numeric mock (not a real vault token)
+    // after submitting, without needing to inspect console output.
+    private var cvvMockCheckLabel: UILabel?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,6 +122,14 @@ class CollectAndRevealViewController: UIViewController {
             collectButton.backgroundColor = .blue
             collectButton.setTitle("Submit", for: .normal)
             collectButton.addTarget(self, action: #selector(submitForm), for: .touchUpInside)
+
+            let cvvMockCheckLabel = UILabel()
+            cvvMockCheckLabel.text = "CVV token will appear here after submit"
+            cvvMockCheckLabel.numberOfLines = 0
+            cvvMockCheckLabel.textColor = .darkGray
+            cvvMockCheckLabel.font = .systemFont(ofSize: 13)
+            self.cvvMockCheckLabel = cvvMockCheckLabel
+
             self.revealContainer = skyflow?.container(type: Skyflow.ContainerType.REVEAL, options: nil)
             self.revealButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 40))
             revealButton.backgroundColor = .blue

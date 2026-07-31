@@ -273,7 +273,9 @@ public extension Container {
                                               onFailureHandler: {
                 }
                 )
-                self.skyflow.apiClient.postAndUpdate(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
+                let cvvMap = CVVTokenReplacer.captureCVVMap(elements: self.elements)
+                let cvvMaskingCallback = CVVMaskingCallback(cvvMap: cvvMap, wrapping: logCallback)
+                self.skyflow.apiClient.postAndUpdate(records: records!, callback: cvvMaskingCallback, options: icOptions, contextOptions: tempContextOptions)
             }
     }
         
