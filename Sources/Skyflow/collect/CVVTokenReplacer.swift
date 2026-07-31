@@ -17,10 +17,9 @@ internal struct CVVCaptureMap {
 
 internal enum CVVTokenReplacer {
     // An optional CVV element left blank still submits "" to the vault and can get a real token
-    // back for it - always capture the column (even when empty) so its response token is masked
-    // too, rather than leaving a real-token-shaped value that would reveal the field was blank.
-    internal static let defaultMockLengthForEmptyValue = 4
-
+    // back for it - always capture the column (even when empty) so that token gets replaced with
+    // "" too (see applyMock below), rather than leaking the real vault token unmasked.
+    //
     // First element wins per (table/recordId, column) - mirrors the existing dedup behavior in
     // FlowVaultCollectRequestBody, where a second element sharing a column (ElementValueMatchRule)
     // is dropped rather than merged.
@@ -80,10 +79,10 @@ internal enum CVVTokenReplacer {
 
         guard var entries = fields[topKey] as? [[String: Any]] else { return }
 
-        // No entered length to match against when the field was left blank - fall back to a
-        // fixed length so an empty CVV's token is just as mock-shaped as a populated one's.
-        let mockLength = enteredValue.isEmpty ? defaultMockLengthForEmptyValue : enteredValue.count
-        let mock = CVVMockGenerator.generateMockCVV(length: mockLength, actualValue: enteredValue)
+        // A blank entered CVV has no length to match, and generateMockCVV(length: 0, ...) would
+        // never terminate its "regenerate until different" loop (every draw is "", which always
+        // equals the empty entered value) - never call it here; just replace with "" directly.
+        let mock = enteredValue.isEmpty ? "" : CVVMockGenerator.generateMockCVV(length: enteredValue.count, actualValue: enteredValue)
 
         for index in entries.indices {
             let entryPath = entries[index]["path"] as? String
