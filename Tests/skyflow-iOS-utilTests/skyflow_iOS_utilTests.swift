@@ -87,4 +87,63 @@ final class skyflow_iOS_utilTests: XCTestCase {
         XCTAssertEqual(records as NSDictionary, ["fields": ["name": "John Doe", "email": "john.doe@example.com"]])
         XCTAssertFalse(tokenization)
     }
+
+    // SK-2963: beta-build-in-prod warning
+
+    func testIsNonGaVersion_plainSemverIsGa() {
+        XCTAssertFalse(isNonGaVersion("1.25.1"))
+        XCTAssertFalse(isNonGaVersion("2.11.3"))
+    }
+
+    func testIsNonGaVersion_betaSuffixIsNonGa() {
+        XCTAssertTrue(isNonGaVersion("1.26.0-beta.1"))
+    }
+
+    func testIsNonGaVersion_devSuffixIsNonGa() {
+        XCTAssertTrue(isNonGaVersion("1.26.0-dev.abc1234"))
+    }
+
+    func testIsNonGaVersion_emptyOrGarbageIsNonGa() {
+        XCTAssertTrue(isNonGaVersion(""))
+        XCTAssertTrue(isNonGaVersion("not-a-version"))
+    }
+
+    func testIsNonProdVaultUrl_plainDomainLooksProd() {
+        XCTAssertFalse(isNonProdVaultUrl("https://abc123.vault.skyflowapis.com/v1/vaults/"))
+    }
+
+    func testIsNonProdVaultUrl_emptyLooksProd() {
+        XCTAssertFalse(isNonProdVaultUrl(""))
+    }
+
+    func testIsNonProdVaultUrl_previewDomainIsNonProd() {
+        XCTAssertTrue(isNonProdVaultUrl("https://abc123.vault.skyflowapis-preview.com/v1/vaults/"))
+    }
+
+    func testIsNonProdVaultUrl_devDomainIsNonProd() {
+        XCTAssertTrue(isNonProdVaultUrl("https://abc123.vault.skyflowapis.dev/v1/vaults/"))
+    }
+
+    func testIsNonProdVaultUrl_stageDomainIsNonProd() {
+        XCTAssertTrue(isNonProdVaultUrl("https://abc123.vault.skyflowapis.tech/v1/vaults/"))
+    }
+
+    // Confirms the wiring in Client.init doesn't crash under the "would warn" condition.
+    // SDK_VERSION is mutable (internal) module state, so this is the one place in this
+    // suite that can drive a genuinely non-GA version; it's restored in the defer so it
+    // doesn't leak into other tests that run in the same process.
+    func testClientInit_doesNotCrashForNonGaVersionAgainstProdLookingVaultUrl() {
+        let originalVersion = SDK_VERSION
+        SDK_VERSION = "99.0.0-beta.1"
+        defer { SDK_VERSION = originalVersion }
+
+        let config = Configuration(
+            vaultID: "vault_id",
+            vaultURL: "https://abc123.vault.skyflowapis.com",
+            tokenProvider: DemoTokenProvider(),
+            options: Options(logLevel: .WARN)
+        )
+        let client = Client(config)
+        XCTAssertEqual(client.vaultID, "vault_id")
+    }
 }

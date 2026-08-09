@@ -50,6 +50,7 @@ internal enum Message {
     case FORMAT_AND_TRANSLATION
     case EMPTY_TRANSLATION_VALUE
     case VALIDATE_COMPOSABLE_RECORDS
+    case BETA_BUILD_WARNING
 
 
     var description: String {
@@ -93,6 +94,7 @@ internal enum Message {
         case .VALIDATE_GET_INPUT: return "Validating getByID input."
         case .FORMAT_AND_TRANSLATION: return "format or translation are not supported on <ELEMENT_TYPE> element type"
         case .EMPTY_TRANSLATION_VALUE: return "Value is empty in Translation Key"
+        case .BETA_BUILD_WARNING: return "This is a beta/pre-release build of the Skyflow SDK (v\(SDK_VERSION)). Beta builds are intended for acceptance testing only - you appear to be connecting to a Production vault. Contact your Skyflow representative before using this build in Production."
         }
     }
 
