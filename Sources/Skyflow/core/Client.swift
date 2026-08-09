@@ -18,6 +18,9 @@ public class Client {
         self.vaultURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL + "v1/vaults/" : skyflowConfig.vaultURL + "/v1/vaults/"
         self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: self.vaultURL, tokenProvider: skyflowConfig.tokenProvider)
         self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel, env: skyflowConfig.options!.env, interface: .CLIENT)
+        if isNonGaVersion(SDK_VERSION) && !isNonProdVaultUrl(self.vaultURL) {
+            Log.warn(message: .BETA_BUILD_WARNING, contextOptions: self.contextOptions)
+        }
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 
