@@ -8,6 +8,7 @@ then
     sed -E "s/spec.version .+/spec.version      = \"$SEMVER\"/g" "./Skyflow.podspec" > tempfile
     sed -E "s/source .+/source       = { :git => \"https:\/\/github.com\/skyflowapi\/skyflow-iOS.git\", :tag => \"$1\" }/g" tempfile > ./Skyflow.podspec && rm -f tempfile
     sed -E "s/var SDK_VERSION = .+/var SDK_VERSION = \"$SEMVER\"/g" ./Sources/Skyflow/Version.swift > tempfile && cat tempfile > ./Sources/Skyflow/Version.swift && rm -f tempfile
+    ./scripts/toggle_beta_banner.sh README.md "$SEMVER"
 
 
     echo --------------------------
