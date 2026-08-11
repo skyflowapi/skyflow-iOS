@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 class skyflow_iOS_ValidateGetRecordTest: XCTestCase {
     var skyflow: Client!

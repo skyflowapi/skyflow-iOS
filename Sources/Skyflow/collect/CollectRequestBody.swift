@@ -126,7 +126,7 @@ internal class CollectRequestBody {
             let tableName = element.tableName!
             let columnName = element.columnName!
             let value = element.getValue()
-            let skyflowID = element.skyflowID // Assumes TextField has this property
+            let skyflowID = element.skyflowId // Assumes TextField has this property
 
             if let skyflowID = skyflowID, !skyflowID.isEmpty {
                 if updatePayload[skyflowID] != nil {

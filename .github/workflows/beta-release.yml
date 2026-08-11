@@ -24,7 +24,9 @@ jobs:
     - name: Deploy to Cocoapods
       run: |
            set -eo pipefail
-           pod lib lint --allow-warnings
-           pod trunk push --allow-warnings
+           pod lib lint Skyflow.podspec --allow-warnings
+           pod lib lint Skyflow-flowvault-ios.podspec --allow-warnings
+           pod trunk push Skyflow.podspec --allow-warnings
+           pod trunk push Skyflow-flowvault-ios.podspec --allow-warnings
       env:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}

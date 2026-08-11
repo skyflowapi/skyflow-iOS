@@ -42,7 +42,7 @@ internal class CollectAPICallback: Callback {
 
         if hasInsert {
             group.enter()
-            guard let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) else {
+            guard let url = URL(string: self.apiClient.legacyVaultURL + self.apiClient.vaultID) else {
                 self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
                 return
             }
@@ -75,7 +75,7 @@ internal class CollectAPICallback: Callback {
                     group.leave()
                     continue
                 }
-                let urlString = self.apiClient.vaultURL + self.apiClient.vaultID + "/" + table + "/" + skyflowID
+                let urlString = self.apiClient.legacyVaultURL + self.apiClient.vaultID + "/" + table + "/" + skyflowID
                 guard let url = URL(string: urlString) else {
                     group.leave()
                     requestError?.append(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))

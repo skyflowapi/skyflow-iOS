@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import Skyflow
+@testable import SkyflowCore
 
 enum MethodsUnderTest {
     case PUREINSERT
@@ -24,13 +25,13 @@ class ClientScenario {
     }
     
     func setVaultUrl(vaultURL: String) -> ClientScenario{
-        self.config.vaultURL = vaultURL
+        self.config.data.vaultURL = vaultURL
         
         return self
     }
     
     func setVaultID(vaultId: String) -> ClientScenario{
-        self.config.vaultID = vaultId
+        self.config.data.vaultID = vaultId
         return self
     }
     
@@ -47,7 +48,7 @@ class ClientScenario {
     func getById(ids: [String: Any], callback: Callback) {
         Client(self.config).getById(records: ids, callback: callback)
     }
-    
+
     private func detokenizeRequestBody(_ tokens: [String]) -> [String: [[String: String]]]{
         var records = [] as [[String: String]]
         
