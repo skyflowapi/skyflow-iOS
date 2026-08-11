@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
   # cannot contain hyphens).
   spec.module_name  = "SkyflowFlowVaultIOS"
 
-  spec.version      = "1.26.0-beta.1"
+  spec.version      = "1.26.0-beta.1-dev.09b6e4d"
 
   spec.summary      = "skyflow-flowvault-iOS"
 
@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = "13.0"
 
   # Both SDKs share one version line: a single x.y.z tag releases both pods.
-  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :tag => "1.26.0-beta.1" }
+  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :commit => "09b6e4d" }
 
   # CocoaPods compiles the shared core and the FlowVault contract layer into a
   # single module, so the SPM-only re-export shim is excluded.
