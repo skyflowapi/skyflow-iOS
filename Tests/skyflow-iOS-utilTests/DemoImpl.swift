@@ -4,7 +4,8 @@
 
 import Foundation
 import XCTest
-import Skyflow
+import SkyflowFlowVaultIOS
+import SkyflowCore
 
 public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
@@ -16,6 +17,8 @@ public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
+    var collectResponse: CollectResponse?
+    var revealResponse: RevealResponse?
 
     public init(expectation: XCTestExpectation) {
         self.expectation = expectation
@@ -23,7 +26,11 @@ public class DemoAPICallback: Callback {
 
     public func onSuccess(_ responseBody: Any) {
         print("success")
-        if let response = responseBody as? String {
+        if let response = responseBody as? CollectResponse {
+            self.collectResponse = response
+        } else if let response = responseBody as? RevealResponse {
+            self.revealResponse = response
+        } else if let response = responseBody as? String {
             self.receivedResponse = response
         }
         else {
@@ -43,5 +50,16 @@ public class DemoAPICallback: Callback {
         print("failure", self.data, self.receivedResponse)
 
         expectation.fulfill()
+    }
+
+    // CollectContainer.collect(callback:)/RevealContainer.reveal(callback:) require the
+    // concrete CollectCallback/RevealCallback types - these wrap self so existing
+    // DemoAPICallback call sites only need a one-word change (.asCollectCallback/.asRevealCallback).
+    var asCollectCallback: CollectCallback {
+        CollectCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
+    }
+
+    var asRevealCallback: RevealCallback {
+        RevealCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
     }
 }

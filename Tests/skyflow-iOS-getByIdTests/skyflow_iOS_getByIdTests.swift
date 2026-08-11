@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 class skyflow_iOS_getByIdTests: XCTestCase {
@@ -49,14 +50,14 @@ class skyflow_iOS_getByIdTests: XCTestCase {
                         ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
                         ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
                     ],
                     "table": "persons",
-                    "redaction": Skyflow.RedactionType.PLAIN_TEXT
+                    "redaction": RedactionType.PLAIN_TEXT
                 ]
             ]
         ]
@@ -74,5 +75,20 @@ class skyflow_iOS_getByIdTests: XCTestCase {
         
         XCTAssertEqual(errorMessage, "TokenProvider error")
     }
-    
+
+    func testGetByIdEmptyVaultURL() {
+        // Client.getById()'s vault-level errors route through callRevealOnFailure, which
+        // wraps the NSError in {"errors": [errorObject]} rather than passing it through raw.
+        let expectation = XCTestExpectation(description: "getById with empty vaultURL should fail")
+        let callback = DemoAPICallback(expectation: expectation)
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+
+        clientWithEmptyURL.getById(records: ["records": [["ids": ["id1"], "table": "persons"]]], callback: callback)
+
+        wait(for: [expectation], timeout: 10.0)
+        let errors = callback.data["errors"] as! [NSError]
+        XCTAssertEqual(errors.count, 1)
+        XCTAssertEqual(errors[0].localizedDescription, ErrorCodes.EMPTY_VAULT_URL().description)
+    }
+
 }

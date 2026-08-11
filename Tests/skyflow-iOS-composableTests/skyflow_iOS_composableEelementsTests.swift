@@ -6,13 +6,14 @@
 //
 
 import XCTest
-@testable import Skyflow
+@testable import SkyflowFlowVaultIOS
+@testable import SkyflowCore
 
 final class skyflow_iOS_composableEelementsTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = Skyflow.initialize(
+        self.skyflow = SkyflowFlowVaultIOS.initialize(
             Configuration(
                 vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                 vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
@@ -33,7 +34,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         
@@ -54,7 +55,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         
@@ -74,7 +75,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         
@@ -94,7 +95,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         
@@ -114,7 +115,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         cardNumber?.actualValue = "4111 1111 1111 1111"
@@ -137,25 +138,25 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let collectElement = container?.create(input: collectInput, options: options)
         
         
-        collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
+        collectElement?.on(eventName: EventName.CHANGE) { state in
             print("state", state)
             onChangeCalled = true
         }
-        collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
+        collectElement?.on(eventName: EventName.BLUR) { state in
             print("state", state)
             onBlurCalled = true
             
         }
-        collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
+        collectElement?.on(eventName: EventName.FOCUS) { state in
             print("state", state)
             onFocusCalled = true
         }
-        collectElement?.on(eventName: Skyflow.EventName.READY) { _ in
+        collectElement?.on(eventName: EventName.READY) { _ in
             onReadyCalled = true
         }
         sleep(1)
@@ -177,7 +178,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         do {
@@ -213,7 +214,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -221,7 +222,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         cardNumber?.textFieldDidEndEditing(cardNumber!.textField)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -257,7 +258,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         let options = CollectElementOptions(required: true)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         do {
@@ -283,7 +284,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [2]))
 
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         do {
             let view = try mycontainer?.getComposableView()
@@ -311,7 +312,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [1]))
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         do {
             let view = try mycontainer?.getComposableView()
@@ -338,14 +339,14 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
         var vs = ValidationSet()
         vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
         
         let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
@@ -371,7 +372,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         cardNumber?.actualValue = "4111 1111 1111 1111"
@@ -398,7 +399,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         cardNumber?.actualValue = "4111 1111 1111 1111"
@@ -427,10 +428,10 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber",inputStyles: styles, label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber",inputStyles: styles, label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -455,7 +456,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
     }
     func testInsertEmptyTableNameForUpsertOption() {
         _ = skyflow.container(type: ContainerType.COMPOSABLE)
-        let upsertOptions = [["column": "person"]]
+        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -467,23 +468,24 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
-    func testCollectBadTableKeyAddionalFields() {
-        let additionalFields = ["records": [["table": []]]]
-        let container = skyflow.container(type: ContainerType.COMPOSABLE)
-        
+
+    func testComposableCollectEmptyVaultURL() {
+        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
+        let container = clientWithEmptyURL.container(type: ContainerType.COMPOSABLE)
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
+        container?.collect(callback: callback)
+
         wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
+
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
     }
     func testCreateRows() {
         let elements = [1, 2]
@@ -587,7 +589,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         let options = CollectElementOptions(required: true)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         do {

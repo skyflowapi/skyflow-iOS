@@ -5,6 +5,7 @@
 
 import Foundation
 @testable import Skyflow
+@testable import SkyflowCore
 
 class InsertScenario {
     private var records: [String: [[String: Any]]] = [:]
