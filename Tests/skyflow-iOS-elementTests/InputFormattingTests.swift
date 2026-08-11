@@ -4,7 +4,8 @@
 
 import XCTest
 import Foundation
-@testable import Skyflow
+@testable import SkyflowFlowVaultIOS
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 class InputFormattingTests: XCTestCase {
@@ -12,7 +13,7 @@ class InputFormattingTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Skyflow.initialize(
+        self.skyflow = SkyflowFlowVaultIOS.initialize(
             Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                           vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
                           tokenProvider: DemoTokenProvider())
@@ -27,7 +28,7 @@ class InputFormattingTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let cardNumberInput = CollectElementInput(table: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
+        let cardNumberInput = CollectElementInput(tableName: "persons", column: "card_number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: cardNumberInput, options: options)
         window.addSubview(cardNumber!)
@@ -43,7 +44,7 @@ class InputFormattingTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let expiryDateInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_DATE)
+        let expiryDateInput = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_DATE)
         
         let expiryDate = container?.create(input: expiryDateInput, options: options)
         window.addSubview(expiryDate!)
@@ -59,7 +60,7 @@ class InputFormattingTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let expiryDateInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_MONTH)
+        let expiryDateInput = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "expiryDate", type: .EXPIRATION_MONTH)
         
         let expiryDate = container?.create(input: expiryDateInput, options: options)
         window.addSubview(expiryDate!)
@@ -229,8 +230,8 @@ class InputFormattingTests: XCTestCase {
         let devOptions = ContextOptions(env: .DEV)
         let cardInput = CollectElementInput(type: .CARD_NUMBER)
         
-        let prodField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        let devField = TextField(input: cardInput, options: CollectElementOptions(), contextOptions: devOptions, elements: [prodField])
+        let prodField = TextField(input: cardInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        let devField = TextField(input: cardInput.data, options: CollectElementOptions().data, contextOptions: devOptions, elements: [prodField])
         
         prodField.actualValue = "4111 1111 1111 1111"
         devField.actualValue = "4111 1111 1111 1111"
@@ -252,8 +253,8 @@ class InputFormattingTests: XCTestCase {
         let devOptions = ContextOptions(env: .DEV)
         
         // cvv
-        var prodField = TextField(input: cvvInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        var devField = TextField(input: cvvInput, options: CollectElementOptions(), contextOptions: devOptions)
+        var prodField = TextField(input: cvvInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        var devField = TextField(input: cvvInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "572"
         devField.actualValue = "572"
@@ -262,8 +263,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "572")
         
         // expiryDate
-        prodField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        prodField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "12/24"
         devField.actualValue = "12/24"
@@ -272,8 +273,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "12/24")
         
         // expiryYear
-        prodField = TextField(input: expirationYearInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        devField = TextField(input: expirationYearInput, options: CollectElementOptions(), contextOptions: devOptions)
+        prodField = TextField(input: expirationYearInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        devField = TextField(input: expirationYearInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "2024"
         devField.actualValue = "2024"
@@ -282,8 +283,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "2024")
         
         // expiryMonth
-        prodField = TextField(input: expirationMonthInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        prodField = TextField(input: expirationMonthInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "12"
         devField.actualValue = "12"
@@ -292,8 +293,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "12")
         
         // cardholderName
-        prodField = TextField(input: nameInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        devField = TextField(input: nameInput, options: CollectElementOptions(), contextOptions: devOptions)
+        prodField = TextField(input: nameInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        devField = TextField(input: nameInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "John"
         devField.actualValue = "John"
@@ -302,8 +303,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "John")
         
         // PIN
-        prodField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        prodField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "1234"
         devField.actualValue = "1234"
@@ -312,8 +313,8 @@ class InputFormattingTests: XCTestCase {
         XCTAssertEqual((devField.state as! StateforText).getStateForListener()["value"] as? String, "1234")
         
         // generic
-        prodField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: prodOptions)
-        devField = TextField(input: expirationDateInput, options: CollectElementOptions(), contextOptions: devOptions)
+        prodField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: prodOptions)
+        devField = TextField(input: expirationDateInput.data, options: CollectElementOptions().data, contextOptions: devOptions)
         
         prodField.actualValue = "1234"
         devField.actualValue = "1234"
@@ -329,8 +330,8 @@ class InputFormattingTests: XCTestCase {
         let prodOptions = ContextOptions()
         let devOptions = ContextOptions(env: .DEV)
         
-        let prodField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: prodOptions, elements: [])
-        let devField = TextField(input: amexInput, options: CollectElementOptions(), contextOptions: devOptions, elements: [])
+        let prodField = TextField(input: amexInput.data, options: CollectElementOptions().data, contextOptions: prodOptions, elements: [])
+        let devField = TextField(input: amexInput.data, options: CollectElementOptions().data, contextOptions: devOptions, elements: [])
         
         prodField.actualValue = "378282246310005"
         devField.actualValue = "378282246310005"

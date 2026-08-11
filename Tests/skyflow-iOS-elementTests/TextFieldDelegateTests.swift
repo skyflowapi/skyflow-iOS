@@ -7,7 +7,8 @@
 
 import XCTest
 import Foundation
-@testable import Skyflow
+@testable import SkyflowFlowVaultIOS
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 
@@ -15,7 +16,7 @@ class TextFieldDelegateTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = Skyflow.initialize(
+        self.skyflow = SkyflowFlowVaultIOS.initialize(
             Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                           vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
                           tokenProvider: DemoTokenProvider())
@@ -30,7 +31,7 @@ class TextFieldDelegateTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false, format: "+91 YYYY-YYYY-YYYY YYYY XXXX", translation: ["X": "[A-Z]", "Y": "[0-9]", "Z": "[A-Za-z0-9]"])
 
-        let inputFieldInput = CollectElementInput(table: "persons", column: "input_field", placeholder: "input_field", type: .INPUT_FIELD)
+        let inputFieldInput = CollectElementInput(tableName: "persons", column: "input_field", placeholder: "input_field", type: .INPUT_FIELD)
         
         let inputField = container?.create(input: inputFieldInput, options: collectOptions)
         window.addSubview(inputField!)
@@ -45,7 +46,7 @@ class TextFieldDelegateTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false, format: "+91 YYYY-YYYY-YYYY YYYY XXXX")
 
-        let inputFieldInput = CollectElementInput(table: "persons", column: "input_field", placeholder: "input_field", type: .INPUT_FIELD)
+        let inputFieldInput = CollectElementInput(tableName: "persons", column: "input_field", placeholder: "input_field", type: .INPUT_FIELD)
         
         let inputField = container?.create(input: inputFieldInput, options: collectOptions)
         window.addSubview(inputField!)
@@ -60,7 +61,7 @@ class TextFieldDelegateTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false, format: "+91 XX XXXX XXXX", translation: ["X": "[0-9]"])
 
-        let inputFieldInput = CollectElementInput(table: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
+        let inputFieldInput = CollectElementInput(tableName: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
         
         let inputField = container?.create(input: inputFieldInput, options: collectOptions)
         window.addSubview(inputField!)
@@ -75,7 +76,7 @@ class TextFieldDelegateTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false, format: "(XXX) XXX-XXXX", translation: ["X": "[0-9]"])
 
-        let inputFieldInput = CollectElementInput(table: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
+        let inputFieldInput = CollectElementInput(tableName: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
         
         let inputField = container?.create(input: inputFieldInput, options: collectOptions)
         window.addSubview(inputField!)
@@ -90,7 +91,7 @@ class TextFieldDelegateTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false, format: "XXX-XX-XXXX", translation: ["X": "[0-9]"])
 
-        let inputFieldInput = CollectElementInput(table: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
+        let inputFieldInput = CollectElementInput(tableName: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
         
         let inputField = container?.create(input: inputFieldInput, options: collectOptions)
         window.addSubview(inputField!)
@@ -105,7 +106,7 @@ class TextFieldDelegateTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false, format: "X-YYYYYYY", translation: ["X": "[A-Z]", "Y": "[0-9]"])
 
-        let inputFieldInput = CollectElementInput(table: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
+        let inputFieldInput = CollectElementInput(tableName: "persons", column: "input_field", placeholder: "phone Number", type: .INPUT_FIELD)
         
         let inputField = container?.create(input: inputFieldInput, options: collectOptions)
         window.addSubview(inputField!)

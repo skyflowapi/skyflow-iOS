@@ -3,14 +3,15 @@
 */
 
 import XCTest
-@testable import Skyflow
+@testable import SkyflowFlowVaultIOS
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = Skyflow.initialize(
+        self.skyflow = SkyflowFlowVaultIOS.initialize(
             Configuration(
                 vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                 vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
@@ -33,7 +34,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -57,7 +58,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -85,7 +86,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -107,7 +108,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -127,7 +128,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -144,7 +145,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -160,7 +161,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -177,7 +178,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         _ = container?.create(input: collectInput, options: options)
         
@@ -193,21 +194,21 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let collectElement = container?.create(input: collectInput, options: options)
         
         
-        collectElement?.on(eventName: Skyflow.EventName.CHANGE) { state in
+        collectElement?.on(eventName: EventName.CHANGE) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.BLUR) { state in
+        collectElement?.on(eventName: EventName.BLUR) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.FOCUS) { state in
+        collectElement?.on(eventName: EventName.FOCUS) { state in
             print("state", state)
         }
-        collectElement?.on(eventName: Skyflow.EventName.READY) { _ in
+        collectElement?.on(eventName: EventName.READY) { _ in
             onReadyCalled = true
         }
         sleep(1)
@@ -225,7 +226,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -237,7 +238,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -254,7 +255,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", label: "Card Number", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -264,7 +265,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -277,7 +278,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -294,7 +295,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -302,7 +303,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         window.addSubview(cardNumber!)
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvv = container?.create(input: collectInput2, options: options)
         
@@ -314,7 +315,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -329,7 +330,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: true)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -339,7 +340,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let callback = DemoAPICallback(expectation: expectation)
         
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -386,7 +387,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Pure insert with invalid token")
         
         let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: ["records": records], options: InsertOptions(tokens: true), callback: callback)
+        skyflow.insert(records: ["records": records], options: InsertOptions(), callback: callback)
         
         wait(for: [expectation], timeout: 10.0)
         
@@ -405,7 +406,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -428,7 +429,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         
         let window = UIWindow()
@@ -439,7 +440,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
-        mycontainer?.collect(callback: myCallback)
+        mycontainer?.collect(callback: myCallback.asCollectCallback)
         wait(for: [expectFailure], timeout: 10.0)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber INVALID_CARD_NUMBER\n")
@@ -451,7 +452,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         
         let window = UIWindow()
@@ -462,7 +463,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         textField?.textFieldDidEndEditing(textField!.textField)
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
-        mycontainer?.collect(callback: myCallback)
+        mycontainer?.collect(callback: myCallback.asCollectCallback)
         wait(for: [expectFailure], timeout: 10.0)
         
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber Regex match failed\n")
@@ -474,7 +475,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
@@ -500,7 +501,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let mycontainer = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER, validations: myRules)
         let textField = mycontainer?.create(input: collectInput)
         
         let window = UIWindow()
@@ -513,7 +514,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectFailure = XCTestExpectation(description: "Should fail")
         let myCallback = DemoAPICallback(expectation: expectFailure)
-        mycontainer?.collect(callback: myCallback)
+        mycontainer?.collect(callback: myCallback.asCollectCallback)
         
         wait(for: [expectFailure], timeout: 10.0)
         XCTAssertEqual(myCallback.receivedResponse, "for cardnumber triggered error\n")
@@ -523,14 +524,14 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
         var vs = ValidationSet()
         vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "", placeholder: "pin", type: .PIN, validations: vs)
         
         let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
@@ -554,14 +555,14 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let collectOptions = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN)
+        let collectInput = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN)
         
         let pinElement = container?.create(input: collectInput, options: collectOptions)
         
         var vs = ValidationSet()
         vs.add(rule: ElementValueMatchRule(element: pinElement!, error: "ELEMENT NOT MATCHING"))
         
-        let collectInput2 = CollectElementInput(table: "persons", column: "pin", placeholder: "pin", type: .PIN, validations: vs)
+        let collectInput2 = CollectElementInput(tableName: "persons", column: "pin", placeholder: "pin", type: .PIN, validations: vs)
         
         let confirmPinElement = container?.create(input: collectInput2, options: collectOptions)
         
@@ -579,7 +580,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let expectSuccess = XCTestExpectation(description: "Should succeed")
         let myCallback = DemoAPICallback(expectation: expectSuccess)
         
-        let records = CollectRequestBody.createRequestBody(elements: elements, callback: myCallback, contextOptions: ContextOptions())
+        let records = FlowVaultCollectRequestBody.createRequestBody(elements: elements, callback: myCallback, contextOptions: ContextOptions())
         
         let recordElement = (records?["records"] as? [[String: Any]])?[0]
         let fields = recordElement?["fields"] as? [String: Any]
@@ -591,7 +592,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValue(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cvv", placeholder: "cvv", type: .CVV)
         
         let cvvElement = container?.create(input: collectInput)
         
@@ -611,8 +612,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormatting(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": "[0-9]"])
+        let collectInputfieldInput = CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": "[0-9]"])
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -633,8 +634,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormattingWithEmptyTsanslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": ""])
+        let collectInputfieldInput = CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY", translation: ["Y": ""])
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -655,8 +656,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithCustomFormattingWithoutTranslation(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY")
+        let collectInputfieldInput = CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true, format: "+91 YYYY-YYYY-YYYY YYYY")
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -677,8 +678,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithoutCustomFormatting(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.INPUT_FIELD )
-        let requiredOption = Skyflow.CollectElementOptions(required: true)
+        let collectInputfieldInput = CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.INPUT_FIELD )
+        let requiredOption = CollectElementOptions(required: true)
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -699,8 +700,8 @@ final class skyflow_iOS_collectTests: XCTestCase {
     func testCollectElementSetValueAndClearValueWithoutCustomFormattingForCardNumber(){
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
-        let collectInputfieldInput = Skyflow.CollectElementInput(table: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: Skyflow.ElementType.CARD_NUMBER )
-        let requiredOption = Skyflow.CollectElementOptions(required: true, format: "XXXX-XXXX-XXXX-XXXX")
+        let collectInputfieldInput = CollectElementInput(tableName: "pii_fields", column: "cardholder_name", label: "input field", placeholder: "card input field", type: ElementType.CARD_NUMBER )
+        let requiredOption = CollectElementOptions(required: true, format: "XXXX-XXXX-XXXX-XXXX")
 
         let collectInputField = container?.create(input: collectInputfieldInput, options: requiredOption )
 
@@ -725,250 +726,97 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 20.0)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_ID().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
     func testCollectNoVaultURL() {
-        skyflow.vaultURL = "/v1/vaults/"
+        skyflow.vaultURL = "/"
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
         
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 20.0)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectBadTypeAddionalFields() {
-        let additionalFields = ["records": "records"]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_RECORDS_TYPE().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    func testCollectNoRecordsInAddionalFields() {
-        let additionalFields = ["typo": []]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse,
-                       ErrorCodes.MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
-                        .getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
     func testCollectEmptyRecordsAddionalFields() {
-        let additionalFields = ["records": []]
+        let additionalFields = AdditionalFields(records: [])
         let container = skyflow.container(type: ContainerType.COLLECT)
-        
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
+
         wait(for: [expectation], timeout: 20.0)
-        
+
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
-    
-    func testCollectNoTableKeyAddionalFields() {
-        let additionalFields = ["records": [[:]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    func testCollectBadTableKeyAddionalFields() {
-        let additionalFields = ["records": [["table": []]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
+
     func testCollectEmptyTableAddionalFields() {
-        let additionalFields = ["records": [["table": ""]]]
+        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(tableName: "", data: ["field": "value"])])
         let container = skyflow.container(type: ContainerType.COLLECT)
-        
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
+
         wait(for: [expectation], timeout: 20.0)
-        
+
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_TABLE_NAME().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
-    
-    func testCollectNoFieldsKeyAddionalFields() {
-        let additionalFields = ["records": [["table": "table"]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.FIELDS_KEY_ERROR(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    func testCollectInvalidFieldsAddionalFields() {
-        let additionalFields = ["records": [["table": "table", "fields": "fields"]]]
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.INVALID_FIELDS_TYPE(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
+
     func testCollectEmptyFieldsAddionalFields() {
-        let additionalFields = ["records": [["table": "table", "fields": [:]]]]
+        let additionalFields = AdditionalFields(records: [AdditionalFieldsRecord(tableName: "table", data: [:])])
         let container = skyflow.container(type: ContainerType.COLLECT)
-        
+
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, additionalFields: additionalFields))
-        
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: additionalFields))
+
         wait(for: [expectation], timeout: 20.0)
-        
+
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
     
-    func testCollectEmptyColumnNameForUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["table": "card1"]]
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, upsert:upsertOptions))
-        
-        wait(for: [expectation], timeout: 20.0)
-        
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-    
-    
-    func testCollectEmptyTableNameForUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["column": "person"]]
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, upsert:upsertOptions))
-
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-
-
     func testCollectEmptyUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, upsert:[]))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:[]))
 
         wait(for: [expectation], timeout: 20.0)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
 
-    func testCollectEmptyColumnNameUpsertOption() {
+    func testCollectEmptyUniqueColumnsUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["table": "card1", "column": ""]]
+        let upsertOptions = [UpsertOption(tableName: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, upsert:upsertOptions))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
 
     func testCollectEmptyTableNameUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["table": "", "column": "person"]]
+        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback, options: CollectOptions(tokens: true, upsert:upsertOptions))
+        container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
 
         wait(for: [expectation], timeout: 20.0)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
     }
-
-   
-
-
-    func testInsertEmptyColumnNameForUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["table": "card1"]]
-        let expectation = XCTestExpectation()
-        let records = [
-          "records" : [[
-            "table": "card1",
-            "fields": [
-              "person" : "abcfgdyt",
-                "cvv" : "567"
-            ]
-          ]]
-        ]
-        let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
-        self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
-    }
-
-
-    func testInsertEmptyTableNameForUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["column": "person"]]
-        let expectation = XCTestExpectation()
-        let records = [
-          "records" : [[
-            "table": "card1",
-            "fields": [
-              "person" : "abcfgdyt",
-                "cvv" : "567"
-            ]
-          ]]
-        ]
-        let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
-        self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
-    }
-
 
     func testInsertEmptyUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
@@ -983,16 +831,16 @@ final class skyflow_iOS_collectTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: [])
+        let insertOptions = InsertOptions(upsert: [])
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
 
-    func testInsertEmptyColumnNameUpsertOption() {
+    func testInsertEmptyUniqueColumnsUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["table": "card1", "column": ""]]
+        let upsertOptions = [UpsertOption(tableName: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -1004,16 +852,16 @@ final class skyflow_iOS_collectTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
 
     func testInsertEmptyTableNameUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [["table": "", "column": "person"]]
+        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -1025,13 +873,13 @@ final class skyflow_iOS_collectTests: XCTestCase {
           ]]
         ]
         let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = Skyflow.InsertOptions(tokens: false, upsert: upsertOptions)
+        let insertOptions = InsertOptions(upsert: upsertOptions)
         self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
         wait(for: [expectation], timeout: 20.0)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
-    
+
     func testUnmount() {
         let container = skyflow.container(type: ContainerType.COLLECT)
         let date = container?.create(input: CollectElementInput(type: .EXPIRATION_DATE), options: CollectElementOptions(format: "test"))
@@ -1106,7 +954,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false)
         
-        let collectInput = CollectElementInput(table: "persons", column: "cardnumber", inputStyles: Styles(base: Style(cursorColor: .orange)), placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: Styles(base: Style(cursorColor: .orange)), placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput, options: options)
         
@@ -1119,7 +967,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false, enableCopy: true)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -1142,7 +990,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false, enableCopy: false)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         
@@ -1163,7 +1011,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         
         let options = CollectElementOptions(required: false, enableCopy: true)
         
-        let collectInput1 = CollectElementInput(table: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
+        let collectInput1 = CollectElementInput(tableName: "persons", column: "cardnumber", placeholder: "card number", type: .CARD_NUMBER)
         
         let cardNumber = container?.create(input: collectInput1, options: options)
         

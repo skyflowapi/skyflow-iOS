@@ -8,41 +8,42 @@
 import Foundation
 import XCTest
 
-@testable import Skyflow
+@testable import SkyflowFlowVaultIOS
+@testable import SkyflowCore
 
 
 class RevealElementOptionsTests: XCTestCase {
 
     func testRevealElementOptionsTestWithoutFormatTranslation(){
         let revealElementsOptions = RevealElementOptions()
-        XCTAssertEqual(revealElementsOptions.format, nil)
-        XCTAssertEqual(revealElementsOptions.translation, nil)
+        XCTAssertEqual(revealElementsOptions.data.format, nil)
+        XCTAssertEqual(revealElementsOptions.data.translation, nil)
     }
     func testRevealElementOptionsTestWithFormat(){
         let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX")
-        XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
-        XCTAssertEqual(revealElementsOptions.translation, nil)
+        XCTAssertEqual(revealElementsOptions.data.format, "XXXX-XXXX-XXXX")
+        XCTAssertEqual(revealElementsOptions.data.translation, nil)
     }
     func testRevealElementOptionsTestWithTranslation(){
         let revealElementsOptions = RevealElementOptions(translation: ["X": "[0-9]"])
-        XCTAssertEqual(revealElementsOptions.format, nil)
-        XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.data.format, nil)
+        XCTAssertEqual(revealElementsOptions.data.translation, ["X": "[0-9]"])
     }
     func testRevealElementOptionsTestWithBoth(){
         let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX", translation: ["X": "[0-9]"])
-        XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
-        XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.data.format, "XXXX-XXXX-XXXX")
+        XCTAssertEqual(revealElementsOptions.data.translation, ["X": "[0-9]"])
     }
     func testRevealElementOptionsTestWithEnableTrue(){
         let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX", translation: ["X": "[0-9]"], enableCopy: true)
-        XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
-        XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
-        XCTAssertEqual(revealElementsOptions.enableCopy, true)
+        XCTAssertEqual(revealElementsOptions.data.format, "XXXX-XXXX-XXXX")
+        XCTAssertEqual(revealElementsOptions.data.translation, ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.data.enableCopy, true)
     }
     func testRevealElementOptionsTestWithFalseEnable(){
         let revealElementsOptions = RevealElementOptions(format: "XXXX-XXXX-XXXX", translation: ["X": "[0-9]"])
-        XCTAssertEqual(revealElementsOptions.format, "XXXX-XXXX-XXXX")
-        XCTAssertEqual(revealElementsOptions.translation, ["X": "[0-9]"])
-        XCTAssertEqual(revealElementsOptions.enableCopy, false)
+        XCTAssertEqual(revealElementsOptions.data.format, "XXXX-XXXX-XXXX")
+        XCTAssertEqual(revealElementsOptions.data.translation, ["X": "[0-9]"])
+        XCTAssertEqual(revealElementsOptions.data.enableCopy, false)
     }
 }

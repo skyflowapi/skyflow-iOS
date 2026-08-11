@@ -1,47 +1,66 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "Skyflow",
+    platforms: [
+        .iOS(.v13)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
+        // Legacy vault SDK 1(v1 API contract).
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
+        // FlowVault SDK (v2 API contract). Module name is SkyflowFlowVaultIOS.
+        .library(
+            name: "Skyflow-flowvault-ios",
+            targets: ["SkyflowFlowVaultIOS"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
+        // Shared, contract-agnostic core: UI elements, validations, styles,
+        // container machinery, token/JWT handling, logging, errors, utils.
         .target(
-            name: "Skyflow",
+            name: "SkyflowCore",
             dependencies: [],
             resources: [
                    .process("Resources")
                  ]
             ),
+        // Legacy (v1) contract layer.
+        .target(
+            name: "Skyflow",
+            dependencies: ["SkyflowCore"]
+            ),
+        // FlowVault (v2) contract layer.
+        .target(
+            name: "SkyflowFlowVaultIOS",
+            dependencies: ["SkyflowCore"]
+            ),
         .testTarget(
             name: "skyflow-iOS-collectTests",
-            dependencies: ["Skyflow"]),
+            dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-revealTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-errorTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-getByIdTests",
-                        dependencies: ["Skyflow"]),
+                        dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-elementTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-utilTests",
-                        dependencies: ["Skyflow"]),
+                        dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
+        .testTarget(name: "skyflow-iOS-legacyTests",
+                        dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-scenarioTests",
-                            dependencies: ["Skyflow"]),
+                            dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-getTests",
-                   dependencies: ["Skyflow"]),
-        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["Skyflow"])
+                   dependencies: ["Skyflow", "SkyflowCore"]),
+        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"])
     ]
 )

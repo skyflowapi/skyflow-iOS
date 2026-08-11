@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import Skyflow
+import SkyflowCore
 
 public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
@@ -33,7 +34,6 @@ public class DemoTokenProvider: TokenProvider {
 
 public class DemoAPICallback: Callback {
     var receivedResponse: String = ""
-    var xml: String = ""
     var expectation: XCTestExpectation
     var data: [String: Any] = [:]
     var error: NSError? = nil
@@ -53,9 +53,6 @@ public class DemoAPICallback: Callback {
             self.error = error as! NSError
         } else if error is [String: Any] {
             self.data = (error as! [String: Any])
-        }
-        if error is SkyflowError {
-            self.xml = (error as! SkyflowError).getXML()
         }
         expectation.fulfill()
     }

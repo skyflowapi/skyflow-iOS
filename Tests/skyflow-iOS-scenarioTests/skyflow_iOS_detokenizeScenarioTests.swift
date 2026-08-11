@@ -5,6 +5,7 @@
 // swiftlint:disable file_length
 import XCTest
 @testable import Skyflow
+@testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
 final class skyflow_iOS_detokenizeScenarioTests: XCTestCase {

@@ -22,7 +22,7 @@ internal class InsertAPICallback: Callback {
         self.contextOptions = contextOptions
     }
     internal func onSuccess(_ responseBody: Any) {
-        guard let url = URL(string: self.apiClient.vaultURL + self.apiClient.vaultID) else {
+        guard let url = URL(string: self.apiClient.legacyVaultURL + self.apiClient.vaultID) else {
             self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
             return
         }
