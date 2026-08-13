@@ -67,68 +67,51 @@ final class skyflow_iOS_legacyUtilTests: XCTestCase {
         XCTAssertNil(postPayload[0]["upsert"])
     }
 
-    // Dormant v1 ICOptions.validateUpsert() (untyped upsert dicts), kept for potential future
-    // PDB reuse. Distinct from RequestValidators.checkUpsertOptions in FlowVault, which covers the live path.
+    // v1 upsert validation (untyped upsert dicts), now in RequestValidators like the
+    // FlowVault SDK's checkUpsertOptions; the operations deliver the returned error.
 
-    func testICOptionsValidateUpsertValid() {
-        let callback = DemoAPICallback(expectation: XCTestExpectation())
+    func testCheckUpsertOptionsValid() {
         let upsert: [[String: Any]] = [["table": "table1", "column": "email"]]
-        let options = ICOptions(tokens: false, upsert: upsert, callback: callback, contextOptions: ContextOptions())
 
-        XCTAssertFalse(options.validateUpsert())
+        XCTAssertNil(RequestValidators.checkUpsertOptions(upsert))
     }
 
-    func testICOptionsValidateUpsertEmptyArray() {
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
-        let options = ICOptions(tokens: false, upsert: [], callback: callback, contextOptions: ContextOptions())
+    func testCheckUpsertOptionsEmptyArray() {
+        let errorCode = RequestValidators.checkUpsertOptions([])
 
-        XCTAssertTrue(options.validateUpsert())
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions()).localizedDescription)
+        XCTAssertEqual(errorCode?.getErrorObject(contextOptions: ContextOptions()).localizedDescription,
+                       ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions()).localizedDescription)
     }
 
-    func testICOptionsValidateUpsertMissingTableKey() {
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
+    func testCheckUpsertOptionsMissingTableKey() {
         let upsert: [[String: Any]] = [["column": "email"]]
-        let options = ICOptions(tokens: false, upsert: upsert, callback: callback, contextOptions: ContextOptions())
+        let errorCode = RequestValidators.checkUpsertOptions(upsert)
 
-        XCTAssertTrue(options.validateUpsert())
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
+        XCTAssertEqual(errorCode?.getErrorObject(contextOptions: ContextOptions()).localizedDescription,
+                       ErrorCodes.MISSING_TABLE_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
     }
 
-    func testICOptionsValidateUpsertMissingColumnKey() {
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
+    func testCheckUpsertOptionsMissingColumnKey() {
         let upsert: [[String: Any]] = [["table": "table1"]]
-        let options = ICOptions(tokens: false, upsert: upsert, callback: callback, contextOptions: ContextOptions())
+        let errorCode = RequestValidators.checkUpsertOptions(upsert)
 
-        XCTAssertTrue(options.validateUpsert())
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
+        XCTAssertEqual(errorCode?.getErrorObject(contextOptions: ContextOptions()).localizedDescription,
+                       ErrorCodes.MISSING_COLUMN_NAME_IN_USERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
     }
 
-    func testICOptionsValidateUpsertEmptyTableValue() {
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
+    func testCheckUpsertOptionsEmptyTableValue() {
         let upsert: [[String: Any]] = [["table": "", "column": "email"]]
-        let options = ICOptions(tokens: false, upsert: upsert, callback: callback, contextOptions: ContextOptions())
+        let errorCode = RequestValidators.checkUpsertOptions(upsert)
 
-        XCTAssertTrue(options.validateUpsert())
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
+        XCTAssertEqual(errorCode?.getErrorObject(contextOptions: ContextOptions()).localizedDescription,
+                       ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
     }
 
-    func testICOptionsValidateUpsertEmptyColumnValue() {
-        let expectation = XCTestExpectation()
-        let callback = DemoAPICallback(expectation: expectation)
+    func testCheckUpsertOptionsEmptyColumnValue() {
         let upsert: [[String: Any]] = [["table": "table1", "column": ""]]
-        let options = ICOptions(tokens: false, upsert: upsert, callback: callback, contextOptions: ContextOptions())
+        let errorCode = RequestValidators.checkUpsertOptions(upsert)
 
-        XCTAssertTrue(options.validateUpsert())
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
+        XCTAssertEqual(errorCode?.getErrorObject(contextOptions: ContextOptions()).localizedDescription,
+                       ErrorCodes.COLUMN_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
     }
 }

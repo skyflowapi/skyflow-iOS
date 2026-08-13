@@ -2,15 +2,16 @@
  * Copyright (c) 2022 Skyflow
 */
 
-// Shared base for the Skyflow client. Each SDK product defines its own public
-// `Client` subclass where that contract's operations (insert/detokenize/get/
-// getById, ...) and any future SDK-specific enhancements live; the base holds
-// shared state, container creation, and validation helpers. Applications can
-// see the base type name but cannot construct, subclass, or use it (package init/members).
+// The one shared Client class, used by both SDK products. It holds shared
+// state, container creation, and validation helpers. Each SDK adds its own
+// public convenience init (taking that SDK's Configuration) and its contract's
+// operations (insert/detokenize/get/getById, ...) via extensions in its own
+// target. Applications construct it only through an SDK's convenience init;
+// the designated init and all members are package-visible only.
 
 import Foundation
 
-open class ClientBase {
+public class Client {
     package var vaultID: String
     package var apiClient: APIClient
     // Normalized base vault URL (always ends with "/"). Empty configuration input

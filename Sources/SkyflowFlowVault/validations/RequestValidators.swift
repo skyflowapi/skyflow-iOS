@@ -10,7 +10,7 @@ import Foundation
 
 internal class RequestValidators {
     // Guards shared by every operation: the client must have been configured
-    // with a vault ID and URL. (An empty vaultURL becomes "/" in ClientBase.)
+    // with a vault ID and URL. (An empty vaultURL becomes "/" in SkyflowCore.Client.)
     internal static func checkClientConfig(vaultID: String, vaultURL: String) -> ErrorCodes? {
         if vaultID.isEmpty {
             return .EMPTY_VAULT_ID()

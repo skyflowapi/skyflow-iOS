@@ -12,15 +12,15 @@
 import Foundation
 
 public class Container<T: ContainerProtocol> {
-    package var skyflow: ClientBase
+    package var skyflow: Client
     package var elements: [TextField] = []
     package var revealElements: [Label] = []
     package var containerOptions: BaseContainerOptions? = nil
 
-    package init(skyflow: ClientBase) {
+    package init(skyflow: Client) {
         self.skyflow = skyflow
     }
-    package init(skyflow: ClientBase, options: BaseContainerOptions? = nil){
+    package init(skyflow: Client, options: BaseContainerOptions? = nil){
         self.containerOptions = options
         self.skyflow = skyflow
     }

@@ -11,12 +11,7 @@ public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
-        if self.skyflow.vaultID.isEmpty {
-            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
-            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
-        }
-        if self.skyflow.vaultURL == "/"  {
-            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         var errors = ""
@@ -24,7 +19,7 @@ public extension Container {
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
 
         for element in self.elements {
-            errorCode = checkElement(element: element)
+            errorCode = RequestValidators.checkElement(element: element)
             if errorCode != nil {
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
@@ -59,7 +54,7 @@ public extension Container {
                     return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 }
                 for (index, record) in additionalFieldEntries.enumerated() {
-                    errorCode = checkRecord(record: record, index: index)
+                    errorCode = RequestValidators.checkRecord(record: record, index: index)
                     if errorCode != nil {
                         return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                     }
@@ -72,9 +67,9 @@ public extension Container {
         }
         let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
         let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
-        if options?.upsert != nil {
-            if icOptions.validateUpsert() {
-                return;
+        if let upsert = options?.upsert {
+            if let upsertError = RequestValidators.checkUpsertOptions(upsert) {
+                return callback.onFailure(upsertError.getErrorObject(contextOptions: tempContextOptions))
             }
         }
         if records != nil {
@@ -87,44 +82,6 @@ public extension Container {
             )
             self.skyflow.apiClient.postAndUpdate(records: records!, callback: logCallback, options: icOptions, contextOptions: tempContextOptions)
         }
-    }
-
-    private func checkElement(element: TextField) -> ErrorCodes? {
-        if element.collectInput.tableName.isEmpty {
-            return .EMPTY_TABLE_NAME_IN_COLLECT()
-        }
-        if element.collectInput.column.isEmpty {
-            return .EMPTY_COLUMN_NAME_IN_COLLECT()
-        }
-        if !element.isMounted() {
-            return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
-        }
-
-        return nil
-    }
-
-    private func checkRecord(record: [String: Any], index: Int) -> ErrorCodes? {
-        if record["table"] == nil {
-            return .TABLE_KEY_ERROR(value: "\(index)")
-        }
-        if !(record["table"] is String) {
-            return .INVALID_TABLE_NAME_TYPE(value: "\(index)")
-        }
-        if (record["table"] as? String == "") {
-            return .EMPTY_TABLE_NAME()
-        }
-        if record["fields"] == nil {
-            return .FIELDS_KEY_ERROR(value: "\(index)")
-        }
-        if !(record["fields"] is [String: Any]) {
-            return .INVALID_FIELDS_TYPE(value: "\(index)")
-        }
-        let fields = record["fields"] as! [String: Any]
-        if (fields.isEmpty){
-            return .EMPTY_FIELDS_KEY(value: "\(index)")
-        }
-
-        return nil
     }
 }
 

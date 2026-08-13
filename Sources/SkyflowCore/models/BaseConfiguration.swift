@@ -4,7 +4,7 @@
 
 // Shared storage for the client configuration. Each SDK product defines its
 // own public `BaseConfiguration` struct exposing that contract's initializer
-// (identical in both contracts today); ClientBase consumes this value once at
+// (identical in both contracts today); Client consumes this value once at
 // initialization and does not retain it.
 
 import Foundation

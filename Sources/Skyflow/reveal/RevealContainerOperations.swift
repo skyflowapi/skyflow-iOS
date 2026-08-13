@@ -10,12 +10,7 @@ public extension Container {
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
-        if self.skyflow.vaultID.isEmpty {
-            let errorCode = ErrorCodes.EMPTY_VAULT_ID()
-            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
-        }
-        if self.skyflow.vaultURL == "/"  {
-            let errorCode = ErrorCodes.EMPTY_VAULT_URL()
+        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         var errorCode: ErrorCodes?
@@ -25,17 +20,9 @@ public extension Container {
             callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             return
         }
-        for element in self.revealElements {
-            if element.errorTriggered {
-                errorCode = .ERROR_TRIGGERED(value: element.triggeredErrorMessage)
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
-            }
-            if element.getToken().isEmpty {
-                errorCode = .EMPTY_TOKEN_ID()
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
-            }
+        if let elementError = RequestValidators.checkRevealElements(elements: self.revealElements) {
+            callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
+            return
         }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: tempContextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)
