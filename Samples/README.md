@@ -12,11 +12,11 @@ Sample apps are organized by SDK — pick the folder for the product you use.
 | [UpsertFeature](Skyflow/UpsertFeature/) | Insert with upsert options |
 | [Validations](Skyflow/Validations/) | Built-in and custom validation rules |
 
-## [`SkyflowFlowVaultIOS/`](SkyflowFlowVaultIOS/) — Skyflow FlowVault SDK (`pod 'Skyflow-flowvault-ios'` / `import SkyflowFlowVaultIOS`)
+## [`SkyflowFlowVault/`](SkyflowFlowVault/) — Skyflow FlowVault SDK (`pod 'Skyflow-flowvault-ios'` / `import SkyflowFlowVault`)
 
 | Sample | Demonstrates |
 |---|---|
-| [UpdateDataUsingElements](SkyflowFlowVaultIOS/UpdateDataUsingElements/) | Updating vault records via collect elements with `skyflowId`; its Podfile also shows installing **both** SDKs side by side in one app |
+| [UpdateDataUsingElements](SkyflowFlowVault/UpdateDataUsingElements/) | Updating vault records via collect elements with `skyflowId`; its Podfile also shows installing **both** SDKs side by side in one app |
 
 ## Running a sample
 

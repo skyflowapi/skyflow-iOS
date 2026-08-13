@@ -3,7 +3,7 @@
 */
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 
@@ -15,7 +15,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         self.collectCallback = FlowVaultCollectAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
                                                   apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
                                                   records: defaultRecord,
-                                                  options: FlowVaultICOptions(additionalFields: nil),
+                                                  upsert: nil,
                                                   contextOptions: ContextOptions())
     }
 
@@ -79,7 +79,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
 
     func testGetCollectResponseWithTokens() {
         let response = ["records": [["skyflowID": "SID", "tableName": "table", "tokens": ["field": [["token": "tok", "tokenGroupName": "group"]]]]]] as [String: Any]
-        self.collectCallback.options = FlowVaultICOptions()
+        self.collectCallback.upsert = nil
 
         do {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
@@ -105,7 +105,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             "data": ["field": "value"],
             "hashedData": ["field": "hashed-value"]
         ]]]
-        self.collectCallback.options = FlowVaultICOptions()
+        self.collectCallback.upsert = nil
 
         do {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
@@ -246,7 +246,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": [insertRecord]],
-            options: FlowVaultICOptions(additionalFields: nil),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
 
@@ -283,7 +283,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": insertRecords],
-            options: FlowVaultICOptions(additionalFields: nil),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
 
@@ -320,7 +320,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": insertRecords],
-            options: FlowVaultICOptions(additionalFields: nil),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
 
@@ -361,7 +361,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": insertRecords],
-            options: FlowVaultICOptions(additionalFields: nil),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
 
@@ -409,7 +409,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         """
         let responseData = json.data(using: .utf8)!
         let urlResponse = HTTPURLResponse(url: URL(string: "https://example.org/v2/records/update")!, statusCode: 200, httpVersion: "1.1", headerFields: nil)
-        self.collectCallback.options = FlowVaultICOptions()
+        self.collectCallback.upsert = nil
 
         do {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
@@ -485,7 +485,7 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         """
         let responseData = json.data(using: .utf8)!
         let urlResponse = HTTPURLResponse(url: URL(string: "https://example.org/v2/records/update")!, statusCode: 207, httpVersion: "1.1", headerFields: nil)
-        self.collectCallback.options = FlowVaultICOptions()
+        self.collectCallback.upsert = nil
 
         do {
             let processed = try self.collectCallback.processResponse(data: responseData, response: urlResponse, error: nil)
@@ -501,16 +501,16 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
 
     // The tests above all call processResponse(data:response:error:) directly, which only
     // exercises parsing a single HTTP response body. When a request has BOTH inserts and
-    // updates, FlowVaultInsertAPICallback.onSuccess fires two REAL network calls (v2/records/insert
+    // updates, FlowVaultCollectAPICallback.onSuccess fires two REAL network calls (v2/records/insert
     // and v2/records/update) and merges both results via a DispatchGroup - that merge logic can
     // only be exercised by going through onSuccess with real URLSession dispatch, hence the
     // URLProtocol mock here.
     func testInsertAndUpdateResponsesMergeIntoOneCollectResponse() {
         let mockConfiguration = URLSessionConfiguration.ephemeral
         mockConfiguration.protocolClasses = [MockURLProtocol.self]
-        let originalConfiguration = FlowVaultInsertAPICallback.urlSessionConfiguration
-        FlowVaultInsertAPICallback.urlSessionConfiguration = mockConfiguration
-        defer { FlowVaultInsertAPICallback.urlSessionConfiguration = originalConfiguration }
+        let originalConfiguration = FlowVaultCollectAPICallback.urlSessionConfiguration
+        FlowVaultCollectAPICallback.urlSessionConfiguration = mockConfiguration
+        defer { FlowVaultCollectAPICallback.urlSessionConfiguration = originalConfiguration }
 
         MockURLProtocol.requestHandler = { request in
             let url = request.url!.absoluteString
@@ -536,11 +536,11 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             "update": ["id1": ["table": "persons", "fields": ["name": "John"]]]
         ]
 
-        let insertApiCallback = FlowVaultInsertAPICallback(
+        let insertApiCallback = FlowVaultCollectAPICallback(
             callback: callback.asCollectCallback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: records,
-            options: FlowVaultICOptions(),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
         // onSuccess's parameter here is the bearer token from TokenAPICallback - unused by this
@@ -564,9 +564,9 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
         // stringified dump of the internal {"records", "errors"} merge container.
         let mockConfiguration = URLSessionConfiguration.ephemeral
         mockConfiguration.protocolClasses = [MockURLProtocol.self]
-        let originalConfiguration = FlowVaultInsertAPICallback.urlSessionConfiguration
-        FlowVaultInsertAPICallback.urlSessionConfiguration = mockConfiguration
-        defer { FlowVaultInsertAPICallback.urlSessionConfiguration = originalConfiguration }
+        let originalConfiguration = FlowVaultCollectAPICallback.urlSessionConfiguration
+        FlowVaultCollectAPICallback.urlSessionConfiguration = mockConfiguration
+        defer { FlowVaultCollectAPICallback.urlSessionConfiguration = originalConfiguration }
 
         MockURLProtocol.requestHandler = { request in
             let url = request.url!.absoluteString
@@ -593,11 +593,11 @@ final class skyflow_iOS_collectUtilTests: XCTestCase {
             "update": ["id1": ["table": "persons", "fields": ["name": "John"]]]
         ]
 
-        let insertApiCallback = FlowVaultInsertAPICallback(
+        let insertApiCallback = FlowVaultCollectAPICallback(
             callback: callback.asCollectCallback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: records,
-            options: FlowVaultICOptions(),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
         insertApiCallback.onSuccess("dummy-token")

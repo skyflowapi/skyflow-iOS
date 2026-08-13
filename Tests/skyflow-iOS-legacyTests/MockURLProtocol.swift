@@ -5,7 +5,7 @@
 // Minimal URLProtocol-based network mock. Register via URLProtocol.registerClass(MockURLProtocol.self)
 // before the request fires (URLSession(configuration: .default) consults globally registered
 // protocol classes), and unregister afterward. Used for tests that need to exercise real
-// URLSession.dataTask call sites (e.g. FlowVaultInsertAPICallback's insert+update merge), where
+// URLSession.dataTask call sites (e.g. FlowVaultCollectAPICallback's insert+update merge), where
 // bypassing the network layer entirely (as most other tests do via processResponse(data:response:error:))
 // wouldn't exercise the merge logic itself.
 

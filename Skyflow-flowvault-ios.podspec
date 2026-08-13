@@ -2,9 +2,9 @@ Pod::Spec.new do |spec|
 
   spec.name         = "Skyflow-flowvault-ios"
 
-  # Consumers import the SDK as `import SkyflowFlowVaultIOS` (Swift module names
+  # Consumers import the SDK as `import SkyflowFlowVault` (Swift module names
   # cannot contain hyphens).
-  spec.module_name  = "SkyflowFlowVaultIOS"
+  spec.module_name  = "SkyflowFlowVault"
 
   spec.version      = "1.26.0-beta.1"
 
@@ -29,9 +29,9 @@ Pod::Spec.new do |spec|
 
   # CocoaPods compiles the shared core and the FlowVault contract layer into a
   # single module, so the SPM-only re-export shim is excluded.
-  spec.source_files  = "Sources/SkyflowCore/**/*.{swift}", "Sources/SkyflowFlowVaultIOS/**/*.{swift}"
+  spec.source_files  = "Sources/SkyflowCore/**/*.{swift}", "Sources/SkyflowFlowVault/**/*.{swift}"
 
-  spec.exclude_files = "Sources/SkyflowFlowVaultIOS/Exports.swift"
+  spec.exclude_files = "Sources/SkyflowFlowVault/Exports.swift"
 
   # `package` access-level declarations (shared across the SPM targets) require a
   # package name when compiled outside SPM.

@@ -3,7 +3,7 @@
 */
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 final class skyflow_iOS_cvvMockTests: XCTestCase {
@@ -81,7 +81,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
     }
 
     func testCaptureFirstElementWinsOnDuplicateColumn() {
-        // Mirrors FlowVaultCollectRequestBody's own dedup rule (e.g. ElementValueMatchRule):
+        // Mirrors CollectRequestBuilder's own dedup rule (e.g. ElementValueMatchRule):
         // when two elements target the same column, only the first one's value reaches the vault.
         let first = makeCVVElement(table: "persons", column: "cvv", value: "111")
         let second = makeCVVElement(table: "persons", column: "cvv", value: "222")
@@ -362,7 +362,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
     // only reliably intercepts URLSession.shared, not ad-hoc .default sessions - confirmed by this
     // failing against the real network (github.com/.../example.org) rather than the mock handler.
     // Making that interceptable would require adding a test-only seam to production SDK code
-    // (e.g. FlowVaultInsertAPICallback's injectable urlSessionConfiguration), which is out of
+    // (e.g. FlowVaultCollectAPICallback's injectable urlSessionConfiguration), which is out of
     // scope here. The wiring itself (cvvMap capture + CVVMaskingCallback insertion in
     // CollectContainer.swift/ComposableContainer.swift) is two lines per container and is
     // exercised for real via the NormalTesting sample app's CVV Mock Scenarios screen against a

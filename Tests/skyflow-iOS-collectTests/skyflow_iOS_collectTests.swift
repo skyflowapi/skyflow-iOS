@@ -3,7 +3,7 @@
 */
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
@@ -11,7 +11,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = SkyflowFlowVaultIOS.initialize(
+        self.skyflow = SkyflowFlowVault.initialize(
             Configuration(
                 vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                 vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
@@ -580,7 +580,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         let expectSuccess = XCTestExpectation(description: "Should succeed")
         let myCallback = DemoAPICallback(expectation: expectSuccess)
         
-        let records = FlowVaultCollectRequestBody.createRequestBody(elements: elements, callback: myCallback, contextOptions: ContextOptions())
+        let records = CollectRequestBuilder.createCollectRecords(elements: elements, callback: myCallback, contextOptions: ContextOptions())
         
         let recordElement = (records?["records"] as? [[String: Any]])?[0]
         let fields = recordElement?["fields"] as? [String: Any]

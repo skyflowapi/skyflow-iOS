@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-import SkyflowFlowVaultIOS
+import SkyflowFlowVault
 import SkyflowCore
 
 public class DemoTokenProvider: TokenProvider {

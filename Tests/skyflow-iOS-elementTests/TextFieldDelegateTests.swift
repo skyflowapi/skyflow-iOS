@@ -7,7 +7,7 @@
 
 import XCTest
 import Foundation
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
@@ -16,7 +16,7 @@ class TextFieldDelegateTests: XCTestCase {
     var skyflow: Client!
 
     override func setUp() {
-        self.skyflow = SkyflowFlowVaultIOS.initialize(
+        self.skyflow = SkyflowFlowVault.initialize(
             Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                           vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
                           tokenProvider: DemoTokenProvider())

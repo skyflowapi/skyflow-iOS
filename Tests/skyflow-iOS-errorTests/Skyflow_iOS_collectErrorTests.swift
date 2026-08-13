@@ -12,7 +12,7 @@
 import XCTest
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
@@ -268,7 +268,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(cvv!)
         let expectation = XCTestExpectation(description: "Container insert call - Duplicate Elements")
         let callback = DemoAPICallback(expectation: expectation)
-        FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
+        CollectRequestBuilder.createCollectRecords(elements: [cardNumber!, cvv!], callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
@@ -294,7 +294,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let fields = AdditionalFields(records: [
             AdditionalFieldsRecord(tableName: "persons", data: ["cvv": "123", "name": "John Doe"])
         ])
-        FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
+        CollectRequestBuilder.createCollectRecords(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
 
         let responseData = callback.receivedResponse
@@ -321,7 +321,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "persons", data: ["duplicate": "123", "name": "John Doe"]),
             AdditionalFieldsRecord(tableName: "persons", data: ["duplicate": "123"])
         ])
-        FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
+        CollectRequestBuilder.createCollectRecords(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
 
         let responseData = callback.receivedResponse
@@ -347,7 +347,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "persons", data: ["cvv": "123"]),
             AdditionalFieldsRecord(tableName: "persons", data: ["duplicate": "123"])
         ])
-        FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
+        CollectRequestBuilder.createCollectRecords(elements: [cardNumber!, cvv!], additionalFields: fields,callback: callback, contextOptions: ContextOptions(interface: .COLLECT_CONTAINER))
         wait(for: [expectation], timeout: 10.0)
 
         let responseData = callback.receivedResponse
@@ -368,7 +368,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         cvv?.textField.secureText = "211"
         window.addSubview(cvv!)
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Insert only"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!, cvv!], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [cardNumber!, cvv!], callback: callback, contextOptions: ContextOptions())
         XCTAssertNotNil(requestBody)
         XCTAssertNotNil(requestBody?["records"])
         XCTAssertEqual(requestBody?["records"] as! [NSDictionary], [
@@ -391,7 +391,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(cardNumber!)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Explicit empty-string skyflowId is rejected"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [cardNumber!], callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNil(requestBody)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "element with column 'card_number'").description)
@@ -402,7 +402,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "table1", data: ["column1": "value1"], skyflowId: "id1")
         ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Update via additionalFields"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
         XCTAssertNotNil(requestBody)
         XCTAssertEqual((requestBody?["records"] as! [[String: Any]]).count, 0)
         let update = requestBody?["update"] as! [String: Any]
@@ -418,7 +418,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "table1", data: ["column1": "value1"], skyflowId: "")
         ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Empty skyflowId is rejected"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNil(requestBody)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index 0").description)
@@ -432,7 +432,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "persons", data: ["email": "john@example.com"], skyflowId: "id1")
         ])
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Merge additionalFields sharing a skyflowId"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         let update = requestBody?["update"] as! [String: Any]
@@ -454,7 +454,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(cardNumber!)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Update via element skyflowID"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [cardNumber!], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [cardNumber!], callback: callback, contextOptions: ContextOptions())
         XCTAssertNotNil(requestBody)
         XCTAssertEqual((requestBody?["records"] as! [[String: Any]]).count, 0)
         let update = requestBody?["update"] as! [String: Any]
@@ -482,7 +482,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(updateElement!)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Mixed insert and update elements"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [insertElement!, updateElement!], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [insertElement!, updateElement!], callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         let records = requestBody?["records"] as! [[String: Any]]
@@ -512,7 +512,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         ])
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Element insert + additionalFields insert"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [insertElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [insertElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         let records = requestBody?["records"] as! [[String: Any]]
@@ -541,7 +541,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         ])
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Element update + additionalFields insert"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [updateElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [updateElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         let records = requestBody?["records"] as! [[String: Any]]
@@ -556,8 +556,8 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
     func testFullCombinationCollectUpdateUpsertAndAdditionalFields() {
         // The kitchen-sink scenario: an insert element, an update-by-skyflowId element, an
         // insert additionalFields record, and an update additionalFields record, all in one
-        // request - then upsert applied on top. Upsert only ever touches FlowVaultInsertRequestBody's
-        // "records" bucket (confirmed: FlowVaultUpdateRequestBody never reads options.upsert at
+        // request - then upsert applied on top. Upsert only ever touches CollectRequestBuilder.createInsertRequestBody's
+        // "records" bucket (confirmed: CollectRequestBuilder.createUpdateRequestBody never reads options.upsert at
         // all), so it should only decorate the matching insert record and leave "update" untouched.
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -579,7 +579,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         ])
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Full combination"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [insertElement!, updateElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [insertElement!, updateElement!], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
         XCTAssertNotNil(requestBody)
 
         let records = requestBody?["records"] as! [[String: Any]]
@@ -594,7 +594,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
 
         // Apply upsert on top, matching only the "cards" table.
         let upsertOptions = [UpsertOption(tableName: "cards", uniqueColumns: ["card_number"], updateType: .UPDATE)]
-        let wireBody = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: requestBody!, options: FlowVaultICOptions(upsert: upsertOptions))
+        let wireBody = CollectRequestBuilder.createInsertRequestBody(vaultID: "vault123", records: requestBody!, upsert: upsertOptions)
         let wireRecords = wireBody["records"] as! [[String: Any]]
 
         let cardsWireRecord = wireRecords.first { $0["tableName"] as? String == "cards" }
@@ -603,15 +603,15 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let accountsWireRecord = wireRecords.first { $0["tableName"] as? String == "accounts" }
         XCTAssertNil(accountsWireRecord?["upsert"])
 
-        // update bucket is a completely separate path (FlowVaultUpdateRequestBody) - upsert has
-        // no way to reach or affect it, confirmed structurally since FlowVaultInsertRequestBody
+        // update bucket is a completely separate path (CollectRequestBuilder.createUpdateRequestBody) - upsert has
+        // no way to reach or affect it, confirmed structurally since CollectRequestBuilder.createInsertRequestBody
         // only ever reads requestBody["records"].
         XCTAssertEqual(update.count, 2)
     }
 
     // Not currently reachable from any documented flow (README only shows ElementValueMatchRule
     // used to allow a duplicate plain/insert element, not two update-by-skyflowId elements), but
-    // the code path exists in FlowVaultCollectRequestBody's update branch too - covering it now
+    // the code path exists in CollectRequestBuilder's update branch too - covering it now
     // in case a future update UI (e.g. confirm-password-style re-entry on an editable field) relies on it.
     func testCreateRequestBodyElementValueMatchRuleBypassesUpdateDuplicate() {
         let window = UIWindow()
@@ -633,7 +633,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         window.addSubview(updateElement2!)
 
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Should not fail"))
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [updateElement1!, updateElement2!], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [updateElement1!, updateElement2!], callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         let update = requestBody?["update"] as! [String: Any]

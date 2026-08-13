@@ -8,7 +8,7 @@
 import Foundation
 import XCTest
 
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 class RevealSkyflowLabelViewTests: XCTestCase {
@@ -29,7 +29,7 @@ class RevealSkyflowLabelViewTests: XCTestCase {
         let config = Configuration(vaultID: "vault id", vaultURL:"vault url", tokenProvider: DemoTokenProvider(), options: Options(env: Env.DEV))
 
         // Initialize skyflow client
-        let skyflowClient = SkyflowFlowVaultIOS.initialize(config)
+        let skyflowClient = SkyflowFlowVault.initialize(config)
 
         // Create a Reveal Container
         let container = skyflowClient.container(type: ContainerType.REVEAL)

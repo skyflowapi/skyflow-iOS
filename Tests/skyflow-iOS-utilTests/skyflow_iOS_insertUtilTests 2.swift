@@ -3,19 +3,19 @@
 */
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 
 final class skyflow_iOS_insertUtilTests: XCTestCase {
-    var collectCallback: FlowVaultInsertAPICallback! = nil
+    var collectCallback: FlowVaultCollectAPICallback! = nil
     var defaultRecord: [String: Any] = ["records": [["table": "table", "fields": ["field": "value"]]]]
 
     override func setUp() {
-        self.collectCallback = FlowVaultInsertAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
+        self.collectCallback = FlowVaultCollectAPICallback(callback: DemoAPICallback(expectation: XCTestExpectation()),
                                                   apiClient: APIClient(vaultID: "", vaultURL: "", tokenProvider: DemoTokenProvider()),
                                                   records: defaultRecord,
-                                                  options: FlowVaultICOptions(additionalFields: nil),
+                                                  upsert: nil,
                                                   contextOptions: ContextOptions())
     }
 
@@ -77,7 +77,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
 
     func testGetCollectResponseWithTokens() {
         let response = ["records": [["skyflowID": "SID", "tableName": "table", "tokens": ["field": [["token": "tok", "tokenGroupName": "group"]]]]]] as [String: Any]
-        self.collectCallback.options = FlowVaultICOptions()
+        self.collectCallback.upsert = nil
 
         do {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
@@ -103,7 +103,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             "data": ["field": "value"],
             "hashedData": ["field": "hashed-value"]
         ]]]
-        self.collectCallback.options = FlowVaultICOptions()
+        self.collectCallback.upsert = nil
 
         do {
             let data = try JSONSerialization.data(withJSONObject: response, options: .fragmentsAllowed)
@@ -235,11 +235,11 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             "fields": ["field": "value"]
         ]
 
-        let collectCallback = FlowVaultInsertAPICallback(
+        let collectCallback = FlowVaultCollectAPICallback(
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": [insertRecord]],
-            options: FlowVaultICOptions(additionalFields: nil),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
 
@@ -272,11 +272,11 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             "fields": ["field": "value"]
         ]
 
-        let collectCallback = FlowVaultInsertAPICallback(
+        let collectCallback = FlowVaultCollectAPICallback(
             callback: callback,
             apiClient: APIClient(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: DemoTokenProvider()),
             records: ["records": [insertRecord]],
-            options: FlowVaultICOptions(additionalFields: nil),
+            upsert: nil,
             contextOptions: ContextOptions()
         )
 

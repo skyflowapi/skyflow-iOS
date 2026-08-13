@@ -13,10 +13,10 @@ let package = Package(
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
-        // FlowVault SDK (v2 API contract). Module name is SkyflowFlowVaultIOS.
+        // FlowVault SDK (v2 API contract). Module name is SkyflowFlowVault.
         .library(
             name: "Skyflow-flowvault-ios",
-            targets: ["SkyflowFlowVaultIOS"]),
+            targets: ["SkyflowFlowVault"]), // check this
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -39,28 +39,28 @@ let package = Package(
             ),
         // FlowVault (v2) contract layer.
         .target(
-            name: "SkyflowFlowVaultIOS",
+            name: "SkyflowFlowVault",
             dependencies: ["SkyflowCore"]
             ),
         .testTarget(
             name: "skyflow-iOS-collectTests",
-            dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
+            dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-revealTests",
-                    dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-errorTests",
-                    dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-getByIdTests",
                         dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-elementTests",
-                    dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-utilTests",
-                        dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"]),
+                        dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-legacyTests",
                         dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-scenarioTests",
                             dependencies: ["Skyflow", "SkyflowCore"]),
         .testTarget(name: "skyflow-iOS-getTests",
                    dependencies: ["Skyflow", "SkyflowCore"]),
-        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["SkyflowFlowVaultIOS", "SkyflowCore"])
+        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["SkyflowFlowVault", "SkyflowCore"])
     ]
 )

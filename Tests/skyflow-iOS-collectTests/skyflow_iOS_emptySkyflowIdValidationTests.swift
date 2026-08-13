@@ -2,12 +2,12 @@
  * Copyright (c) 2022 Skyflow
 */
 
-// Unit tests for the EMPTY_SKYFLOW_ID validation in FlowVaultCollectRequestBody:
+// Unit tests for the EMPTY_SKYFLOW_ID validation in CollectRequestBuilder:
 // an explicit empty-string skyflowId (on an element or an additionalFields record)
 // is rejected client-side instead of silently falling back to an insert.
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
@@ -38,7 +38,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "persons", data: ["name": "demo"], skyflowId: "")
         ])
 
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNil(requestBody)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index 0").description)
@@ -51,7 +51,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "persons", data: ["age": "30"], skyflowId: "")
         ])
 
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNil(requestBody)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index 1").description)
@@ -61,7 +61,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
         let element = makeNameElement(skyflowId: "")
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Empty skyflowId on element"))
 
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [element], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [element], callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNil(requestBody)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_SKYFLOW_ID(value: "element with column 'name'").description)
@@ -74,7 +74,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
             AdditionalFieldsRecord(tableName: "table1", data: ["email": "a@b.com"])
         ])
 
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [element], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [element], additionalFields: additionalFields, callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         let records = requestBody?["records"] as! [[String: Any]]
@@ -92,7 +92,7 @@ final class skyflow_iOS_emptySkyflowIdValidationTests: XCTestCase {
         let element = makeNameElement(skyflowId: "row-1")
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Valid skyflowId updates"))
 
-        let requestBody = FlowVaultCollectRequestBody.createRequestBody(elements: [element], callback: callback, contextOptions: ContextOptions())
+        let requestBody = CollectRequestBuilder.createCollectRecords(elements: [element], callback: callback, contextOptions: ContextOptions())
 
         XCTAssertNotNil(requestBody)
         XCTAssertEqual((requestBody?["records"] as! [[String: Any]]).count, 0)

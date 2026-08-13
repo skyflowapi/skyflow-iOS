@@ -3,7 +3,7 @@
 */
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 final class skyflow_iOS_utilTests: XCTestCase {
@@ -63,7 +63,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
         XCTAssertEqual(textField.secureText, "4111 1111 1111 1111")
     }
     func testConstructV2RequestBody() {
-        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions())
+        let result = CollectRequestBuilder.createInsertRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], upsert: nil)
         XCTAssertEqual(result["vaultID"] as! String, "vault123")
         let records = result["records"] as! [[String: Any]]
         XCTAssertEqual(records[0]["tableName"] as! String, "table")
@@ -72,7 +72,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
 
     func testConstructV2RequestBodyWithUpsert() {
         let upsert = [UpsertOption(tableName: "table", uniqueColumns: ["field1"], updateType: .REPLACE)]
-        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(upsert: upsert))
+        let result = CollectRequestBuilder.createInsertRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], upsert: upsert)
         let records = result["records"] as! [[String: Any]]
         let upsertPayload = records[0]["upsert"] as! [String: Any]
         XCTAssertEqual(upsertPayload["uniqueColumns"] as! [String], ["field1"])
@@ -84,7 +84,7 @@ final class skyflow_iOS_utilTests: XCTestCase {
     // "updateType" is omitted from the wire payload rather than serialized as null.
     func testConstructV2RequestBodyWithUpsertAndNilUpdateType() {
         let upsert = [UpsertOption(tableName: "table", uniqueColumns: ["field1"])]
-        let result = FlowVaultInsertRequestBody.createRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], options: FlowVaultICOptions(upsert: upsert))
+        let result = CollectRequestBuilder.createInsertRequestBody(vaultID: "vault123", records: ["records": [["table": "table", "fields": ["field1": "value1"]]]], upsert: upsert)
         let records = result["records"] as! [[String: Any]]
         let upsertPayload = records[0]["upsert"] as! [String: Any]
         XCTAssertEqual(upsertPayload["uniqueColumns"] as! [String], ["field1"])
@@ -92,13 +92,13 @@ final class skyflow_iOS_utilTests: XCTestCase {
     }
 
 
-    func testFlowVaultUpdateRequestBody() {
+    func testCreateUpdateRequestBody() {
         let records: [[String: Any]] = [
             ["skyflowID": "id1", "tableName": "table1", "data": ["email": "a@b.com"]],
             ["skyflowID": "id2", "tableName": "table2", "data": ["name": "chiku"]]
         ]
 
-        let result = FlowVaultUpdateRequestBody.createRequestBody(vaultID: "vault123", records: records)
+        let result = CollectRequestBuilder.createUpdateRequestBody(vaultID: "vault123", records: records)
 
         XCTAssertEqual(result["vaultID"] as? String, "vault123")
         let resultRecords = result["records"] as! [[String: Any]]

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 class CollectElementOptionsTests: XCTestCase {

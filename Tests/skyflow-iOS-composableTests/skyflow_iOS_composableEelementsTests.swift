@@ -6,14 +6,14 @@
 //
 
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 final class skyflow_iOS_composableEelementsTests: XCTestCase {
     var skyflow: Client!
     
     override func setUp() {
-        self.skyflow = SkyflowFlowVaultIOS.initialize(
+        self.skyflow = SkyflowFlowVault.initialize(
             Configuration(
                 vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
                 vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,

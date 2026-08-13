@@ -212,7 +212,7 @@ public class SkyflowError: NSError {
         // (Container<RevealContainer>.reveal()'s equivalent failures are already unwrapped earlier,
         // by RevealValueCallback.onFailure.)
         //
-        // A third shape reaches here too: FlowVaultInsertAPICallback's insert+update merge
+        // A third shape reaches here too: FlowVaultCollectAPICallback's insert+update merge
         // (group.notify in onSuccess) builds mergedErrors entries as {"error": {"message",
         // "httpCode", ...}} - a JSON-decoded API error detail dict, not an NSError - so it's
         // handled by trying SkyflowError(apiError:) on the entry itself, which expects exactly

@@ -3,7 +3,7 @@
 */
 
 // Unit tests for the dormant v1 PDB CollectRequestBody (kept for potential future PDB reuse).
-// Distinct from FlowVaultCollectRequestBody, which is the live class covering this same logic.
+// Distinct from CollectRequestBuilder, which is the live class covering this same logic.
 
 import XCTest
 @testable import Skyflow

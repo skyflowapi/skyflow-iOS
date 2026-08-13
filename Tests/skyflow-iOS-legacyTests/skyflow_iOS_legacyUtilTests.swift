@@ -68,7 +68,7 @@ final class skyflow_iOS_legacyUtilTests: XCTestCase {
     }
 
     // Dormant v1 ICOptions.validateUpsert() (untyped upsert dicts), kept for potential future
-    // PDB reuse. Distinct from FlowVaultICOptions.validateUpsert(), which covers the live path.
+    // PDB reuse. Distinct from RequestValidators.checkUpsertOptions in FlowVault, which covers the live path.
 
     func testICOptionsValidateUpsertValid() {
         let callback = DemoAPICallback(expectation: XCTestExpectation())

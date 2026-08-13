@@ -5,7 +5,7 @@
 import Foundation
 import XCTest
 
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
@@ -110,7 +110,7 @@ class skyflow_iOS_revealTests: XCTestCase {
         let revealElementInput = getRevealElementInput()
         let revealElement = revealContainer?.create(input: revealElementInput, options: RevealElementOptions())
 
-        let requestBody = RevealRequestBody.createRequestBody(elements: [revealElement!]) as! [String: [[String: Any]]]
+        let requestBody = RevealRequestBuilder.createRevealRecords(elements: [revealElement!]) as! [String: [[String: Any]]]
 
         let result: [String: [[String: Any]]] = ["records": [["token": revealTestId]]]
 

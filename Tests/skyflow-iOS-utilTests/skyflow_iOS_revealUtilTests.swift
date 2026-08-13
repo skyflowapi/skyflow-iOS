@@ -4,7 +4,7 @@
 
 // swiftlint:disable file_length
 import XCTest
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 // swiftlint:disable:next type_body_length
@@ -66,7 +66,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
 
     func testConstructV2DetokenizeRequestBody() {
         self.revealApiCallback.records = [RevealRequestRecord(token: "token1"), RevealRequestRecord(token: "token2")]
-        let result = FlowVaultDetokenizeRequestBody.createRequestBody(vaultID: "vault123", records: self.revealApiCallback.records)
+        let result = RevealRequestBuilder.createDetokenizeRequestBody(vaultID: "vault123", records: self.revealApiCallback.records)
 
         XCTAssertEqual(result["vaultID"] as! String, "vault123")
         XCTAssertEqual(result["tokens"] as! [String], ["token1", "token2"])
@@ -76,7 +76,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     func testConstructV2DetokenizeRequestBodyWithTokenGroupRedactions() {
         let records = [RevealRequestRecord(token: "token1")]
         let tokenGroupRedactions = [TokenGroupRedaction(tokenGroupName: "group1", redaction: "MASKED")]
-        let result = FlowVaultDetokenizeRequestBody.createRequestBody(vaultID: "vault123", records: records, tokenGroupRedactions: tokenGroupRedactions)
+        let result = RevealRequestBuilder.createDetokenizeRequestBody(vaultID: "vault123", records: records, tokenGroupRedactions: tokenGroupRedactions)
 
         let redactions = result["tokenGroupRedactions"] as! [[String: Any]]
         XCTAssertEqual(redactions.count, 1)
@@ -211,7 +211,7 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
             TokenGroupRedaction(tokenGroupName: "group1", redaction: "MASKED"),
             TokenGroupRedaction(tokenGroupName: "group1", redaction: "PLAIN_TEXT")
         ]
-        let result = FlowVaultDetokenizeRequestBody.createRequestBody(vaultID: "vault123", records: records, tokenGroupRedactions: tokenGroupRedactions)
+        let result = RevealRequestBuilder.createDetokenizeRequestBody(vaultID: "vault123", records: records, tokenGroupRedactions: tokenGroupRedactions)
 
         let redactions = result["tokenGroupRedactions"] as! [[String: Any]]
         XCTAssertEqual(redactions.count, 2)

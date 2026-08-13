@@ -8,7 +8,7 @@
 import Foundation
 import XCTest
 
-@testable import SkyflowFlowVaultIOS
+@testable import SkyflowFlowVault
 @testable import SkyflowCore
 
 
