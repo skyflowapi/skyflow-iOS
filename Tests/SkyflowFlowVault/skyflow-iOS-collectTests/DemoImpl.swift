@@ -16,7 +16,7 @@ import SkyflowCore
 
 public class DemoTokenProvider: TokenProvider {
     public func getBearerToken(_ apiCallback: Callback) {
-        if let url = URL(string: ProcessInfo.processInfo.environment["TOKEN_ENDPOINT"]! ) {
+        if let url = URL(string: (ProcessInfo.processInfo.environment["TOKEN_ENDPOINT"] ?? "https://dummy.vault.skyflowapis.dev/token") ) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, _, error in
                 if error != nil {

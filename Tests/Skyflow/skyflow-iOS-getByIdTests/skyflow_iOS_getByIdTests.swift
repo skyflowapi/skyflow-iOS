@@ -20,8 +20,8 @@ class skyflow_iOS_getByIdTests: XCTestCase {
 
     override func setUp() {
         self.skyflow = Client(Configuration(
-            vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
-            vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+            vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
+            vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
             tokenProvider: DemoTokenProvider(),
             options: Options(logLevel: .DEBUG)))
     }
@@ -40,21 +40,21 @@ class skyflow_iOS_getByIdTests: XCTestCase {
         }
         
         let invalidTokenProvider = InvalidTokenProvider()
-        let skyflow = Client(Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!, vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!, tokenProvider: invalidTokenProvider))
+        let skyflow = Client(Configuration(vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"), vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"), tokenProvider: invalidTokenProvider))
         let records = [
             "records": [
                 [
                     "ids": [
-                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID1"]!,
-                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"]!,
-                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
+                        (ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID1"] ?? "dummy_skyflow_id_1"),
+                        (ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID2"] ?? "dummy_skyflow_id_2"),
+                        (ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"] ?? "dummy_skyflow_id_3")
                     ],
                     "table": "persons",
                     "redaction": RedactionType.PLAIN_TEXT
                 ],
                 [
                     "ids": [
-                        ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"]!
+                        (ProcessInfo.processInfo.environment["TEST_SKYFLOW_ID3"] ?? "dummy_skyflow_id_3")
                     ],
                     "table": "persons",
                     "redaction": RedactionType.PLAIN_TEXT

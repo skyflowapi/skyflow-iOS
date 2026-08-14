@@ -15,8 +15,8 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
     override func setUp() {
         self.skyflow = SkyflowFlowVault.initialize(
             Configuration(
-                vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
-                vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
+                vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
                 tokenProvider: DemoTokenProvider(),
                 options: Options(logLevel: .DEBUG, env: .DEV))
         )

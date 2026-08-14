@@ -15,10 +15,10 @@ class skyflow_iOS_revealTests: XCTestCase {
 
     override func setUp() {
         self.skyflow = Client(Configuration(
-                                vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
-                                vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+                                vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
+                                vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
                                 tokenProvider: DemoTokenProvider(), options: Options(logLevel: .DEBUG)))
-        self.revealTestId = ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"]!
+        self.revealTestId = (ProcessInfo.processInfo.environment["DETOKENIZE_TEST_TOKEN"] ?? "dummy_detokenize_token")
     }
 
     override func tearDown() {
@@ -126,8 +126,8 @@ class skyflow_iOS_revealTests: XCTestCase {
         }
         
         let skyflow = Client(
-            Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
-                          vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+            Configuration(vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
+                          vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
                           tokenProvider: InvalidTokenProvider()))
         
         let defaultRecords = ["records": [["token": self.revealTestId]]]

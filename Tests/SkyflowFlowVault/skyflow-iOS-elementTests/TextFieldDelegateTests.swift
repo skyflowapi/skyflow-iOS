@@ -17,8 +17,8 @@ class TextFieldDelegateTests: XCTestCase {
 
     override func setUp() {
         self.skyflow = SkyflowFlowVault.initialize(
-            Configuration(vaultID: ProcessInfo.processInfo.environment["VAULT_ID"]!,
-                          vaultURL: ProcessInfo.processInfo.environment["VAULT_URL"]!,
+            Configuration(vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
+                          vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
                           tokenProvider: DemoTokenProvider())
         )
     }
