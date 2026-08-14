@@ -6,12 +6,14 @@
 // token-group redactions).
 
 import Foundation
-
 public extension Container {
+    func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
+        return makeRevealElement(input: input.data, options: options?.data)
+    }
     func reveal(callback: RevealCallback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         var errorCode: ErrorCodes?
@@ -21,7 +23,7 @@ public extension Container {
             callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             return
         }
-        if let elementError = RequestValidators.checkRevealElements(elements: self.revealElements) {
+        if let elementError = CoreRequestValidators.checkRevealElements(elements: self.revealElements) {
             callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
             return
         }
@@ -50,11 +52,5 @@ public extension Container {
             )
             self.skyflow.apiClient.get(records: list, tokenGroupRedactions: options?.tokenGroupRedactions, callback: logCallback, contextOptions: tempContextOptions)
         }
-    }
-}
-
-public extension Container {
-    func create(input: RevealElementInput, options: RevealElementOptions? = RevealElementOptions()) -> Label where T: RevealContainer {
-        return makeRevealElement(input: input.data, options: options?.data)
     }
 }

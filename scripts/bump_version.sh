@@ -1,7 +1,7 @@
 
 
 # Both SDK products share one version line: this bumps Skyflow.podspec,
-# Skyflow-flowvault-ios.podspec, and the shared SDK_VERSION together.
+# SkyflowFlowVault.podspec, and the shared SDK_VERSION together.
 #
 # Usage:
 #   ./scripts/bump_version.sh 1.27.0            # release version, tag 1.27.0
@@ -10,7 +10,7 @@
 version=$1
 SEMVER=$version
 
-PODSPECS="Skyflow.podspec Skyflow-flowvault-ios.podspec"
+PODSPECS="Skyflow.podspec SkyflowFlowVault.podspec"
 VERSION_FILE="./Sources/SkyflowCore/Version.swift"
 
 if [ -z $2 ]

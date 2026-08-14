@@ -7,7 +7,7 @@ on:
       - '*'
     paths-ignore:
       - 'Skyflow.podspec'
-      - 'Skyflow-flowvault-ios.podspec'
+      - 'SkyflowFlowVault.podspec'
       - '*.md'
       - 'Sources/SkyflowCore/Version.swift'
     branches: 
@@ -37,7 +37,7 @@ jobs:
       run: |
            git config user.name ${{ github.actor }}
            git config user.email ${{ github.actor }}@users.noreply.github.com
-           git add Skyflow.podspec Skyflow-flowvault-ios.podspec
+           git add Skyflow.podspec SkyflowFlowVault.podspec
            git add Sources/SkyflowCore/Version.swift
            git commit -m "[AUTOMATED] Private Release ${{ steps.previoustag.outputs.tag }}.$(git rev-parse --short $GITHUB_SHA)"
            git push origin
@@ -54,5 +54,5 @@ jobs:
       run: |
            pod repo add private_spec git@github.com:skyflowapi/skyflow-iOS-private-spec.git
            pod repo push private_spec ./Skyflow.podspec --allow-warnings
-           pod repo push private_spec ./Skyflow-flowvault-ios.podspec --allow-warnings
+           pod repo push private_spec ./SkyflowFlowVault.podspec --allow-warnings
            echo "Published as Private pod"

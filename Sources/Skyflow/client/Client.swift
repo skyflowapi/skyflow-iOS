@@ -19,12 +19,11 @@ extension Client {
     }
 
     // MARK: - Legacy (v1) contract operations
-
     public func insert(records: [String: Any], options: InsertOptions = InsertOptions(), callback: Callback) {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .INSERT
         Log.info(message: .INSERT_TRIGGERED, contextOptions: tempContextOptions)
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         let icOptions = ICOptions(tokens: options.tokens, upsert: options.upsert, callback: callback, contextOptions: tempContextOptions)
@@ -92,7 +91,7 @@ extension Client {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .DETOKENIZE
         Log.info(message: .DETOKENIZE_TRIGGERED, contextOptions: tempContextOptions)
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         Log.info(message: .VALIDATE_DETOKENIZE_INPUT, contextOptions: tempContextOptions)
@@ -135,7 +134,7 @@ extension Client {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GETBYID
         Log.info(message: .GET_BY_ID_TRIGGERED, contextOptions: tempContextOptions)
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         Log.info(message: .VALIDATE_GET_BY_ID_INPUT, contextOptions: tempContextOptions)
@@ -175,7 +174,7 @@ extension Client {
         var tempContextOptions = self.contextOptions
         tempContextOptions.interface = .GET
         Log.info(message: .GET_TRIGGERED, contextOptions: tempContextOptions)
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.vaultID, vaultURL: self.vaultURL) {
             return callRevealOnFailure(callback: callback, errorObject: errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         Log.info(message: .VALIDATE_GET_INPUT, contextOptions: tempContextOptions)

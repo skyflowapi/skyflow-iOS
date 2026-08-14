@@ -1,4 +1,3 @@
-// swift-tools-version:5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -9,22 +8,20 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        // Legacy vault SDK 1(v1 API contract).
+        // PDB vault SDK 1(v1 API contract).
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
-        // FlowVault SDK (v2 API contract). Module name is SkyflowFlowVault.
+        // FlowVault SDK (v2 API contract).
         .library(
-            name: "Skyflow-flowvault-ios",
-            targets: ["SkyflowFlowVault"]), // check this
+            name: "SkyflowFlowVault",
+            targets: ["SkyflowFlowVault"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
-        // Shared, contract-agnostic core: UI elements, validations, styles,
-        // container machinery, token/JWT handling, logging, errors, utils.
         .target(
             name: "SkyflowCore",
             dependencies: [],

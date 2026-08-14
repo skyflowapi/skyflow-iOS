@@ -10,7 +10,7 @@ public extension Container {
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         var errorCode: ErrorCodes?
@@ -20,7 +20,7 @@ public extension Container {
             callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
             return
         }
-        if let elementError = RequestValidators.checkRevealElements(elements: self.revealElements) {
+        if let elementError = CoreRequestValidators.checkRevealElements(elements: self.revealElements) {
             callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
             return
         }

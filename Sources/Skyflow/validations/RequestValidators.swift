@@ -6,36 +6,12 @@
 // container operations and the client-level operations. Stateless: only
 // static functions, never instantiated. Validators compute and return the
 // error; the call sites own delivering the failure to their callback.
+// Contract-agnostic validators (checkClientConfig, checkElement,
+// checkRevealElements) live in SkyflowCore.CoreRequestValidators.
 
 import Foundation
 
 internal class RequestValidators {
-    // Guards shared by every operation: the client must have been configured
-    // with a vault ID and URL. (An empty vaultURL becomes "/" in SkyflowCore.Client.)
-    internal static func checkClientConfig(vaultID: String, vaultURL: String) -> ErrorCodes? {
-        if vaultID.isEmpty {
-            return .EMPTY_VAULT_ID()
-        }
-        if vaultURL == "/" {
-            return .EMPTY_VAULT_URL()
-        }
-        return nil
-    }
-
-    internal static func checkElement(element: TextField) -> ErrorCodes? {
-        if element.collectInput.tableName.isEmpty {
-            return .EMPTY_TABLE_NAME_IN_COLLECT()
-        }
-        if element.collectInput.column.isEmpty {
-            return .EMPTY_COLUMN_NAME_IN_COLLECT()
-        }
-        if !element.isMounted() {
-            return .UNMOUNTED_COLLECT_ELEMENT(value: element.collectInput.column)
-        }
-
-        return nil
-    }
-
     internal static func checkRecord(record: [String: Any], index: Int) -> ErrorCodes? {
         if record["table"] == nil {
             return .TABLE_KEY_ERROR(value: "\(index)")
@@ -57,18 +33,6 @@ internal class RequestValidators {
             return .EMPTY_FIELDS_KEY(value: "\(index)")
         }
 
-        return nil
-    }
-
-    internal static func checkRevealElements(elements: [Label]) -> ErrorCodes? {
-        for element in elements {
-            if element.errorTriggered {
-                return .ERROR_TRIGGERED(value: element.triggeredErrorMessage)
-            }
-            if element.getToken().isEmpty {
-                return .EMPTY_TOKEN_ID()
-            }
-        }
         return nil
     }
 

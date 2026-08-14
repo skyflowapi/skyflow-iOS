@@ -24,7 +24,7 @@ public extension Container {
         return skyflowElement
     }
 
-    func on(eventName: EventName, handler: @escaping () -> Void) {
+    func on(eventName: EventName, handler: @escaping () -> Void) -> Void where T: ComposableContainer {
         if (eventName == EventName.SUBMIT){
             for element in elements {
                 element.onSubmitHandler = handler
@@ -179,7 +179,7 @@ public extension Container {
     }
 
 
-    func getComposableView() throws -> UIView {
+    func getComposableView() throws -> UIView where T: ComposableContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COMPOSABLE_CONTAINER
         var totalCount = 0

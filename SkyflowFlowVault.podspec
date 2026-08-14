@@ -1,16 +1,12 @@
 Pod::Spec.new do |spec|
 
-  spec.name         = "Skyflow-flowvault-ios"
-
-  # Consumers import the SDK as `import SkyflowFlowVault` (Swift module names
-  # cannot contain hyphens).
-  spec.module_name  = "SkyflowFlowVault"
+  spec.name         = "SkyflowFlowVault"
 
   spec.version      = "1.26.0-beta.1"
 
-  spec.summary      = "skyflow-flowvault-iOS"
+  spec.summary      = "SkyflowFlowVault"
 
-  spec.description  = "Skyflow FlowVault iOS SDK (v2 API)"
+  spec.description  = "Skyflow FlowVault iOS SDK"
 
   spec.homepage     = "https://github.com/skyflowapi/skyflow-iOS.git"
 

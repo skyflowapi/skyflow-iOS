@@ -11,7 +11,7 @@ public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: ComposableContainer {
             var tempContextOptions = self.skyflow.contextOptions
             tempContextOptions.interface = .COMPOSABLE_CONTAINER
-            if let errorCode = RequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
+            if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
                 return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
             }
             var errors = ""
@@ -19,7 +19,7 @@ public extension Container {
             Log.info(message: .VALIDATE_COMPOSABLE_RECORDS, contextOptions: tempContextOptions)
 
             for element in self.elements {
-                errorCode = RequestValidators.checkElement(element: element)
+                errorCode = CoreRequestValidators.checkElement(element: element)
                 if errorCode != nil {
                     callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                     return

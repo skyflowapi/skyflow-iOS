@@ -7,10 +7,13 @@ import Foundation
 import UIKit
 
 public extension Container {
+    func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
+        return makeCollectElement(input: input.data, options: options?.data)
+    }
     func collect(callback: CollectCallback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
-        if let errorCode = RequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
+        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
         var errors = ""
@@ -18,7 +21,7 @@ public extension Container {
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
 
         for element in self.elements {
-            errorCode = RequestValidators.checkElement(element: element)
+            errorCode = CoreRequestValidators.checkElement(element: element)
             if errorCode != nil {
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return
@@ -72,11 +75,5 @@ public extension Container {
             let cvvMaskingCallback = CVVMaskingCallback(cvvMap: cvvMap, wrapping: logCallback)
             self.skyflow.apiClient.postAndUpdate(records: records!, callback: cvvMaskingCallback, upsert: options?.upsert, contextOptions: tempContextOptions)
         }
-    }
-}
-
-public extension Container {
-    func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {
-        return makeCollectElement(input: input.data, options: options?.data)
     }
 }
