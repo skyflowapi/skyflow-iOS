@@ -1,47 +1,77 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "Skyflow",
+    platforms: [
+        .iOS(.v13)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
+        // PDB vault SDK
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
+        // FlowVault SDK
+        .library(
+            name: "SkyflowFlowVault",
+            targets: ["SkyflowFlowVault"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "Skyflow",
+            name: "SkyflowCore",
             dependencies: [],
             resources: [
                    .process("Resources")
                  ]
             ),
+        // Legacy (v1) contract layer.
+        .target(
+            name: "Skyflow",
+            dependencies: ["SkyflowCore"]
+            ),
+        // FlowVault (v2) contract layer.
+        .target(
+            name: "SkyflowFlowVault",
+            dependencies: ["SkyflowCore"]
+            ),
+        // Tests for the legacy (v1) SDK live under Tests/Skyflow/,
+        // FlowVault (v2) SDK tests under Tests/SkyflowFlowVault/.
         .testTarget(
             name: "skyflow-iOS-collectTests",
-            dependencies: ["Skyflow"]),
+            dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+            path: "Tests/SkyflowFlowVault/skyflow-iOS-collectTests"),
         .testTarget(name: "skyflow-iOS-revealTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-revealTests"),
         .testTarget(name: "skyflow-iOS-errorTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-errorTests"),
         .testTarget(name: "skyflow-iOS-getByIdTests",
-                        dependencies: ["Skyflow"]),
+                        dependencies: ["Skyflow", "SkyflowCore"],
+                        path: "Tests/Skyflow/skyflow-iOS-getByIdTests"),
         .testTarget(name: "skyflow-iOS-elementTests",
-                    dependencies: ["Skyflow"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-elementTests"),
         .testTarget(name: "skyflow-iOS-utilTests",
-                        dependencies: ["Skyflow"]),
+                        dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                        path: "Tests/SkyflowFlowVault/skyflow-iOS-utilTests"),
+        .testTarget(name: "skyflow-iOS-legacyTests",
+                        dependencies: ["Skyflow", "SkyflowCore"],
+                        path: "Tests/Skyflow/skyflow-iOS-legacyTests"),
         .testTarget(name: "skyflow-iOS-scenarioTests",
-                            dependencies: ["Skyflow"]),
+                            dependencies: ["Skyflow", "SkyflowCore"],
+                            path: "Tests/Skyflow/skyflow-iOS-scenarioTests"),
         .testTarget(name: "skyflow-iOS-getTests",
-                   dependencies: ["Skyflow"]),
-        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["Skyflow"])
+                   dependencies: ["Skyflow", "SkyflowCore"],
+                   path: "Tests/Skyflow/skyflow-iOS-getTests"),
+        .testTarget(name: "skyflow-iOS-composableTests",
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-composableTests")
     ]
 )

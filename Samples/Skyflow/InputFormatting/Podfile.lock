@@ -1,0 +1,16 @@
+PODS:
+  - Skyflow (1.18.0-beta.1):
+
+DEPENDENCIES:
+  - Skyflow (= 1.18.0-beta.1)
+
+SPEC REPOS:
+  trunk:
+    - Skyflow
+
+SPEC CHECKSUMS:
+  Skyflow: d702f8e9beafba05e164a3f74a6f862596f41085
+
+PODFILE CHECKSUM: 4958176a88d5d7c9eb37117625a3937f5da81019
+
+COCOAPODS: 1.11.3
