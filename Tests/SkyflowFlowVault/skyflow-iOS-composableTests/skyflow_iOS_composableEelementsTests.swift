@@ -66,6 +66,26 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
+    func testContainerOptionsEmptyLayoutArray() {
+        let container = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: []))
+
+        let bstyle = Style(borderColor: UIColor.blue, cornerRadius: 20, padding: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 5), borderWidth: 2, textColor: UIColor.blue)
+
+        let styles = Styles(base: bstyle)
+
+        let options = CollectElementOptions(required: false)
+
+        let collectInput = CollectElementInput(tableName: "persons", column: "cardnumber", inputStyles: styles, placeholder: "card number", type: .CARD_NUMBER)
+
+        _ = container?.create(input: collectInput, options: options)
+
+        do {
+            _ = try container?.getComposableView()
+        } catch {
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().description)" ]).localizedDescription)
+        }
+        XCTAssertEqual(bstyle.borderColor, UIColor.blue)
+    }
     func testContainerOptionsLayoutIsless() {
         let container = skyflow.container(type: ContainerType.COMPOSABLE, options: ContainerOptions(layout: [0]))
         

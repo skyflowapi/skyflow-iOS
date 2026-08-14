@@ -9,11 +9,11 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        // PDB vault SDK 1(v1 API contract).
+        // PDB vault SDK
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
-        // FlowVault SDK (v2 API contract).
+        // FlowVault SDK
         .library(
             name: "SkyflowFlowVault",
             targets: ["SkyflowFlowVault"]),
@@ -40,25 +40,38 @@ let package = Package(
             name: "SkyflowFlowVault",
             dependencies: ["SkyflowCore"]
             ),
+        // Tests for the legacy (v1) SDK live under Tests/Skyflow/,
+        // FlowVault (v2) SDK tests under Tests/SkyflowFlowVault/.
         .testTarget(
             name: "skyflow-iOS-collectTests",
-            dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
+            dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+            path: "Tests/SkyflowFlowVault/skyflow-iOS-collectTests"),
         .testTarget(name: "skyflow-iOS-revealTests",
-                    dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-revealTests"),
         .testTarget(name: "skyflow-iOS-errorTests",
-                    dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-errorTests"),
         .testTarget(name: "skyflow-iOS-getByIdTests",
-                        dependencies: ["Skyflow", "SkyflowCore"]),
+                        dependencies: ["Skyflow", "SkyflowCore"],
+                        path: "Tests/Skyflow/skyflow-iOS-getByIdTests"),
         .testTarget(name: "skyflow-iOS-elementTests",
-                    dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-elementTests"),
         .testTarget(name: "skyflow-iOS-utilTests",
-                        dependencies: ["SkyflowFlowVault", "SkyflowCore"]),
+                        dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                        path: "Tests/SkyflowFlowVault/skyflow-iOS-utilTests"),
         .testTarget(name: "skyflow-iOS-legacyTests",
-                        dependencies: ["Skyflow", "SkyflowCore"]),
+                        dependencies: ["Skyflow", "SkyflowCore"],
+                        path: "Tests/Skyflow/skyflow-iOS-legacyTests"),
         .testTarget(name: "skyflow-iOS-scenarioTests",
-                            dependencies: ["Skyflow", "SkyflowCore"]),
+                            dependencies: ["Skyflow", "SkyflowCore"],
+                            path: "Tests/Skyflow/skyflow-iOS-scenarioTests"),
         .testTarget(name: "skyflow-iOS-getTests",
-                   dependencies: ["Skyflow", "SkyflowCore"]),
-        .testTarget(name: "skyflow-iOS-composableTests", dependencies: ["SkyflowFlowVault", "SkyflowCore"])
+                   dependencies: ["Skyflow", "SkyflowCore"],
+                   path: "Tests/Skyflow/skyflow-iOS-getTests"),
+        .testTarget(name: "skyflow-iOS-composableTests",
+                    dependencies: ["SkyflowFlowVault", "SkyflowCore"],
+                    path: "Tests/SkyflowFlowVault/skyflow-iOS-composableTests")
     ]
 )

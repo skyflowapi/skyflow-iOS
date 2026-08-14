@@ -12,7 +12,7 @@ Pod::Spec.new do |spec|
 
   spec.license      = { :type => "MIT", :file => "LICENSE" }
 
-  spec.author             = { "Skyflow" => "service-ops@skyflow.com" }
+  spec.author       = { "Skyflow" => "service-ops@skyflow.com" }
 
   spec.swift_version = '5.9'
 

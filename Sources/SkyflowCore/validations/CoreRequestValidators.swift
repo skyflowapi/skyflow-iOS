@@ -48,4 +48,78 @@ package class CoreRequestValidators {
         }
         return nil
     }
+
+    // Element-state validation shared by the collect() and composable collect()
+    // operations. Returns the fail-fast element error (if any) plus the
+    // accumulated per-element validation messages; the call sites own wrapping
+    // the messages in their error type and delivering to their callback.
+    // Side effects (updateErrorMessage, resignFirstResponder) happen while
+    // iterating, exactly as in the original per-SDK loops.
+    package static func validateElementStates(elements: [TextField]) -> (errorCode: ErrorCodes?, errors: String) {
+        var errors = ""
+        for element in elements {
+            let errorCode = checkElement(element: element)
+            if errorCode != nil {
+                return (errorCode, errors)
+            }
+
+
+            let state = element.getState()
+            let error = state["validationError"]
+            if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
+                errors += element.columnName + " is empty" + "\n"
+                element.updateErrorMessage()
+            }
+            if !(state["isValid"] as! Bool) {
+                errors += "for " + element.columnName + " " + (error as! String) + "\n"
+            }
+            if element.isFirstResponder {
+                element.resignFirstResponder()
+            }
+        }
+        return (nil, errors)
+    }
+
+    // Reveal pre-flight shared by both SDKs' reveal() operations: all elements
+    // must be mounted, error-free, and carry a token.
+    package static func checkRevealElementsPreflight(elements: [Label]) -> ErrorCodes? {
+        if let element = ConversionHelpers.checkElementsAreMounted(elements: elements) as? Label {
+            return .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
+        }
+        return checkRevealElements(elements: elements)
+    }
+
+    // Insert record-entry validation shared by both SDKs' client insert()
+    // operations. Preserves the original loop's semantics exactly: the last
+    // entry's error wins, except an invalid fields type stops the scan.
+    package static func checkInsertRecordEntries(_ recordEntries: [[String: Any]]) -> ErrorCodes? {
+        var errorCode: ErrorCodes?
+        for (index, record) in recordEntries.enumerated() {
+            if record["table"] != nil {
+                if !(record["table"] is String) {
+                    errorCode = .INVALID_TABLE_NAME_TYPE(value: "\(index)")
+                } else {
+                    if (record["table"] as! String).isEmpty {
+                        errorCode = .EMPTY_TABLE_NAME()
+                    } else {
+                        if record["fields"] != nil {
+                            if !(record["fields"] is [String: Any]) {
+                                errorCode = .INVALID_FIELDS_TYPE(value: "\(index)")
+                                break
+                            }
+                            let fields = record["fields"] as! [String: Any]
+                            if fields.isEmpty {
+                                errorCode = .EMPTY_FIELDS_KEY(value: "\(index)")
+                            }
+                         } else {
+                            errorCode = .FIELDS_KEY_ERROR(value: "\(index)")
+                         }
+                     }
+                }
+            } else {
+                errorCode = .TABLE_KEY_ERROR(value: "\(index)")
+            }
+        }
+        return errorCode
+    }
 }

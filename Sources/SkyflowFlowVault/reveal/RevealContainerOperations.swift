@@ -16,14 +16,8 @@ public extension Container {
         if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
-        if let element = ConversionHelpers.checkElementsAreMounted(elements: self.revealElements) as? Label {
-            errorCode = .UNMOUNTED_REVEAL_ELEMENT(value: element.revealInput.token)
-            callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-            return
-        }
-        if let elementError = CoreRequestValidators.checkRevealElements(elements: self.revealElements) {
+        if let elementError = CoreRequestValidators.checkRevealElementsPreflight(elements: self.revealElements) {
             callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
             return
         }

@@ -16,45 +16,20 @@ public extension Container {
         if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
             return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
         }
-        var errors = ""
-        var errorCode: ErrorCodes?
         Log.info(message: .VALIDATE_COLLECT_RECORDS, contextOptions: tempContextOptions)
 
-        for element in self.elements {
-            errorCode = CoreRequestValidators.checkElement(element: element)
-            if errorCode != nil {
-                callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                return
-            }
-
-
-            let state = element.getState()
-            let error = state["validationError"]
-            if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
-                errors += element.columnName + " is empty" + "\n"
-                element.updateErrorMessage()
-            }
-            if !(state["isValid"] as! Bool) {
-                errors += "for " + element.columnName + " " + (error as! String) + "\n"
-            }
-            if element.isFirstResponder {
-                element.resignFirstResponder()
-            }
+        let elementsValidation = CoreRequestValidators.validateElementStates(elements: self.elements)
+        if let elementErrorCode = elementsValidation.errorCode {
+            callback.onFailure(elementErrorCode.getErrorObject(contextOptions: tempContextOptions))
+            return
         }
-        if errors != "" {
-            callback.onFailure(SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: errors]))
+        if elementsValidation.errors != "" {
+            callback.onFailure(SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: elementsValidation.errors]))
             return
         }
         if let additionalFields = options?.additionalFields {
-            if additionalFields.records.isEmpty {
-                errorCode = .EMPTY_RECORDS_OBJECT()
-                return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-            }
-            for (index, record) in additionalFields.records.enumerated() {
-                errorCode = RequestValidators.checkRecord(record: record, index: index)
-                if errorCode != nil {
-                    return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                }
+            if let errorCode = RequestValidators.checkAdditionalFields(additionalFields) {
+                return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
             }
         }
         let records = CollectRequestBuilder.createCollectRecords(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)

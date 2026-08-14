@@ -374,9 +374,12 @@ final class skyflow_iOS_getUtilTests: XCTestCase {
         
         let output = [["skyflow_id": "SID", "value": "val"]]
         self.getApiCallback.handleCallbacks(outputArray: output, errorArray: [], isSuccess: true, errorObject: nil)
-        
+
         wait(for: [expectation], timeout: 20.0)
-        let records = callback.data["records"] as! [[String: String]]
+        // This target's DemoAPICallback serializes success payloads into
+        // receivedResponse as a JSON string; data is only populated on failure.
+        let json = try! JSONSerialization.jsonObject(with: Data(callback.receivedResponse.utf8)) as! [String: Any]
+        let records = json["records"] as! [[String: String]]
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records[0], output[0])
     }

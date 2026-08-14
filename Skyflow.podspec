@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
 
   spec.summary      = "skyflow-iOS"
 
-  spec.description  = "Skyflow iOS SDK (legacy v1 vault API)"
+  spec.description  = "Skyflow iOS SDK"
 
   spec.homepage     = "https://github.com/skyflowapi/skyflow-iOS.git"
 

@@ -15,57 +15,21 @@ public extension Container {
             if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
                 return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
             }
-            var errors = ""
-            var errorCode: ErrorCodes?
             Log.info(message: .VALIDATE_COMPOSABLE_RECORDS, contextOptions: tempContextOptions)
 
-            for element in self.elements {
-                errorCode = CoreRequestValidators.checkElement(element: element)
-                if errorCode != nil {
-                    callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                    return
-                }
-
-
-                let state = element.getState()
-                let error = state["validationError"]
-                if (state["isRequired"] as! Bool) && (state["isEmpty"] as! Bool) {
-                    errors += element.columnName + " is empty" + "\n"
-                    element.updateErrorMessage()
-                }
-                if !(state["isValid"] as! Bool) {
-                    errors += "for " + element.columnName + " " + (error as! String) + "\n"
-                }
-                if element.isFirstResponder {
-                    element.resignFirstResponder()
-                }
+            let elementsValidation = CoreRequestValidators.validateElementStates(elements: self.elements)
+            if let elementErrorCode = elementsValidation.errorCode {
+                callback.onFailure(elementErrorCode.getErrorObject(contextOptions: tempContextOptions))
+                return
             }
-
-            if errors != "" {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: errors]))
+            if elementsValidation.errors != "" {
+                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: elementsValidation.errors]))
 
                 return
             }
-            if options?.additionalFields != nil {
-                if options?.additionalFields!["records"] == nil {
-                    errorCode = .MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
-                    return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                }
-                if let additionalFieldEntries = options?.additionalFields!["records"] as? [[String: Any]] {
-                    if additionalFieldEntries.isEmpty {
-                        errorCode = .EMPTY_RECORDS_OBJECT()
-                        return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                    }
-                    for (index, record) in additionalFieldEntries.enumerated() {
-                        errorCode = RequestValidators.checkRecord(record: record, index: index)
-                        if errorCode != nil {
-                            return callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                        }
-                    }
-                } else {
-                    errorCode = .INVALID_RECORDS_TYPE()
-                    callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
-                    return
+            if let additionalFields = options?.additionalFields {
+                if let errorCode = RequestValidators.checkAdditionalFields(additionalFields) {
+                    return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
                 }
             }
             let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)

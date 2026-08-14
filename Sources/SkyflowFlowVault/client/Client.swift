@@ -36,32 +36,7 @@ public extension Client {
 
         Log.info(message: .VALIDATE_RECORDS, contextOptions: tempContextOptions)
         if let recordEntries = records["records"] as? [[String: Any]] {
-            for (index, record) in recordEntries.enumerated() {
-                if record["table"] != nil {
-                    if !(record["table"] is String) {
-                        errorCode = .INVALID_TABLE_NAME_TYPE(value: "\(index)")
-                    } else {
-                        if (record["table"] as! String).isEmpty {
-                            errorCode = .EMPTY_TABLE_NAME()
-                        } else {
-                            if record["fields"] != nil {
-                                if !(record["fields"] is [String: Any]) {
-                                    errorCode = .INVALID_FIELDS_TYPE(value: "\(index)")
-                                    break
-                                }
-                                let fields = record["fields"] as! [String: Any]
-                                if fields.isEmpty {
-                                    errorCode = .EMPTY_FIELDS_KEY(value: "\(index)")
-                                }
-                             } else {
-                                errorCode = .FIELDS_KEY_ERROR(value: "\(index)")
-                             }
-                         }
-                    }
-                } else {
-                    errorCode = .TABLE_KEY_ERROR(value: "\(index)")
-                }
-            }
+            errorCode = CoreRequestValidators.checkInsertRecordEntries(recordEntries)
             if errorCode != nil {
                 callback.onFailure(errorCode!.getErrorObject(contextOptions: tempContextOptions))
                 return

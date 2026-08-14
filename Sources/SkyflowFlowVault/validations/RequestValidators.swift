@@ -21,6 +21,20 @@ internal class RequestValidators {
         return nil
     }
 
+    // Validation of the typed additional fields passed to collect(), shared by
+    // the collect and composable container operations.
+    internal static func checkAdditionalFields(_ additionalFields: AdditionalFields) -> ErrorCodes? {
+        if additionalFields.records.isEmpty {
+            return .EMPTY_RECORDS_OBJECT()
+        }
+        for (index, record) in additionalFields.records.enumerated() {
+            if let errorCode = checkRecord(record: record, index: index) {
+                return errorCode
+            }
+        }
+        return nil
+    }
+
     internal static func checkTokenGroupRedactions(_ redactions: [TokenGroupRedaction]) -> ErrorCodes? {
         for (index, entry) in redactions.enumerated() {
             if entry.tokenGroupName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

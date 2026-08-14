@@ -36,6 +36,27 @@ internal class RequestValidators {
         return nil
     }
 
+    // Validation of the untyped additional fields dictionary passed to
+    // collect(), shared by the collect and composable container operations.
+    internal static func checkAdditionalFields(_ additionalFields: [String: Any]) -> ErrorCodes? {
+        if additionalFields["records"] == nil {
+            return .MISSING_RECORDS_IN_ADDITIONAL_FIELDS()
+        }
+        if let additionalFieldEntries = additionalFields["records"] as? [[String: Any]] {
+            if additionalFieldEntries.isEmpty {
+                return .EMPTY_RECORDS_OBJECT()
+            }
+            for (index, record) in additionalFieldEntries.enumerated() {
+                if let errorCode = checkRecord(record: record, index: index) {
+                    return errorCode
+                }
+            }
+        } else {
+            return .INVALID_RECORDS_TYPE()
+        }
+        return nil
+    }
+
     internal static func checkDetokenizeRecord(token: [String: Any], index: Int) -> ErrorCodes? {
            if token["redaction"] != nil {
                guard let _ = token["redaction"] as? RedactionType else {
