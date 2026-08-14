@@ -703,9 +703,8 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
     func testRevealRecordNormalizesSkyflowIDKeyInMetadata() {
         let record = RevealRecord(["token": "abc", "httpCode": 200, "metadata": ["skyflowID": "SID", "tableName": "table"]])
         let metadata = record.metadata!
-        XCTAssertEqual(metadata["skyflowId"] as? String, "SID")
-        XCTAssertNil(metadata["skyflowID"])
-        XCTAssertEqual(metadata["tableName"] as? String, "table")
+        XCTAssertEqual(metadata.skyflowId, "SID")
+        XCTAssertEqual(metadata.tableName, "table")
     }
 
     // Exact metadata shape reported from a real device run: {"skyflowID": "426279b9-...",
@@ -718,9 +717,53 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         ])
         print("metadata:", record.metadata as Any)
         let metadata = record.metadata!
-        XCTAssertEqual(metadata["skyflowId"] as? String, "426279b9-efe0-44df-bc39-16839bc86e86")
-        XCTAssertNil(metadata["skyflowID"])
-        XCTAssertEqual(metadata["tableName"] as? String, "table5")
+        XCTAssertEqual(metadata.skyflowId, "426279b9-efe0-44df-bc39-16839bc86e86")
+        XCTAssertEqual(metadata.tableName, "table5")
+    }
+
+    func testRevealRecordMetadataAcceptsAlreadyNormalizedSkyflowIdKey() {
+        // Not currently the wire's own casing, but accepted so consumers constructing a
+        // RevealRecord directly (e.g. in tests) don't need to know the wire spelling.
+        let record = RevealRecord(["token": "abc", "httpCode": 200, "metadata": ["skyflowId": "SID", "tableName": "table"]])
+
+        XCTAssertEqual(record.metadata?.skyflowId, "SID")
+        XCTAssertEqual(record.metadata?.tableName, "table")
+    }
+
+    func testRevealRecordMetadataNilWhenKeyAbsent() {
+        let record = RevealRecord(["token": "abc", "httpCode": 200])
+
+        XCTAssertNil(record.metadata)
+    }
+
+    func testRevealRecordMetadataNilWhenJSONNull() {
+        let record = RevealRecord(["token": "abc", "httpCode": 200, "metadata": NSNull()])
+
+        XCTAssertNil(record.metadata)
+    }
+
+    func testRevealRecordMetadataPresentWithNilFieldsWhenKeysMissing() {
+        // The dict itself is valid, just missing both known keys - metadata is a present,
+        // non-nil RevealMetadata whose individual fields are nil, not a dropped/nil metadata.
+        let record = RevealRecord(["token": "abc", "httpCode": 200, "metadata": [:] as [String: Any]])
+
+        XCTAssertNotNil(record.metadata)
+        XCTAssertNil(record.metadata?.tableName)
+        XCTAssertNil(record.metadata?.skyflowId)
+    }
+
+    func testRevealMetadataPublicInit() {
+        let metadata = RevealMetadata(tableName: "persons", skyflowId: "sid-1")
+
+        XCTAssertEqual(metadata.tableName, "persons")
+        XCTAssertEqual(metadata.skyflowId, "sid-1")
+    }
+
+    func testRevealMetadataPublicInitDefaultsToNilFields() {
+        let metadata = RevealMetadata()
+
+        XCTAssertNil(metadata.tableName)
+        XCTAssertNil(metadata.skyflowId)
     }
 
     func testRevealResponseInitReturnsNilForMalformedBody() {
