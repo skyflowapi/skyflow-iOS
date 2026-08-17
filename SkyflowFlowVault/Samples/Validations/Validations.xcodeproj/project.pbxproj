@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		61BA6DDEE43670E58D668441 /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47B16B92A54F283C62D4E02 /* ExampleTokenProvider.swift */; };
 		F1030006274E0A0D008F614B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1030005274E0A0D008F614B /* AppDelegate.swift */; };
 		F1030008274E0A0D008F614B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1030007274E0A0D008F614B /* SceneDelegate.swift */; };
 		F103000A274E0A0D008F614B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1030009274E0A0D008F614B /* ViewController.swift */; };
@@ -24,6 +25,7 @@
 		F103000E274E0A12008F614B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1030011274E0A12008F614B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F1030013274E0A12008F614B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F47B16B92A54F283C62D4E02 /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 				F103000E274E0A12008F614B /* Assets.xcassets */,
 				F1030010274E0A12008F614B /* LaunchScreen.storyboard */,
 				F1030013274E0A12008F614B /* Info.plist */,
+				F47B16B92A54F283C62D4E02 /* ExampleTokenProvider.swift */,
 			);
 			path = Validations;
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 				F103000A274E0A0D008F614B /* ViewController.swift in Sources */,
 				F1030006274E0A0D008F614B /* AppDelegate.swift in Sources */,
 				F1030008274E0A0D008F614B /* SceneDelegate.swift in Sources */,
+				61BA6DDEE43670E58D668441 /* ExampleTokenProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

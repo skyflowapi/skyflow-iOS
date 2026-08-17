@@ -39,7 +39,7 @@ class CardBrandChoiceSampleViewController: UIViewController {
             let iconStyles = SkyflowFlowVault.Styles(base: Style(cardIconAlignment: .right))
             
             // create card number element
-            let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(table: "<TABLE_NAME>", column: "<COLUMN_NAME>", inputStyles: inputStyles, iconStyles: Styles(base: Style(cardIconAlignment: .right)),label: "Card Number", placeholder: "XXXXXXXXXXXXX", type: SkyflowFlowVault.ElementType.CARD_NUMBER)
+            let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(tableName: "<TABLE_NAME>", column: "<COLUMN_NAME>", inputStyles: inputStyles, iconStyles: Styles(base: Style(cardIconAlignment: .right)),label: "Card Number", placeholder: "XXXXXXXXXXXXX", type: SkyflowFlowVault.ElementType.CARD_NUMBER)
             let requiredOption = SkyflowFlowVault.CollectElementOptions(required: true, enableCardIcon: true, enableCopy: false)
             
             collectCardNumberElement = container?.create(input: collectCardNumberInput, options: requiredOption)

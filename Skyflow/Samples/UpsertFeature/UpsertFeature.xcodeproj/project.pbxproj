@@ -29,8 +29,8 @@
 		9818DEA329239C1C004C72AE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9818DEA529239C1C004C72AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9818DEAB29239C87004C72AE /* ResponseStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseStructs.swift; sourceTree = "<group>"; };
-		9818DEAF29239CD0004C72AE /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExampleTokenProvider.swift; path = ../../Upsert/Upsert/ExampleTokenProvider.swift; sourceTree = "<group>"; };
-		9818DEB129239CD9004C72AE /* ExampleAPICallback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExampleAPICallback.swift; path = ../../Upsert/Upsert/ExampleAPICallback.swift; sourceTree = "<group>"; };
+		9818DEAF29239CD0004C72AE /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
+		9818DEB129239CD9004C72AE /* ExampleAPICallback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExampleAPICallback.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
