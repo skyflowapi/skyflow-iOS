@@ -75,6 +75,11 @@ let package = Package(
                    path: "Skyflow/Tests/skyflow-iOS-getTests"),
         .testTarget(name: "skyflow-iOS-composableTests",
                     dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-                    path: "SkyflowFlowVault/Tests/skyflow-iOS-composableTests")
+                    path: "SkyflowFlowVault/Tests/skyflow-iOS-composableTests"),
+        // Dual-SDK coexistence tests: import both products side by side,
+        // public API only, the way an app installing both pods would.
+        .testTarget(name: "skyflow-iOS-coexistenceTests",
+                    dependencies: ["Skyflow", "SkyflowFlowVault"],
+                    path: "Tests/skyflow-iOS-coexistenceTests")
     ]
 )
