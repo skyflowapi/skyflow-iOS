@@ -80,6 +80,11 @@ let package = Package(
         // public API only, the way an app installing both pods would.
         .testTarget(name: "skyflow-iOS-coexistenceTests",
                     dependencies: ["Skyflow", "SkyflowFlowVault"],
-                    path: "Tests/skyflow-iOS-coexistenceTests")
+                    path: "Tests/skyflow-iOS-coexistenceTests"),
+        // Shared-core logic tests: depend only on SkyflowCore, so core
+        // regressions surface here independently of either SDK.
+        .testTarget(name: "skyflow-iOS-coreTests",
+                    dependencies: ["SkyflowCore"],
+                    path: "SkyflowCore/Tests/skyflow-iOS-coreTests")
     ]
 )
