@@ -8,8 +8,7 @@ import SkyflowFlowVault
 class ViewController: UIViewController {
     var retryCount = 0
     private var skyflow: SkyflowFlowVault.Client?
-    private var container: SkyflowFlowVault.Container<SkyflowFlowVault.CollectContainer>?
-    private var b: UIButton?
+    private var container: SkyflowFlowVault.Container<SkyflowFlowVault.ComposableContainer>?
 
     private var stackView: UIStackView!
 
@@ -63,51 +62,51 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
                 placeholder: "4111-1111-1111-1111",
                 type: SkyflowFlowVault.ElementType.CARD_NUMBER,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
 
             )
             let collectNameInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
                 placeholder: "John Doe",
                 type: SkyflowFlowVault.ElementType.CARDHOLDER_NAME,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
             )
             let collectCVVInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
                 placeholder: "***",
                 type: .CVV,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
             )
             let collectExpMonthInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
                 placeholder: "MM",
                 type: .EXPIRATION_MONTH,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
 
             )
             let collectExpYearInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",
                 placeholder: "YYYY",
                 type: .EXPIRATION_YEAR,
-                skyflowID: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
 
             )
             let requiredOption = SkyflowFlowVault.CollectElementOptions(required: true)
@@ -122,8 +121,9 @@ class ViewController: UIViewController {
             collectButton.addTarget(self, action: #selector(submitForm), for: .touchUpInside)
 
             do {
-                let composableView = try container?.getComposableView()
-                stackView.addArrangedSubview(composableView)
+                if let composableView = try container?.getComposableView() {
+                    stackView.addArrangedSubview(composableView)
+                }
             } catch {
                 print(error)
             }
@@ -169,7 +169,7 @@ class ViewController: UIViewController {
                 onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
                 onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
             ),
-            options: SkyflowFlowVault.CollectOptions(tokens: true)
+            options: SkyflowFlowVault.CollectOptions()
         )
     }
     internal func updateSuccess(_ response: CollectResponse) {

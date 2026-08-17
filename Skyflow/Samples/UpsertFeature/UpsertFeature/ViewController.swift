@@ -40,7 +40,7 @@ class ViewController: UIViewController {
                 textAlignment: .left,
                 textColor: .blue
             )
-            let focusStyle = Skyflow.Style(borderColor: .blue) ̰
+            let focusStyle = Skyflow.Style(borderColor: .blue)
             let completedStyle = Skyflow.Style(borderColor: UIColor.green, textColor: UIColor.green)
             let invalidStyle = Skyflow.Style(borderColor: UIColor.red, textColor: UIColor.red)
             let styles = Skyflow.Styles(

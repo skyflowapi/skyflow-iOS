@@ -9,7 +9,6 @@ class ViewController: UIViewController {
     private var skyflow: SkyflowFlowVault.Client?
     private var container: SkyflowFlowVault.Container<SkyflowFlowVault.CollectContainer>?
     private var revealContainer: SkyflowFlowVault.Container<SkyflowFlowVault.RevealContainer>?
-    private var b: UIButton?
     private var stackView: UIStackView!
     private var revealCardNumber: Label?
     private var revealCvv: Label?
@@ -40,7 +39,7 @@ class ViewController: UIViewController {
                 textAlignment: .left,
                 textColor: .blue
             )
-            let focusStyle = SkyflowFlowVault.Style(borderColor: .blue) ̰
+            let focusStyle = SkyflowFlowVault.Style(borderColor: .blue)
             let completedStyle = SkyflowFlowVault.Style(borderColor: UIColor.green, textColor: UIColor.green)
             let invalidStyle = SkyflowFlowVault.Style(borderColor: UIColor.red, textColor: UIColor.red)
             let styles = SkyflowFlowVault.Styles(
@@ -85,7 +84,7 @@ class ViewController: UIViewController {
             )
             // keep card number as unique column for testing upsert feature
             let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(
-                table: "persons",
+                tableName: "persons",
                 column: "cardnumber",
                 inputStyles: styles,
                 labelStyles: labelStyles,
@@ -97,7 +96,7 @@ class ViewController: UIViewController {
             let requiredOption = SkyflowFlowVault.CollectElementOptions(required: true)
             let collectCardNumber = container?.create(input: collectCardNumberInput, options: requiredOption)
             let collectCvvInput = SkyflowFlowVault.CollectElementInput(
-                table: "persons",
+                tableName: "persons",
                 column: "cvv",
                 inputStyles: styles,
                 label: "Cvv",
@@ -154,18 +153,20 @@ class ViewController: UIViewController {
             callback: RevealCallback(
                 onSuccess: { (response: RevealResponse) in print("success:", response) },
                 onFailure: { (error: SkyflowError) in print("failure:", error) }
-            )
+            ),
+            options: SkyflowFlowVault.RevealOptions(tokenGroupRedactions: [
+                SkyflowFlowVault.TokenGroupRedaction(tokenGroupName: "<TOKEN_GROUP_NAME>", redaction: "<REDACTION_TYPE>")
+            ])
         )
     }
 
     @objc func submitForm() {
-        let upsertOptions = [["table": "persons", "column": "cardnumber"]] as [[String: Any]]
         container!.collect(
             callback: CollectCallback(
                 onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
                 onFailure: { [weak self] (_: SkyflowError) in self?.updateFailure() }
             ),
-            options: SkyflowFlowVault.CollectOptions(tokens: true)
+            options: SkyflowFlowVault.CollectOptions()
         )
     }
 
@@ -204,8 +205,7 @@ class ViewController: UIViewController {
             let revealCardNumberInput = SkyflowFlowVault.RevealElementInput(
                 token: token(for: "cardnumber"),
                 inputStyles: revealStyles,
-                label: "Card Number",
-                redaction: .DEFAULT
+                label: "Card Number"
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
@@ -214,8 +214,7 @@ class ViewController: UIViewController {
             let revealCvvInput = SkyflowFlowVault.RevealElementInput(
                 token: token(for: "cvv"),
                 inputStyles: revealStyles,
-                label: "Cvv",
-                redaction: .DEFAULT
+                label: "Cvv"
             )
             self.revealCvv = self.revealContainer?.create(
                 input: revealCvvInput,

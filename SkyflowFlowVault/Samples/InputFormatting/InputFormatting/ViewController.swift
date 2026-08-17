@@ -11,7 +11,6 @@ class ViewController: UIViewController {
     private var skyflow: SkyflowFlowVault.Client?
     private var container: SkyflowFlowVault.Container<SkyflowFlowVault.CollectContainer>?
     private var revealContainer: SkyflowFlowVault.Container<SkyflowFlowVault.RevealContainer>?
-    private var b: UIButton?
 
     private var stackView: UIStackView!
 
@@ -77,7 +76,7 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
@@ -85,7 +84,7 @@ class ViewController: UIViewController {
                 type: SkyflowFlowVault.ElementType.CARD_NUMBER
             )
             let collectNameInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
@@ -93,7 +92,7 @@ class ViewController: UIViewController {
                 type: SkyflowFlowVault.ElementType.CARDHOLDER_NAME
             )
             let collectCVVInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
@@ -101,7 +100,7 @@ class ViewController: UIViewController {
                 type: .CVV
             )
             let collectExpMonthInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
@@ -109,7 +108,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_MONTH
             )
             let collectExpYearInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",
@@ -117,7 +116,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_YEAR
             )
             let collectSSNInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "ssn",
                 inputStyles: styles,
                 label: "SSN",
@@ -125,7 +124,7 @@ class ViewController: UIViewController {
                 type: .INPUT_FIELD
             )
             let collectPhoneNumberInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "phone_number",
                 inputStyles: styles,
                 label: "Phone Number",
@@ -133,7 +132,7 @@ class ViewController: UIViewController {
                 type: .INPUT_FIELD
             )
             let collectLicenseNumberInput = SkyflowFlowVault.CollectElementInput(
-                table: "table",
+                tableName: "table",
                 column: "license_number",
                 inputStyles: styles,
                 label: "License Number",
@@ -214,7 +213,7 @@ class ViewController: UIViewController {
                 onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
                 onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
             ),
-            options: SkyflowFlowVault.CollectOptions(tokens: true)
+            options: SkyflowFlowVault.CollectOptions()
         )
     }
     internal func updateSuccess(_ response: CollectResponse) {

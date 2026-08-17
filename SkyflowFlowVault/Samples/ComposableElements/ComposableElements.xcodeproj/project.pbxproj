@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		67D8C91FAB59F1B52D6AAD3E /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51739068CD4F85D3D45E427 /* ExampleTokenProvider.swift */; };
 		7C5748C72A7B71DF002D64AA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5748C62A7B71DF002D64AA /* AppDelegate.swift */; };
 		7C5748C92A7B71DF002D64AA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5748C82A7B71DF002D64AA /* SceneDelegate.swift */; };
 		7C5748CB2A7B71DF002D64AA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5748CA2A7B71DF002D64AA /* ViewController.swift */; };
@@ -49,6 +50,7 @@
 		7C5748E32A7B71DF002D64AA /* ComposableElementsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ComposableElementsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C5748E72A7B71DF002D64AA /* ComposableElementsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposableElementsUITests.swift; sourceTree = "<group>"; };
 		7C5748E92A7B71DF002D64AA /* ComposableElementsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposableElementsUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B51739068CD4F85D3D45E427 /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				7C5748CF2A7B71DF002D64AA /* Assets.xcassets */,
 				7C5748D12A7B71DF002D64AA /* LaunchScreen.storyboard */,
 				7C5748D42A7B71DF002D64AA /* Info.plist */,
+				B51739068CD4F85D3D45E427 /* ExampleTokenProvider.swift */,
 			);
 			path = ComposableElements;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				7C5748CB2A7B71DF002D64AA /* ViewController.swift in Sources */,
 				7C5748C72A7B71DF002D64AA /* AppDelegate.swift in Sources */,
 				7C5748C92A7B71DF002D64AA /* SceneDelegate.swift in Sources */,
+				67D8C91FAB59F1B52D6AAD3E /* ExampleTokenProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

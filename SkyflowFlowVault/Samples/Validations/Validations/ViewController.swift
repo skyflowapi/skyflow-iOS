@@ -12,9 +12,6 @@ import SkyflowFlowVault
 class ViewController: UIViewController {
     private var skyflowClient: SkyflowFlowVault.Client?
     private var container: SkyflowFlowVault.Container<SkyflowFlowVault.CollectContainer>?
-    private var b: UIButton?
-    private var confirmPasswordElement: SkyflowFlowVault.TextField?
-
     private var stackView: UIStackView!
 
     override func loadView() {
@@ -99,15 +96,9 @@ class ViewController: UIViewController {
                 validations: ValidationSet(rules: [strongPasswordRule, lengthRule, elementValueMatchRule])
             )
             let confirmPassword = container?.create(input: confirmPasswordInput, options: collectElementOptions)
-            self.confirmPasswordElement = confirmPassword
             // mount elements on screen - errors will be shown if any of the validaitons fail
             stackView.addArrangedSubview(password!)
             stackView.addArrangedSubview(confirmPassword!)
-            let resetButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 40))
-            resetButton.backgroundColor = .blue
-            resetButton.setTitle("Reset Password", for: .normal)
-            resetButton.addTarget(self, action: #selector(resetPassword), for: .touchUpInside)
-            stackView.addArrangedSubview(resetButton)
             stackView.axis = .vertical
             stackView.distribution = .fill
             stackView.spacing = 10
@@ -118,23 +109,5 @@ class ViewController: UIViewController {
             stackView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 10).isActive = true
             stackView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -10).isActive = true
         }
-    }
-
-    @objc func resetPassword() {
-        let url = ""
-        let requestHeaders = ["Content-Type": "application/json ", "Authorization": ""]
-        let requestBody: [String: Any] = [
-            // Other fields...
-            "password": self.confirmPasswordElement!
-        ]
-        let responseBody: [String: Any] = [:]
-        let connectionConfig = ConnectionConfig(
-            connectionURL: url,
-            method: .POST,
-            requestBody: requestBody,
-            requestHeader: requestHeaders,
-            responseBody: responseBody
-        )
-        self.skyflowClient?.invokeConnection(config: connectionConfig, callback: ExampleAPICallback())
     }
 }

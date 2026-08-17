@@ -8,9 +8,8 @@ import SkyflowFlowVault
 class ViewController: UIViewController {
     var retryCount = 0
     private var skyflow: SkyflowFlowVault.Client?
-    private var container: SkyflowFlowVault.Container<SkyflowFlowVault.CollectContainer>?
+    private var container: SkyflowFlowVault.Container<SkyflowFlowVault.ComposableContainer>?
     private var revealContainer: SkyflowFlowVault.Container<SkyflowFlowVault.RevealContainer>?
-    private var b: UIButton?
 
     private var stackView: UIStackView!
 
@@ -73,7 +72,7 @@ class ViewController: UIViewController {
             )
 
             let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "card_number",
                 inputStyles: styles,
                 label: "Card Number",
@@ -81,7 +80,7 @@ class ViewController: UIViewController {
                 type: SkyflowFlowVault.ElementType.CARD_NUMBER
             )
             let collectNameInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cardholder_name",
                 inputStyles: styles,
                 label: "Card Holder Name",
@@ -89,7 +88,7 @@ class ViewController: UIViewController {
                 type: SkyflowFlowVault.ElementType.CARDHOLDER_NAME
             )
             let collectCVVInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "cvv",
                 inputStyles: styles,
                 label: "CVV",
@@ -97,7 +96,7 @@ class ViewController: UIViewController {
                 type: .CVV
             )
             let collectExpMonthInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_month",
                 inputStyles: styles,
                 label: "Expiration Month",
@@ -105,7 +104,7 @@ class ViewController: UIViewController {
                 type: .EXPIRATION_MONTH
             )
             let collectExpYearInput = SkyflowFlowVault.CollectElementInput(
-                table: "credit_cards",
+                tableName: "credit_cards",
                 column: "expiry_year",
                 inputStyles: styles,
                 label: "Expiration Year",
@@ -129,8 +128,9 @@ class ViewController: UIViewController {
             revealButton.addTarget(self, action: #selector(revealForm), for: .touchUpInside)
 
             do {
-                let composableView = try container?.getComposableView()
-                stackView.addArrangedSubview(composableView)
+                if let composableView = try container?.getComposableView() {
+                    stackView.addArrangedSubview(composableView)
+                }
             } catch {
                 print(error)
             }
@@ -174,7 +174,10 @@ class ViewController: UIViewController {
             callback: RevealCallback(
                 onSuccess: { (response: RevealResponse) in print("success:", response) },
                 onFailure: { (error: SkyflowError) in print("failure:", error) }
-            )
+            ),
+            options: SkyflowFlowVault.RevealOptions(tokenGroupRedactions: [
+                SkyflowFlowVault.TokenGroupRedaction(tokenGroupName: "<TOKEN_GROUP_NAME>", redaction: "<REDACTION_TYPE>")
+            ])
         )
     }
     @objc func submitForm() {
@@ -183,7 +186,7 @@ class ViewController: UIViewController {
                 onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
                 onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
             ),
-            options: SkyflowFlowVault.CollectOptions(tokens: true)
+            options: SkyflowFlowVault.CollectOptions()
         )
     }
     internal func updateSuccess(_ response: CollectResponse) {
@@ -225,8 +228,7 @@ class ViewController: UIViewController {
             let revealCardNumberInput = SkyflowFlowVault.RevealElementInput(
                 token: token(for: "card_number"),
                 inputStyles: revealStyles,
-                label: "Card Number",
-                redaction: .REDACTED
+                label: "Card Number"
             )
             self.revealCardNumber = self.revealContainer?.create(
                 input: revealCardNumberInput,
@@ -235,23 +237,19 @@ class ViewController: UIViewController {
             let revealCVVtInput = SkyflowFlowVault.RevealElementInput(
                 token: token(for: "cvv"),
                 inputStyles: revealStyles,
-                label: "CVV",
-                redaction: .MASKED
+                label: "CVV"
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = SkyflowFlowVault.RevealElementInput(
                 token: token(for: "cardholder_name"),
                 inputStyles: revealStyles,
-                label: "Card Holder Name",
-                redaction: .DEFAULT
-
+                label: "Card Holder Name"
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = SkyflowFlowVault.RevealElementInput(
                 token: token(for: "expiry_month"),
                 inputStyles: revealStyles,
-                label: "Expiration Month",
-                redaction: .PLAIN_TEXT                
+                label: "Expiration Month"
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = SkyflowFlowVault.RevealElementInput(
