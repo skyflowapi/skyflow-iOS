@@ -11,7 +11,7 @@ version=$1
 SEMVER=$version
 
 PODSPECS="Skyflow.podspec SkyflowFlowVault.podspec"
-VERSION_FILE="./Sources/SkyflowCore/Version.swift"
+VERSION_FILE="./SkyflowCore/Sources/Version.swift"
 
 if [ -z $2 ]
 then

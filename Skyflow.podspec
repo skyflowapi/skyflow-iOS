@@ -24,14 +24,14 @@ Pod::Spec.new do |spec|
 
   # CocoaPods compiles the shared core and the legacy contract layer into a single
   # module, so the SPM-only re-export shim is excluded.
-  spec.source_files  = "Sources/SkyflowCore/**/*.{swift}", "Sources/Skyflow/**/*.{swift}"
+  spec.source_files  = "SkyflowCore/Sources/**/*.{swift}", "Skyflow/Sources/**/*.{swift}"
 
-  spec.exclude_files = "Sources/Skyflow/Exports.swift"
+  spec.exclude_files = "Skyflow/Sources/Exports.swift"
 
   # `package` access-level declarations (shared across the SPM targets) require a
   # package name when compiled outside SPM.
   spec.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS' => '-package-name skyflow_ios_sdk' }
 
-  spec.resource_bundles = {'Skyflow' => ['Sources/SkyflowCore/Resources/**/*.{xcassets}'] }
+  spec.resource_bundles = {'Skyflow' => ['SkyflowCore/Sources/Resources/**/*.{xcassets}'] }
 
 end

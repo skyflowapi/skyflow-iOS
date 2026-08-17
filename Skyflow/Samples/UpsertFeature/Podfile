@@ -1,0 +1,4 @@
+source 'https://github.com/CocoaPods/Specs.git'
+target 'UpsertFeature' do
+  pod 'Skyflow', ">= 1.22.0"
+end
