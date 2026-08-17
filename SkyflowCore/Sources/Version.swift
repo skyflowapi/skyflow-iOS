@@ -18,6 +18,6 @@ import Foundation
 // product so directly constructing Client(_:) still reports correctly there.
 package var SDK_NAME = "skyflow-iOS"
 
-package var SDK_VERSION = "1.26.0-beta.1-dev.6470fa7"
+package var SDK_VERSION = "1.26.0-beta.1-dev.e78394c"
 
 var LangAndVersion: String { "iOS SDK v\(SDK_VERSION)" }
