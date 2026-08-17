@@ -201,21 +201,38 @@ class ViewController: UIViewController {
         }
     }
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        self.revealContainer?.reveal(
+            callback: RevealCallback(
+                onSuccess: { (response: RevealResponse) in print("success:", response) },
+                onFailure: { (error: SkyflowError) in print("failure:", error) }
+            )
+        )
     }
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: SkyflowFlowVault.CollectOptions(tokens: true))
+        container!.collect(
+            callback: CollectCallback(
+                onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
+                onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
+            ),
+            options: SkyflowFlowVault.CollectOptions(tokens: true)
+        )
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: CollectResponse) {
         print(response)
-        updateRevealInputs(tokens: response.records[0].fields)
+        if let record = response.records.first {
+            updateRevealInputs(record: record)
+        }
         print("Successfully got response:", response)
     }
-    internal func updateFailure(error: Any) {
+    internal func updateFailure(error: SkyflowError) {
         print("Failed Operation", error)
     }
-    internal func updateRevealInputs(tokens: Fields) {
+    internal func updateRevealInputs(record: CollectRecord) {
+        // A column maps to a list of Token(token:tokenGroupName:) - there's just one token
+        // group configured for these columns here, so take the first.
+        func token(for column: String) -> String {
+            record.tokens?[column]?.first?.token ?? ""
+        }
         let revealBaseStyle = SkyflowFlowVault.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -232,7 +249,7 @@ class ViewController: UIViewController {
                 self.revealed = true
             }
             let revealCardNumberInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.card_number,
+                token: token(for: "card_number"),
                 inputStyles: revealStyles,
                 label: "Card Number"
             )
@@ -241,43 +258,43 @@ class ViewController: UIViewController {
                 options: SkyflowFlowVault.RevealElementOptions(format: "XXXX-XXXX-XXXX-XXXX-XXX", translation: ["X": "[0-9]"])
             )
             let revealCVVtInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.cvv,
+                token: token(for: "cvv"),
                 inputStyles: revealStyles,
                 label: "CVV"
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.cardholder_name,
+                token: token(for: "cardholder_name"),
                 inputStyles: revealStyles,
                 label: "Card Holder Name"
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.expiry_month,
+                token: token(for: "expiry_month"),
                 inputStyles: revealStyles,
                 label: "Expiration Month"
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.expiry_year,
+                token: token(for: "expiry_year"),
                 inputStyles: revealStyles,
                 label: "Expiration Year"
             )
             self.revealExpirationYear = self.revealContainer?.create(input: revealExpirationYearInput)
             let revealSSNInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.ssn,
+                token: token(for: "ssn"),
                 inputStyles: revealStyles,
                 label: "SSN"
             )
             self.revealSSN = self.revealContainer?.create(input: revealSSNInput, options: SkyflowFlowVault.RevealElementOptions(format: "XXX XX XXXX", translation: ["X": "[0-9]"]))
             let revealPhoneNumberInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.phone_number,
+                token: token(for: "phone_number"),
                 inputStyles: revealStyles,
                 label: "Phone Number"
             )
             self.revealPhoneNumber = self.revealContainer?.create(input: revealPhoneNumberInput, options: SkyflowFlowVault.RevealElementOptions(format: "+91 XXXX-XX-XXXX", translation: ["X": "[0-9]"]))
             let revealLicenseNumberInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.phone_number,
+                token: token(for: "phone_number"),
                 inputStyles: revealStyles,
                 label: "License Number"
             )

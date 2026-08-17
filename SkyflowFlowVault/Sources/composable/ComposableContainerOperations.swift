@@ -8,7 +8,7 @@ import Foundation
 import UIKit
 
 public extension Container {
-    func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: ComposableContainer {
+    func collect(callback: CollectCallback, options: CollectOptions? = CollectOptions()) where T: ComposableContainer {
             var tempContextOptions = self.skyflow.contextOptions
             tempContextOptions.interface = .COMPOSABLE_CONTAINER
             if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {

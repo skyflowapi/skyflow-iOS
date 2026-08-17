@@ -153,26 +153,38 @@ class CollectAndRevealViewController: UIViewController {
         }
     }
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        self.revealContainer?.reveal(
+            callback: RevealCallback(
+                onSuccess: { (response: RevealResponse) in print("success:", response) },
+                onFailure: { (error: SkyflowError) in print("failure:", error) }
+            )
+        )
     }
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: SkyflowFlowVault.CollectOptions(tokens: true))
+        container!.collect(
+            callback: CollectCallback(
+                onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
+                onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
+            ),
+            options: SkyflowFlowVault.CollectOptions(tokens: true)
+        )
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: CollectResponse) {
         print(response)
         retryCount = 0
-        updateRevealInputs(tokens: response.records[0].fields)
+        if let record = response.records.first {
+            updateRevealInputs(record: record)
+        }
         print("Successfully got response:", response)
     }
-    internal func updateFailure(error: Any) {
-        if((error as AnyObject).contains("Invalid Bearer token") && retryCount <= 2){ // To do, it will be replaced with error code in the future
+    internal func updateFailure(error: SkyflowError) {
+        if error.message.contains("Invalid Bearer token") && retryCount <= 2 { // To do, it will be replaced with error code in the future
             retryCount += 1
             submitForm()
         }
         print("Failed Operation", error)
     }
-    internal func updateRevealInputs(tokens: Fields) {
+    internal func updateRevealInputs(record: CollectRecord) {
         let revealBaseStyle = SkyflowFlowVault.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -182,6 +194,11 @@ class CollectAndRevealViewController: UIViewController {
             textColor: UIColor.blue
         )
         let revealStyles = SkyflowFlowVault.Styles(base: revealBaseStyle)
+        // A column maps to a list of Token(token:tokenGroupName:) - there's just one token
+        // group configured for these columns here, so take the first.
+        func token(for column: String) -> String {
+            record.tokens?[column]?.first?.token ?? ""
+        }
         DispatchQueue.main.async {
             if self.revealed {
                 self.removeRevealElements()
@@ -189,7 +206,7 @@ class CollectAndRevealViewController: UIViewController {
                 self.revealed = true
             }
             let revealCardNumberInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.card_number,
+                token: token(for: "card_number"),
                 inputStyles: revealStyles,
                 label: "Card Number",
                 redaction: .REDACTED
@@ -199,14 +216,14 @@ class CollectAndRevealViewController: UIViewController {
                 options: SkyflowFlowVault.RevealElementOptions()
             )
             let revealCVVtInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.cvv,
+                token: token(for: "cvv"),
                 inputStyles: revealStyles,
                 label: "CVV",
                 redaction: .MASKED
             )
             self.revealCVV = self.revealContainer?.create(input: revealCVVtInput)
             let revealNameInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.cardholder_name,
+                token: token(for: "cardholder_name"),
                 inputStyles: revealStyles,
                 label: "Card Holder Name",
                 redaction: .DEFAULT
@@ -214,14 +231,14 @@ class CollectAndRevealViewController: UIViewController {
             )
             self.revealName = self.revealContainer?.create(input: revealNameInput)
             let revealExpirationMonthInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.expiry_month,
+                token: token(for: "expiry_month"),
                 inputStyles: revealStyles,
                 label: "Expiration Month",
                 redaction: .PLAIN_TEXT
             )
             self.revealExpirationMonth = self.revealContainer?.create(input: revealExpirationMonthInput)
             let revealExpirationYearInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.expiry_year,
+                token: token(for: "expiry_year"),
                 inputStyles: revealStyles,
                 label: "Expiration Year"
             )

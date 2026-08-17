@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6CAC82BEF157325DE8024E2E /* libPods-CollectAndRevealSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F5C5B124A49D66E3C560B0D /* libPods-CollectAndRevealSample.a */; };
 		7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */; };
 		7C2C89DE2C8F23C30076C641 /* CollectAndRevealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89DD2C8F23C30076C641 /* CollectAndRevealViewController.swift */; };
 		7C2C89E52C8F25C50076C641 /* libSkyflow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C2C89E42C8F25C50076C641 /* libSkyflow.a */; };
@@ -16,9 +17,7 @@
 		F1613E57272565CF0042C130 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1613E55272565CF0042C130 /* Main.storyboard */; };
 		F1613E59272565D30042C130 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1613E58272565D30042C130 /* Assets.xcassets */; };
 		F1613E5C272565D30042C130 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1613E5A272565D30042C130 /* LaunchScreen.storyboard */; };
-		F1613E652725663C0042C130 /* ExampleAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E642725663C0042C130 /* ExampleAPICallback.swift */; };
 		F1613E682725665D0042C130 /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E672725665D0042C130 /* ExampleTokenProvider.swift */; };
-		F1613E6B272566800042C130 /* ResponseStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E6A272566800042C130 /* ResponseStructs.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,9 +35,7 @@
 		F1613E58272565D30042C130 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1613E5B272565D30042C130 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F1613E5D272565D30042C130 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F1613E642725663C0042C130 /* ExampleAPICallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAPICallback.swift; sourceTree = "<group>"; };
 		F1613E672725665D0042C130 /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
-		F1613E6A272566800042C130 /* ResponseStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseStructs.swift; sourceTree = "<group>"; };
 		F2D4C9A9B1D1DF56AC7781D1 /* Pods-CollectAndRevealSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollectAndRevealSample.release.xcconfig"; path = "Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,6 +45,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C2C89E52C8F25C50076C641 /* libSkyflow.a in Frameworks */,
+				6CAC82BEF157325DE8024E2E /* libPods-CollectAndRevealSample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,9 +91,7 @@
 				F1613E58272565D30042C130 /* Assets.xcassets */,
 				F1613E5A272565D30042C130 /* LaunchScreen.storyboard */,
 				F1613E5D272565D30042C130 /* Info.plist */,
-				F1613E642725663C0042C130 /* ExampleAPICallback.swift */,
 				F1613E672725665D0042C130 /* ExampleTokenProvider.swift */,
-				F1613E6A272566800042C130 /* ResponseStructs.swift */,
 				7C2C89DD2C8F23C30076C641 /* CollectAndRevealViewController.swift */,
 			);
 			path = CollectAndRevealSample;
@@ -128,8 +124,6 @@
 			dependencies = (
 			);
 			name = CollectAndRevealSample;
-			packageProductDependencies = (
-			);
 			productName = CollectAndRevealSample;
 			productReference = F1613E4C272565CF0042C130 /* CollectAndRevealSample.app */;
 			productType = "com.apple.product-type.application";
@@ -230,10 +224,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1613E54272565CF0042C130 /* ViewController.swift in Sources */,
-				F1613E6B272566800042C130 /* ResponseStructs.swift in Sources */,
 				F1613E682725665D0042C130 /* ExampleTokenProvider.swift in Sources */,
 				F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */,
-				F1613E652725663C0042C130 /* ExampleAPICallback.swift in Sources */,
 				F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */,
 				7C2C89DE2C8F23C30076C641 /* CollectAndRevealViewController.swift in Sources */,
 				7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */,

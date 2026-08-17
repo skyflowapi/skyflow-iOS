@@ -211,7 +211,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             
             let callback = DemoAPICallback(expectation: expectation)
             
-            container?.collect(callback: callback)
+            container?.collect(callback: callback.asCollectCallback)
             
             wait(for: [expectation], timeout: 10.0)
             
@@ -258,7 +258,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             
             let callback = DemoAPICallback(expectation: expectation)
             
-            container?.collect(callback: callback)
+            container?.collect(callback: callback.asCollectCallback)
             
             wait(for: [expectation], timeout: 10.0)
             
@@ -288,7 +288,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             
             let callback = DemoAPICallback(expectation: expectation)
             
-            container?.collect(callback: callback)
+            container?.collect(callback: callback.asCollectCallback)
             
             wait(for: [expectation], timeout: 10.0)
             
@@ -316,7 +316,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             textField?.textFieldDidEndEditing(textField!.textField)
             let expectFailure = XCTestExpectation(description: "Should fail")
             let myCallback = DemoAPICallback(expectation: expectFailure)
-            mycontainer?.collect(callback: myCallback)
+            mycontainer?.collect(callback: myCallback.asCollectCallback)
             wait(for: [expectFailure], timeout: 10.0)
             
             XCTAssertEqual(myCallback.receivedResponse, "for cardnumber INVALID_CARD_NUMBER\n")
@@ -344,7 +344,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
             
             let expectFailure = XCTestExpectation(description: "Should fail")
             let myCallback = DemoAPICallback(expectation: expectFailure)
-            mycontainer?.collect(callback: myCallback)
+            mycontainer?.collect(callback: myCallback.asCollectCallback)
             
             wait(for: [expectFailure], timeout: 10.0)
             XCTAssertEqual(myCallback.receivedResponse, "for cardnumber triggered error\n")
@@ -501,7 +501,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
-        container?.collect(callback: callback)
+        container?.collect(callback: callback.asCollectCallback)
 
         wait(for: [expectation], timeout: 20.0)
 

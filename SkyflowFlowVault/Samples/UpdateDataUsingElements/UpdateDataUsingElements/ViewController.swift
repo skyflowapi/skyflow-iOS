@@ -164,16 +164,21 @@ class ViewController: UIViewController {
     }
 
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
-        container!.collect(callback: exampleAPICallback, options: SkyflowFlowVault.CollectOptions(tokens: true))
+        container!.collect(
+            callback: CollectCallback(
+                onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
+                onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
+            ),
+            options: SkyflowFlowVault.CollectOptions(tokens: true)
+        )
     }
-    internal func updateSuccess(_ response: SuccessResponse) {
+    internal func updateSuccess(_ response: CollectResponse) {
         print(response)
         retryCount = 0
         print("Successfully got response:", response)
     }
-    internal func updateFailure(error: Any) {
-        if((error as AnyObject).contains("Invalid Bearer token") && retryCount <= 2){ // To do, it will be replaced with error code in the future
+    internal func updateFailure(error: SkyflowError) {
+        if error.message.contains("Invalid Bearer token") && retryCount <= 2 { // To do, it will be replaced with error code in the future
             retryCount += 1
             submitForm()
         }

@@ -150,17 +150,29 @@ class ViewController: UIViewController {
     }
 
     @objc func revealForm() {
-        self.revealContainer?.reveal(callback: ExampleAPICallback())
+        self.revealContainer?.reveal(
+            callback: RevealCallback(
+                onSuccess: { (response: RevealResponse) in print("success:", response) },
+                onFailure: { (error: SkyflowError) in print("failure:", error) }
+            )
+        )
     }
 
     @objc func submitForm() {
-        let exampleAPICallback = ExampleAPICallback(updateSuccess: updateSuccess, updateFailure: updateFailure)
         let upsertOptions = [["table": "persons", "column": "cardnumber"]] as [[String: Any]]
-        container!.collect(callback: exampleAPICallback, options: SkyflowFlowVault.CollectOptions(tokens: true))
+        container!.collect(
+            callback: CollectCallback(
+                onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
+                onFailure: { [weak self] (_: SkyflowError) in self?.updateFailure() }
+            ),
+            options: SkyflowFlowVault.CollectOptions(tokens: true)
+        )
     }
 
-    internal func updateSuccess(_ response: SuccessResponse) {
-        updateRevealInputs(tokens: response.records[0].fields)
+    internal func updateSuccess(_ response: CollectResponse) {
+        if let record = response.records.first {
+            updateRevealInputs(record: record)
+        }
         print("Successfully got response:", response)
     }
 
@@ -168,7 +180,12 @@ class ViewController: UIViewController {
         print("Failed Operation")
     }
 
-    internal func updateRevealInputs(tokens: Fields) {
+    internal func updateRevealInputs(record: CollectRecord) {
+        // A column maps to a list of Token(token:tokenGroupName:) - there's just one token
+        // group configured for these columns here, so take the first.
+        func token(for column: String) -> String {
+            record.tokens?[column]?.first?.token ?? ""
+        }
         let revealBaseStyle = SkyflowFlowVault.Style(
             borderColor: UIColor.black,
             cornerRadius: 20,
@@ -185,7 +202,7 @@ class ViewController: UIViewController {
                 self.revealed = true
             }
             let revealCardNumberInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.cardnumber,
+                token: token(for: "cardnumber"),
                 inputStyles: revealStyles,
                 label: "Card Number",
                 redaction: .DEFAULT
@@ -195,7 +212,7 @@ class ViewController: UIViewController {
                 options: SkyflowFlowVault.RevealElementOptions()
             )
             let revealCvvInput = SkyflowFlowVault.RevealElementInput(
-                token: tokens.cvv,
+                token: token(for: "cvv"),
                 inputStyles: revealStyles,
                 label: "Cvv",
                 redaction: .DEFAULT

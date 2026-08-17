@@ -17,15 +17,9 @@
 		7C4197BD29F978A9002CA73E /* InputFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197BC29F978A9002CA73E /* InputFormattingTests.swift */; };
 		7C4197C729F978A9002CA73E /* InputFormattingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197C629F978A9002CA73E /* InputFormattingUITests.swift */; };
 		7C4197C929F978A9002CA73E /* InputFormattingUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197C829F978A9002CA73E /* InputFormattingUITestsLaunchTests.swift */; };
-		7C4197D629F97E9F002CA73E /* ExampleAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D529F97E9F002CA73E /* ExampleAPICallback.swift */; };
-		7C4197D729F97E9F002CA73E /* ExampleAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D529F97E9F002CA73E /* ExampleAPICallback.swift */; };
-		7C4197D829F97E9F002CA73E /* ExampleAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D529F97E9F002CA73E /* ExampleAPICallback.swift */; };
 		7C4197DA29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */; };
 		7C4197DB29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */; };
 		7C4197DC29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */; };
-		7C4197DE29F97EFD002CA73E /* ResponseStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197DD29F97EFD002CA73E /* ResponseStructs.swift */; };
-		7C4197DF29F97EFD002CA73E /* ResponseStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197DD29F97EFD002CA73E /* ResponseStructs.swift */; };
-		7C4197E029F97EFD002CA73E /* ResponseStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197DD29F97EFD002CA73E /* ResponseStructs.swift */; };
 		8E4FC698E4F6F8422455BB76 /* Pods_InputFormatting_InputFormattingUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 362238A2034F5E696B5CB492 /* Pods_InputFormatting_InputFormattingUITests.framework */; };
 		96007AFE98552781CD9CA0FB /* Pods_InputFormatting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15DB42C2155F11A364E2EA97 /* Pods_InputFormatting.framework */; };
 /* End PBXBuildFile section */
@@ -66,9 +60,7 @@
 		7C4197C229F978A9002CA73E /* InputFormattingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InputFormattingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C4197C629F978A9002CA73E /* InputFormattingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFormattingUITests.swift; sourceTree = "<group>"; };
 		7C4197C829F978A9002CA73E /* InputFormattingUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFormattingUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		7C4197D529F97E9F002CA73E /* ExampleAPICallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAPICallback.swift; sourceTree = "<group>"; };
 		7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
-		7C4197DD29F97EFD002CA73E /* ResponseStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseStructs.swift; sourceTree = "<group>"; };
 		B4544E89336067DF84CD3C85 /* Pods-InputFormatting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InputFormatting.debug.xcconfig"; path = "Target Support Files/Pods-InputFormatting/Pods-InputFormatting.debug.xcconfig"; sourceTree = "<group>"; };
 		BD7E5EBA615A5DD2B93E86DB /* Pods-InputFormattingTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InputFormattingTests.release.xcconfig"; path = "Target Support Files/Pods-InputFormattingTests/Pods-InputFormattingTests.release.xcconfig"; sourceTree = "<group>"; };
 		D28B0C4C19EA3040136B35C5 /* Pods_InputFormattingTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InputFormattingTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,9 +127,7 @@
 				7C4197AE29F978A9002CA73E /* Assets.xcassets */,
 				7C4197B029F978A9002CA73E /* LaunchScreen.storyboard */,
 				7C4197B329F978A9002CA73E /* Info.plist */,
-				7C4197D529F97E9F002CA73E /* ExampleAPICallback.swift */,
 				7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */,
-				7C4197DD29F97EFD002CA73E /* ResponseStructs.swift */,
 			);
 			path = InputFormatting;
 			sourceTree = "<group>";
@@ -422,10 +412,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C4197AA29F978A8002CA73E /* ViewController.swift in Sources */,
-				7C4197DE29F97EFD002CA73E /* ResponseStructs.swift in Sources */,
 				7C4197DA29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */,
 				7C4197A629F978A8002CA73E /* AppDelegate.swift in Sources */,
-				7C4197D629F97E9F002CA73E /* ExampleAPICallback.swift in Sources */,
 				7C4197A829F978A8002CA73E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,10 +422,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C4197D729F97E9F002CA73E /* ExampleAPICallback.swift in Sources */,
 				7C4197DB29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */,
 				7C4197BD29F978A9002CA73E /* InputFormattingTests.swift in Sources */,
-				7C4197DF29F97EFD002CA73E /* ResponseStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,10 +431,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C4197E029F97EFD002CA73E /* ResponseStructs.swift in Sources */,
 				7C4197C929F978A9002CA73E /* InputFormattingUITestsLaunchTests.swift in Sources */,
 				7C4197DC29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */,
-				7C4197D829F97E9F002CA73E /* ExampleAPICallback.swift in Sources */,
 				7C4197C729F978A9002CA73E /* InputFormattingUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
