@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
 
   spec.name         = "Skyflow"
 
-  spec.version      = "1.26.0-beta.1-dev.ce4f393"
+  spec.version      = "1.26.0-beta.1-dev.e141b1a"
 
   spec.summary      = "skyflow-iOS"
 
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
 
   spec.ios.deployment_target = "13.0"
 
-  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :commit => "ce4f393" }
+  spec.source       = { :git => "https://github.com/skyflowapi/skyflow-iOS.git", :commit => "e141b1a" }
 
   # CocoaPods compiles the shared core and the legacy contract layer into a single
   # module, so the SPM-only re-export shim is excluded.
