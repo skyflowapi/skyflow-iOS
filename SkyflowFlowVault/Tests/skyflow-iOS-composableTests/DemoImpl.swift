@@ -65,4 +65,10 @@ public class DemoAPICallback: Callback {
         }
         expectation.fulfill()
     }
+
+    // Composable Container.collect(callback:) requires the concrete CollectCallback type -
+    // this wraps self so existing DemoAPICallback call sites only need a one-word change.
+    var asCollectCallback: CollectCallback {
+        CollectCallback(onSuccess: { self.onSuccess($0) }, onFailure: { self.onFailure($0) })
+    }
 }

@@ -32,7 +32,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "composable collect with unmounted element should fail")
         let callback = DemoAPICallback(expectation: expectation)
-        container!.collect(callback: callback)
+        container!.collect(callback: callback.asCollectCallback)
 
         wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "name").description)
@@ -45,7 +45,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "composable collect with empty additionalFields should fail")
         let callback = DemoAPICallback(expectation: expectation)
-        container!.collect(callback: callback, options: CollectOptions(additionalFields: AdditionalFields(records: [])))
+        container!.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: AdditionalFields(records: [])))
 
         wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().description)
@@ -58,7 +58,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "composable collect with empty upsert should fail")
         let callback = DemoAPICallback(expectation: expectation)
-        container!.collect(callback: callback, options: CollectOptions(upsert: []))
+        container!.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert: []))
 
         wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().description)
@@ -76,7 +76,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "composable collect should reach the network layer and fail offline")
         let callback = DemoAPICallback(expectation: expectation)
-        container!.collect(callback: callback, options: options)
+        container!.collect(callback: callback.asCollectCallback, options: options)
 
         wait(for: [expectation], timeout: 20.0)
         // The whole request-building path (validators, CollectRequestBuilder, CVV

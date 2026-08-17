@@ -13,7 +13,6 @@
 		9818DE9F29239C17004C72AE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9818DE9D29239C17004C72AE /* Main.storyboard */; };
 		9818DEA129239C1C004C72AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9818DEA029239C1C004C72AE /* Assets.xcassets */; };
 		9818DEA429239C1C004C72AE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9818DEA229239C1C004C72AE /* LaunchScreen.storyboard */; };
-		9818DEAC29239C87004C72AE /* ResponseStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818DEAB29239C87004C72AE /* ResponseStructs.swift */; };
 		9818DEB029239CD0004C72AE /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818DEAF29239CD0004C72AE /* ExampleTokenProvider.swift */; };
 		9818DEB229239CD9004C72AE /* ExampleAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818DEB129239CD9004C72AE /* ExampleAPICallback.swift */; };
 		9818DEB82923B61D004C72AE /* Skyflow in Frameworks */ = {isa = PBXBuildFile; productRef = 9818DEB72923B61D004C72AE /* Skyflow */; };
@@ -28,7 +27,6 @@
 		9818DEA029239C1C004C72AE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9818DEA329239C1C004C72AE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9818DEA529239C1C004C72AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9818DEAB29239C87004C72AE /* ResponseStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseStructs.swift; sourceTree = "<group>"; };
 		9818DEAF29239CD0004C72AE /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExampleTokenProvider.swift; path = ../../Upsert/Upsert/ExampleTokenProvider.swift; sourceTree = "<group>"; };
 		9818DEB129239CD9004C72AE /* ExampleAPICallback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExampleAPICallback.swift; path = ../../Upsert/Upsert/ExampleAPICallback.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,7 +67,6 @@
 				9818DE9B29239C17004C72AE /* ViewController.swift */,
 				9818DEB129239CD9004C72AE /* ExampleAPICallback.swift */,
 				9818DEAF29239CD0004C72AE /* ExampleTokenProvider.swift */,
-				9818DEAB29239C87004C72AE /* ResponseStructs.swift */,
 				9818DE9D29239C17004C72AE /* Main.storyboard */,
 				9818DEA029239C1C004C72AE /* Assets.xcassets */,
 				9818DEA229239C1C004C72AE /* LaunchScreen.storyboard */,
@@ -159,7 +156,6 @@
 				9818DE9829239C17004C72AE /* AppDelegate.swift in Sources */,
 				9818DEB229239CD9004C72AE /* ExampleAPICallback.swift in Sources */,
 				9818DE9A29239C17004C72AE /* SceneDelegate.swift in Sources */,
-				9818DEAC29239C87004C72AE /* ResponseStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
