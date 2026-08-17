@@ -9,7 +9,7 @@ on:
       - 'Skyflow.podspec'
       - 'SkyflowFlowVault.podspec'
       - '*.md'
-      - 'Sources/SkyflowCore/Version.swift'
+      - 'SkyflowCore/Sources/Version.swift'
     branches: 
       - release/*
 
@@ -38,7 +38,7 @@ jobs:
            git config user.name ${{ github.actor }}
            git config user.email ${{ github.actor }}@users.noreply.github.com
            git add Skyflow.podspec SkyflowFlowVault.podspec
-           git add Sources/SkyflowCore/Version.swift
+           git add SkyflowCore/Sources/Version.swift
            git commit -m "[AUTOMATED] Private Release ${{ steps.previoustag.outputs.tag }}.$(git rev-parse --short $GITHUB_SHA)"
            git push origin
 

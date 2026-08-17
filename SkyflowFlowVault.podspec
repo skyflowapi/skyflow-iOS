@@ -25,9 +25,9 @@ Pod::Spec.new do |spec|
 
   # CocoaPods compiles the shared core and the FlowVault contract layer into a
   # single module, so the SPM-only re-export shim is excluded.
-  spec.source_files  = "Sources/SkyflowCore/**/*.{swift}", "Sources/SkyflowFlowVault/**/*.{swift}"
+  spec.source_files  = "SkyflowCore/Sources/**/*.{swift}", "SkyflowFlowVault/Sources/**/*.{swift}"
 
-  spec.exclude_files = "Sources/SkyflowFlowVault/Exports.swift"
+  spec.exclude_files = "SkyflowFlowVault/Sources/Exports.swift"
 
   # `package` access-level declarations (shared across the SPM targets) require a
   # package name when compiled outside SPM.
@@ -37,6 +37,6 @@ Pod::Spec.new do |spec|
   # load "Skyflow.bundle" (see SkyflowAssetBundle), and keeping one name for both
   # pods avoids any build-configuration dependence. The bundle is internal to the
   # pod and never seen by SDK consumers.
-  spec.resource_bundles = {'Skyflow' => ['Sources/SkyflowCore/Resources/**/*.{xcassets}'] }
+  spec.resource_bundles = {'Skyflow' => ['SkyflowCore/Sources/Resources/**/*.{xcassets}'] }
 
 end

@@ -26,6 +26,7 @@ let package = Package(
         .target(
             name: "SkyflowCore",
             dependencies: [],
+            path: "SkyflowCore/Sources",
             resources: [
                    .process("Resources")
                  ]
@@ -33,45 +34,57 @@ let package = Package(
         // Legacy (v1) contract layer.
         .target(
             name: "Skyflow",
-            dependencies: ["SkyflowCore"]
+            dependencies: ["SkyflowCore"],
+            path: "Skyflow/Sources"
             ),
         // FlowVault (v2) contract layer.
         .target(
             name: "SkyflowFlowVault",
-            dependencies: ["SkyflowCore"]
+            dependencies: ["SkyflowCore"],
+            path: "SkyflowFlowVault/Sources"
             ),
-        // Tests for the legacy (v1) SDK live under Tests/Skyflow/,
-        // FlowVault (v2) SDK tests under Tests/SkyflowFlowVault/.
+        // Tests for the legacy (v1) SDK live under Skyflow/Tests/,
+        // FlowVault (v2) SDK tests under SkyflowFlowVault/Tests/.
         .testTarget(
             name: "skyflow-iOS-collectTests",
             dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-            path: "Tests/SkyflowFlowVault/skyflow-iOS-collectTests"),
+            path: "SkyflowFlowVault/Tests/skyflow-iOS-collectTests"),
         .testTarget(name: "skyflow-iOS-revealTests",
                     dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-                    path: "Tests/SkyflowFlowVault/skyflow-iOS-revealTests"),
+                    path: "SkyflowFlowVault/Tests/skyflow-iOS-revealTests"),
         .testTarget(name: "skyflow-iOS-errorTests",
                     dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-                    path: "Tests/SkyflowFlowVault/skyflow-iOS-errorTests"),
+                    path: "SkyflowFlowVault/Tests/skyflow-iOS-errorTests"),
         .testTarget(name: "skyflow-iOS-getByIdTests",
                         dependencies: ["Skyflow", "SkyflowCore"],
-                        path: "Tests/Skyflow/skyflow-iOS-getByIdTests"),
+                        path: "Skyflow/Tests/skyflow-iOS-getByIdTests"),
         .testTarget(name: "skyflow-iOS-elementTests",
                     dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-                    path: "Tests/SkyflowFlowVault/skyflow-iOS-elementTests"),
+                    path: "SkyflowFlowVault/Tests/skyflow-iOS-elementTests"),
         .testTarget(name: "skyflow-iOS-utilTests",
                         dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-                        path: "Tests/SkyflowFlowVault/skyflow-iOS-utilTests"),
+                        path: "SkyflowFlowVault/Tests/skyflow-iOS-utilTests"),
         .testTarget(name: "skyflow-iOS-legacyTests",
                         dependencies: ["Skyflow", "SkyflowCore"],
-                        path: "Tests/Skyflow/skyflow-iOS-legacyTests"),
+                        path: "Skyflow/Tests/skyflow-iOS-legacyTests"),
         .testTarget(name: "skyflow-iOS-scenarioTests",
                             dependencies: ["Skyflow", "SkyflowCore"],
-                            path: "Tests/Skyflow/skyflow-iOS-scenarioTests"),
+                            path: "Skyflow/Tests/skyflow-iOS-scenarioTests"),
         .testTarget(name: "skyflow-iOS-getTests",
                    dependencies: ["Skyflow", "SkyflowCore"],
-                   path: "Tests/Skyflow/skyflow-iOS-getTests"),
+                   path: "Skyflow/Tests/skyflow-iOS-getTests"),
         .testTarget(name: "skyflow-iOS-composableTests",
                     dependencies: ["SkyflowFlowVault", "SkyflowCore"],
-                    path: "Tests/SkyflowFlowVault/skyflow-iOS-composableTests")
+                    path: "SkyflowFlowVault/Tests/skyflow-iOS-composableTests"),
+        // Dual-SDK coexistence tests: import both products side by side,
+        // public API only, the way an app installing both pods would.
+        .testTarget(name: "skyflow-iOS-coexistenceTests",
+                    dependencies: ["Skyflow", "SkyflowFlowVault"],
+                    path: "Tests/skyflow-iOS-coexistenceTests"),
+        // Shared-core logic tests: depend only on SkyflowCore, so core
+        // regressions surface here independently of either SDK.
+        .testTarget(name: "skyflow-iOS-coreTests",
+                    dependencies: ["SkyflowCore"],
+                    path: "SkyflowCore/Tests/skyflow-iOS-coreTests")
     ]
 )

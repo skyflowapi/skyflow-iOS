@@ -1,0 +1,1 @@
+This sample illustrates how to apply custom validation rules on secure Skyflow Collect elements to restrict the type of input a user can provide.
