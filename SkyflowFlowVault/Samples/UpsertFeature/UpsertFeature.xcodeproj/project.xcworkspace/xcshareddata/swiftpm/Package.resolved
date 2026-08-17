@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AEXML",
+        "repositoryURL": "https://github.com/tadija/AEXML.git",
+        "state": {
+          "branch": null,
+          "revision": "38f7d00b23ecd891e1ee656fa6aeebd6ba04ecc3",
+          "version": "4.6.1"
+        }
+      },
+      {
+        "package": "Skyflow",
+        "repositoryURL": "https://github.com/skyflowapi/skyflow-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "6598b75aac71dd6d573b2d15f59acedd5e9fa7dc",
+          "version": "1.16.6"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
