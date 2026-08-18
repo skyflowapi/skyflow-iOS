@@ -54,6 +54,17 @@ final class skyflow_iOS_legacyValidatorTests: XCTestCase {
                     .EMPTY_FIELDS_KEY(value: "0"))
     }
 
+    func testCheckRecordValidWithStringSkyflowID() {
+        XCTAssertNil(RequestValidators.checkRecord(record: ["table": "persons", "fields": ["name": "john"], "skyflowID": "abc"], index: 0))
+    }
+
+    func testCheckRecordInvalidSkyflowIDType() {
+        // CollectRequestBody.createRequestBody force-casts "skyflowID" to String once this
+        // validation passes - a non-String value here must be caught, not crash downstream.
+        assertError(RequestValidators.checkRecord(record: ["table": "persons", "fields": ["name": "john"], "skyflowID": 12345], index: 0),
+                    .INVALID_SKYFLOW_ID_TYPE(value: "0"))
+    }
+
     // MARK: - checkAdditionalFields
 
     func testCheckAdditionalFieldsValid() {

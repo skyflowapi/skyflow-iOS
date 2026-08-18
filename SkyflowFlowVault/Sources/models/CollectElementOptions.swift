@@ -14,8 +14,8 @@ import UIKit
 public struct CollectElementOptions {
     package var data: BaseCollectElementOptions
 
-    public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil, enableCopy: Bool = false, cardMetaData: [ String: Any]? = nil) {
-        self.data = BaseCollectElementOptions(required: required!, enableCardIcon: enableCardIcon, format: format, translation: translation, enableCopy: enableCopy, cardMetaData: cardMetaData)
+    public init(required: Bool? = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil, enableCopy: Bool = false, cardMetaData: [ String: Any]? = nil, returnMockValue: Bool = false) {
+        self.data = BaseCollectElementOptions(required: required ?? false, enableCardIcon: enableCardIcon, format: format, translation: translation, enableCopy: enableCopy, cardMetaData: cardMetaData, returnMockValue: returnMockValue)
     }
 }
 

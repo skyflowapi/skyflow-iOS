@@ -20,11 +20,11 @@ public struct CollectResponse {
 public struct CollectRecord {
     public let tableName: String?
     public let skyflowId: String?
-    // Keyed by column name, e.g. "card_number": [Token(token: "...", tokenGroupName: "...")].
-    // A column maps to more than one Token when multiple token groups apply to it.
-    public let tokens: [String: [Token]]?
-    // Keyed by column name, e.g. "card_number": [{"data": "...", "hashName": "..."}].
-    public let hashedData: [String: Any]?
+    // Keyed by column name, e.g. "card_number": [CollectRecordToken(token: "...", tokenGroupName: "...")].
+    // A column maps to more than one CollectRecordToken when multiple token groups apply to it.
+    public let tokens: [String: [CollectRecordToken]]?
+    // Keyed by column name, e.g. "card_number": [CollectRecordHashedData(data: "...", hashName: "...")].
+    public let hashedData: [String: [CollectRecordHashedData]]?
     public let httpCode: Int
     public let error: String?
 
@@ -37,9 +37,11 @@ public struct CollectRecord {
         // property name changed, not the response dict this reads from. Malformed entries
         // (wrong shape, missing "token") are dropped rather than crashing.
         self.tokens = (dict["fields"] as? [String: Any])?.compactMapValues { value in
-            (value as? [[String: Any]])?.compactMap(Token.init(dict:))
+            (value as? [[String: Any]])?.compactMap(CollectRecordToken.init(dict:))
         }
-        self.hashedData = dict["hashedData"] as? [String: Any]
+        self.hashedData = (dict["hashedData"] as? [String: Any])?.compactMapValues { value in
+            (value as? [[String: Any]])?.compactMap(CollectRecordHashedData.init(dict:))
+        }
         self.httpCode = dict["httpCode"] as? Int ?? 0
         self.error = dict["error"] as? String
     }

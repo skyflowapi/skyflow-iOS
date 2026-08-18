@@ -8,47 +8,12 @@ import XCTest
 
 final class skyflow_iOS_cvvMockTests: XCTestCase {
 
-    // MARK: - CVVMockGenerator
+    // MARK: - Helpers
 
-    func testGeneratedMockMatchesRequestedLength() {
-        for length in [3, 4] {
-            let mock = CVVMockGenerator.generateMockCVV(length: length, actualValue: "000")
-            XCTAssertEqual(mock.count, length)
-        }
-    }
-
-    func testGeneratedMockIsNumeric() {
-        let mock = CVVMockGenerator.generateMockCVV(length: 4, actualValue: "1234")
-        XCTAssertNotNil(Int(mock))
-    }
-
-    func testGeneratedMockNeverEqualsActualValue() {
-        // Run repeatedly since generation is random - none of the draws should ever match.
-        for _ in 0..<200 {
-            let mock = CVVMockGenerator.generateMockCVV(length: 3, actualValue: "123")
-            XCTAssertNotEqual(mock, "123")
-        }
-    }
-
-    func testGeneratedMockAllowsLeadingZeros() {
-        // A 3-digit space has only 1000 possibilities; forcing actualValue to something that
-        // can't collide keeps this deterministic while still exercising the "starts with 0" case
-        // over many draws.
-        var sawLeadingZero = false
-        for _ in 0..<500 where !sawLeadingZero {
-            let mock = CVVMockGenerator.generateMockCVV(length: 3, actualValue: "999")
-            if mock.hasPrefix("0") {
-                sawLeadingZero = true
-            }
-        }
-        XCTAssertTrue(sawLeadingZero)
-    }
-
-    // MARK: - CVVTokenReplacer.captureCVVMap
-
-    private func makeCVVElement(table: String, column: String, value: String, skyflowId: String? = nil) -> TextField {
+    private func makeCVVElement(table: String, column: String, value: String, skyflowId: String? = nil, returnMockValue: Bool = true) -> TextField {
         let input = CollectElementInput(tableName: table, column: column, type: .CVV, skyflowId: skyflowId)
-        let field = TextField(input: input.data, options: CollectElementOptions().data, contextOptions: ContextOptions(), elements: [])
+        let options = CollectElementOptions(returnMockValue: returnMockValue)
+        let field = TextField(input: input.data, options: options.data, contextOptions: ContextOptions(), elements: [])
         field.actualValue = value
         return field
     }
@@ -59,6 +24,77 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         field.actualValue = value
         return field
     }
+
+    private func makePINElement(table: String, column: String, value: String) -> TextField {
+        let input = CollectElementInput(tableName: table, column: column, type: .PIN)
+        let field = TextField(input: input.data, options: CollectElementOptions().data, contextOptions: ContextOptions(), elements: [])
+        field.actualValue = value
+        return field
+    }
+
+    // MARK: - Hardcoded mock value
+
+    func testMockValueForThreeDigitCVVIs817() {
+        let cvv = makeCVVElement(table: "t", column: "cvv", value: "123")
+        let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
+        let records: [[String: Any]] = [[
+            "tableName": "t",
+            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+        ]]
+        let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
+        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        XCTAssertEqual(token, "817")
+    }
+
+    func testMockValueForFourDigitCVVIs8173() {
+        let cvv = makeCVVElement(table: "t", column: "cvv", value: "1234")
+        let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
+        let records: [[String: Any]] = [[
+            "tableName": "t",
+            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+        ]]
+        let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
+        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        XCTAssertEqual(token, "8173")
+    }
+
+    func testMockValueForEmptyEnteredCVVIsEmptyString() {
+        let cvv = makeCVVElement(table: "t", column: "cvv", value: "")
+        let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
+        let records: [[String: Any]] = [[
+            "tableName": "t",
+            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+        ]]
+        let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
+        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        XCTAssertEqual(token, "")
+    }
+
+    // MARK: - returnMockValue gate
+
+    func testCaptureSkipsElementWithReturnMockValueFalse() {
+        let enabled = makeCVVElement(table: "t", column: "cvv1", value: "123", returnMockValue: true)
+        let disabled = makeCVVElement(table: "t", column: "cvv2", value: "456", returnMockValue: false)
+        let map = CVVTokenReplacer.captureCVVMap(elements: [enabled, disabled])
+        XCTAssertEqual(map.byTable["t"]?["cvv1"], "123")
+        XCTAssertNil(map.byTable["t"]?["cvv2"])
+    }
+
+    func testReplaceIsNoOpWhenAllElementsHaveReturnMockValueFalse() {
+        let cvv = makeCVVElement(table: "t", column: "cvv", value: "123", returnMockValue: false)
+        let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
+        XCTAssertTrue(map.isEmpty)
+
+        let records: [[String: Any]] = [[
+            "tableName": "t",
+            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+        ]]
+        let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
+        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        XCTAssertEqual(token, "real-token")
+    }
+
+    // MARK: - CVVTokenReplacer.captureCVVMap
 
     func testCaptureOnlyPicksUpCVVElements() {
         let cvv = makeCVVElement(table: "persons", column: "cvv", value: "123")
@@ -81,8 +117,6 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
     }
 
     func testCaptureFirstElementWinsOnDuplicateColumn() {
-        // Mirrors CollectRequestBuilder's own dedup rule (e.g. ElementValueMatchRule):
-        // when two elements target the same column, only the first one's value reaches the vault.
         let first = makeCVVElement(table: "persons", column: "cvv", value: "111")
         let second = makeCVVElement(table: "persons", column: "cvv", value: "222")
 
@@ -92,12 +126,12 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
     }
 
     func testCaptureStillCapturesEmptyValue() {
-        // An optional CVV element left blank still submits "" to the vault and can get a real
-        // token back - it must still be captured so that token gets masked too.
         let cvv = makeCVVElement(table: "persons", column: "cvv", value: "")
         let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
         XCTAssertEqual(map.byTable["persons"]?["cvv"], "")
     }
+
+    // MARK: - CVVTokenReplacer.replaceCVVTokens
 
     func testReplaceFlatColumnWithEmptyEnteredValueBecomesEmptyString() {
         let cvvMap = CVVCaptureMap(byTable: ["persons": ["cvv": ""]], byRecordId: [:])
@@ -114,11 +148,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let cvvEntries = fields["cvv"] as! [[String: Any]]
         let nameEntries = fields["name"] as! [[String: Any]]
 
-        // A real (long) vault token no longer leaks through unmasked just because the field
-        // was left blank - it's replaced with "", never a generated mock (generating one for a
-        // length-0 entered value would never terminate, see CVVMockGenerator's guard).
         XCTAssertEqual(cvvEntries[0]["token"] as! String, "")
-        // Sibling column untouched.
         XCTAssertEqual(nameEntries[0]["token"] as! String, "name-token")
     }
 
@@ -142,29 +172,11 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let pincode = addressEntries.first { $0["path"] as? String == "pincode" }!
         let city = addressEntries.first { $0["path"] as? String == "city" }!
 
-        // Only the "pincode" leaf becomes "" - parent/sibling entries are untouched.
         XCTAssertEqual(pincode["token"] as! String, "")
         XCTAssertEqual(wholeColumn["token"] as! String, "whole-column-token")
         XCTAssertEqual(city["token"] as! String, "city-token")
     }
 
-    func testGeneratedMockWithZeroLengthReturnsEmptyStringWithoutLooping() {
-        // Guards against the hazard directly: length 0 with actualValue "" would make the
-        // "regenerate until different" loop never terminate if this guard weren't there,
-        // since every candidate is "" and "" always equals the empty actualValue.
-        let mock = CVVMockGenerator.generateMockCVV(length: 0, actualValue: "")
-        XCTAssertEqual(mock, "")
-    }
-
-    private func makePINElement(table: String, column: String, value: String) -> TextField {
-        let input = CollectElementInput(tableName: table, column: column, type: .PIN)
-        let field = TextField(input: input.data, options: CollectElementOptions().data, contextOptions: ContextOptions(), elements: [])
-        field.actualValue = value
-        return field
-    }
-
-    // A PIN element is never masked, even on a column literally named "pincode" (a postal-code
-    // subfield, unrelated to ElementType.PIN) or sharing a table with a real CVV element.
     func testCaptureAndReplaceNeverTouchPINElements() {
         let cvv = makeCVVElement(table: "nested", column: "card.cvv", value: "123")
         let pin = makePINElement(table: "nested", column: "address.pincode", value: "5000")
@@ -186,12 +198,9 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let cardEntries = fields["card"] as! [[String: Any]]
         let addressEntries = fields["address"] as! [[String: Any]]
 
-        XCTAssertNotEqual(cardEntries[0]["token"] as! String, "real-cvv-token")
-        // PIN's "pincode" token is untouched.
+        XCTAssertEqual(cardEntries[0]["token"] as! String, "817")
         XCTAssertEqual(addressEntries[0]["token"] as! String, "real-pincode-token")
     }
-
-    // MARK: - CVVTokenReplacer.replaceCVVTokens
 
     func testReplaceFlatColumnSingleTokenGroup() {
         let cvvMap = CVVCaptureMap(byTable: ["persons": ["cvv": "123"]], byRecordId: [:])
@@ -210,9 +219,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let nameEntries = fields["name"] as! [[String: Any]]
 
         XCTAssertEqual(cvvEntries.count, 1)
-        XCTAssertNotEqual(cvvEntries[0]["token"] as! String, "real-token")
-        XCTAssertEqual((cvvEntries[0]["token"] as! String).count, 3)
-        // Non-CVV column untouched.
+        XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
         XCTAssertEqual(nameEntries[0]["token"] as! String, "name-token")
     }
 
@@ -231,12 +238,9 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
         let cvvEntries = (result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
 
-        XCTAssertEqual(cvvEntries.count, 2)
-        let mock1 = cvvEntries[0]["token"] as! String
-        let mock2 = cvvEntries[1]["token"] as! String
-        // Both token-group entries for the same column get the same mock.
-        XCTAssertEqual(mock1, mock2)
-        XCTAssertNotEqual(mock1, "1234")
+        // Both token-group entries for the same column get the same hardcoded mock.
+        XCTAssertEqual(cvvEntries[0]["token"] as! String, "8173")
+        XCTAssertEqual(cvvEntries[1]["token"] as! String, "8173")
     }
 
     func testReplaceNestedColumnOnlyTouchesMatchingPath() {
@@ -259,9 +263,9 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let pincode = addressEntries.first { $0["path"] as? String == "pincode" }!
         let city = addressEntries.first { $0["path"] as? String == "city" }!
 
-        // Only the "pincode" subfield is mocked.
         XCTAssertEqual(wholeColumn["token"] as! String, "whole-column-token")
-        XCTAssertNotEqual(pincode["token"] as! String, "pincode-token")
+        // 4-digit entered → "8173"
+        XCTAssertEqual(pincode["token"] as! String, "8173")
         XCTAssertEqual(city["token"] as! String, "city-token")
     }
 
@@ -276,8 +280,8 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
         let cvvEntries = (result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
 
-        // Matched via byRecordId (length of captured "222" is 3), not byTable's "111".
-        XCTAssertEqual((cvvEntries[0]["token"] as! String).count, 3)
+        // byRecordId captures "222" (3-digit) → mock is "817"
+        XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
     }
 
     func testReplaceLeavesHashedDataAndErrorRecordsUntouched() {
@@ -333,7 +337,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         wait(for: [expectation], timeout: 5.0)
         let records = demo.data["records"] as! [[String: Any]]
         let cvvEntries = (records[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
-        XCTAssertNotEqual(cvvEntries[0]["token"] as! String, "real-token")
+        XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
     }
 
     func testMaskingCallbackMasksPartialFailureRecords() {
@@ -353,18 +357,6 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         wait(for: [expectation], timeout: 5.0)
         let records = demo.data["records"] as! [[String: Any]]
         let cvvEntries = (records[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
-        XCTAssertNotEqual(cvvEntries[0]["token"] as! String, "real-token")
+        XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
     }
-
-    // Note: a true end-to-end test through CollectContainer.collect()/ComposableContainer.collect()
-    // (real network dispatch) isn't reachable from a unit test here: FlowVaultCollectAPICallback
-    // always builds a fresh URLSession(configuration: .default), and URLProtocol.registerClass
-    // only reliably intercepts URLSession.shared, not ad-hoc .default sessions - confirmed by this
-    // failing against the real network (github.com/.../example.org) rather than the mock handler.
-    // Making that interceptable would require adding a test-only seam to production SDK code
-    // (e.g. FlowVaultCollectAPICallback's injectable urlSessionConfiguration), which is out of
-    // scope here. The wiring itself (cvvMap capture + CVVMaskingCallback insertion in
-    // CollectContainer.swift/ComposableContainer.swift) is two lines per container and is
-    // exercised for real via the NormalTesting sample app's CVV Mock Scenarios screen against a
-    // live vault; the masking logic itself is fully covered above without needing the network.
 }

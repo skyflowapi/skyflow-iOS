@@ -127,10 +127,13 @@ internal class CollectRequestBuilder {
         }
 
         for element in elements {
+            // Safe: setupField() unconditionally copies these from collectInput onto every
+            // element the moment it's created via container.create() - elements is only ever
+            // populated with elements that have already gone through that path.
             let tableName = element.tableName!
             let columnName = element.columnName!
             let value = element.getValue()
-            let skyflowId = element.skyflowId // Assumes TextField has this property
+            let skyflowId = element.skyflowId
 
             // Same guard as additionalFields above: CollectElementInput now defaults
             // skyflowId to nil, so an empty string can only be an explicit caller mistake.

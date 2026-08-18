@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RevealMetadata {
+public struct RevealRecordMetadata {
     public let tableName: String?
     public let skyflowId: String?
 

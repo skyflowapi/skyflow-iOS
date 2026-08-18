@@ -7,23 +7,23 @@
 
 import Foundation
 
-package struct GetRecord {
+struct GetRecord {
     var ids: [String]?
     var table: String
     var redaction: String?
     var columnName: String?
     var columnValues: [String]?
-    
-    package init(ids: [String], table: String, redaction: String) {
+
+    init(ids: [String], table: String, redaction: String) {
         self.ids = ids
         self.table = table
         self.redaction = redaction
     }
-    package init(ids: [String], table: String) {
+    init(ids: [String], table: String) {
         self.ids = ids
         self.table = table
     }
-    package init(columnValues: [String], table: String, columnName: String, redaction: String) {
+    init(columnValues: [String], table: String, columnName: String, redaction: String) {
         self.columnValues = columnValues
         self.table = table
         self.columnName = columnName

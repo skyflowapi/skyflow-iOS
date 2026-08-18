@@ -154,15 +154,7 @@ internal class CollectAPICallback: Callback {
         return temp
     }
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
-        var jsonString = ""
-
-        do {
-           let deviceDetails = FetchMetrices().getMetrices()
-            let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
-            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
-        } catch {
-            jsonString = ""
-        }
+        let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
 
@@ -180,14 +172,7 @@ internal class CollectAPICallback: Callback {
     
     // Helper for single update request
     private func getRequestSessionForUpdate(url: URL, updateRecords: [String: Any]) throws -> (URLRequest, URLSession) {
-        var jsonString = ""
-        do {
-            let deviceDetails = FetchMetrices().getMetrices()
-            let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
-            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
-        } catch {
-            jsonString = ""
-        }
+        let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         do {

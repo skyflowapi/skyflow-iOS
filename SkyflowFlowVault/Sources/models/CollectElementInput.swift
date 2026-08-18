@@ -14,20 +14,20 @@ public struct CollectElementInput {
     public init(tableName: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
                 placeholder: String? = "", validations: ValidationSet=ValidationSet(), skyflowId: String? = nil) {
-        self.data = BaseCollectElementInput(tableName: tableName, column: column, inputStyles: inputStyles!, labelStyles: labelStyles!, errorTextStyles: errorTextStyles!, iconStyles: iconStyles!, label: label!, placeholder: placeholder!, type: nil, validations: validations, skyflowId: skyflowId)
+        self.data = BaseCollectElementInput(tableName: tableName, column: column, inputStyles: inputStyles ?? Styles(), labelStyles: labelStyles ?? Styles(), errorTextStyles: errorTextStyles ?? Styles(), iconStyles: iconStyles ?? Styles(), label: label ?? "", placeholder: placeholder ?? "", type: nil, validations: validations, skyflowId: skyflowId)
     }
 
     public init(tableName: String = "", column: String = "",
                 inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
                 placeholder: String? = "", type: ElementType?, validations: ValidationSet=ValidationSet(), skyflowId: String? = nil) {
-        self.data = BaseCollectElementInput(tableName: tableName, column: column, inputStyles: inputStyles!, labelStyles: labelStyles!, errorTextStyles: errorTextStyles!, iconStyles: iconStyles!, label: label!, placeholder: placeholder!, type: type, validations: validations, skyflowId: skyflowId)
+        self.data = BaseCollectElementInput(tableName: tableName, column: column, inputStyles: inputStyles ?? Styles(), labelStyles: labelStyles ?? Styles(), errorTextStyles: errorTextStyles ?? Styles(), iconStyles: iconStyles ?? Styles(), label: label ?? "", placeholder: placeholder ?? "", type: type, validations: validations, skyflowId: skyflowId)
     }
 
     @available(*, deprecated, message: "altText param is deprecated")
     public init(tableName: String = "", column: String = "",
             inputStyles: Styles? = Styles(), labelStyles: Styles? = Styles(), errorTextStyles: Styles? = Styles(), iconStyles: Styles? = Styles(), label: String? = "",
             placeholder: String? = "", altText: String? = "", type: ElementType?, validations: ValidationSet=ValidationSet(), skyflowId: String? = nil) {
-        self.data = BaseCollectElementInput(tableName: tableName, column: column, inputStyles: inputStyles!, labelStyles: labelStyles!, errorTextStyles: errorTextStyles!, iconStyles: iconStyles!, label: label!, placeholder: placeholder!, type: type, validations: validations, skyflowId: skyflowId)
+        self.data = BaseCollectElementInput(tableName: tableName, column: column, inputStyles: inputStyles ?? Styles(), labelStyles: labelStyles ?? Styles(), errorTextStyles: errorTextStyles ?? Styles(), iconStyles: iconStyles ?? Styles(), label: label ?? "", placeholder: placeholder ?? "", type: type, validations: validations, skyflowId: skyflowId)
     }
 }
 

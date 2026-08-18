@@ -15,10 +15,15 @@ package struct ContextOptions {
     package var logLevel: LogLevel
     package var env: Env
     package var interface: InterfaceName
+    // Which SDK product created the Client this ContextOptions belongs to - feeds the
+    // sdk_name_version vault metric. Per-instance (not a shared global) so that both SDKs
+    // coexisting in one app process each report their own identity correctly.
+    package var sdkName: String
 
-    package init(logLevel: LogLevel = .ERROR, env: Env = .PROD, interface: InterfaceName = .EMPTY) {
+    package init(logLevel: LogLevel = .ERROR, env: Env = .PROD, interface: InterfaceName = .EMPTY, sdkName: String = "skyflow-iOS") {
         self.logLevel = logLevel
         self.env = env
         self.interface = interface
+        self.sdkName = sdkName
     }
 }

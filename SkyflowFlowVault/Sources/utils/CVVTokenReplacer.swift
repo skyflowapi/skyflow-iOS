@@ -26,7 +26,7 @@ internal enum CVVTokenReplacer {
     internal static func captureCVVMap(elements: [TextField]) -> CVVCaptureMap {
         var map = CVVCaptureMap()
         for element in elements {
-            guard element.fieldType == .CVV, let columnName = element.columnName else { continue }
+            guard element.fieldType == .CVV, element.returnMockValue, let columnName = element.columnName else { continue }
             let value = element.getValue()
 
             if let skyflowId = element.skyflowId, !skyflowId.isEmpty {
@@ -79,10 +79,15 @@ internal enum CVVTokenReplacer {
 
         guard var entries = fields[topKey] as? [[String: Any]] else { return }
 
-        // A blank entered CVV has no length to match, and generateMockCVV(length: 0, ...) would
-        // never terminate its "regenerate until different" loop (every draw is "", which always
-        // equals the empty entered value) - never call it here; just replace with "" directly.
-        let mock = enteredValue.isEmpty ? "" : CVVMockGenerator.generateMockCVV(length: enteredValue.count, actualValue: enteredValue)
+        // Empty entered value → replace real vault token with "" (field was left blank).
+        // Otherwise use the hardcoded constant for the detected length so the app never
+        // receives the actual CVV token: "817" for 3-digit, "8173" for 4-digit.
+        let mock: String
+        if enteredValue.isEmpty {
+            mock = ""
+        } else {
+            mock = enteredValue.count == 4 ? "8173" : "817"
+        }
 
         for index in entries.indices {
             let entryPath = entries[index]["path"] as? String
@@ -128,27 +133,5 @@ internal class CVVMaskingCallback: Callback {
 
         dict["records"] = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
         return dict
-    }
-}
-internal enum CVVMockGenerator {
-    internal static func generateMockCVV(length: Int, actualValue: String) -> String {
-        guard length > 0 else { return "" }
-        var mock: String
-        repeat {
-            mock = randomNumericString(length: length)
-        } while mock == actualValue
-        return mock
-    }
-
-    private static func randomNumericString(length: Int) -> String {
-        var bytes = [UInt8](repeating: 0, count: length)
-        let status = SecRandomCopyBytes(kSecRandomDefault, length, &bytes)
-        if status != errSecSuccess {
-            var generator = SystemRandomNumberGenerator()
-            for i in 0..<length {
-                bytes[i] = UInt8.random(in: 0...255, using: &generator)
-            }
-        }
-        return bytes.map { String($0 % 10) }.joined()
     }
 }

@@ -4,7 +4,6 @@
 // FlowVault implementation of the collect() operation.
 
 import Foundation
-import UIKit
 
 public extension Container {
     func create(input: CollectElementInput, options: CollectElementOptions? = CollectElementOptions()) -> TextField where T: CollectContainer {

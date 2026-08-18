@@ -21,7 +21,7 @@ public struct RevealResponse {
     public init?(_ responseBody: Any) {
         guard let dict = responseBody as? [String: Any],
               let recordDicts = dict["records"] as? [[String: Any]] else { return nil }
-        self.records = recordDicts.map { RevealRecord($0) }
+        self.records = recordDicts.compactMap { RevealRecord($0) }
     }
 }
 
@@ -29,16 +29,19 @@ public struct RevealResponse {
 // (error is non-nil) - the vault returns both together in the same array, each tagged with its
 // own httpCode.
 public struct RevealRecord {
-    public let token: String?
+    public let token: String
     public let tokenGroupName: String?
-    public let metadata: RevealMetadata?
+    public let metadata: RevealRecordMetadata?
     public let httpCode: Int
     public let error: String?
 
-    init(_ dict: [String: Any]) {
-        self.token = dict["token"] as? String
+    // Drops the entry (returns nil) rather than crashing or preserving malformed data if
+    // "token" is missing or isn't a String - matches CollectRecordToken's failable-init pattern.
+    init?(_ dict: [String: Any]) {
+        guard let token = dict["token"] as? String else { return nil }
+        self.token = token
         self.tokenGroupName = dict["tokenGroupName"] as? String
-        self.metadata = RevealMetadata(dict: dict["metadata"] as? [String: Any])
+        self.metadata = RevealRecordMetadata(dict: dict["metadata"] as? [String: Any])
         self.httpCode = dict["httpCode"] as? Int ?? 0
         self.error = dict["error"] as? String
     }

@@ -11,7 +11,7 @@ import Foundation
 
 public extension Client {
     convenience init(_ skyflowConfig: Configuration) {
-        self.init(skyflowConfig.data)
+        self.init(skyflowConfig.data, sdkName: "SkyflowFlowVault")
     }
 
     func container<T>(type: T.Type, options: ContainerOptions? = nil) -> Container<T>? {

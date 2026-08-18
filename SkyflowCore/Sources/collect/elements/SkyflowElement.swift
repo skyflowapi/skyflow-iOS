@@ -22,6 +22,7 @@ public class SkyflowElement: UIView {
     package var collectInput: BaseCollectElementInput!
     internal var options: BaseCollectElementOptions!
     internal var contextOptions: ContextOptions!
+    package var returnMockValue: Bool { options?.returnMockValue ?? false }
     package var elements: [TextField] = []
 
     /// Describes `SkyflowElement` input   State`

@@ -15,19 +15,13 @@ final class skyflow_iOS_flowVaultSdkTests: XCTestCase {
     // MARK: - initialize()
 
     func testInitializeStampsFlowVaultSdkName() {
-        // SDK_NAME is a process-wide global shared with the legacy SDK's
-        // tests (and asserted against its default by testGetDeviceDetails);
-        // restore it so this test can't leak into other suites.
-        let originalSdkName = SDK_NAME
-        defer { SDK_NAME = originalSdkName }
-
         let client = SkyflowFlowVault.initialize(Configuration(
             vaultID: "vault_id",
             vaultURL: "https://example.org/",
             tokenProvider: DemoTokenProvider()))
 
         XCTAssertNotNil(client)
-        XCTAssertEqual(SDK_NAME, "skyflow-flowvault-ios")
+        XCTAssertEqual(client.contextOptions.sdkName, "SkyflowFlowVault")
     }
 
     // MARK: - CollectCallback wrapper

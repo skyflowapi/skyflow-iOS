@@ -62,15 +62,7 @@ class FlowVaultRevealAPICallback: Callback {
     }
 
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
-        var jsonString = ""
-
-        do {
-           let deviceDetails = FetchMetrices().getMetrices()
-            let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
-            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
-        } catch {
-            jsonString = ""
-        }
+        let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
 
@@ -89,7 +81,7 @@ class FlowVaultRevealAPICallback: Callback {
 
     func processResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any] {
         if error != nil || response == nil {
-            throw error!
+            throw error ?? ErrorCodes.APIError(code: 0, message: "Unknown error").getErrorObject(contextOptions: self.contextOptions)
         }
 
         if let httpResponse = response as? HTTPURLResponse {
@@ -106,17 +98,15 @@ class FlowVaultRevealAPICallback: Callback {
                 }
                 var description = "Detokenize call failed with the following status code " + String(httpResponse.statusCode)
                 if let safeData = data {
-                    do {
-                        let errorResponse = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-                        if let errorDetails = errorResponse["error"] as? [String: Any],
-                           let message = errorDetails["message"] as? String {
-                            description = message
-                        }
-                        if let requestId = httpResponse.allHeaderFields["x-request-id"] {
-                            description += " - request-id: \(requestId)"
-                        }
-                    } catch {
+                    guard let errorResponse = try? JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as? [String: Any] else {
                         throw ErrorCodes.APIError(code: httpResponse.statusCode, message: String(data: safeData, encoding: .utf8) ?? "Unknown error").getErrorObject(contextOptions: self.contextOptions)
+                    }
+                    if let errorDetails = errorResponse["error"] as? [String: Any],
+                       let message = errorDetails["message"] as? String {
+                        description = message
+                    }
+                    if let requestId = httpResponse.allHeaderFields["x-request-id"] {
+                        description += " - request-id: \(requestId)"
                     }
                 }
                 throw ErrorCodes.APIError(code: httpResponse.statusCode, message: description).getErrorObject(contextOptions: self.contextOptions)
@@ -131,7 +121,7 @@ class FlowVaultRevealAPICallback: Callback {
     }
 
     func getDetokenizeResponseBody(data: Data) throws -> [String: Any] {
-        let jsonData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
+        let jsonData = (try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]) ?? [:]
         var records: [[String: Any]] = []
 
         let responseRecords = jsonData["response"] as? [[String: Any]] ?? []

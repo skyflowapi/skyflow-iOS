@@ -68,6 +68,10 @@ internal class CollectRequestBody {
         var inputPayload: [[String: Any]] = []
 
         if additionalFields != nil {
+            // Safe: RequestValidators.checkAdditionalFields()/checkRecord() already validated
+            // "records" is [[String: Any]] and each entry's "table"/"fields"/"skyflowID" (when
+            // present) are the expected types, before collect()/composable collect() ever calls
+            // into this function - a validation failure there returns early without reaching here.
             inputPayload = additionalFields?["records"] as! [[String: Any]]
             for entry in inputPayload {
                 let entryDict = entry
@@ -123,10 +127,13 @@ internal class CollectRequestBody {
         }
 
         for element in elements {
+            // Safe: setupField() unconditionally copies these from collectInput onto every
+            // element the moment it's created via container.create() - elements is only ever
+            // populated with elements that have already gone through that path.
             let tableName = element.tableName!
             let columnName = element.columnName!
             let value = element.getValue()
-            let skyflowID = element.skyflowId // Assumes TextField has this property
+            let skyflowID = element.skyflowId
 
             if let skyflowID = skyflowID, !skyflowID.isEmpty {
                 if updatePayload[skyflowID] != nil {

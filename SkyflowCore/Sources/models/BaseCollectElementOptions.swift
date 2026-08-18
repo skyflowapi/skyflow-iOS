@@ -19,14 +19,19 @@ package struct BaseCollectElementOptions {
     package var translation: [ Character: String ]?
     package var enableCopy: Bool
     package var cardMetaData: [ String: Any]?
+    // FlowVault-only: when true, the collect response replaces the real CVV vault
+    // token with a hardcoded mock ("817" for 3-digit, "8173" for 4-digit) so the
+    // app never receives the actual CVV token. Default false = no modification.
+    package var returnMockValue: Bool
 
-    package init(required: Bool = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil, enableCopy: Bool = false, cardMetaData: [ String: Any]? = nil) {
+    package init(required: Bool = false, enableCardIcon: Bool = true, format: String = "mm/yy", translation: [ Character: String ]? = nil, enableCopy: Bool = false, cardMetaData: [ String: Any]? = nil, returnMockValue: Bool = false) {
         self.required = required
         self.enableCardIcon = enableCardIcon
         self.format = format
         self.translation = translation
         self.enableCopy = enableCopy
         self.cardMetaData = cardMetaData
+        self.returnMockValue = returnMockValue
 
         if (self.translation != nil){
             for (_, value) in self.translation! {

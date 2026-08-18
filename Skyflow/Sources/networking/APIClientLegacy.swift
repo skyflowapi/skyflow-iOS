@@ -8,7 +8,7 @@ import Foundation
 
 extension APIClient {
     // Base URL for v1 vault endpoints; legacy callbacks append the vault ID and paths.
-    package var legacyVaultURL: String {
+    internal var legacyVaultURL: String {
         return vaultURL + "v1/vaults/"
     }
 
@@ -76,11 +76,11 @@ extension APIClient {
 
 // v1 get/getById wire calls (moved from core: legacy-contract only).
 extension APIClient {
-    package func getById(records: [GetByIdRecord], callback: Callback, contextOptions: ContextOptions) {
+    internal func getById(records: [GetByIdRecord], callback: Callback, contextOptions: ContextOptions) {
         let revealByIdApiCallback = RevealByIDAPICallback(callback: callback, apiClient: self, connectionUrl: (legacyVaultURL + vaultID), records: records, contextOptions: contextOptions)
         self.getAccessToken(callback: revealByIdApiCallback, contextOptions: contextOptions)
     }
-    package func getRecord(records: [GetRecord], callback: Callback, getOptions: GetOptions, contextOptions: ContextOptions) {
+    internal func getRecord(records: [GetRecord], callback: Callback, getOptions: GetOptions, contextOptions: ContextOptions) {
         let getApiCallback = GetAPICallback(callback: callback, apiClient: self, connectionUrl: (legacyVaultURL + vaultID), records: records, getOptions: getOptions, contextOptions: contextOptions)
         self.getAccessToken(callback: getApiCallback, contextOptions: contextOptions)
     }

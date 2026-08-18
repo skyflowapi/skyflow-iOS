@@ -20,12 +20,12 @@ public class Client {
     package var contextOptions: ContextOptions
     package var elementLookup: [String: Any] = [:]
 
-    package init(_ skyflowConfig: BaseConfiguration) {
+    package init(_ skyflowConfig: BaseConfiguration, sdkName: String = "skyflow-iOS") {
         self.vaultID = skyflowConfig.vaultID
         let normalizedBaseURL = skyflowConfig.vaultURL.hasSuffix("/") ? skyflowConfig.vaultURL : skyflowConfig.vaultURL + "/"
         self.vaultURL = normalizedBaseURL
         self.apiClient = APIClient(vaultID: skyflowConfig.vaultID, vaultURL: normalizedBaseURL, tokenProvider: skyflowConfig.tokenProvider)
-        self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel, env: skyflowConfig.options!.env, interface: .CLIENT)
+        self.contextOptions = ContextOptions(logLevel: skyflowConfig.options!.logLevel, env: skyflowConfig.options!.env, interface: .CLIENT, sdkName: sdkName)
         Log.info(message: .CLIENT_INITIALIZED, contextOptions: self.contextOptions)
     }
 

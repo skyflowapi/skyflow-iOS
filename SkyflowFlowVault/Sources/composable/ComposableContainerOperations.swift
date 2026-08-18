@@ -5,7 +5,6 @@
 // FlowVault implementation of the composable container's collect() operation.
 
 import Foundation
-import UIKit
 
 public extension Container {
     func collect(callback: CollectCallback, options: CollectOptions? = CollectOptions()) where T: ComposableContainer {
@@ -22,7 +21,7 @@ public extension Container {
                 return
             }
             if elementsValidation.errors != "" {
-                callback.onFailure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: elementsValidation.errors]))
+                callback.onFailure(SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: elementsValidation.errors]))
 
                 return
             }

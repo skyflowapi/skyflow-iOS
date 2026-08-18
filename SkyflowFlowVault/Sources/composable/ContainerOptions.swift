@@ -9,7 +9,7 @@
 import Foundation
 
 public struct ContainerOptions {
-    package var data: BaseContainerOptions // make it naming with prefix Base
+    package var data: BaseContainerOptions
 
     public init(){
         self.data = BaseContainerOptions()

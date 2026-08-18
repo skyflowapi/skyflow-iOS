@@ -182,7 +182,7 @@ class ViewController: UIViewController {
     }
 
     internal func updateRevealInputs(record: CollectRecord) {
-        // A column maps to a list of Token(token:tokenGroupName:) - there's just one token
+        // A column maps to a list of CollectRecordToken(token:tokenGroupName:path:) - there's just one token
         // group configured for these columns here, so take the first.
         func token(for column: String) -> String {
             record.tokens?[column]?.first?.token ?? ""

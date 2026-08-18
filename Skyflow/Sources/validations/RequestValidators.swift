@@ -32,6 +32,9 @@ internal class RequestValidators {
         if (fields.isEmpty){
             return .EMPTY_FIELDS_KEY(value: "\(index)")
         }
+        if let skyflowID = record["skyflowID"], !(skyflowID is String) {
+            return .INVALID_SKYFLOW_ID_TYPE(value: "\(index)")
+        }
 
         return nil
     }

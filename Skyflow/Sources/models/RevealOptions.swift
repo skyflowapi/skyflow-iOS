@@ -2,12 +2,7 @@
  * Copyright (c) 2022 Skyflow
 */
 
-//
-//  File.swift
-//  
-//
-//  Created by Akhil Anil Mangala on 11/08/21.
-//
+// Options for the reveal() operation (legacy v1 has no reveal-time options).
 
 import Foundation
 

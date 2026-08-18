@@ -11,11 +11,11 @@
 
 import Foundation
 
-package struct GetByIdRecord {
+struct GetByIdRecord {
     var ids: [String]
     var table: String
     var redaction: String
-    package init(ids: [String], table: String, redaction: String) {
+    init(ids: [String], table: String, redaction: String) {
         self.ids = ids
         self.table = table
         self.redaction = redaction

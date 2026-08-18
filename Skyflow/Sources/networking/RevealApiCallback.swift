@@ -91,15 +91,7 @@ class RevealAPICallback: Callback {
     }
     
     internal func getRequestSession() -> (URLRequest, URLSession){
-        var jsonString = ""
-
-        do {
-           let deviceDetails = FetchMetrices().getMetrices()
-            let jsonData = try JSONSerialization.data(withJSONObject: deviceDetails, options: [])
-            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
-        } catch {
-            jsonString = ""
-        }
+        let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)
         let url = URL(string: (connectionUrl + "/detokenize"))
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"

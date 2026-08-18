@@ -112,4 +112,14 @@ final class CoreLogicTests: XCTestCase {
         XCTAssertEqual(message(CoreRequestValidators.checkInsertRecordEntries(emptyFields)!),
                        message(ErrorCodes.EMPTY_FIELDS_KEY(value: "0")))
     }
+
+    // MARK: - SkyflowElement.returnMockValue
+
+    func testReturnMockValueDefaultsToFalseWhenOptionsNeverSet() {
+        // options is nil until a CollectElementOptions is applied - confirm the
+        // nil-coalescing fallback, not just the options-is-set path.
+        let element = SkyflowElement(frame: .zero)
+        XCTAssertNil(element.options)
+        XCTAssertFalse(element.returnMockValue)
+    }
 }

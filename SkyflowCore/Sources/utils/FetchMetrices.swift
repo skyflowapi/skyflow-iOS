@@ -11,7 +11,7 @@ import UIKit
 package class FetchMetrices {
     package init() {}
     
-    package func getDeviceDetails() -> [String: Any] {
+    package func getDeviceDetails(sdkName: String) -> [String: Any] {
         var deviceDetails: [String: Any] = [:]
         do {
             let currentDevice = UIDevice.current
@@ -22,7 +22,7 @@ package class FetchMetrices {
             let systemVersion = currentDevice.systemVersion
 
             deviceDetails["os_details"] = systemName + "@" + systemVersion
-            deviceDetails["sdk_name_version"] = SDK_NAME + "@" + SDK_VERSION
+            deviceDetails["sdk_name_version"] = sdkName + "@" + SDK_VERSION
         } catch {
             deviceDetails["device"] = ""
             deviceDetails["os_details"] = ""
@@ -31,14 +31,24 @@ package class FetchMetrices {
         return deviceDetails
     }
 
-    
-    package func getMetrices() -> [String: Any]{
-        let details = getDeviceDetails()
+
+    package func getMetrices(sdkName: String) -> [String: Any]{
+        let details = getDeviceDetails(sdkName: sdkName)
         let deviceDetails = [
             "sdk_name_version": details["sdk_name_version"] ,
             "sdk_client_device_model": details["device"],
             "sdk_client_os_details": details["os_details"],
         ]
         return deviceDetails as [String : Any]
+    }
+
+    // Serialized device metrics for the "sky-metadata" request header - shared by every
+    // networking callback in both SDKs, which otherwise each repeated this same
+    // serialize-or-fall-back-to-empty-string boilerplate independently.
+    package func buildMetadataHeaderValue(sdkName: String) -> String {
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: getMetrices(sdkName: sdkName), options: []) else {
+            return ""
+        }
+        return String(data: jsonData, encoding: .utf8) ?? ""
     }
 }

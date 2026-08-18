@@ -7,6 +7,5 @@
 import Foundation
 
 public func initialize(_ skyflowConfig: Configuration) -> Client {
-    SDK_NAME = "skyflow-flowvault-ios"
     return Client(skyflowConfig)
 }
