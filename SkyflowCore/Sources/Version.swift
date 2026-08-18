@@ -16,6 +16,6 @@ import Foundation
 // prefixes. The per-instance SDK name (for the sdk_name_version vault metric)
 // lives on ContextOptions.sdkName instead of here, so that both SDKs
 // coexisting in one app process each report their own identity correctly.
-package var SDK_VERSION = "1.26.0-beta.1-dev.faf30ce"
+package var SDK_VERSION = "1.26.0-beta.1-dev.38e5046"
 
 var LangAndVersion: String { "iOS SDK v\(SDK_VERSION)" }
