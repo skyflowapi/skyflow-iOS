@@ -1,0 +1,198 @@
+/*
+ * Copyright (c) 2022 Skyflow
+ */
+
+// Update-data-using-elements demonstrated through a ComposableContainer - this is the
+// project's original single-screen demo, renamed and moved into its own file to make room
+// for the plain CollectContainer variant (CollectUpdateViewController.swift). Supplying a
+// real skyflowId on each element turns the collect call into an update of that record.
+
+import UIKit
+import SkyflowFlowVault
+
+class ComposableUpdateViewController: UIViewController {
+    var retryCount = 0
+    private var skyflow: SkyflowFlowVault.Client?
+    private var container: SkyflowFlowVault.Container<SkyflowFlowVault.ComposableContainer>?
+
+    private var stackView: UIStackView!
+
+    override func loadView() {
+        let view = UIView()
+        view.backgroundColor = .white
+        self.view = view
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: self,
+            action: #selector(closeTapped)
+        )
+
+        let tokenProvider = ExampleTokenProvider()
+
+        let config = SkyflowFlowVault.Configuration(
+            vaultID: "<VAULT_ID>",
+            vaultURL: "<VAULT_URL>",
+            tokenProvider: tokenProvider,
+            options: SkyflowFlowVault.Options(
+                logLevel: SkyflowFlowVault.LogLevel.DEBUG
+            )
+        )
+
+        self.skyflow = SkyflowFlowVault.initialize(config)
+
+        if self.skyflow != nil {
+            let container = self.skyflow?.container(type: SkyflowFlowVault.ContainerType.COMPOSABLE, options: ContainerOptions(layout: [1, 2, 2], styles: Styles(base: Style(borderColor: UIColor.gray)), errorTextStyles: Styles(base: Style(textColor: UIColor.red))))
+            self.container = container
+            self.stackView = UIStackView()
+
+            let baseStyle = SkyflowFlowVault.Style(
+                cornerRadius: 2,
+                padding: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10),
+                borderWidth: 1,
+                textAlignment: .left,
+                textColor: .blue
+            )
+
+            let focusStyle = SkyflowFlowVault.Style(borderColor: .blue)
+
+            let completedStyle = SkyflowFlowVault.Style(textColor: UIColor.green)
+
+            let invalidStyle = SkyflowFlowVault.Style(textColor: UIColor.red)
+
+            let styles = SkyflowFlowVault.Styles(
+                base: baseStyle,
+                complete: completedStyle,
+                focus: focusStyle,
+                invalid: invalidStyle
+            )
+
+            let collectCardNumberInput = SkyflowFlowVault.CollectElementInput(
+                tableName: "credit_cards",
+                column: "card_number",
+                inputStyles: styles,
+                label: "Card Number",
+                placeholder: "4111-1111-1111-1111",
+                type: SkyflowFlowVault.ElementType.CARD_NUMBER,
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+            )
+            let collectNameInput = SkyflowFlowVault.CollectElementInput(
+                tableName: "credit_cards",
+                column: "cardholder_name",
+                inputStyles: styles,
+                label: "Card Holder Name",
+                placeholder: "John Doe",
+                type: SkyflowFlowVault.ElementType.CARDHOLDER_NAME,
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+            )
+            let collectCVVInput = SkyflowFlowVault.CollectElementInput(
+                tableName: "credit_cards",
+                column: "cvv",
+                inputStyles: styles,
+                label: "CVV",
+                placeholder: "***",
+                type: .CVV,
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+            )
+            let collectExpMonthInput = SkyflowFlowVault.CollectElementInput(
+                tableName: "credit_cards",
+                column: "expiry_month",
+                inputStyles: styles,
+                label: "Expiration Month",
+                placeholder: "MM",
+                type: .EXPIRATION_MONTH,
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+            )
+            let collectExpYearInput = SkyflowFlowVault.CollectElementInput(
+                tableName: "credit_cards",
+                column: "expiry_year",
+                inputStyles: styles,
+                label: "Expiration Year",
+                placeholder: "YYYY",
+                type: .EXPIRATION_YEAR,
+                skyflowId: "<SKYFLOW_ID>" // replace it with actual skyflowID if you want to test update with elements functionality, otherwise you can remove skyflowID field from input
+            )
+            let requiredOption = SkyflowFlowVault.CollectElementOptions(required: true)
+            _ = container?.create(input: collectCardNumberInput, options: requiredOption)
+            _ = container?.create(input: collectNameInput, options: requiredOption)
+            _ = container?.create(input: collectCVVInput, options: requiredOption)
+            _ = container?.create(input: collectExpMonthInput, options: requiredOption)
+            _ = container?.create(input: collectExpYearInput, options: requiredOption)
+            let collectButton = UIButton(frame: CGRect(x: 100, y: 400, width: 100, height: 40))
+            collectButton.backgroundColor = .blue
+            collectButton.setTitle("Submit", for: .normal)
+            collectButton.addTarget(self, action: #selector(submitForm), for: .touchUpInside)
+
+            do {
+                if let composableView = try container?.getComposableView() {
+                    stackView.addArrangedSubview(composableView)
+                }
+            } catch {
+                print(error)
+            }
+
+            stackView.addArrangedSubview(collectButton)
+            stackView.axis = .vertical
+            stackView.distribution = .fill
+            stackView.spacing = 10
+            stackView.alignment = .fill
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            let scrollView = UIScrollView(frame: .zero)
+            scrollView.isScrollEnabled = true
+            scrollView.backgroundColor = .white
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(scrollView)
+            scrollView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 20
+            ).isActive = true
+            scrollView.leftAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leftAnchor,
+                constant: 10
+            ).isActive = true
+            scrollView.rightAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.rightAnchor,
+                constant: -10
+            ).isActive = true
+            scrollView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ).isActive = true
+            scrollView.addSubview(stackView)
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -10).isActive = true
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+            stackView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
+            stackView.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -10).isActive = true
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        }
+    }
+
+    @objc func closeTapped() {
+        dismiss(animated: true)
+    }
+
+    @objc func submitForm() {
+        container!.collect(
+            callback: CollectCallback(
+                onSuccess: { [weak self] (response: CollectResponse) in self?.updateSuccess(response) },
+                onFailure: { [weak self] (error: SkyflowError) in self?.updateFailure(error: error) }
+            ),
+            options: SkyflowFlowVault.CollectOptions()
+        )
+    }
+    internal func updateSuccess(_ response: CollectResponse) {
+        print(response)
+        retryCount = 0
+        print("Successfully got response:", response)
+    }
+    internal func updateFailure(error: SkyflowError) {
+        if error.message.contains("Invalid Bearer token") && retryCount <= 2 { // To do, it will be replaced with error code in the future
+            retryCount += 1
+            submitForm()
+        }
+        print("Failed Operation", error)
+    }
+}

@@ -4,3 +4,6 @@
 /*.xcodeproj
 xcuserdata/
 Skyflow-Local.xcscheme
+.claude/
+CLAUDE.md
+Pods/

@@ -1,26 +1,19 @@
-# Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
-
+platform :ios, '13.0'
 target 'UpdateDataUsingElements' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
+  pod 'SkyflowFlowVault', :git => 'https://github.com/skyflowapi/skyflow-iOS.git', :branch => 'release/26.8.2'
+
   # Pods for UpdateDataUsingElements
-    pod 'AEXML', '4.6.1'
-    pod 'SkyflowFlowVault'
 
   target 'UpdateDataUsingElementsTests' do
     inherit! :search_paths
     # Pods for testing
-     pod 'AEXML', '4.6.1'
-     pod 'SkyflowFlowVault'
   end
 
   target 'UpdateDataUsingElementsUITests' do
     # Pods for testing
-  	pod 'AEXML', '4.6.1'
-    pod 'SkyflowFlowVault'
-
   end
 
 end
