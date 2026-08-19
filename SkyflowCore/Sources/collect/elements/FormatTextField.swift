@@ -197,10 +197,10 @@ package class FormatTextField: UITextField {
             if j < formatArray.count {
                 let formatChar = formatArray[j]
                 if let translationString = translation[formatChar] {
-                    let regex = try! NSRegularExpression(pattern: translationString, options: [])
+                    let regex = try? NSRegularExpression(pattern: translationString, options: [])
                     let characterString = String(character)
                     let range = NSRange(location: 0, length: characterString.count)
-                    if regex.firstMatch(in: characterString, options: [], range: range) != nil {
+                    if regex?.firstMatch(in: characterString, options: [], range: range) != nil {
                         output.append(characterString)
                         j += 1
                     }
@@ -215,10 +215,10 @@ package class FormatTextField: UITextField {
                         for var k in 0+j..<format.count {
                             var formatChar = formatArray[k]
                             if let translationString = translation[formatChar] {
-                                let regex = try! NSRegularExpression(pattern: translationString, options: [])
+                                let regex = try? NSRegularExpression(pattern: translationString, options: [])
                                 let characterString = String(character)
                                 let range = NSRange(location: 0, length: characterString.count)
-                                if regex.firstMatch(in: characterString, options: [], range: range) != nil {
+                                if regex?.firstMatch(in: characterString, options: [], range: range) != nil {
                                     output.append(characterString)
                                     j += 1
                                 }

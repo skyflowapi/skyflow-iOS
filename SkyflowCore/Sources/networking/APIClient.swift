@@ -40,12 +40,15 @@ package class APIClient {
             payload64 += "="
         }
 
-        let payloadData = Data(base64Encoded: payload64,
-                               options: .ignoreUnknownCharacters)!
+        guard let payloadData = Data(base64Encoded: payload64, options: .ignoreUnknownCharacters) else {
+            return false
+        }
 
         do {
-            let json = try JSONSerialization.jsonObject(with: payloadData, options: []) as! [String: Any]
-            let exp = json["exp"] as! Int
+            guard let json = try JSONSerialization.jsonObject(with: payloadData, options: []) as? [String: Any],
+                  let exp = json["exp"] as? Int else {
+                return false
+            }
             let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
 
             return expDate.compare(Date()) == .orderedDescending

@@ -119,7 +119,7 @@ class RevealAPICallback: Callback {
     internal func processResponse(record: RevealRequestRecord, data: Data?, response: URLResponse?, error: Error?) throws -> (RevealSuccessRecord?, RevealErrorRecord?){
         
         if error != nil || response == nil {
-            throw error!
+            throw error ?? NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
         }
         
         if let httpResponse = response as? HTTPURLResponse {

@@ -65,61 +65,64 @@ internal class FlowVaultCollectAPICallback: Callback {
             return
         }
 
-        guard URL(string: self.apiClient.vaultURL + "v2/records/insert") != nil else {
-            self.callback.onFailure(ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions))
-            return
-        }
-
         let group = DispatchGroup()
         var mergedRecords: [[String: Any]] = []
         var mergedErrors: [[String: Any]] = []
 
         if hasInsert {
             group.enter()
-            let url = URL(string: self.apiClient.vaultURL + "v2/records/insert")!
-            do {
-                let (request, session) = try self.getRequestSession(url: url)
-                let task = session.dataTask(with: request) { data, response, error in
-                    defer { group.leave() }
-                    do {
-                        let response = try self.processResponse(data: data, response: response, error: error)
-                        if response["error"] != nil {
-                            mergedErrors.append(response)
-                        } else {
-                            mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
+            if let url = URL(string: self.apiClient.vaultURL + "v2/records/insert") {
+                do {
+                    let (request, session) = try self.getRequestSession(url: url)
+                    let task = session.dataTask(with: request) { data, response, error in
+                        defer { group.leave() }
+                        do {
+                            let response = try self.processResponse(data: data, response: response, error: error)
+                            if response["error"] != nil {
+                                mergedErrors.append(response)
+                            } else {
+                                mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
+                            }
+                        } catch {
+                            mergedErrors.append(["error": error.localizedDescription])
                         }
-                    } catch {
-                        mergedErrors.append(["error": error.localizedDescription])
                     }
+                    task.resume()
+                } catch let error {
+                    mergedErrors.append(["error": error.localizedDescription])
+                    group.leave()
                 }
-                task.resume()
-            } catch let error {
-                mergedErrors.append(["error": error.localizedDescription])
+            } else {
+                mergedErrors.append(["error": ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions).localizedDescription])
                 group.leave()
             }
         }
 
         if hasUpdate {
             group.enter()
-            let url = URL(string: self.apiClient.vaultURL + "v2/records/update")!
-            do {
-                let (request, session) = try self.getUpdateRequestSession(url: url, records: updateRecords)
-                let task = session.dataTask(with: request) { data, response, error in
-                    defer { group.leave() }
-                    do {
-                        let response = try self.processResponse(data: data, response: response, error: error)
-                        if response["error"] != nil {
-                            mergedErrors.append(response)
-                        } else {
-                            mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
+            if let url = URL(string: self.apiClient.vaultURL + "v2/records/update") {
+                do {
+                    let (request, session) = try self.getUpdateRequestSession(url: url, records: updateRecords)
+                    let task = session.dataTask(with: request) { data, response, error in
+                        defer { group.leave() }
+                        do {
+                            let response = try self.processResponse(data: data, response: response, error: error)
+                            if response["error"] != nil {
+                                mergedErrors.append(response)
+                            } else {
+                                mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
+                            }
+                        } catch {
+                            mergedErrors.append(["error": error.localizedDescription])
                         }
-                    } catch {
-                        mergedErrors.append(["error": error.localizedDescription])
                     }
+                    task.resume()
+                } catch let error {
+                    mergedErrors.append(["error": error.localizedDescription])
+                    group.leave()
                 }
-                task.resume()
-            } catch let error {
-                mergedErrors.append(["error": error.localizedDescription])
+            } else {
+                mergedErrors.append(["error": ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions).localizedDescription])
                 group.leave()
             }
         }

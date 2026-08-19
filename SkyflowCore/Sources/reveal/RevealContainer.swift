@@ -15,7 +15,7 @@ extension Container {
     package func makeRevealElement(input: BaseRevealElementInput, options: BaseRevealElementOptions? = BaseRevealElementOptions()) -> Label where T: RevealContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .REVEAL_CONTAINER
-        let revealElement = Label(input: input, options: options!)
+        let revealElement = Label(input: input, options: options ?? BaseRevealElementOptions())
         revealElements.append(revealElement)
         let uuid = NSUUID().uuidString
         self.skyflow.elementLookup[uuid] = revealElement

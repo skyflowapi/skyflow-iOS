@@ -104,7 +104,7 @@ internal class TextFieldValidationDelegate: NSObject, UITextFieldDelegate {
         if (collectField.fieldType == .INPUT_FIELD && !(collectField.options.format == "mm/yy" || collectField.options.format == "")) {
             return customFormat()
          }
-        if let elementType = collectField.fieldType.instance {       
+        if let fieldType = collectField.fieldType, let elementType = fieldType.instance {
             if let acceptabledCharacters = elementType.acceptableCharacters, string.rangeOfCharacter(from: acceptabledCharacters) == nil {
                 return false
             }

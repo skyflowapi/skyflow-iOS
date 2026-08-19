@@ -27,7 +27,10 @@ public struct RegexMatchRule: ValidationRule {
 extension RegexMatchRule: SkyflowInternalValidationProtocol {
     /// validate the text with specified regex
     public func validate(_ text: String?) -> Bool {
-        if text!.isEmpty {
+        guard let text = text else {
+            return false
+        }
+        if text.isEmpty {
         return true
         }
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: text)

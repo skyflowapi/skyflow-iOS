@@ -80,7 +80,7 @@ internal class InsertAPICallback: Callback {
     
     func processResponse(data: Data?, response: URLResponse?, error: Error?) throws -> [String: Any] {
         if error != nil || response == nil {
-            throw error!
+            throw error ?? NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
         }
 
         if let httpResponse = response as? HTTPURLResponse {

@@ -28,9 +28,9 @@ public struct ElementValueMatchRule: ValidationRule {
 extension ElementValueMatchRule: SkyflowInternalValidationProtocol {
     /// validate element value
     public func validate(_ text: String?) -> Bool {
-        guard text != nil else {
+        guard let text = text else {
             return false
         }
-        return text! == (element as! TextField).actualValue
+        return text == element.actualValue
     }
 }

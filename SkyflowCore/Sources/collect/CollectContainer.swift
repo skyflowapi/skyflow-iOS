@@ -15,7 +15,7 @@ extension Container {
     package func makeCollectElement(input: BaseCollectElementInput, options: BaseCollectElementOptions? = BaseCollectElementOptions()) -> TextField where T: CollectContainer {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COLLECT_CONTAINER
-         let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions, elements: elements)
+         let skyflowElement = TextField(input: input, options: options ?? BaseCollectElementOptions(), contextOptions: tempContextOptions, elements: elements)
         elements.append(skyflowElement)
         let uuid = NSUUID().uuidString
         self.skyflow.elementLookup[uuid] = skyflowElement

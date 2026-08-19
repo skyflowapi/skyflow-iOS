@@ -94,7 +94,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         setFormatPattern()
         setupField()
         let formatNotSupportedElements = [ElementType.CARDHOLDER_NAME, ElementType.EXPIRATION_MONTH, ElementType.CVV, ElementType.PIN]
-        if(formatNotSupportedElements.contains(fieldType)) {
+        if let fieldType = fieldType, formatNotSupportedElements.contains(fieldType) {
             var context = self.contextOptions
             context?.interface = .COLLECT_CONTAINER
             context?.logLevel = .WARN
@@ -155,7 +155,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         case .EXPIRATION_DATE:
             self.textField.formatPattern = self.options.format.lowercased().replacingOccurrences(of: "\\w", with: "#", options: .regularExpression)
         default:
-            if let instance = fieldType.instance {
+            if let fieldType = fieldType, let instance = fieldType.instance {
                 self.textField.formatPattern = instance.formatPattern
             }
         }

@@ -49,8 +49,8 @@ class FlowVaultRevealAPICallback: Callback {
     }
 
     internal func onFailure(_ error: Any) {
-        if error is Error {
-            callRevealOnFailure(callback: self.callback, errorObject: error as! Error)
+        if let error = error as? Error {
+            callRevealOnFailure(callback: self.callback, errorObject: error)
         } else {
             self.callback.onFailure(error)
         }

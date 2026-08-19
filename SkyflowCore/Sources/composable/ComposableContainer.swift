@@ -15,7 +15,7 @@ public extension Container {
         var tempContextOptions = self.skyflow.contextOptions
         tempContextOptions.interface = .COMPOSABLE_CONTAINER
 
-        let skyflowElement = TextField(input: input, options: options!, contextOptions: tempContextOptions, elements: elements)
+        let skyflowElement = TextField(input: input, options: options ?? BaseCollectElementOptions(), contextOptions: tempContextOptions, elements: elements)
         elements.append(skyflowElement)
         let uuid = NSUUID().uuidString
         self.skyflow.elementLookup[uuid] = skyflowElement
@@ -147,7 +147,7 @@ public extension Container {
                         errorList[element.elements.count] = ""
                         labelArray = self.updateErrorMessageInLabel(errorList: errorList, layout: layout, labelArray: labelArray, result: rowWiseError)
                         if( element.elements.count + 1 < self.elements.count ){
-                            if ALLOWED_FOCUS_AUTO_SHIFT_ELEMENT_TYPES.contains(element.fieldType) && element.textField.isFirstResponder && (element.state.getState()["isValid"] as! Bool)  {
+                            if let elementFieldType = element.fieldType, ALLOWED_FOCUS_AUTO_SHIFT_ELEMENT_TYPES.contains(elementFieldType) && element.textField.isFirstResponder && (element.state.getState()["isValid"] as! Bool)  {
                                 if(element.elements.count + 1 < self.elements.count){
                                     self.elements[element.elements.count + 1].textField.becomeFirstResponder()
                                 }

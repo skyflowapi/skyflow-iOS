@@ -194,7 +194,7 @@ class RevealByIDAPICallback: Callback {
     
     func processURLResponse(record: GetByIdRecord, data: Data?, response: URLResponse?, error: Error?) throws -> ([[String: Any]]?, [String: Any]?) {
         if error != nil || response == nil {
-            throw error!
+            throw error ?? NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
         }
         if let httpResponse = response as? HTTPURLResponse {
             let range = 400...599
