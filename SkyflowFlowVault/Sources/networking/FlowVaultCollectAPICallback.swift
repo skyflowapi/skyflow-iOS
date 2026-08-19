@@ -152,15 +152,7 @@ internal class FlowVaultCollectAPICallback: Callback {
     }
 
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
-        var temp: [String: Any] = [:]
-        for (key, val) in dict {
-            if let v = val as? [String: Any] {
-                temp[key] = buildFieldsDict(dict: v)
-            } else {
-                temp[key] = val
-            }
-        }
-        return temp
+        return ConversionHelpers.buildFieldsDict(dict: dict)
     }
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
         let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)

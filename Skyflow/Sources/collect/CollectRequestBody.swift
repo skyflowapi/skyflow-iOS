@@ -205,13 +205,4 @@ internal class CollectRequestBody {
         }
         return ["records": payload, "update": updatePayload]
     }
-    internal static func getUniqueColumn(tableName: String, upsert: [[String: Any]]) -> String{
-        var uniqueColumn = "";
-        for currUpsertOption in upsert{
-            if(currUpsertOption["table"] as! String == tableName){
-                uniqueColumn = currUpsertOption["column"] as! String;
-            }
-        }
-        return uniqueColumn;
-    }
 }

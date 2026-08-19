@@ -11,15 +11,9 @@ public extension Container {
         return makeRevealElement(input: input.data, options: options?.data)
     }
     func reveal(callback: RevealCallback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
-        var tempContextOptions = self.skyflow.contextOptions
-        tempContextOptions.interface = .REVEAL_CONTAINER
-        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
-            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
-        }
-        Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
-        if let elementError = CoreRequestValidators.checkRevealElementsPreflight(elements: self.revealElements) {
-            callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
-            return
+        let (tempContextOptions, preflightError) = CoreRequestValidators.revealPreflight(client: self.skyflow, revealElements: self.revealElements)
+        if let preflightError = preflightError {
+            return callback.onFailure(preflightError.getErrorObject(contextOptions: tempContextOptions))
         }
         if let redactions = options?.tokenGroupRedactions {
             if let redactionError = RequestValidators.checkTokenGroupRedactions(redactions) {

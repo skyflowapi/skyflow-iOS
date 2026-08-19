@@ -17,9 +17,6 @@ package class State {
     /// set as true if  `SkyflowTextField` input is required to fill
     internal(set) open var isRequired = false
 
-    /// true if `SkyflowTextField` input in valid
-    // internal(set) open var isValid: Bool = false
-
     init(columnName: String, isRequired: Bool) {
         self.columnName = columnName
         self.isRequired = isRequired

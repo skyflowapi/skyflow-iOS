@@ -86,8 +86,7 @@ class RevealAPICallback: Callback {
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
-        let result = ["errors": [["error": errorObject]]]
-        callback.onFailure(result)
+        callback.onFailure(ConversionHelpers.wrapRevealFailure(errorObject: errorObject))
     }
     
     internal func getRequestSession() -> (URLRequest, URLSession){
@@ -142,14 +141,20 @@ class RevealAPICallback: Callback {
         }
 
         if let safeData = data {
-            let jsonData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as! [String: Any]
-            let receivedResponseArray: [Any] = (jsonData[keyPath: "records"] as! [Any])
-            let records: [String: Any] = receivedResponseArray[0] as! [String: Any]
-            let successRecord = RevealSuccessRecord(token_id: records["token"] as! String, value: records["value"] as! String)
-            
+            guard let jsonData = try JSONSerialization.jsonObject(with: safeData, options: .allowFragments) as? [String: Any],
+                  let receivedResponseArray = jsonData["records"] as? [Any],
+                  let records = receivedResponseArray.first as? [String: Any],
+                  let tokenId = records["token"] as? String,
+                  let value = records["value"] as? String else {
+                let error: NSError = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Malformed reveal response"])
+                let errorRecord = RevealErrorRecord(id: record.token, error: error)
+                return (nil, errorRecord)
+            }
+            let successRecord = RevealSuccessRecord(token_id: tokenId, value: value)
+
             return (successRecord, nil)
         }
-        
+
         return (nil, nil)
     }
     

@@ -135,14 +135,6 @@ internal class RevealValueCallback: Callback {
     }
 
     func getTokensToErrors(_ errors: [[String: Any]]?) -> [String: String] {
-        var result = [String: String]()
-        if let errorsObj = errors {
-            for error in errorsObj {
-                if let token = error["token"] as? String {
-                    result[token] = "Invalid Token"
-                }
-            }
-        }
-        return result
+        return ConversionHelpers.getTokensToErrors(errors)
     }
 }

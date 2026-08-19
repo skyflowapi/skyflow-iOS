@@ -5,7 +5,6 @@
 // Legacy (v1) implementation of the collect() operation.
 
 import Foundation
-import UIKit
 
 public extension Container {
     func collect(callback: Callback, options: CollectOptions? = CollectOptions()) where T: CollectContainer {
@@ -30,15 +29,15 @@ public extension Container {
                 return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
             }
         }
-        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
-        let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
         if let upsert = options?.upsert {
             if let upsertError = RequestValidators.checkUpsertOptions(upsert) {
                 return callback.onFailure(upsertError.getErrorObject(contextOptions: tempContextOptions))
             }
         }
+        let records = CollectRequestBody.createRequestBody(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
+        let icOptions = ICOptions(tokens: options!.tokens, additionalFields: options?.additionalFields, upsert: options?.upsert, callback: callback, contextOptions: tempContextOptions)
         if records != nil {
-            let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
+            let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions,
                 onSuccessHandler: {
                     Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
                 },

@@ -7,9 +7,6 @@
 // can add or remove options independently in the future.
 
 import Foundation
-#if os(iOS)
-import UIKit
-#endif
 
 public struct CollectElementOptions {
     package var data: BaseCollectElementOptions

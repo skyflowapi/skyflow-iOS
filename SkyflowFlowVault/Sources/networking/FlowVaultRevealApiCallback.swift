@@ -57,8 +57,7 @@ class FlowVaultRevealAPICallback: Callback {
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
-        let result = ["errors": [["error": errorObject]]]
-        callback.onFailure(result)
+        callback.onFailure(ConversionHelpers.wrapRevealFailure(errorObject: errorObject))
     }
 
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {

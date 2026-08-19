@@ -8,15 +8,9 @@ import Foundation
 
 public extension Container {
     func reveal(callback: Callback, options: RevealOptions? = RevealOptions()) where T: RevealContainer {
-        var tempContextOptions = self.skyflow.contextOptions
-        tempContextOptions.interface = .REVEAL_CONTAINER
-        if let errorCode = CoreRequestValidators.checkClientConfig(vaultID: self.skyflow.vaultID, vaultURL: self.skyflow.vaultURL) {
-            return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
-        }
-        Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
-        if let elementError = CoreRequestValidators.checkRevealElementsPreflight(elements: self.revealElements) {
-            callback.onFailure(elementError.getErrorObject(contextOptions: tempContextOptions))
-            return
+        let (tempContextOptions, preflightError) = CoreRequestValidators.revealPreflight(client: self.skyflow, revealElements: self.revealElements)
+        if let preflightError = preflightError {
+            return callback.onFailure(preflightError.getErrorObject(contextOptions: tempContextOptions))
         }
         let revealValueCallback = RevealValueCallback(callback: callback, revealElements: self.revealElements, contextOptions: tempContextOptions)
         let records = RevealRequestBody.createRequestBody(elements: self.revealElements)

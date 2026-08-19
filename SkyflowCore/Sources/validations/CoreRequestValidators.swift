@@ -89,6 +89,25 @@ package class CoreRequestValidators {
         return checkRevealElements(elements: elements)
     }
 
+    // Shared opening sequence of both SDKs' reveal(): tags the context, checks
+    // client config, logs validation start, then validates reveal elements.
+    // Returns the tagged contextOptions (for the caller's own subsequent
+    // error/log calls) plus any error found - the caller owns delivering the
+    // failure to its callback, matching the "validators compute, call sites
+    // deliver" convention used throughout this file.
+    package static func revealPreflight(client: Client, revealElements: [Label]) -> (contextOptions: ContextOptions, errorCode: ErrorCodes?) {
+        var tempContextOptions = client.contextOptions
+        tempContextOptions.interface = .REVEAL_CONTAINER
+        if let errorCode = checkClientConfig(vaultID: client.vaultID, vaultURL: client.vaultURL) {
+            return (tempContextOptions, errorCode)
+        }
+        Log.info(message: .VALIDATE_REVEAL_RECORDS, contextOptions: tempContextOptions)
+        if let elementError = checkRevealElementsPreflight(elements: revealElements) {
+            return (tempContextOptions, elementError)
+        }
+        return (tempContextOptions, nil)
+    }
+
     // Insert record-entry validation shared by both SDKs' client insert()
     // operations. Preserves the original loop's semantics exactly: the last
     // entry's error wins, except an invalid fields type stops the scan.

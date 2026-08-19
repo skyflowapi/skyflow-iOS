@@ -31,14 +31,14 @@ public extension Container {
                 return callback.onFailure(errorCode.getErrorObject(contextOptions: tempContextOptions))
             }
         }
-        let records = CollectRequestBuilder.createCollectRecords(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
         if let upsert = options?.upsert {
             if let upsertError = RequestValidators.checkUpsertOptions(upsert) {
                 return callback.onFailure(upsertError.getErrorObject(contextOptions: tempContextOptions))
             }
         }
+        let records = CollectRequestBuilder.createCollectRecords(elements: self.elements, additionalFields: options?.additionalFields, callback: callback, contextOptions: tempContextOptions)
         if records != nil {
-            let logCallback = LogCallback(clientCallback: callback, contextOptions: self.skyflow.contextOptions,
+            let logCallback = LogCallback(clientCallback: callback, contextOptions: tempContextOptions,
                 onSuccessHandler: {
                     Log.info(message: .COLLECT_SUBMIT_SUCCESS, contextOptions: tempContextOptions)
                 },

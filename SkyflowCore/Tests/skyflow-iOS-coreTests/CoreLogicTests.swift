@@ -122,4 +122,72 @@ final class CoreLogicTests: XCTestCase {
         XCTAssertNil(element.options)
         XCTAssertFalse(element.returnMockValue)
     }
+
+    // MARK: - ConversionHelpers.buildFieldsDict
+    // Single shared implementation now backing 5 formerly-duplicated per-SDK copies
+    // (Skyflow's CollectAPICallback/InsertAPICallback/RevealByIDAPICallback/GetAPICallback
+    // and SkyflowFlowVault's FlowVaultCollectAPICallback all delegate here).
+
+    func testBuildFieldsDictFlatDictPassesThroughUnchanged() {
+        let result = ConversionHelpers.buildFieldsDict(dict: ["a": 1, "b": "two"])
+
+        XCTAssertEqual(result["a"] as? Int, 1)
+        XCTAssertEqual(result["b"] as? String, "two")
+    }
+
+    func testBuildFieldsDictEmptyDictReturnsEmptyDict() {
+        XCTAssertTrue(ConversionHelpers.buildFieldsDict(dict: [:]).isEmpty)
+    }
+
+    func testBuildFieldsDictRecursesIntoNestedDictionaries() {
+        let input: [String: Any] = ["address": ["city": "Deoria", "geo": ["lat": 1, "lng": 2]]]
+        let result = ConversionHelpers.buildFieldsDict(dict: input)
+
+        let address = try! XCTUnwrap(result["address"] as? [String: Any])
+        XCTAssertEqual(address["city"] as? String, "Deoria")
+        let geo = try! XCTUnwrap(address["geo"] as? [String: Any])
+        XCTAssertEqual(geo["lat"] as? Int, 1)
+        XCTAssertEqual(geo["lng"] as? Int, 2)
+    }
+
+    // MARK: - ConversionHelpers.getTokensToErrors
+    // Single shared implementation now backing both SDKs' RevealValueCallback.
+
+    func testGetTokensToErrorsMapsEachTokenToInvalidTokenMessage() {
+        let result = ConversionHelpers.getTokensToErrors([["token": "tok-1"], ["token": "tok-2"]])
+
+        XCTAssertEqual(result["tok-1"], "Invalid Token")
+        XCTAssertEqual(result["tok-2"], "Invalid Token")
+        XCTAssertEqual(result.count, 2)
+    }
+
+    func testGetTokensToErrorsNilErrorsReturnsEmptyDict() {
+        XCTAssertTrue(ConversionHelpers.getTokensToErrors(nil).isEmpty)
+    }
+
+    func testGetTokensToErrorsEmptyArrayReturnsEmptyDict() {
+        XCTAssertTrue(ConversionHelpers.getTokensToErrors([]).isEmpty)
+    }
+
+    func testGetTokensToErrorsSkipsEntriesMissingTokenKey() {
+        let result = ConversionHelpers.getTokensToErrors([["error": "some error"], ["token": "tok-1"]])
+
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result["tok-1"], "Invalid Token")
+    }
+
+    // MARK: - ConversionHelpers.wrapRevealFailure
+    // Single shared implementation now backing 4 formerly-duplicated per-SDK copies
+    // (Skyflow's RevealApiCallback/RevealByIDAPICallback/GetAPICallback and
+    // SkyflowFlowVault's FlowVaultRevealApiCallback all delegate here).
+
+    func testWrapRevealFailureNestsErrorUnderErrorKeyInsideErrorsArray() throws {
+        let errorObject = NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "boom"])
+        let result = ConversionHelpers.wrapRevealFailure(errorObject: errorObject)
+
+        let errors = try XCTUnwrap(result["errors"] as? [[String: Any]])
+        XCTAssertEqual(errors.count, 1)
+        let wrapped = try XCTUnwrap(errors[0]["error"] as? NSError)
+        XCTAssertEqual(wrapped.localizedDescription, "boom")
+    }
 }

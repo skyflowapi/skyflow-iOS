@@ -21,8 +21,6 @@ package class StateforText: State
     /// represents length of SkyflowTextField
     internal(set) open var inputLength: Int = 0
 
-//    internal(set) open var isComplete = false
-
     internal(set) open var isFocused = false
 
     internal(set) open var elementType: ElementType!

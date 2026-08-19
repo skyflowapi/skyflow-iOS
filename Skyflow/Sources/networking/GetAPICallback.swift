@@ -88,20 +88,11 @@ class GetAPICallback: Callback {
     }
 
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
-        var temp: [String: Any] = [:]
-        for (key, val) in dict {
-                if let v = val as? [String: Any] {
-                    temp[key] = buildFieldsDict(dict: v)
-                } else {
-                    temp[key] = val
-                }
-        }
-        return temp
+        return ConversionHelpers.buildFieldsDict(dict: dict)
     }
 
     private func callRevealOnFailure(callback: Callback, errorObject: Error) {
-        let result = ["errors": [["error" : errorObject]]]
-        callback.onFailure(result)
+        callback.onFailure(ConversionHelpers.wrapRevealFailure(errorObject: errorObject))
     }
     
     internal func getRequestSession(urlComponents: URLComponents?) -> (URLRequest, URLSession) {

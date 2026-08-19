@@ -5,7 +5,6 @@
 // Callback used while API callback for Collect the elements
 
 import Foundation
-import UIKit
 
 internal class InsertAPICallback: Callback {
     var apiClient: APIClient
@@ -51,15 +50,7 @@ internal class InsertAPICallback: Callback {
     }
 
     internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
-        var temp: [String: Any] = [:]
-        for (key, val) in dict {
-            if let v = val as? [String: Any] {
-                temp[key] = buildFieldsDict(dict: v)
-            } else {
-                temp[key] = val
-            }
-        }
-        return temp
+        return ConversionHelpers.buildFieldsDict(dict: dict)
     }
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
         let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)
@@ -114,30 +105,44 @@ internal class InsertAPICallback: Callback {
                 
     }
     
+    // Reads the skyflow_id out of the batch response entry at responseIndex, guarding every
+    // step of the shape (top-level dict, "records" array, first element, "skyflow_id" key) and
+    // the array bounds - a malformed or short response yields nil instead of crashing.
+    private func skyflowId(in receivedResponseArray: [Any], atResponseIndex responseIndex: Int) -> Any? {
+        guard responseIndex >= 0, responseIndex < receivedResponseArray.count,
+              let recordsWrapper = receivedResponseArray[responseIndex] as? [String: Any],
+              let recordsArray = recordsWrapper["records"] as? [Any],
+              let firstRecord = recordsArray.first as? [String: Any] else {
+            return nil
+        }
+        return firstRecord["skyflow_id"]
+    }
+
     func getCollectResponseBody(data: Data) throws -> [String: Any]{
         let originalString = String(decoding: data, as: UTF8.self)
         let changedData = Data(originalString.utf8)
-        let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as! [String: Any]
+        guard let jsonData = try JSONSerialization.jsonObject(with: changedData, options: .allowFragments) as? [String: Any],
+              let receivedResponseArray = jsonData["responses"] as? [Any],
+              let inputRecords = self.records["records"] as? [Any] else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Malformed collect response"])
+        }
         var responseEntries: [Any] = []
-
-        let receivedResponseArray = (jsonData[keyPath: "responses"] as! [Any])
-
-        let inputRecords = self.records["records"] as! [Any]
 
         let length = inputRecords.count
         for (index, _) in inputRecords.enumerated() {
             var tempEntry: [String: Any] = [:]
-            tempEntry["table"] = (inputRecords[index] as! [String: Any])["table"]
+            tempEntry["table"] = (inputRecords[index] as? [String: Any])?["table"]
             if self.options.tokens {
-                let fieldsDict = (receivedResponseArray[length + index] as! [String: Any])["fields"]
-                if fieldsDict != nil {
-                    let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict!)
+                let responseIndex = length + index
+                if responseIndex < receivedResponseArray.count,
+                   let fieldsDict = (receivedResponseArray[responseIndex] as? [String: Any])?["fields"] {
+                    let fieldsData = try JSONSerialization.data(withJSONObject: fieldsDict)
                     let fieldsObj = try JSONSerialization.jsonObject(with: fieldsData, options: .allowFragments)
                     tempEntry["fields"] = self.buildFieldsDict(dict: fieldsObj as? [String: Any] ?? [:])
-                    tempEntry[keyPath: "fields.skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
+                    tempEntry[keyPath: "fields.skyflow_id"] = skyflowId(in: receivedResponseArray, atResponseIndex: index)
                 }
             } else {
-                tempEntry["skyflow_id"] = (((receivedResponseArray[index] as! [String: Any])["records"] as! [Any])[0] as! [String: Any])["skyflow_id"]
+                tempEntry["skyflow_id"] = skyflowId(in: receivedResponseArray, atResponseIndex: index)
             }
             responseEntries.append(tempEntry)
         }

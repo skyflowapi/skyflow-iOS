@@ -89,15 +89,4 @@ final class skyflow_iOS_dormantCollectRequestBodyTests: XCTestCase {
         XCTAssertNil(requestBody)
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: "column1").getErrorObject(contextOptions: ContextOptions()).localizedDescription)
     }
-
-    func testGetUniqueColumn() {
-        let upsert: [[String: Any]] = [
-            ["table": "table1", "column": "email"],
-            ["table": "table2", "column": "ssn"]
-        ]
-
-        XCTAssertEqual(CollectRequestBody.getUniqueColumn(tableName: "table1", upsert: upsert), "email")
-        XCTAssertEqual(CollectRequestBody.getUniqueColumn(tableName: "table2", upsert: upsert), "ssn")
-        XCTAssertEqual(CollectRequestBody.getUniqueColumn(tableName: "table3", upsert: upsert), "")
-    }
 }
