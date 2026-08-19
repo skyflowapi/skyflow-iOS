@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2FCB331EB53F7D3A19C61E2E /* Pods_InputFormatting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15DB42C2155F11A364E2EA97 /* Pods_InputFormatting.framework */; };
 		3001626AF634014586294C89 /* Pods_InputFormattingTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D28B0C4C19EA3040136B35C5 /* Pods_InputFormattingTests.framework */; };
 		7C4197A629F978A8002CA73E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197A529F978A8002CA73E /* AppDelegate.swift */; };
 		7C4197A829F978A8002CA73E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197A729F978A8002CA73E /* SceneDelegate.swift */; };
@@ -21,7 +22,9 @@
 		7C4197DB29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */; };
 		7C4197DC29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */; };
 		8E4FC698E4F6F8422455BB76 /* Pods_InputFormatting_InputFormattingUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 362238A2034F5E696B5CB492 /* Pods_InputFormatting_InputFormattingUITests.framework */; };
-		96007AFE98552781CD9CA0FB /* Pods_InputFormatting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15DB42C2155F11A364E2EA97 /* Pods_InputFormatting.framework */; };
+		8ECF47BD3035F3F9008CDA94 /* SkyflowFlowVault in Frameworks */ = {isa = PBXBuildFile; productRef = 8ECF47BC3035F3F9008CDA94 /* SkyflowFlowVault */; };
+		8ECF47BF3035F451008CDA94 /* CollectInputFormattingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF47BE3035F451008CDA94 /* CollectInputFormattingViewController.swift */; };
+		8ECF47C13035F45C008CDA94 /* ComposableInputFormattingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF47C03035F45C008CDA94 /* ComposableInputFormattingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +64,8 @@
 		7C4197C629F978A9002CA73E /* InputFormattingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFormattingUITests.swift; sourceTree = "<group>"; };
 		7C4197C829F978A9002CA73E /* InputFormattingUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFormattingUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		7C4197D929F97ED2002CA73E /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
+		8ECF47BE3035F451008CDA94 /* CollectInputFormattingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectInputFormattingViewController.swift; sourceTree = "<group>"; };
+		8ECF47C03035F45C008CDA94 /* ComposableInputFormattingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposableInputFormattingViewController.swift; sourceTree = "<group>"; };
 		B4544E89336067DF84CD3C85 /* Pods-InputFormatting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InputFormatting.debug.xcconfig"; path = "Target Support Files/Pods-InputFormatting/Pods-InputFormatting.debug.xcconfig"; sourceTree = "<group>"; };
 		BD7E5EBA615A5DD2B93E86DB /* Pods-InputFormattingTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InputFormattingTests.release.xcconfig"; path = "Target Support Files/Pods-InputFormattingTests/Pods-InputFormattingTests.release.xcconfig"; sourceTree = "<group>"; };
 		D28B0C4C19EA3040136B35C5 /* Pods_InputFormattingTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InputFormattingTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,7 +77,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96007AFE98552781CD9CA0FB /* Pods_InputFormatting.framework in Frameworks */,
+				8ECF47BD3035F3F9008CDA94 /* SkyflowFlowVault in Frameworks */,
+				2FCB331EB53F7D3A19C61E2E /* Pods_InputFormatting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +126,8 @@
 		7C4197A429F978A8002CA73E /* InputFormatting */ = {
 			isa = PBXGroup;
 			children = (
+				8ECF47C03035F45C008CDA94 /* ComposableInputFormattingViewController.swift */,
+				8ECF47BE3035F451008CDA94 /* CollectInputFormattingViewController.swift */,
 				7C4197A529F978A8002CA73E /* AppDelegate.swift */,
 				7C4197A729F978A8002CA73E /* SceneDelegate.swift */,
 				7C4197A929F978A8002CA73E /* ViewController.swift */,
@@ -265,6 +273,9 @@
 				Base,
 			);
 			mainGroup = 7C41979929F978A8002CA73E;
+			packageReferences = (
+				8ECF47BB3035F3F9008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */,
+			);
 			productRefGroup = 7C4197A329F978A8002CA73E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -412,8 +423,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C4197AA29F978A8002CA73E /* ViewController.swift in Sources */,
+				8ECF47C13035F45C008CDA94 /* ComposableInputFormattingViewController.swift in Sources */,
 				7C4197DA29F97ED2002CA73E /* ExampleTokenProvider.swift in Sources */,
 				7C4197A629F978A8002CA73E /* AppDelegate.swift in Sources */,
+				8ECF47BF3035F451008CDA94 /* CollectInputFormattingViewController.swift in Sources */,
 				7C4197A829F978A8002CA73E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -758,6 +771,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8ECF47BB3035F3F9008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/skyflowapi/skyflow-iOS.git";
+			requirement = {
+				branch = release/26.8.2;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8ECF47BC3035F3F9008CDA94 /* SkyflowFlowVault */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8ECF47BB3035F3F9008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */;
+			productName = SkyflowFlowVault;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7C41979A29F978A8002CA73E /* Project object */;
 }

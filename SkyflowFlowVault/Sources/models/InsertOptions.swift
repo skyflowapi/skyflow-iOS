@@ -7,8 +7,8 @@
 import Foundation
 
 public struct InsertOptions {
-    var upsert: [UpsertOption]?
-    public init(upsert: [UpsertOption]? = nil) {
+    var upsert: [UpsertOptions]?
+    public init(upsert: [UpsertOptions]? = nil) {
         self.upsert = upsert
     }
 }

@@ -8,8 +8,8 @@ import Foundation
 
 public struct CollectOptions {
     var additionalFields: AdditionalFields?
-    var upsert: [UpsertOption]?
-    public init(additionalFields: AdditionalFields? = nil, upsert: [UpsertOption]? = nil) {
+    var upsert: [UpsertOptions]?
+    public init(additionalFields: AdditionalFields? = nil, upsert: [UpsertOptions]? = nil) {
         self.additionalFields = additionalFields
         self.upsert = upsert
     }

@@ -11,7 +11,7 @@ public enum UpdateType: String {
     case REPLACE
 }
 
-public struct UpsertOption {
+public struct UpsertOptions {
     public let tableName: String
     public let uniqueColumns: [String]
     public let updateType: UpdateType?

@@ -45,7 +45,7 @@ internal class RequestValidators {
         return nil
     }
 
-    internal static func checkUpsertOptions(_ upsert: [UpsertOption]) -> ErrorCodes? {
+    internal static func checkUpsertOptions(_ upsert: [UpsertOptions]) -> ErrorCodes? {
         if upsert.count == 0 {
             return .UPSERT_OPTION_CANNOT_BE_EMPTY()
         }

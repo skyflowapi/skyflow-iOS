@@ -212,7 +212,7 @@ internal class CollectRequestBuilder {
     }
 
     // Stage 2a: assemble the final v2 insert payload (with upsert options).
-    internal static func createInsertRequestBody(vaultID: String, records: [String: Any], upsert: [UpsertOption]? = nil) -> [String: Any] {
+    internal static func createInsertRequestBody(vaultID: String, records: [String: Any], upsert: [UpsertOptions]? = nil) -> [String: Any] {
         var recordsPayload: [[String: Any]] = []
         for record in (records["records"] as! [[String: Any]]) {
             var temp: [String: Any] = [:]

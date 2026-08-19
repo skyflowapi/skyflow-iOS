@@ -796,7 +796,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testCollectEmptyUniqueColumnsUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(tableName: "card1", uniqueColumns: [])]
+        let upsertOptions = [UpsertOptions(tableName: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
@@ -808,7 +808,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testCollectEmptyTableNameUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
+        let upsertOptions = [UpsertOptions(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let callback = DemoAPICallback(expectation: expectation)
         container?.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert:upsertOptions))
@@ -840,7 +840,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testInsertEmptyUniqueColumnsUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(tableName: "card1", uniqueColumns: [])]
+        let upsertOptions = [UpsertOptions(tableName: "card1", uniqueColumns: [])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[
@@ -861,7 +861,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
     func testInsertEmptyTableNameUpsertOption() {
         let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOption(tableName: "", uniqueColumns: ["person"])]
+        let upsertOptions = [UpsertOptions(tableName: "", uniqueColumns: ["person"])]
         let expectation = XCTestExpectation()
         let records = [
           "records" : [[

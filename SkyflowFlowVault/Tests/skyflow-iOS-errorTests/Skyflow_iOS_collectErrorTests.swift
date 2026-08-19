@@ -593,7 +593,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         XCTAssertEqual((update["id2"] as! [String: Any])["table"] as! String, "billing")
 
         // Apply upsert on top, matching only the "cards" table.
-        let upsertOptions = [UpsertOption(tableName: "cards", uniqueColumns: ["card_number"], updateType: .UPDATE)]
+        let upsertOptions = [UpsertOptions(tableName: "cards", uniqueColumns: ["card_number"], updateType: .UPDATE)]
         let wireBody = CollectRequestBuilder.createInsertRequestBody(vaultID: "vault123", records: requestBody!, upsert: upsertOptions)
         let wireRecords = wireBody["records"] as! [[String: Any]]
 

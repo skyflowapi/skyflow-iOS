@@ -15,10 +15,10 @@ internal class FlowVaultCollectAPICallback: Callback {
     var apiClient: APIClient
     var records: [String: Any]
     var callback: Callback
-    var upsert: [UpsertOption]?
+    var upsert: [UpsertOptions]?
     var contextOptions: ContextOptions
 
-    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], upsert: [UpsertOption]? = nil, contextOptions: ContextOptions) {
+    internal init(callback: Callback, apiClient: APIClient, records: [String: Any], upsert: [UpsertOptions]? = nil, contextOptions: ContextOptions) {
         self.records = records
         self.apiClient = apiClient
         self.callback = callback

@@ -118,12 +118,12 @@ final class skyflow_iOS_flowVaultSdkTests: XCTestCase {
     // MARK: - Typed models
 
     func testUpsertOptionCarriesTypedFields() {
-        let option = UpsertOption(tableName: "persons", uniqueColumns: ["email"], updateType: .REPLACE)
+        let option = UpsertOptions(tableName: "persons", uniqueColumns: ["email"], updateType: .REPLACE)
 
         XCTAssertEqual(option.tableName, "persons")
         XCTAssertEqual(option.uniqueColumns, ["email"])
         XCTAssertEqual(option.updateType, .REPLACE)
-        XCTAssertNil(UpsertOption(tableName: "persons", uniqueColumns: ["email"]).updateType)
+        XCTAssertNil(UpsertOptions(tableName: "persons", uniqueColumns: ["email"]).updateType)
     }
 
     func testAdditionalFieldsRecordDefaultsToNilSkyflowId() {
@@ -167,7 +167,7 @@ final class skyflow_iOS_flowVaultSdkTests: XCTestCase {
 
     func testCheckUpsertOptionsValidReturnsNil() {
         XCTAssertNil(RequestValidators.checkUpsertOptions([
-            UpsertOption(tableName: "persons", uniqueColumns: ["email"])
+            UpsertOptions(tableName: "persons", uniqueColumns: ["email"])
         ]))
     }
 

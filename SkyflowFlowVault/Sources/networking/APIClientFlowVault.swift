@@ -7,11 +7,11 @@
 import Foundation
 
 extension APIClient {
-    internal func postAndUpdate(records: [String: Any], callback: Callback, upsert: [UpsertOption]? = nil, contextOptions: ContextOptions) {
+    internal func postAndUpdate(records: [String: Any], callback: Callback, upsert: [UpsertOptions]? = nil, contextOptions: ContextOptions) {
         let collectApiCallback = FlowVaultCollectAPICallback(callback: callback, apiClient: self, records: records, upsert: upsert, contextOptions: contextOptions)
         self.getAccessToken(callback: collectApiCallback, contextOptions: contextOptions)
     }
-    internal func post(records: [String: Any], callback: Callback, upsert: [UpsertOption]? = nil, contextOptions: ContextOptions) {
+    internal func post(records: [String: Any], callback: Callback, upsert: [UpsertOptions]? = nil, contextOptions: ContextOptions) {
         let insertApiCallback = FlowVaultCollectAPICallback(callback: callback, apiClient: self, records: records, upsert: upsert, contextOptions: contextOptions)
         self.getAccessToken(callback: insertApiCallback, contextOptions: contextOptions)
     }

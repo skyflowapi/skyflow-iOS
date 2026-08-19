@@ -72,7 +72,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
 
         let options = CollectOptions(
             additionalFields: AdditionalFields(records: [AdditionalFieldsRecord(tableName: "contacts", data: ["email": "a@b.com"])]),
-            upsert: [UpsertOption(tableName: "persons", uniqueColumns: ["name"])])
+            upsert: [UpsertOptions(tableName: "persons", uniqueColumns: ["name"])])
 
         let expectation = XCTestExpectation(description: "composable collect should reach the network layer and fail offline")
         let callback = DemoAPICallback(expectation: expectation)
