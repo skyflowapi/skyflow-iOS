@@ -359,8 +359,7 @@ SkyflowFlowVault.CollectElementOptions(
   enableCardIcon: Boolean,         // Indicates whether card icon should be enabled (only for CARD_NUMBER inputs)
   format: String,                  // Format for the element 
   translation: [Character: String] // Indicates the allowed data type value for format.
-  enableCopy: Boolean,             // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
-  cardMetaData: [String: [SkyflowFlowVault.CardType]]      // Optional, metadata to control card number element behavior. (only applicable for CARD_NUMBER ElementType).
+  enableCopy: Boolean              // Indicates whether to enable the copy icon in collect elements to copy text to clipboard. Defaults to 'false'
 )
 ```
     
@@ -372,30 +371,6 @@ SkyflowFlowVault.CollectElementOptions(
      - if `translation` isn't specified, the `format` value is considered a string literal.
 - `translation`: A dictionary of key/value pairs, where the key is a character that appears in `format` and the value is a regex pattern of acceptable inputs for that character. Each key can only appear once. Only applicable for INPUT_FIELD elements.
 - `enableCopy`: Indicates whether to enable the copy icon in collect elements to copy text to clipboard.
-- `cardMetaData`: An object of metadata keys to control card number element behavior. It supports an optional key called `scheme`, which accepts an array of Skyflow-supported card types and determines which brands display in the card number element's card brand choice dropdown. `SkyflowFlowVault.CardType` is an enum with all Skyflow-supported card schemes.
-
-```swift
-import SkyflowFlowVault
-
-const cardMetaData = [ "scheme": [SkyflowFlowVault.CardType]] // Optional, array of skyflow supported card types.
-```
-
-#### Supported card types by SkyflowFlowVault.CardType :
-- `VISA`
-- `MASTERCARD`
-- `AMEX`
-- `DINERS_CLUB`
-- `DISCOVER`
-- `JCB`
-- `MAESTRO`
-- `UNIONPAY`
-- `HIPERCARD`
-- `CARTES_BANCAIRES`
-  
-Update cardMetaData:
-```swift
-cardNumberElement.update(updateOptions: CollectElementOptions(cardMetaData: ["scheme": [SkyflowFlowVault.CardType.CARTES_BANCAIRES, SkyflowFlowVault.CardType.MASTERCARD]]))
-```
 
 Accepted values by element type:
 
@@ -944,13 +919,11 @@ let state = [
     "isEmpty": Bool ,
     "isFocused": Bool,
     "isValid": Bool,
-    "value": String,
-    "selectedCardScheme": String // only for CARD_NUMBER element type
+    "value": String
 ]
 ```
 `Note:`
 - values of SkyflowElements will be returned in element state object only when `env` is `DEV`, else it is empty string i.e, '', but in case of CARD_NUMBER type element when the `env` is `PROD` for all the card types except AMEX, it will return first eight digits, for AMEX it will return first six digits and rest all digits in masked format.
-- `selectedCardScheme` is only populated for the `CARD_NUMBER` element state when a user chooses a card brand. By default, `selectedCardScheme` is an empty string.
  
 ##### Sample code snippet for using listeners
 ```swift
@@ -1147,7 +1120,7 @@ var containerOptions = ContainerOptions(
                         )
 ```
 ### Step 2: Create Composable Elements
-Composable Elements use the same `SkyflowFlowVault.CollectElementInput` and `SkyflowFlowVault.CollectElementOptions` schema as [basic Collect Elements](#step-2-create-a-collect-element) - see that section for the full parameter list, the `Styles`/`Style` walkthrough, and `CollectElementOptions` (including `cardMetaData`/`SkyflowFlowVault.CardType` and the `format`/`translation` tables).
+Composable Elements use the same `SkyflowFlowVault.CollectElementInput` and `SkyflowFlowVault.CollectElementOptions` schema as [basic Collect Elements](#step-2-create-a-collect-element) - see that section for the full parameter list, the `Styles`/`Style` walkthrough, and `CollectElementOptions` (including the `format`/`translation` tables).
 
 The iOS SDK supports the following composable elements:
 
