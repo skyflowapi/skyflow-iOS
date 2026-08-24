@@ -33,10 +33,8 @@ public struct CollectRecord {
         // Wire key is intentionally left as "skyflowID" here - only the public Swift-facing
         // property name changed, not the response dict this reads from.
         self.skyflowId = dict["skyflowID"] as? String
-        // Dict key is intentionally left as "fields" here - only the public Swift-facing
-        // property name changed, not the response dict this reads from. Malformed entries
-        // (wrong shape, missing "token") are dropped rather than crashing.
-        self.tokens = (dict["fields"] as? [String: Any])?.compactMapValues { value in
+        // Malformed entries (wrong shape, missing "token") are dropped rather than crashing.
+        self.tokens = (dict["tokens"] as? [String: Any])?.compactMapValues { value in
             (value as? [[String: Any]])?.compactMap(CollectRecordToken.init(dict:))
         }
         self.hashedData = (dict["hashedData"] as? [String: Any])?.compactMapValues { value in

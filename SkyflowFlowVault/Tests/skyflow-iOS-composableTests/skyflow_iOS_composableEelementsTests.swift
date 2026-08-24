@@ -474,27 +474,6 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         }
 
     }
-    func testInsertEmptyTableNameForUpsertOption() {
-        _ = skyflow.container(type: ContainerType.COMPOSABLE)
-        let upsertOptions = [UpsertOptions(tableName: "", uniqueColumns: ["person"])]
-        let expectation = XCTestExpectation()
-        let records = [
-          "records" : [[
-            "table": "card1",
-            "fields": [
-              "person" : "abcfgdyt",
-                "cvv" : "567"
-            ]
-          ]]
-        ]
-        let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = InsertOptions(upsert: upsertOptions)
-        self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
-    }
-
     func testComposableCollectEmptyVaultURL() {
         let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
         let container = clientWithEmptyURL.container(type: ContainerType.COMPOSABLE)

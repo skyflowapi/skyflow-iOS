@@ -46,7 +46,7 @@ internal enum CVVTokenReplacer {
         guard !cvvMap.isEmpty else { return records }
 
         return records.map { record in
-            guard record["error"] == nil, var fields = record["fields"] as? [String: Any] else { return record }
+            guard record["error"] == nil, var tokens = record["tokens"] as? [String: Any] else { return record }
 
             let cvvColumns: [String: String]?
             if let skyflowId = record["skyflowID"] as? String, let byId = cvvMap.byRecordId[skyflowId] {
@@ -60,11 +60,11 @@ internal enum CVVTokenReplacer {
             guard let columns = cvvColumns else { return record }
 
             for (capturedColumn, enteredValue) in columns {
-                applyMock(to: &fields, capturedColumn: capturedColumn, enteredValue: enteredValue)
+                applyMock(to: &tokens, capturedColumn: capturedColumn, enteredValue: enteredValue)
             }
 
             var record = record
-            record["fields"] = fields
+            record["tokens"] = tokens
             return record
         }
     }

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		202D90BC6EE0C59746E5FAA8 /* Pods_CollectAndRevealSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8314D439CEB6995468E7CA1B /* Pods_CollectAndRevealSample.framework */; };
-		7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */; };
 		7C2C89DE2C8F23C30076C641 /* CollectAndRevealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89DD2C8F23C30076C641 /* CollectAndRevealViewController.swift */; };
 		F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E4F272565CF0042C130 /* AppDelegate.swift */; };
 		F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E51272565CF0042C130 /* SceneDelegate.swift */; };
@@ -21,7 +20,6 @@
 
 /* Begin PBXFileReference section */
 		267485426163B1ACCD8ED25D /* Pods-CollectAndRevealSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollectAndRevealSample.debug.xcconfig"; path = "Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample.debug.xcconfig"; sourceTree = "<group>"; };
-		7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBrandChoiceSampleViewController.swift; sourceTree = "<group>"; };
 		7C2C89DD2C8F23C30076C641 /* CollectAndRevealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectAndRevealViewController.swift; sourceTree = "<group>"; };
 		8314D439CEB6995468E7CA1B /* Pods_CollectAndRevealSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CollectAndRevealSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1613E4C272565CF0042C130 /* CollectAndRevealSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollectAndRevealSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,7 +78,6 @@
 				F1613E4F272565CF0042C130 /* AppDelegate.swift */,
 				F1613E51272565CF0042C130 /* SceneDelegate.swift */,
 				F1613E53272565CF0042C130 /* ViewController.swift */,
-				7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */,
 				F1613E55272565CF0042C130 /* Main.storyboard */,
 				F1613E58272565D30042C130 /* Assets.xcassets */,
 				F1613E5A272565D30042C130 /* LaunchScreen.storyboard */,
@@ -145,8 +142,6 @@
 				Base,
 			);
 			mainGroup = F1613E43272565CF0042C130;
-			packageReferences = (
-			);
 			productRefGroup = F1613E4D272565CF0042C130 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -200,13 +195,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -225,7 +216,6 @@
 				F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */,
 				F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */,
 				7C2C89DE2C8F23C30076C641 /* CollectAndRevealViewController.swift in Sources */,
-				7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

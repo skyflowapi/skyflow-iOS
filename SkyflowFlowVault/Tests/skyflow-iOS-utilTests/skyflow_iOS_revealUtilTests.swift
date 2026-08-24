@@ -792,29 +792,5 @@ final class skyflow_iOS_revealUtilTests: XCTestCase {
         XCTAssertNil(RevealResponse(["records": "not an array"]))
     }
 
-    // Verifies the real end-to-end wiring for a whole-request failure through
-    // FlowVaultRevealAPICallback -> callRevealOnFailure -> LogCallback -> RevealCallback ->
-    // SkyflowError.wrap, using a token provider that fails immediately (no network mocking
-    // needed - TokenAPICallback's failure reaches the exact same callRevealOnFailure wrapping
-    // as a real dispatch failure would). This is the plumbing that had a real bug (SkyflowError.wrap
-    // losing the message entirely) until it was found and fixed earlier via a unit test on
-    // SkyflowError.wrap directly - this test instead confirms the full real call chain, not just
-    // the isolated function.
-    func testDetokenizeTokenProviderFailureSurfacesAsSkyflowErrorThroughRealCallChain() {
-        class FailingTokenProvider: TokenProvider {
-            func getBearerToken(_ apiCallback: Callback) {
-                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
-            }
-        }
-        let client = Client(Configuration(vaultID: "vault", vaultURL: "https://example.org/", tokenProvider: FailingTokenProvider()))
-        let expectation = XCTestExpectation(description: "TokenProvider failure surfaces as SkyflowError")
-        let callback = DemoAPICallback(expectation: expectation)
-
-        client.detokenize(records: ["records": [["token": "tok1"]]], callback: callback.asRevealCallback)
-
-        wait(for: [expectation], timeout: 10.0)
-
-        XCTAssertEqual(callback.receivedResponse, "TokenProvider error")
-    }
 
 }

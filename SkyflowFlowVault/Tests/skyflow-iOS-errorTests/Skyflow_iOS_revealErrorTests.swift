@@ -32,54 +32,6 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         skyflow = nil
     }
 
-    func getDataFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> String {
-        let expectRecords = XCTestExpectation(description: description)
-        let callback = DemoAPICallback(expectation: expectRecords)
-        skyflow.detokenize(records: records, callback: callback)
-
-        wait(for: [expectRecords], timeout: 10.0)
-        if callback.receivedResponse.isEmpty {
-            if callback.data["errors"] != nil {
-                return (callback.data["errors"] as! [NSError])[0].localizedDescription
-            } else {
-                return "ok"
-            }
-        } else {
-            return callback.receivedResponse
-        }
-    }
-
-    func testDetokenizeNoRecords() {
-        let records = ["typo": [["token": revealTestId]]]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.RECORDS_KEY_ERROR().description)
-    }
-
-    func testDetokenizeBadRecords() {
-        let records = ["records": 123]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_RECORDS_TYPE().description)
-    }
-
-    func testDetokenizeEmptyRecords() {
-        let records = ["records": []]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.EMPTY_RECORDS_OBJECT().description)
-    }
-
-    func testDetokenizeNoTokens() {
-        let records = ["records": [["foo": "bar"]]]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.ID_KEY_ERROR().description)
-    }
-
-    func testDetokenizeBadTokens() {
-        let records = ["records": [["token": []]]]
-        let result = getDataFromClientWithExpectation(records: records)
-        XCTAssertEqual(result,  ErrorCodes.INVALID_TOKEN_TYPE(value: "0").description)
-    }
-
-
     func testContainerRevealWithUnmountedElements() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)
 
@@ -126,21 +78,6 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         revealContainer?.reveal(callback: callback.asRevealCallback)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .REVEAL_CONTAINER)).localizedDescription)
-    }
-
-    func testDetokenizeEmptyVaultURL() {
-        // Client.detokenize()'s vault-level errors route through callRevealOnFailure, which
-        // wraps the NSError in {"errors": [errorObject]} rather than passing it through raw.
-        let expectation = XCTestExpectation(description: "Detokenize with empty vaultURL should fail")
-        let callback = DemoAPICallback(expectation: expectation)
-        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
-
-        clientWithEmptyURL.detokenize(records: ["records": [["token": "sometoken"]]], callback: callback)
-
-        wait(for: [expectation], timeout: 10.0)
-        let errors = callback.data["errors"] as! [NSError]
-        XCTAssertEqual(errors.count, 1)
-        XCTAssertEqual(errors[0].localizedDescription, ErrorCodes.EMPTY_VAULT_URL().description)
     }
 
 }

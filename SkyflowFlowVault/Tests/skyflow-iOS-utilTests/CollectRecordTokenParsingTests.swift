@@ -11,10 +11,10 @@ import XCTest
 
 final class CollectRecordTokenParsingTests: XCTestCase {
 
-    private func collectRecord(fields: Any?) -> CollectRecord {
+    private func collectRecord(tokens: Any?) -> CollectRecord {
         var dict: [String: Any] = ["tableName": "persons", "skyflowID": "id1", "httpCode": 200]
-        if let fields = fields {
-            dict["fields"] = fields
+        if let tokens = tokens {
+            dict["tokens"] = tokens
         }
         return CollectResponse(["records": [dict]])!.records[0]
     }
@@ -45,12 +45,12 @@ final class CollectRecordTokenParsingTests: XCTestCase {
 
     // MARK: - CollectRecord.tokens parsing
 
-    func testTokensNilWhenFieldsKeyAbsent() {
-        XCTAssertNil(collectRecord(fields: nil).tokens)
+    func testTokensNilWhenTokensKeyAbsent() {
+        XCTAssertNil(collectRecord(tokens: nil).tokens)
     }
 
     func testTokensParsesSingleTokenPerColumn() throws {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [["token": "tok-1", "tokenGroupName": "vault"]]
         ])
 
@@ -61,7 +61,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensParsesMultipleTokenGroupsForSameColumn() throws {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [
                 ["token": "tok-deterministic", "tokenGroupName": "deterministic"],
                 ["token": "tok-vault", "tokenGroupName": "vault"]
@@ -74,7 +74,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensParsesMultipleColumns() {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [["token": "tok-1", "tokenGroupName": "vault"]],
             "cvv": [["token": "tok-2", "tokenGroupName": "vault"]]
         ])
@@ -84,7 +84,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensOmitsTokenGroupNameWhenAbsent() {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [["token": "tok-1"]]
         ])
 
@@ -93,7 +93,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensParsesPathWhenPresent() {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [["token": "tok-1", "tokenGroupName": "vault", "path": "card_number"]]
         ])
 
@@ -101,7 +101,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensOmitsPathWhenAbsent() {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [["token": "tok-1"]]
         ])
 
@@ -109,7 +109,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensDropsEntryMissingTokenKey() throws {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [
                 ["tokenGroupName": "vault"],
                 ["token": "tok-1", "tokenGroupName": "deterministic"]
@@ -122,7 +122,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensDropsEntryWithNonStringTokenValue() {
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": [["token": 12345]]
         ])
 
@@ -130,18 +130,18 @@ final class CollectRecordTokenParsingTests: XCTestCase {
     }
 
     func testTokensDropsColumnWithWrongShape() {
-        // "fields" is expected to be a dict of column -> [token dict]; a column whose
+        // "tokens" is expected to be a dict of column -> [token dict]; a column whose
         // value isn't an array of dictionaries at all is dropped rather than crashing.
-        let record = collectRecord(fields: [
+        let record = collectRecord(tokens: [
             "card_number": "not an array"
         ])
 
         XCTAssertNil(record.tokens?["card_number"])
     }
 
-    func testTokensNilWhenFieldsIsJSONNull() {
+    func testTokensNilWhenTokensIsJSONNull() {
         // JSONSerialization represents a JSON `null` as NSNull, not Swift nil/absence.
-        let record = collectRecord(fields: NSNull())
+        let record = collectRecord(tokens: NSNull())
 
         XCTAssertNil(record.tokens)
     }
@@ -150,7 +150,7 @@ final class CollectRecordTokenParsingTests: XCTestCase {
         // A conditional cast to [[String: Any]] fails for the whole array if even one
         // element isn't a dictionary - the column is dropped, not partially parsed.
         let mixedArray: [Any] = [["token": "tok-1"], "not a dict"]
-        let record = collectRecord(fields: ["card_number": mixedArray])
+        let record = collectRecord(tokens: ["card_number": mixedArray])
 
         XCTAssertNil(record.tokens?["card_number"])
     }

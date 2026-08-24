@@ -4,7 +4,7 @@ Sample apps for the SkyflowFlowVault SDK (`pod 'SkyflowFlowVault'` / `import Sky
 
 | Sample | Description |
 |--------|-------------|
-| [CollectAndRevealSample](CollectAndRevealSample/) | Collect card data with secure elements and reveal tokens back to values (includes card brand choice) |
+| [CollectAndRevealSample](CollectAndRevealSample/) | Collect card data with secure elements and reveal tokens back to values |
 | [ComposableElements](ComposableElements/) | Lay out multiple secure elements together in shared rows using a composable container |
 | [InputFormatting](InputFormatting/) | Apply `format`/`translation` patterns to control how element input is displayed |
 | [UpdateDataUsingElements](UpdateDataUsingElements/) | Update existing vault records through collect elements using a skyflow ID |

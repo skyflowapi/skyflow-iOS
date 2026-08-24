@@ -39,10 +39,10 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
         let records: [[String: Any]] = [[
             "tableName": "t",
-            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+            "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
         ]]
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
-        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        let token = ((result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
         XCTAssertEqual(token, "817")
     }
 
@@ -51,10 +51,10 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
         let records: [[String: Any]] = [[
             "tableName": "t",
-            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+            "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
         ]]
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
-        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        let token = ((result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
         XCTAssertEqual(token, "8173")
     }
 
@@ -63,10 +63,10 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let map = CVVTokenReplacer.captureCVVMap(elements: [cvv])
         let records: [[String: Any]] = [[
             "tableName": "t",
-            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+            "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
         ]]
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
-        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        let token = ((result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
         XCTAssertEqual(token, "")
     }
 
@@ -87,10 +87,10 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
 
         let records: [[String: Any]] = [[
             "tableName": "t",
-            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+            "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
         ]]
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
-        let token = ((result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
+        let token = ((result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]])[0]["token"] as! String
         XCTAssertEqual(token, "real-token")
     }
 
@@ -137,14 +137,14 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let cvvMap = CVVCaptureMap(byTable: ["persons": ["cvv": ""]], byRecordId: [:])
         let records: [[String: Any]] = [[
             "tableName": "persons",
-            "fields": [
+            "tokens": [
                 "cvv": [["token": "real-token-for-empty-value", "tokenGroupName": "deterministic"]],
                 "name": [["token": "name-token", "tokenGroupName": "deterministic"]]
             ]
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
-        let fields = result[0]["fields"] as! [String: Any]
+        let fields = result[0]["tokens"] as! [String: Any]
         let cvvEntries = fields["cvv"] as! [[String: Any]]
         let nameEntries = fields["name"] as! [[String: Any]]
 
@@ -156,7 +156,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let cvvMap = CVVCaptureMap(byTable: ["persons": ["address.pincode": ""]], byRecordId: [:])
         let records: [[String: Any]] = [[
             "tableName": "persons",
-            "fields": [
+            "tokens": [
                 "address": [
                     ["token": "whole-column-token", "tokenGroupName": "deterministic"],
                     ["path": "pincode", "token": "real-pincode-token", "tokenGroupName": "deterministic"],
@@ -166,7 +166,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
-        let addressEntries = (result[0]["fields"] as! [String: Any])["address"] as! [[String: Any]]
+        let addressEntries = (result[0]["tokens"] as! [String: Any])["address"] as! [[String: Any]]
 
         let wholeColumn = addressEntries.first { $0["path"] == nil }!
         let pincode = addressEntries.first { $0["path"] as? String == "pincode" }!
@@ -187,14 +187,14 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
 
         let records: [[String: Any]] = [[
             "tableName": "nested",
-            "fields": [
+            "tokens": [
                 "card": [["path": "cvv", "token": "real-cvv-token", "tokenGroupName": "deterministic"]],
                 "address": [["path": "pincode", "token": "real-pincode-token", "tokenGroupName": "deterministic"]]
             ]
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: map)
-        let fields = result[0]["fields"] as! [String: Any]
+        let fields = result[0]["tokens"] as! [String: Any]
         let cardEntries = fields["card"] as! [[String: Any]]
         let addressEntries = fields["address"] as! [[String: Any]]
 
@@ -207,14 +207,14 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let records: [[String: Any]] = [[
             "tableName": "persons",
             "skyflowID": "SID1",
-            "fields": [
+            "tokens": [
                 "cvv": [["token": "real-token", "tokenGroupName": "deterministic"]],
                 "name": [["token": "name-token", "tokenGroupName": "deterministic"]]
             ]
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
-        let fields = result[0]["fields"] as! [String: Any]
+        let fields = result[0]["tokens"] as! [String: Any]
         let cvvEntries = fields["cvv"] as! [[String: Any]]
         let nameEntries = fields["name"] as! [[String: Any]]
 
@@ -227,7 +227,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let cvvMap = CVVCaptureMap(byTable: ["persons": ["cvv": "1234"]], byRecordId: [:])
         let records: [[String: Any]] = [[
             "tableName": "persons",
-            "fields": [
+            "tokens": [
                 "cvv": [
                     ["token": "det-token", "tokenGroupName": "deterministic"],
                     ["token": "nondet-token", "tokenGroupName": "nondeterministic"]
@@ -236,7 +236,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
-        let cvvEntries = (result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
+        let cvvEntries = (result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]]
 
         // Both token-group entries for the same column get the same hardcoded mock.
         XCTAssertEqual(cvvEntries[0]["token"] as! String, "8173")
@@ -247,7 +247,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let cvvMap = CVVCaptureMap(byTable: ["nested": ["address.pincode": "9876"]], byRecordId: [:])
         let records: [[String: Any]] = [[
             "tableName": "nested",
-            "fields": [
+            "tokens": [
                 "address": [
                     ["token": "whole-column-token", "tokenGroupName": "deterministic"],
                     ["path": "pincode", "token": "pincode-token", "tokenGroupName": "deterministic"],
@@ -257,7 +257,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
-        let addressEntries = (result[0]["fields"] as! [String: Any])["address"] as! [[String: Any]]
+        let addressEntries = (result[0]["tokens"] as! [String: Any])["address"] as! [[String: Any]]
 
         let wholeColumn = addressEntries.first { $0["path"] == nil }!
         let pincode = addressEntries.first { $0["path"] as? String == "pincode" }!
@@ -274,11 +274,11 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let records: [[String: Any]] = [[
             "tableName": "persons",
             "skyflowID": "SID1",
-            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+            "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: cvvMap)
-        let cvvEntries = (result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
+        let cvvEntries = (result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]]
 
         // byRecordId captures "222" (3-digit) → mock is "817"
         XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
@@ -289,7 +289,7 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         let records: [[String: Any]] = [
             [
                 "tableName": "persons",
-                "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]],
+                "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]],
                 "hashedData": ["cvv": [["data": "hash", "hashName": "sha256"]]]
             ],
             [
@@ -305,17 +305,17 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         XCTAssertEqual(hashEntries[0]["data"] as! String, "hash")
 
         XCTAssertEqual(result[1]["error"] as! String, "some error")
-        XCTAssertNil(result[1]["fields"])
+        XCTAssertNil(result[1]["tokens"])
     }
 
     func testReplaceIsNoOpWhenNoCVVCaptured() {
         let records: [[String: Any]] = [[
             "tableName": "persons",
-            "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+            "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
         ]]
 
         let result = CVVTokenReplacer.replaceCVVTokens(in: records, cvvMap: CVVCaptureMap())
-        let cvvEntries = (result[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
+        let cvvEntries = (result[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]]
         XCTAssertEqual(cvvEntries[0]["token"] as! String, "real-token")
     }
 
@@ -330,13 +330,13 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         masking.onSuccess([
             "records": [[
                 "tableName": "persons",
-                "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+                "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
             ]]
         ])
 
         wait(for: [expectation], timeout: 5.0)
         let records = demo.data["records"] as! [[String: Any]]
-        let cvvEntries = (records[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
+        let cvvEntries = (records[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]]
         XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
     }
 
@@ -349,14 +349,14 @@ final class skyflow_iOS_cvvMockTests: XCTestCase {
         masking.onFailure([
             "records": [[
                 "tableName": "persons",
-                "fields": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
+                "tokens": ["cvv": [["token": "real-token", "tokenGroupName": "deterministic"]]]
             ]],
             "errors": [["error": "some other record failed"]]
         ])
 
         wait(for: [expectation], timeout: 5.0)
         let records = demo.data["records"] as! [[String: Any]]
-        let cvvEntries = (records[0]["fields"] as! [String: Any])["cvv"] as! [[String: Any]]
+        let cvvEntries = (records[0]["tokens"] as! [String: Any])["cvv"] as! [[String: Any]]
         XCTAssertEqual(cvvEntries[0]["token"] as! String, "817")
     }
 }

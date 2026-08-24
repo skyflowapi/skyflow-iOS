@@ -53,113 +53,6 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         skyflow = nil
     }
     
-    func testNoRecordsKeyInPayload() {
-        let payload: [String: Any] = [
-            "typo": records
-        ]
-        
-        let expectation = XCTestExpectation(description: "Pure insert call")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        let responseData = callback.receivedResponse.utf8
-        
-        XCTAssertEqual(String(responseData), ErrorCodes.RECORDS_KEY_ERROR().description)
-    }
-    
-    func testInvalidRecordsKeyInPayload() {
-        let payload: [String: Any] = ["records": 12]
-        
-        let expectation = XCTestExpectation(description: "Pure insert call")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        let responseData = callback.receivedResponse.utf8
-        XCTAssertEqual(String(responseData), ErrorCodes.INVALID_RECORDS_TYPE().description)
-    }
-    
-    func testNoTableKeyInPayload() {
-        let payload = [
-            "records": [
-                [
-                    "fields": firstFields
-                ]
-            ]
-        ]
-        let expectation = XCTestExpectation(description: "Pure insert call")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        let responseData = callback.receivedResponse.utf8
-        
-        XCTAssertEqual(String(responseData), ErrorCodes.TABLE_KEY_ERROR(value: "\(0)").description)
-    }
-    
-    func testInvalidTableNameType() {
-        let payload = [
-            "records": [
-                [
-                    "table": 123,
-                    "fields": firstFields
-                ]
-            ]
-        ]
-        let expectation = XCTestExpectation(description: "Pure insert call")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        let responseData = callback.receivedResponse.utf8
-        
-        XCTAssertEqual(String(responseData),  ErrorCodes.INVALID_TABLE_NAME_TYPE(value: "\(0)").description)
-    }
-    
-    func testNoFieldsKeyInPayload() {
-        let payload = [
-            "records": [
-                [
-                    "table": "sometable"
-                ]
-            ]
-        ]
-        let expectation = XCTestExpectation(description: "Pure insert call")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        let responseData = callback.receivedResponse.utf8
-        
-        XCTAssertEqual(String(responseData),  ErrorCodes.FIELDS_KEY_ERROR(value: "\(0)").description)
-    }
-    
-    func testInvalidFieldsType() {
-        let payload = [
-            "records": [
-                [
-                    "table": "sometable",
-                    "fields": "firstFields"
-                ]
-            ]
-        ]
-        let expectation = XCTestExpectation(description: "Pure insert call")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: payload, options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        let responseData = callback.receivedResponse.utf8
-        
-        XCTAssertEqual(String(responseData),  ErrorCodes.INVALID_FIELDS_TYPE(value: "\(0)").description)
-    }
-    
     func testContainerNoTableName() {
         let window = UIWindow()
         let container = skyflow.container(type: ContainerType.COLLECT, options: nil)
@@ -641,17 +534,6 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         let entry = update["id1"] as! [String: Any]
         // Second element's value is skipped (continue), not merged over the first's.
         XCTAssertEqual((entry["fields"] as! [String: String])["name"], "John")
-    }
-
-    func testInsertEmptyVaultURL() {
-        let expectation = XCTestExpectation(description: "Insert with empty vaultURL should fail")
-        let callback = DemoAPICallback(expectation: expectation)
-        let clientWithEmptyURL = Client(Configuration(vaultID: "id", vaultURL: "", tokenProvider: DemoTokenProvider()))
-
-        clientWithEmptyURL.insert(records: ["records": [["table": "table", "fields": ["field": "value"]]]], callback: callback)
-
-        wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .INSERT)).localizedDescription)
     }
 
     func testCollectCallbackOnFailureParsesStructuredAPIError() {

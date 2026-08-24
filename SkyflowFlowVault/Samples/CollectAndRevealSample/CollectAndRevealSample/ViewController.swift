@@ -12,30 +12,19 @@ class ViewController: UIViewController {
         self.stackView = UIStackView()
 
         let button1 = UIButton()
-        let button2 = UIButton()
-
 
         view.backgroundColor = .white
-        
+
         button1.setTitle("Collect And Reveal View", for: .normal)
         button1.backgroundColor = .black
         button1.setTitleColor(.white, for: .normal)
         button1.frame = CGRect(x: 20, y: 70, width: 200, height: 15)
         button1.addTarget(self, action: #selector(openCollectAndRevealViewController), for: .touchUpInside)
-        
-        button2.setTitle("Open Card Brand Choice Sample", for: .normal)
-        button2.backgroundColor = .black
-        button2.setTitleColor(.white, for: .normal)
-        button2.frame = CGRect(x: 20, y: 70, width: 200, height: 15)
-        button2.addTarget(self, action: #selector(openCardBrandChoiceSampleViewController), for: .touchUpInside)
 
         button1.accessibilityIdentifier = "view1"
-        button2.accessibilityIdentifier = "view2"
 
-    
         stackView.addArrangedSubview(button1)
-        stackView.addArrangedSubview(button2)
-    
+
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.spacing = 2
@@ -62,22 +51,13 @@ class ViewController: UIViewController {
     }
     @objc private func openCollectAndRevealViewController(){
             let rootVC = CollectAndRevealViewController()
-            rootVC.title = "Card Brand Choice Sample Vie"
+            rootVC.title = "Collect And Reveal View"
             let navVC  = UINavigationController(rootViewController: rootVC)
             navVC.modalPresentationStyle = .fullScreen
 
             present(navVC, animated: true)
 
     }
-    @objc private func openCardBrandChoiceSampleViewController(){
-            let rootVC = CardBrandChoiceSampleViewController()
-            rootVC.title = "Card Brand Choice Sample View"
-            let navVC  = UINavigationController(rootViewController: rootVC)
-            navVC.modalPresentationStyle = .fullScreen
 
-            present(navVC, animated: true)
-
-    }
- 
 }
 

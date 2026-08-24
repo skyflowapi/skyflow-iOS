@@ -10,49 +10,47 @@
 import Foundation
 
 internal class CollectRequestBuilder {
-    static var tableSet: Set<String> = Set<String>()
-    static var callback: Callback?
-    static var breakFlag = false
-    static var mergedDict: [String: Any] = [:]
-    
-    internal static func addFieldsToTableSet(tableName: String, prefix: String, fields: [String: Any], contextOptions: ContextOptions) {
-        if !self.breakFlag {
-            for (key, val) in fields {
-                if val is [String: Any] {
-                    addFieldsToTableSet(tableName: tableName, prefix: prefix == "" ? key : prefix + "." + key, fields: val as! [String: Any], contextOptions: contextOptions)
+    // Returns true if a duplicate was found (and callback.onFailure has already been called) -
+    // the caller should treat that as "stop, return nil". `tableSet` is per-call local state
+    // threaded through via inout, not shared static state: two concurrent collect() calls
+    // (different containers, or a rapid double-tap) must not race on the same Set.
+    internal static func addFieldsToTableSet(tableName: String, prefix: String, fields: [String: Any], tableSet: inout Set<String>, callback: Callback, contextOptions: ContextOptions) -> Bool {
+        for (key, val) in fields {
+            if let nestedFields = val as? [String: Any] {
+                if addFieldsToTableSet(tableName: tableName, prefix: prefix == "" ? key : prefix + "." + key, fields: nestedFields, tableSet: &tableSet, callback: callback, contextOptions: contextOptions) {
+                    return true
+                }
+            } else {
+                let tableSetEntry = tableName + "-" + (prefix == "" ? key : prefix + "." + key)
+                if tableSet.contains(tableSetEntry) {
+                    callback.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: key).getErrorObject(contextOptions: contextOptions))
+                    return true
                 } else {
-                    let tableSetEntry = tableName + "-" + (prefix == "" ? key : prefix + "." + key)
-                    if tableSet.contains(tableSetEntry) {
-                        if !self.breakFlag {
-                            self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: key).getErrorObject(contextOptions: contextOptions))
-                            self.breakFlag = true
-                            return
-                        }
-                    } else {
-                        self.tableSet.insert(tableSetEntry)
-                    }
+                    tableSet.insert(tableSetEntry)
                 }
             }
         }
+        return false
     }
 
-    internal static func mergeFields(tableName: String, prefix: String, dict: [String: Any], contextOptions: ContextOptions) {
-        for(key, val) in dict {
+    // Same per-call-local pattern as addFieldsToTableSet above, for the same reentrancy reason.
+    internal static func mergeFields(tableName: String, prefix: String, dict: [String: Any], mergedDict: inout [String: Any], callback: Callback, contextOptions: ContextOptions) -> Bool {
+        for (key, val) in dict {
             let keypath = prefix == "" ? key : prefix + "." + key
-            if val is [String: Any] {
-                mergeFields(tableName: tableName, prefix: keypath, dict: val as! [String: Any], contextOptions: contextOptions)
+            if let nestedVal = val as? [String: Any] {
+                if mergeFields(tableName: tableName, prefix: keypath, dict: nestedVal, mergedDict: &mergedDict, callback: callback, contextOptions: contextOptions) {
+                    return true
+                }
             } else {
                 if mergedDict[keyPath: keypath] == nil {
                     mergedDict[keyPath: keypath] = val
                 } else {
-                    if !self.breakFlag {
-                        self.callback?.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: key).getErrorObject(contextOptions: contextOptions))
-                        self.breakFlag = true
-                        return
-                    }
+                    callback.onFailure(ErrorCodes.DUPLICATE_ADDITIONAL_FIELD_FOUND(value: key).getErrorObject(contextOptions: contextOptions))
+                    return true
                 }
             }
         }
+        return false
     }
 
     // Stage 1: gather the records from the mounted collect elements and
@@ -66,9 +64,7 @@ internal class CollectRequestBuilder {
         var tableMap: [String: Int] = [:]
         var payload: [[String: Any]] = []
         var updatePayload: [String: Any] = [:]
-        self.callback = callback
-        self.breakFlag = false
-        self.tableSet = Set<String>()
+        var tableSet = Set<String>()
         var index: Int = 0
 
         if let additionalFields = additionalFields {
@@ -78,7 +74,7 @@ internal class CollectRequestBuilder {
                 // An explicit empty-string skyflowId is a caller bug — reject it rather than
                 // silently inserting a new row where an update was intended.
                 if let skyflowId = entry.skyflowId, skyflowId.isEmpty {
-                    self.callback?.onFailure(ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index \(recordIndex)").getErrorObject(contextOptions: contextOptions))
+                    callback.onFailure(ErrorCodes.EMPTY_SKYFLOW_ID(value: "additional fields record at index \(recordIndex)").getErrorObject(contextOptions: contextOptions))
                     return nil
                 }
                 if let skyflowId = entry.skyflowId, !skyflowId.isEmpty {
@@ -102,22 +98,20 @@ internal class CollectRequestBuilder {
                     continue
                 }
                 if tableMap[tableName] != nil {
-                    let inputEntry = payload[tableMap[tableName]!]
-                    mergedDict = inputEntry["fields"] as! [String: Any]
-                    self.mergeFields(tableName: tableName, prefix: "", dict: fields, contextOptions: contextOptions)
-                    if self.breakFlag {
+                    var mergedDict = payload[tableMap[tableName]!]["fields"] as! [String: Any]
+                    let hadDuplicate = self.mergeFields(tableName: tableName, prefix: "", dict: fields, mergedDict: &mergedDict, callback: callback, contextOptions: contextOptions)
+                    if hadDuplicate {
                         return nil
                     }
                     payload[tableMap[tableName]!]["fields"] = mergedDict
-                    mergedDict = [:]
                 } else {
                     tableMap[tableName] = index
                     let temp: [String: Any] = [
                         "table": tableName,
                         "fields": fields
                     ]
-                    self.addFieldsToTableSet(tableName: tableName, prefix: "", fields: fields, contextOptions: contextOptions)
-                    if self.breakFlag {
+                    let hadDuplicate = self.addFieldsToTableSet(tableName: tableName, prefix: "", fields: fields, tableSet: &tableSet, callback: callback, contextOptions: contextOptions)
+                    if hadDuplicate {
                         return nil
                     }
                     payload.append(temp)
@@ -138,7 +132,7 @@ internal class CollectRequestBuilder {
             // Same guard as additionalFields above: CollectElementInput now defaults
             // skyflowId to nil, so an empty string can only be an explicit caller mistake.
             if let skyflowId = skyflowId, skyflowId.isEmpty {
-                self.callback?.onFailure(ErrorCodes.EMPTY_SKYFLOW_ID(value: "element with column '\(columnName)'").getErrorObject(contextOptions: contextOptions))
+                callback.onFailure(ErrorCodes.EMPTY_SKYFLOW_ID(value: "element with column '\(columnName)'").getErrorObject(contextOptions: contextOptions))
                 return nil
             }
             if let skyflowId = skyflowId, !skyflowId.isEmpty {
@@ -155,7 +149,7 @@ internal class CollectRequestBuilder {
                         }
                         if(!hasElementValueMatchRule)
                         {
-                            self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [ element.columnName, element.tableName!]).getErrorObject(contextOptions: contextOptions))
+                            callback.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [ element.columnName, element.tableName!]).getErrorObject(contextOptions: contextOptions))
                             return nil
                         }
                         continue;
@@ -188,12 +182,12 @@ internal class CollectRequestBuilder {
                         }
                         if(!hasElementValueMatchRule)
                         {
-                            self.callback?.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [ element.columnName, element.tableName!]).getErrorObject(contextOptions: contextOptions))
+                            callback.onFailure(ErrorCodes.DUPLICATE_ELEMENT_FOUND(values: [ element.columnName, element.tableName!]).getErrorObject(contextOptions: contextOptions))
                             return nil
                         }
                         continue;
                     }
-                    self.tableSet.insert(tableSetEntry)
+                    tableSet.insert(tableSetEntry)
                     payload[tableMap[(element.tableName)!]!] = temp
                 } else {
                     tableMap[(element.tableName)!] = index
@@ -203,7 +197,7 @@ internal class CollectRequestBuilder {
                         "fields": [:]
                     ]
                     temp[keyPath: "fields." + element.columnName!] = element.getValue()
-                    self.tableSet.insert(element.tableName! + "-" + element.columnName)
+                    tableSet.insert(element.tableName! + "-" + element.columnName)
                     payload.append(temp)
                 }
             }

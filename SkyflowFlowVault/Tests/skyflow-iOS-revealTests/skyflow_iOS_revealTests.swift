@@ -44,15 +44,6 @@ class skyflow_iOS_revealTests: XCTestCase {
         return revealElementInput
     }
 
-    func getDataFromClientWithExpectation(description: String = "should get records", records: [String: Any]) -> Data {
-        let expectRecords = XCTestExpectation(description: description)
-        let callback = DemoAPICallback(expectation: expectRecords)
-        skyflow.detokenize(records: records, callback: callback)
-
-        wait(for: [expectRecords], timeout: 10.0)
-        return Data(callback.receivedResponse.utf8)
-    }
-
     func testRevealElementInput() {
         let revealElementInput = getRevealElementInput()
 
@@ -116,36 +107,6 @@ class skyflow_iOS_revealTests: XCTestCase {
 
         XCTAssertTrue(compareDictionaries(dict1: result, dict2: requestBody))
     }
-    
-    func testDetokenizeInvalidToken() {
-        
-        class InvalidTokenProvider: TokenProvider {
-            func getBearerToken(_ apiCallback: Callback) {
-                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
-            }
-        }
-        
-        let skyflow = Client(
-            Configuration(vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
-                          vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
-                          tokenProvider: InvalidTokenProvider()))
-        
-        let defaultRecords = ["records": [["token": self.revealTestId]]]
-        
-        let expectRecords = XCTestExpectation(description: description)
-        let callback = DemoAPICallback(expectation: expectRecords)
-        skyflow.detokenize(records: defaultRecords, callback: callback)
-
-        wait(for: [expectRecords], timeout: 10.0)
-        
-        let errorEntry = (callback.data["errors"] as? [Any])?[0]
-        
-        let errorMessage = ((errorEntry as? [String: Any])?["error"] as? Error)?.localizedDescription
-
-        XCTAssertEqual(errorMessage, "TokenProvider error")
-
-    }
-    
     
     func testSetError() {
         let revealContainer = skyflow.container(type: ContainerType.REVEAL, options: nil)

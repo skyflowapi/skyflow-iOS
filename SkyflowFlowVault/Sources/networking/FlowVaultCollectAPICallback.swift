@@ -66,8 +66,18 @@ internal class FlowVaultCollectAPICallback: Callback {
         }
 
         let group = DispatchGroup()
-        var mergedRecords: [[String: Any]] = []
-        var mergedErrors: [[String: Any]] = []
+        // The insert and update sub-requests each build their OWN URLSession (see
+        // getRequestSession/getUpdateRequestSession), and a session created without an explicit
+        // delegateQueue makes its own serial queue - so these two completion handlers run on two
+        // different queues and CAN fire concurrently. Sharing one accumulator between them would be
+        // a data race on a non-thread-safe Swift Array (corrupting it, then crashing later when the
+        // merged records are read back). So each side gets its own pair: every accumulator below has
+        // exactly one writer, and they're only read from group.notify, which DispatchGroup
+        // guarantees happens-after both leave() calls. No locking required.
+        var insertResponseRecords: [[String: Any]] = []
+        var insertResponseErrors: [[String: Any]] = []
+        var updateResponseRecords: [[String: Any]] = []
+        var updateResponseErrors: [[String: Any]] = []
 
         if hasInsert {
             group.enter()
@@ -79,21 +89,25 @@ internal class FlowVaultCollectAPICallback: Callback {
                         do {
                             let response = try self.processResponse(data: data, response: response, error: error)
                             if response["error"] != nil {
-                                mergedErrors.append(response)
+                                insertResponseErrors.append(response)
                             } else {
-                                mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
+                                insertResponseRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
                             }
                         } catch {
-                            mergedErrors.append(["error": error.localizedDescription])
+                            // as NSError: any Swift Error bridges to NSError, giving SkyflowError.wrap
+                            // (its "errors" array branch checks `nested["error"] as? NSError`) a shape
+                            // it can actually unwrap into a real domain/code/message, instead of falling
+                            // through to a generic code:0 error with a raw Swift-interpolated string.
+                            insertResponseErrors.append(["error": error as NSError])
                         }
                     }
                     task.resume()
                 } catch let error {
-                    mergedErrors.append(["error": error.localizedDescription])
+                    insertResponseErrors.append(["error": error as NSError])
                     group.leave()
                 }
             } else {
-                mergedErrors.append(["error": ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions).localizedDescription])
+                insertResponseErrors.append(["error": ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions)])
                 group.leave()
             }
         }
@@ -108,26 +122,32 @@ internal class FlowVaultCollectAPICallback: Callback {
                         do {
                             let response = try self.processResponse(data: data, response: response, error: error)
                             if response["error"] != nil {
-                                mergedErrors.append(response)
+                                updateResponseErrors.append(response)
                             } else {
-                                mergedRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
+                                updateResponseRecords.append(contentsOf: response["records"] as? [[String: Any]] ?? [])
                             }
                         } catch {
-                            mergedErrors.append(["error": error.localizedDescription])
+                            // See the matching insert-side catch above for why `as NSError`
+                            // (not .localizedDescription) is required here.
+                            updateResponseErrors.append(["error": error as NSError])
                         }
                     }
                     task.resume()
                 } catch let error {
-                    mergedErrors.append(["error": error.localizedDescription])
+                    updateResponseErrors.append(["error": error as NSError])
                     group.leave()
                 }
             } else {
-                mergedErrors.append(["error": ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions).localizedDescription])
+                updateResponseErrors.append(["error": ErrorCodes.INVALID_URL().getErrorObject(contextOptions: self.contextOptions)])
                 group.leave()
             }
         }
 
         group.notify(queue: .main) {
+            // Insert results first, then update results - a deterministic order, rather than
+            // "whichever request happened to finish first" as a shared accumulator would give.
+            let mergedRecords = insertResponseRecords + updateResponseRecords
+            let mergedErrors = insertResponseErrors + updateResponseErrors
             if mergedErrors.isEmpty {
                 self.callback.onSuccess(["records": mergedRecords])
             } else {
@@ -151,9 +171,6 @@ internal class FlowVaultCollectAPICallback: Callback {
         return updateRecords
     }
 
-    internal func buildFieldsDict(dict: [String: Any]) -> [String: Any] {
-        return ConversionHelpers.buildFieldsDict(dict: dict)
-    }
     internal func getRequestSession(url: URL) throws -> (URLRequest, URLSession) {
         let jsonString = FetchMetrices().buildMetadataHeaderValue(sdkName: self.contextOptions.sdkName)
         var request = URLRequest(url: url)
@@ -257,14 +274,14 @@ internal class FlowVaultCollectAPICallback: Callback {
                 var successEntry: [String: Any] = [:]
                 if let skyflowID = entry["skyflowID"] { successEntry["skyflowID"] = skyflowID }
                 if let tableName = entry["tableName"] { successEntry["tableName"] = tableName }
-                var fields: [String: Any] = [:]
-                if let tokens = entry["tokens"] as? [String: Any] {
-                    for (column, tokenValue) in self.buildFieldsDict(dict: tokens) {
-                        fields[column] = tokenValue
-                    }
-                }
-                successEntry["fields"] = fields
-                if let hashedData = entry["hashedData"] as? [String: Any] { successEntry["hashedData"] = self.buildFieldsDict(dict: hashedData) }
+                // Both keys keep the FlowDB v2 wire names verbatim, and both are conditional: a
+                // record with only non-tokenized additionalFields data has no "tokens" key at all,
+                // and CollectRecord.tokens must read as nil (not [:]) in that case. Do not rename
+                // these to the legacy PDB v1 SDK's "fields" vocabulary - the response contract this
+                // intermediate dict carries is v2's, and the rename previously masked the
+                // tokens/hashedData asymmetry that caused exactly that nil-vs-[:] bug.
+                if let tokens = entry["tokens"] as? [String: Any] { successEntry["tokens"] = tokens }
+                if let hashedData = entry["hashedData"] as? [String: Any] { successEntry["hashedData"] = hashedData }
                 if let httpCode = entry["httpCode"] { successEntry["httpCode"] = httpCode }
                 records.append(successEntry)
             }

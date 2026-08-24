@@ -60,14 +60,4 @@ internal class RequestValidators {
         return nil
     }
 
-    internal static func checkDetokenizeRecord(token: [String: Any], index: Int) -> ErrorCodes? {
-        if token["token"] == nil {
-            return .ID_KEY_ERROR()
-        } else {
-            guard let _ = token["token"] as? String else {
-                return .INVALID_TOKEN_TYPE(value: "\(index)")
-            }
-        }
-        return nil
-    }
 }

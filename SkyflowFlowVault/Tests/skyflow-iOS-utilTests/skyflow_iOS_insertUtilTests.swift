@@ -19,13 +19,6 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
                                                   contextOptions: ContextOptions())
     }
 
-    func testBuildFieldsDict() {
-        let dict = ["key": "value", "nested": ["key": "value"]] as [String: Any]
-        let result = self.collectCallback.buildFieldsDict(dict: dict)
-        XCTAssertEqual(dict["key"] as! String, result["key"] as! String)
-        XCTAssertEqual(dict["nested"] as! [String: String], result["nested"] as! [String: String])
-    }
-
     func testOnSuccessInvalidUrl() {
         let expectation = XCTestExpectation(description: "Invalid URL should trigger failure")
         let callback = DemoAPICallback(expectation: expectation)
@@ -87,7 +80,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             XCTAssertEqual(records.count, 1)
             XCTAssertEqual(records[0]["tableName"] as! String, "table")
             XCTAssertEqual(records[0]["skyflowID"] as! String, "SID")
-            let fields = records[0]["fields"] as! [String: Any]
+            let fields = records[0]["tokens"] as! [String: Any]
             let fieldTokens = fields["field"] as! [[String: Any]]
             XCTAssertEqual(fieldTokens[0]["token"] as? String, "tok")
         } catch {
@@ -112,8 +105,8 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
 
             XCTAssertEqual(records.count, 1)
             XCTAssertEqual(records[0]["httpCode"] as? Int, 200)
-            let fields = records[0]["fields"] as! [String: Any]
-            XCTAssertNil(fields["data"])
+            // No "tokens" key in the raw response - it should be absent entirely, not [:].
+            XCTAssertNil(records[0]["tokens"])
             XCTAssertEqual(records[0]["hashedData"] as! [String: String], ["field": "hashed-value"])
         } catch {
             XCTFail(error.localizedDescription)
@@ -256,7 +249,7 @@ final class skyflow_iOS_insertUtilTests: XCTestCase {
             XCTAssertEqual(insertRecords.count, 1)
             XCTAssertEqual(insertRecords[0]["tableName"] as? String, "table")
             XCTAssertEqual(insertRecords[0]["skyflowID"] as? String, "SID")
-            let fields = insertRecords[0]["fields"] as! [String: Any]
+            let fields = insertRecords[0]["tokens"] as! [String: Any]
             XCTAssertEqual(fields["field"] as? String, "value")
         } catch {
             XCTFail("Insert scenario failed: \(error)")

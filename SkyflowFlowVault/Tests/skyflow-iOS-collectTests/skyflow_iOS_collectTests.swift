@@ -353,47 +353,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         XCTAssertEqual(charset, skyflowCharset)
     }
     
-    func testInsertWithInvalidToken() {
-        class InvalidTokenProvider: TokenProvider {
-            func getBearerToken(_ apiCallback: Callback) {
-                apiCallback.onFailure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "TokenProvider error"]))
-            }
-        }
-        
-        let skyflow = Client(
-            Configuration(
-                vaultID: (ProcessInfo.processInfo.environment["VAULT_ID"] ?? "dummy_vault_id"),
-                vaultURL: (ProcessInfo.processInfo.environment["VAULT_URL"] ?? "https://dummy.vault.skyflowapis.dev/"),
-                tokenProvider: InvalidTokenProvider()))
-        
-        let records: [[String: Any]] = [
-            ["table": "persons",
-             "fields":
-                ["cvv": "123",
-                 "cardexpiration": "1221",
-                 "cardnumber": "1232132132311231",
-                 "name": ["first_name": "Bob"]
-                 ]
-            ],
-            ["table": "persons",
-             "fields":
-                ["cvv": "123",
-                 "cardexpiration": "1221",
-                 "cardnumber": "1232132132311231",
-                 "name": ["first_name": "Bob"]
-                 ]
-            ]
-        ]
-        let expectation = XCTestExpectation(description: "Pure insert with invalid token")
-        
-        let callback = DemoAPICallback(expectation: expectation)
-        skyflow.insert(records: ["records": records], options: InsertOptions(), callback: callback)
-        
-        wait(for: [expectation], timeout: 10.0)
-        
-        XCTAssertEqual(callback.receivedResponse, "TokenProvider error")
-    }
-    
     func testForCardNumber() {
         let card = CardType.forCardNumber(cardNumber: "4111111111111111").instance
         XCTAssertEqual(card.defaultName, "Visa")
@@ -816,68 +775,6 @@ final class skyflow_iOS_collectTests: XCTestCase {
         wait(for: [expectation], timeout: 20.0)
 
         XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
-    }
-
-    func testInsertEmptyUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let expectation = XCTestExpectation()
-        let records = [
-          "records" : [[
-            "table": "card1",
-            "fields": [
-              "person" : "abcfgdyt",
-                "cvv" : "567"
-            ]
-          ]]
-        ]
-        let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = InsertOptions(upsert: [])
-        self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
-    }
-
-    func testInsertEmptyUniqueColumnsUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOptions(tableName: "card1", uniqueColumns: [])]
-        let expectation = XCTestExpectation()
-        let records = [
-          "records" : [[
-            "table": "card1",
-            "fields": [
-              "person" : "abcfgdyt",
-                "cvv" : "567"
-            ]
-          ]]
-        ]
-        let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = InsertOptions(upsert: upsertOptions)
-        self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
-    }
-
-    func testInsertEmptyTableNameUpsertOption() {
-        let container = skyflow.container(type: ContainerType.COLLECT)
-        let upsertOptions = [UpsertOptions(tableName: "", uniqueColumns: ["person"])]
-        let expectation = XCTestExpectation()
-        let records = [
-          "records" : [[
-            "table": "card1",
-            "fields": [
-              "person" : "abcfgdyt",
-                "cvv" : "567"
-            ]
-          ]]
-        ]
-        let callback = DemoAPICallback(expectation: expectation)
-        let insertOptions = InsertOptions(upsert: upsertOptions)
-        self.skyflow?.insert(records: records, options: insertOptions, callback: callback)
-        wait(for: [expectation], timeout: 20.0)
-
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.INSERT)).localizedDescription)
     }
 
     func testUnmount() {
