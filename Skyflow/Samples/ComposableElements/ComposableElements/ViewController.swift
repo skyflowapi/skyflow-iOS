@@ -8,7 +8,7 @@ import Skyflow
 class ViewController: UIViewController {
     var retryCount = 0
     private var skyflow: Skyflow.Client?
-    private var container: Skyflow.Container<Skyflow.CollectContainer>?
+    private var container: Skyflow.Container<Skyflow.ComposableContainer>?
     private var revealContainer: Skyflow.Container<Skyflow.RevealContainer>?
     private var b: UIButton?
 
@@ -129,7 +129,9 @@ class ViewController: UIViewController {
             revealButton.addTarget(self, action: #selector(revealForm), for: .touchUpInside)
 
             do {
-                let composableView = try container?.getComposableView()
+                 let composableView = try container?.getComposableView() else {
+                    print("error")
+                }
                 stackView.addArrangedSubview(composableView)
             } catch {
                 print(error)

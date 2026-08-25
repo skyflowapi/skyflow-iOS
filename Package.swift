@@ -9,11 +9,11 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        // PDB vault SDK
+        // Skyflow SDK
         .library(
             name: "Skyflow",
             targets: ["Skyflow"]),
-        // FlowVault SDK
+        // SkyflowFlowVault SDK
         .library(
             name: "SkyflowFlowVault",
             targets: ["SkyflowFlowVault"]),
@@ -31,20 +31,16 @@ let package = Package(
                    .process("Resources")
                  ]
             ),
-        // Legacy (v1) contract layer.
         .target(
             name: "Skyflow",
             dependencies: ["SkyflowCore"],
             path: "Skyflow/Sources"
             ),
-        // FlowVault (v2) contract layer.
         .target(
             name: "SkyflowFlowVault",
             dependencies: ["SkyflowCore"],
             path: "SkyflowFlowVault/Sources"
             ),
-        // Tests for the legacy (v1) SDK live under Skyflow/Tests/,
-        // FlowVault (v2) SDK tests under SkyflowFlowVault/Tests/.
         .testTarget(
             name: "skyflow-iOS-collectTests",
             dependencies: ["SkyflowFlowVault", "SkyflowCore"],

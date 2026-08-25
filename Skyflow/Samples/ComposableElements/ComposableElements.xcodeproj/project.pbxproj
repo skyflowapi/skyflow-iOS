@@ -16,6 +16,11 @@
 		7C5748DE2A7B71DF002D64AA /* ComposableElementsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5748DD2A7B71DF002D64AA /* ComposableElementsTests.swift */; };
 		7C5748E82A7B71DF002D64AA /* ComposableElementsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5748E72A7B71DF002D64AA /* ComposableElementsUITests.swift */; };
 		7C5748EA2A7B71DF002D64AA /* ComposableElementsUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5748E92A7B71DF002D64AA /* ComposableElementsUITestsLaunchTests.swift */; };
+		8ECF48F6303DCA7D008CDA94 /* Skyflow in Frameworks */ = {isa = PBXBuildFile; productRef = 8ECF48F5303DCA7D008CDA94 /* Skyflow */; };
+		8ECF48FB303DCB71008CDA94 /* ResponseStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF48F9303DCB71008CDA94 /* ResponseStructs.swift */; };
+		8ECF48FC303DCB71008CDA94 /* ExampleAPICallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF48F7303DCB71008CDA94 /* ExampleAPICallback.swift */; };
+		8ECF48FD303DCB71008CDA94 /* Untitled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF48FA303DCB71008CDA94 /* Untitled.swift */; };
+		8ECF48FE303DCB71008CDA94 /* ExampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF48F8303DCB71008CDA94 /* ExampleTokenProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +54,10 @@
 		7C5748E32A7B71DF002D64AA /* ComposableElementsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ComposableElementsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C5748E72A7B71DF002D64AA /* ComposableElementsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposableElementsUITests.swift; sourceTree = "<group>"; };
 		7C5748E92A7B71DF002D64AA /* ComposableElementsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposableElementsUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8ECF48F7303DCB71008CDA94 /* ExampleAPICallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAPICallback.swift; sourceTree = "<group>"; };
+		8ECF48F8303DCB71008CDA94 /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
+		8ECF48F9303DCB71008CDA94 /* ResponseStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseStructs.swift; sourceTree = "<group>"; };
+		8ECF48FA303DCB71008CDA94 /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8ECF48F6303DCA7D008CDA94 /* Skyflow in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +109,10 @@
 		7C5748C52A7B71DF002D64AA /* ComposableElements */ = {
 			isa = PBXGroup;
 			children = (
+				8ECF48F7303DCB71008CDA94 /* ExampleAPICallback.swift */,
+				8ECF48F8303DCB71008CDA94 /* ExampleTokenProvider.swift */,
+				8ECF48F9303DCB71008CDA94 /* ResponseStructs.swift */,
+				8ECF48FA303DCB71008CDA94 /* Untitled.swift */,
 				7C5748C62A7B71DF002D64AA /* AppDelegate.swift */,
 				7C5748C82A7B71DF002D64AA /* SceneDelegate.swift */,
 				7C5748CA2A7B71DF002D64AA /* ViewController.swift */,
@@ -215,6 +229,9 @@
 				Base,
 			);
 			mainGroup = 7C5748BA2A7B71DF002D64AA;
+			packageReferences = (
+				8ECF48F4303DCA7D008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */,
+			);
 			productRefGroup = 7C5748C42A7B71DF002D64AA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -258,6 +275,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8ECF48FB303DCB71008CDA94 /* ResponseStructs.swift in Sources */,
+				8ECF48FC303DCB71008CDA94 /* ExampleAPICallback.swift in Sources */,
+				8ECF48FD303DCB71008CDA94 /* Untitled.swift in Sources */,
+				8ECF48FE303DCB71008CDA94 /* ExampleTokenProvider.swift in Sources */,
 				7C5748CB2A7B71DF002D64AA /* ViewController.swift in Sources */,
 				7C5748C72A7B71DF002D64AA /* AppDelegate.swift in Sources */,
 				7C5748C92A7B71DF002D64AA /* SceneDelegate.swift in Sources */,
@@ -596,6 +617,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8ECF48F4303DCA7D008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/skyflowapi/skyflow-iOS.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.25.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8ECF48F5303DCA7D008CDA94 /* Skyflow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8ECF48F4303DCA7D008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */;
+			productName = Skyflow;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7C5748BB2A7B71DF002D64AA /* Project object */;
 }

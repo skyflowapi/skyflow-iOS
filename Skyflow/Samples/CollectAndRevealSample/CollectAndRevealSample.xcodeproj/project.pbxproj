@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		7C2C89D82C89C9520076C641 /* CardBrandChoiceSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */; };
 		7C2C89DE2C8F23C30076C641 /* CollectAndRevealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2C89DD2C8F23C30076C641 /* CollectAndRevealViewController.swift */; };
-		7C2C89E52C8F25C50076C641 /* libSkyflow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C2C89E42C8F25C50076C641 /* libSkyflow.a */; };
+		8ECF48F3303DC8DB008CDA94 /* Skyflow in Frameworks */ = {isa = PBXBuildFile; productRef = 8ECF48F2303DC8DB008CDA94 /* Skyflow */; };
 		F1613E50272565CF0042C130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E4F272565CF0042C130 /* AppDelegate.swift */; };
 		F1613E52272565CF0042C130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E51272565CF0042C130 /* SceneDelegate.swift */; };
 		F1613E54272565CF0042C130 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1613E53272565CF0042C130 /* ViewController.swift */; };
@@ -22,12 +22,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		267485426163B1ACCD8ED25D /* Pods-CollectAndRevealSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollectAndRevealSample.debug.xcconfig"; path = "Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample.debug.xcconfig"; sourceTree = "<group>"; };
 		7C2C89D72C89C9520076C641 /* CardBrandChoiceSampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBrandChoiceSampleViewController.swift; sourceTree = "<group>"; };
 		7C2C89DD2C8F23C30076C641 /* CollectAndRevealViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectAndRevealViewController.swift; sourceTree = "<group>"; };
 		7C2C89E22C8F25BC0076C641 /* libSkyflow.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSkyflow.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C2C89E42C8F25C50076C641 /* libSkyflow.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSkyflow.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7F5C5B124A49D66E3C560B0D /* libPods-CollectAndRevealSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CollectAndRevealSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1613E4C272565CF0042C130 /* CollectAndRevealSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollectAndRevealSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1613E4F272565CF0042C130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F1613E51272565CF0042C130 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -39,7 +37,6 @@
 		F1613E642725663C0042C130 /* ExampleAPICallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAPICallback.swift; sourceTree = "<group>"; };
 		F1613E672725665D0042C130 /* ExampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenProvider.swift; sourceTree = "<group>"; };
 		F1613E6A272566800042C130 /* ResponseStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseStructs.swift; sourceTree = "<group>"; };
-		F2D4C9A9B1D1DF56AC7781D1 /* Pods-CollectAndRevealSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollectAndRevealSample.release.xcconfig"; path = "Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C2C89E52C8F25C50076C641 /* libSkyflow.a in Frameworks */,
+				8ECF48F3303DC8DB008CDA94 /* Skyflow in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +56,6 @@
 			children = (
 				7C2C89E42C8F25C50076C641 /* libSkyflow.a */,
 				7C2C89E22C8F25BC0076C641 /* libSkyflow.a */,
-				7F5C5B124A49D66E3C560B0D /* libPods-CollectAndRevealSample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -104,8 +100,6 @@
 		F5228315517A6F192340BB03 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				267485426163B1ACCD8ED25D /* Pods-CollectAndRevealSample.debug.xcconfig */,
-				F2D4C9A9B1D1DF56AC7781D1 /* Pods-CollectAndRevealSample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -117,11 +111,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F1613E60272565D30042C130 /* Build configuration list for PBXNativeTarget "CollectAndRevealSample" */;
 			buildPhases = (
-				3637DA27D226A0C61251962A /* [CP] Check Pods Manifest.lock */,
 				F1613E48272565CF0042C130 /* Sources */,
 				F1613E49272565CF0042C130 /* Frameworks */,
 				F1613E4A272565CF0042C130 /* Resources */,
-				A51B28A216E438D119DD19DB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -129,6 +121,7 @@
 			);
 			name = CollectAndRevealSample;
 			packageProductDependencies = (
+				8ECF48F2303DC8DB008CDA94 /* Skyflow */,
 			);
 			productName = CollectAndRevealSample;
 			productReference = F1613E4C272565CF0042C130 /* CollectAndRevealSample.app */;
@@ -158,7 +151,7 @@
 			);
 			mainGroup = F1613E43272565CF0042C130;
 			packageReferences = (
-				7C2C89DF2C8F25360076C641 /* XCRemoteSwiftPackageReference "skyflow-iOS" */,
+				8ECF48F1303DC8DB008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */,
 			);
 			productRefGroup = F1613E4D272565CF0042C130 /* Products */;
 			projectDirPath = "";
@@ -181,48 +174,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		3637DA27D226A0C61251962A /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CollectAndRevealSample-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A51B28A216E438D119DD19DB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CollectAndRevealSample/Pods-CollectAndRevealSample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F1613E48272565CF0042C130 /* Sources */ = {
@@ -380,7 +331,6 @@
 		};
 		F1613E61272565D30042C130 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 267485426163B1ACCD8ED25D /* Pods-CollectAndRevealSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -399,7 +349,6 @@
 		};
 		F1613E62272565D30042C130 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F2D4C9A9B1D1DF56AC7781D1 /* Pods-CollectAndRevealSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -440,15 +389,23 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		7C2C89DF2C8F25360076C641 /* XCRemoteSwiftPackageReference "skyflow-iOS" */ = {
+		8ECF48F1303DC8DB008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/skyflowapi/skyflow-iOS.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.23.0;
+				kind = exactVersion;
+				version = 1.25.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8ECF48F2303DC8DB008CDA94 /* Skyflow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8ECF48F1303DC8DB008CDA94 /* XCRemoteSwiftPackageReference "skyflow-iOS" */;
+			productName = Skyflow;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F1613E44272565CF0042C130 /* Project object */;
 }

@@ -366,7 +366,7 @@
 			repositoryURL = "https://github.com/skyflowapi/skyflow-iOS.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.16.6;
+				version = 1.25.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
