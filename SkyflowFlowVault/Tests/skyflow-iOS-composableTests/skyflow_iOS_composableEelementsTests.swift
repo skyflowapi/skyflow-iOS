@@ -41,7 +41,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().describedFor(productName: "SkyflowFlowVault"))" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -62,7 +62,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().describedFor(productName: "SkyflowFlowVault"))" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -82,7 +82,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().describedFor(productName: "SkyflowFlowVault"))" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -102,7 +102,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().describedFor(productName: "SkyflowFlowVault"))" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -122,7 +122,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
         do {
             _ = try container?.getComposableView()
         } catch {
-            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ]).localizedDescription)
+            XCTAssertEqual(error.localizedDescription.description, SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().describedFor(productName: "SkyflowFlowVault"))" ]).localizedDescription)
         }
         XCTAssertEqual(bstyle.borderColor, UIColor.blue)
     }
@@ -484,7 +484,7 @@ final class skyflow_iOS_composableEelementsTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COMPOSABLE_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
     func testCreateRows() {
         let elements = [1, 2]

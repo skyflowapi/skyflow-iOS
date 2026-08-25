@@ -35,7 +35,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
         container!.collect(callback: callback.asCollectCallback)
 
         wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "name").description)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "name").describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testComposableCollectEmptyAdditionalFieldsRecordsFails() {
@@ -48,7 +48,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
         container!.collect(callback: callback.asCollectCallback, options: CollectOptions(additionalFields: AdditionalFields(records: [])))
 
         wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().description)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testComposableCollectEmptyUpsertFails() {
@@ -61,7 +61,7 @@ final class skyflow_iOS_composableFlowTests: XCTestCase {
         container!.collect(callback: callback.asCollectCallback, options: CollectOptions(upsert: []))
 
         wait(for: [expectation], timeout: 10.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().description)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testComposableCollectValidElementRunsFullRequestFlow() {

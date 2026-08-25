@@ -688,7 +688,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 20.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_ID().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_ID().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
     
     func testCollectNoVaultURL() {
@@ -700,7 +700,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
         container?.collect(callback: callback.asCollectCallback)
         
         wait(for: [expectation], timeout: 20.0)
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
     
     func testCollectEmptyRecordsAddionalFields() {
@@ -713,7 +713,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_RECORDS_OBJECT().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
 
     func testCollectEmptyTableAddionalFields() {
@@ -726,7 +726,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_TABLE_NAME().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_TABLE_NAME().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
 
     func testCollectEmptyFieldsAddionalFields() {
@@ -739,7 +739,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_FIELDS_KEY(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
     
     func testCollectEmptyUpsertOption() {
@@ -750,7 +750,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UPSERT_OPTION_CANNOT_BE_EMPTY().getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
 
     func testCollectEmptyUniqueColumnsUpsertOption() {
@@ -762,7 +762,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.UNIQUE_COLUMNS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
 
     func testCollectEmptyTableNameUpsertOption() {
@@ -774,7 +774,7 @@ final class skyflow_iOS_collectTests: XCTestCase {
 
         wait(for: [expectation], timeout: 20.0)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.TABLE_NAME_IS_EMPTY_FOR_ATLEAST_ONE_UPSERT_OPTION(value: "0").getErrorObject(contextOptions: ContextOptions(interface: InterfaceName.COLLECT_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
 
     func testUnmount() {

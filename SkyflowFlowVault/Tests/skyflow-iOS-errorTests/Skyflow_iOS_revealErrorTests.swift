@@ -46,7 +46,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
         let result = callback.receivedResponse
 
-        XCTAssertEqual(result, ErrorCodes.UNMOUNTED_REVEAL_ELEMENT(value: revealTestId).description)
+        XCTAssertEqual(result, ErrorCodes.UNMOUNTED_REVEAL_ELEMENT(value: revealTestId).describedFor(productName: "SkyflowFlowVault"))
     }
     func testContainerRevealWithEmptyToken() {
         let window = UIWindow()
@@ -65,7 +65,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
 
         let result = callback.receivedResponse
 
-        XCTAssertEqual(result,  ErrorCodes.EMPTY_TOKEN_ID().description)
+        XCTAssertEqual(result,  ErrorCodes.EMPTY_TOKEN_ID().describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testContainerRevealEmptyVaultURL() {
@@ -77,7 +77,7 @@ class Skyflow_iOS_revealErrorTests: XCTestCase {
         let callback = DemoAPICallback(expectation: XCTestExpectation(description: "Reveal with empty vaultURL should fail"))
         revealContainer?.reveal(callback: callback.asRevealCallback)
 
-        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .REVEAL_CONTAINER)).localizedDescription)
+        XCTAssertEqual(callback.receivedResponse, ErrorCodes.EMPTY_VAULT_URL().getErrorObject(contextOptions: ContextOptions(interface: .REVEAL_CONTAINER, productName: "SkyflowFlowVault")).localizedDescription)
     }
 
 }

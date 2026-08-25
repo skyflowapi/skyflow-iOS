@@ -83,7 +83,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData,  ErrorCodes.EMPTY_TABLE_NAME_IN_COLLECT().description)
+        XCTAssertEqual(responseData,  ErrorCodes.EMPTY_TABLE_NAME_IN_COLLECT().describedFor(productName: "SkyflowFlowVault"))
         
     }
     
@@ -118,7 +118,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData,  ErrorCodes.EMPTY_COLUMN_NAME_IN_COLLECT().description)
+        XCTAssertEqual(responseData,  ErrorCodes.EMPTY_COLUMN_NAME_IN_COLLECT().describedFor(productName: "SkyflowFlowVault"))
         
     }
     
@@ -143,7 +143,7 @@ final class Skyflow_iOS_collectErrorTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
         let responseData = callback.receivedResponse
-        XCTAssertEqual(responseData,  ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "card_number").description)
+        XCTAssertEqual(responseData,  ErrorCodes.UNMOUNTED_COLLECT_ELEMENT(value: "card_number").describedFor(productName: "SkyflowFlowVault"))
     }
     
     func testCreateRequestBodyDuplicateElements() {

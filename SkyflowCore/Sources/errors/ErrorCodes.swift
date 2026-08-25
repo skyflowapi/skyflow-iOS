@@ -10,7 +10,7 @@ package enum ErrorCodes: CustomStringConvertible {
     // No message values
     case EMPTY_TABLE_NAME(code: Int = 400, message: String = "\(LangAndVersion) Validation error. Invalid type for 'table' key value in collect element. Specify a value of type string instead.")
     case EMPTY_COMPOSABLE_LAYOUT_ARRAY(code: Int = 400, message: String = "\(LangAndVersion) Mount failed. Layout array is empty in composable container options. Specify a valid layout array.")
-    case MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: Int = 400, message: String = "options object is required for composable container.")
+    case MISSING_COMPOSABLE_CONTAINER_OPTIONS(code: Int = 400, message: String = "\(LangAndVersion) Mount failed. Options object isn't specified for composable container. Specify a valid options object.")
     case MISSING_COMPOSABLE_LAYOUT_KEY(code:Int = 400, message: String = "\(LangAndVersion) Mount failed. Layout isn't specified in composable container options. Specify a valid layout.")
     case EMPTY_COLUMN_NAME(code: Int = 400, message: String = "\(LangAndVersion) Validation error. 'column' key cannot be empty. Specify a non-empty value instead.")
     case EMPTY_VAULT_ID(code: Int = 400, message: String = "\(LangAndVersion) Initialization failed. Invalid credentials. Specify a valid 'vaultID'.")

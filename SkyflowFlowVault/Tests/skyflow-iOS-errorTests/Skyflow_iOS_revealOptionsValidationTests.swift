@@ -46,28 +46,28 @@ class Skyflow_iOS_revealOptionsValidationTests: XCTestCase {
         let result = revealAndCaptureError(options: RevealOptions(tokenGroupRedactions: [
             TokenGroupRedaction(tokenGroupName: "", redaction: "plain_text")
         ]))
-        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").description)
+        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testEmptyRedactionRejected() {
         let result = revealAndCaptureError(options: RevealOptions(tokenGroupRedactions: [
             TokenGroupRedaction(tokenGroupName: "deterministic", redaction: "")
         ]))
-        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").description)
+        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testWhitespaceOnlyTokenGroupNameRejected() {
         let result = revealAndCaptureError(options: RevealOptions(tokenGroupRedactions: [
             TokenGroupRedaction(tokenGroupName: "   ", redaction: "plain_text")
         ]))
-        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").description)
+        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testWhitespaceOnlyRedactionRejected() {
         let result = revealAndCaptureError(options: RevealOptions(tokenGroupRedactions: [
             TokenGroupRedaction(tokenGroupName: "deterministic", redaction: "\n\t ")
         ]))
-        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").description)
+        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "0").describedFor(productName: "SkyflowFlowVault"))
     }
 
     func testInvalidEntryReportsItsIndex() {
@@ -77,6 +77,6 @@ class Skyflow_iOS_revealOptionsValidationTests: XCTestCase {
             TokenGroupRedaction(tokenGroupName: "deterministic", redaction: "plain_text"),
             TokenGroupRedaction(tokenGroupName: "nondeterministic", redaction: " ")
         ]))
-        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "1").description)
+        XCTAssertEqual(result, ErrorCodes.INVALID_TOKEN_GROUP_REDACTION_ENTRY(value: "1").describedFor(productName: "SkyflowFlowVault"))
     }
 }

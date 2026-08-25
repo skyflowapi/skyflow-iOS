@@ -206,4 +206,177 @@ final class skyflow_iOS_coexistenceTests: XCTestCase {
         waitForExpectations(timeout: 1)
         XCTAssertNotNil(callback.receivedError)
     }
+
+    // MARK: - SDK identity in validation error text
+    //
+    // Both SDKs' Container.collect() run CoreRequestValidators.checkClientConfig FIRST, before
+    // any element validation, so an empty vaultID produces the same underlying EMPTY_VAULT_ID
+    // message from both. That makes it the cleanest symmetric probe available from the public
+    // surface: same error, same code path, differing only in the identity each SDK stamps on it.
+    //
+    // Note this exercises the public API only. The sky-metadata header is the third identity
+    // channel, but FetchMetrices is `package`, so it is not observable from here - it is covered
+    // in each SDK's own SdkNameIdentityTests instead.
+
+    /// The version stamp every stamped message starts with. Legacy messages begin here directly;
+    /// FlowVault's are prefixed with the product name ahead of it.
+    private static let versionStamp = "iOS SDK v"
+
+    private func makeLegacyClientWithEmptyVaultID() -> Client {
+        return Skyflow.initialize(Skyflow.Configuration(
+            vaultID: "",
+            vaultURL: "https://legacy.vault.example.org",
+            tokenProvider: DemoTokenProvider()))
+    }
+
+    private func makeFlowVaultClientWithEmptyVaultID() -> Client {
+        return SkyflowFlowVault.initialize(SkyflowFlowVault.Configuration(
+            vaultID: "",
+            vaultURL: "https://flow.vault.example.org",
+            tokenProvider: DemoTokenProvider()))
+    }
+
+    /// Triggers legacy collect validation and returns the error text delivered to the callback.
+    private func legacyCollectValidationMessage() -> String {
+        let options: Skyflow.ContainerOptions? = nil
+        let container = makeLegacyClientWithEmptyVaultID()
+            .container(type: ContainerType.COLLECT, options: options)
+
+        let expectation = expectation(description: "legacy collect validation failure")
+        var message = ""
+        // Both SDKs contribute a collect(callback:options:) to the shared Container, and the
+        // callback type alone is NOT enough to pick one: FlowVault's CollectCallback conforms to
+        // Callback, so legacy's `any Callback` overload is viable for both. The typed options
+        // argument is what disambiguates - same approach as container(type:options:) above.
+        let callback = MessageCapturingCallback(expectation: expectation) { message = $0 }
+        container?.collect(callback: callback, options: Skyflow.CollectOptions())
+
+        waitForExpectations(timeout: 1)
+        return message
+    }
+
+    /// Triggers FlowVault collect validation and returns the error text delivered to the callback.
+    private func flowVaultCollectValidationMessage() -> String {
+        let options: SkyflowFlowVault.ContainerOptions? = nil
+        let container = makeFlowVaultClientWithEmptyVaultID()
+            .container(type: ContainerType.COLLECT, options: options)
+
+        let expectation = expectation(description: "flowvault collect validation failure")
+        var message = ""
+        let callback = SkyflowFlowVault.CollectCallback(
+            onSuccess: { response in
+                XCTFail("expected onFailure, got onSuccess: \(response)")
+            },
+            onFailure: { error in
+                message = error.localizedDescription
+                expectation.fulfill()
+            })
+        container?.collect(callback: callback, options: SkyflowFlowVault.CollectOptions())
+
+        waitForExpectations(timeout: 1)
+        return message
+    }
+
+    /// Captures onFailure's error text. Separate from FailureExpectingCallback because that one
+    /// stores the raw `Any` rather than the message.
+    private class MessageCapturingCallback: Callback {
+        private let expectation: XCTestExpectation
+        private let onMessage: (String) -> Void
+
+        init(expectation: XCTestExpectation, onMessage: @escaping (String) -> Void) {
+            self.expectation = expectation
+            self.onMessage = onMessage
+        }
+
+        func onSuccess(_ responseBody: Any) {
+            XCTFail("expected onFailure, got onSuccess: \(responseBody)")
+        }
+
+        func onFailure(_ error: Any) {
+            onMessage((error as? NSError)?.localizedDescription ?? "\(error)")
+            expectation.fulfill()
+        }
+    }
+
+    /// The headline coexistence guarantee for error text: with both pods installed, a validation
+    /// message says which SDK produced it. FlowVault names itself; legacy stays as it always was.
+    func testEachSDKStampsItsOwnIdentityOnValidationErrors() {
+        let legacyMessage = legacyCollectValidationMessage()
+        let flowVaultMessage = flowVaultCollectValidationMessage()
+
+        XCTAssertTrue(legacyMessage.hasPrefix(Self.versionStamp),
+                      "legacy message should start at the version stamp, got: \(legacyMessage)")
+        XCTAssertTrue(flowVaultMessage.hasPrefix("SkyflowFlowVault \(Self.versionStamp)"),
+                      "FlowVault message should be prefixed with its name, got: \(flowVaultMessage)")
+
+        XCTAssertNotEqual(legacyMessage, flowVaultMessage,
+                          "the two SDKs must not produce identical error text")
+    }
+
+    /// The prefix is additive: strip FlowVault's name and the two messages are the same string,
+    /// proving the shared message body is untouched rather than reworded per SDK.
+    func testTheOnlyDifferenceIsTheLeadingProductName() {
+        let legacyMessage = legacyCollectValidationMessage()
+        let flowVaultMessage = flowVaultCollectValidationMessage()
+
+        XCTAssertEqual(flowVaultMessage, "SkyflowFlowVault \(legacyMessage)")
+    }
+
+    /// Legacy text must not acquire a name just because FlowVault is linked into the same binary.
+    /// This is the regression that would break existing customer error-string handling.
+    func testLegacyValidationTextIsUnaffectedByFlowVaultBeingLoaded() {
+        // Construct the FlowVault client FIRST, so if identity were stored globally (a shared
+        // static rather than per-Client state) legacy would pick up FlowVault's name below.
+        _ = makeFlowVaultClient()
+
+        let legacyMessage = legacyCollectValidationMessage()
+
+        XCTAssertFalse(legacyMessage.contains("SkyflowFlowVault"), "got: \(legacyMessage)")
+        XCTAssertFalse(legacyMessage.contains("Skyflow iOS SDK"), "got: \(legacyMessage)")
+        XCTAssertTrue(legacyMessage.hasPrefix(Self.versionStamp), "got: \(legacyMessage)")
+    }
+
+    /// Identity is per-Client, not last-writer-wins. Interleaving the two SDKs and re-checking
+    /// each one catches a shared-global implementation that a sequential test would miss.
+    func testIdentityIsPerClientAndSurvivesInterleaving() {
+        let flowVaultFirst = flowVaultCollectValidationMessage()
+        let legacyMiddle = legacyCollectValidationMessage()
+        let flowVaultAgain = flowVaultCollectValidationMessage()
+        let legacyAgain = legacyCollectValidationMessage()
+
+        XCTAssertEqual(flowVaultFirst, flowVaultAgain,
+                       "FlowVault identity changed after a legacy client was used")
+        XCTAssertEqual(legacyMiddle, legacyAgain,
+                       "legacy identity changed after a FlowVault client was used")
+        XCTAssertTrue(flowVaultAgain.hasPrefix("SkyflowFlowVault "), "got: \(flowVaultAgain)")
+        XCTAssertFalse(legacyAgain.contains("SkyflowFlowVault"), "got: \(legacyAgain)")
+    }
+
+    /// Both clients alive at once, each still logging under its own tag. testEachSDKTagsItsLogs...
+    /// above constructs them in separate capture blocks; this one holds both and re-logs, which is
+    /// closer to how an app that uses both SDKs actually behaves.
+    func testBothClientsLogUnderTheirOwnTagWhileBothAreAlive() {
+        let legacyClient = makeLegacyClient()
+        let flowVaultClient = makeFlowVaultClient()
+
+        // Container creation logs, so it gives each live client something to emit.
+        let legacyOutput = captureStdout {
+            let options: Skyflow.ContainerOptions? = nil
+            _ = legacyClient.container(type: ContainerType.COLLECT, options: options)
+        }
+        let flowVaultOutput = captureStdout {
+            let options: SkyflowFlowVault.ContainerOptions? = nil
+            _ = flowVaultClient.container(type: ContainerType.COLLECT, options: options)
+        }
+
+        // Only assert when the operation actually logged - container() is silent at the default
+        // log level, and a vacuous pass is worse than a skip.
+        if legacyOutput.contains("[") {
+            XCTAssertTrue(legacyOutput.contains("[Skyflow]"), "got: \(legacyOutput)")
+            XCTAssertFalse(legacyOutput.contains("[SkyflowFlowVault]"), "got: \(legacyOutput)")
+        }
+        if flowVaultOutput.contains("[") {
+            XCTAssertTrue(flowVaultOutput.contains("[SkyflowFlowVault]"), "got: \(flowVaultOutput)")
+        }
+    }
 }

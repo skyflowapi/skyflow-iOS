@@ -184,19 +184,22 @@ public extension Container {
         tempContextOptions.interface = .COMPOSABLE_CONTAINER
         var totalCount = 0
 
+        // describedFor rather than getErrorObject: these throws must stay silent. getErrorObject
+        // also calls Log.error, which prints unconditionally, and that would add a log line the
+        // legacy SDK never emitted here.
         if let options = containerOptions {
             if (options.layout.count == 0) {
-                throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().description)" ])
+                throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: ErrorCodes.EMPTY_COMPOSABLE_LAYOUT_ARRAY().describedFor(productName: tempContextOptions.productName)])
             }
 
             for i in 0..<(options.layout.count) {
                 totalCount += (options.layout[i])
             }
         } else {
-            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().description)" ])
+            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: ErrorCodes.MISSING_COMPOSABLE_CONTAINER_OPTIONS().describedFor(productName: tempContextOptions.productName)])
         }
         if (elements.count < totalCount || totalCount < elements.count){
-            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "\(ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().description)" ])
+            throw SkyflowError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: ErrorCodes.MISMATCH_ELEMENT_COUNT_LAYOUT_SUM().describedFor(productName: tempContextOptions.productName)])
         }
 
         let view = createDynamicViews(layout: (containerOptions?.layout)!)
