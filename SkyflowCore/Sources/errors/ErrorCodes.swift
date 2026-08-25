@@ -109,8 +109,29 @@ package enum ErrorCodes: CustomStringConvertible {
     }
 
     package func getErrorObject(contextOptions: ContextOptions) -> NSError {
-        Log.error(message: self.description, contextOptions: contextOptions)
-        return SkyflowError(domain: "", code: self.code, userInfo: [NSLocalizedDescriptionKey: "\(self.description)" ])
+        let message = describedFor(productName: contextOptions.productName)
+        Log.error(message: message, contextOptions: contextOptions)
+        return SkyflowError(domain: "", code: self.code, userInfo: [NSLocalizedDescriptionKey: message])
+    }
+
+    /// Prefixes the SDK product name onto the shared "iOS SDK v<version>" stamp that
+    /// `LangAndVersion` bakes into every message, producing e.g.
+    /// "SkyflowFlowVault iOS SDK v1.26.0 Validation error. ...".
+    ///
+    /// Done here rather than in `LangAndVersion` because that is a global with no access to
+    /// per-Client state - putting a mutable SDK name there would mean the last Client
+    /// constructed wins, mislabelling the other SDK whenever both pods are installed.
+    ///
+    /// Returns the message untouched when productName is empty (the legacy SDK, whose message
+    /// text predates this and must not change) or when the message doesn't carry the stamp
+    /// (ERROR_TRIGGERED wraps a caller-supplied string; MISSING_COMPOSABLE_CONTAINER_OPTIONS has
+    /// no prefix) - so a developer's own setError() text never gets an SDK name glued to it.
+    package func describedFor(productName: String) -> String {
+        let stamp = LangAndVersion
+        guard productName.isEmpty == false, self.description.hasPrefix(stamp) else {
+            return self.description
+        }
+        return "\(productName) \(self.description)"
     }
 
     internal func formatMessage(_ message: String, _ values: [String]) -> String {

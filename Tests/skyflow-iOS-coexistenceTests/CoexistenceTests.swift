@@ -61,6 +61,60 @@ final class skyflow_iOS_coexistenceTests: XCTestCase {
             tokenProvider: DemoTokenProvider()))
     }
 
+    // MARK: - SDK identity in log output
+
+    /// Runs `body` with stdout redirected, returning whatever was printed. Log writes via
+    /// print(), so this is the only way to assert on its output from the public surface.
+    private func captureStdout(_ body: () -> Void) -> String {
+        let pipe = Pipe()
+        let originalStdout = dup(STDOUT_FILENO)
+        dup2(pipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO)
+
+        body()
+
+        fflush(stdout)
+        dup2(originalStdout, STDOUT_FILENO)
+        close(originalStdout)
+        try? pipe.fileHandleForWriting.close()
+
+        return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+    }
+
+    /// The coexistence case that matters for support: with both pods installed, a log line has to
+    /// say WHICH SDK produced it. The tag used to be hardcoded to "[Skyflow]" for both, so their
+    /// output was indistinguishable. Uses only public API - Client.init logs CLIENT_INITIALIZED,
+    /// so simply constructing each client is enough to compare tags.
+    func testEachSDKTagsItsLogsWithItsOwnName() {
+        let legacyOutput = captureStdout {
+            _ = Skyflow.initialize(Skyflow.Configuration(
+                vaultID: "legacyVaultID",
+                vaultURL: "https://legacy.vault.example.org",
+                tokenProvider: DemoTokenProvider(),
+                options: Skyflow.Options(logLevel: .DEBUG)))
+        }
+
+        let flowVaultOutput = captureStdout {
+            _ = SkyflowFlowVault.initialize(SkyflowFlowVault.Configuration(
+                vaultID: "flowVaultID",
+                vaultURL: "https://flow.vault.example.org",
+                tokenProvider: DemoTokenProvider(),
+                options: SkyflowFlowVault.Options(logLevel: .DEBUG)))
+        }
+
+        // Legacy keeps its original "[Skyflow]" tag - only FlowVault's output changed.
+        XCTAssertTrue(legacyOutput.contains("[Skyflow]"),
+                      "legacy client should tag its logs [Skyflow], got: \(legacyOutput)")
+        XCTAssertTrue(flowVaultOutput.contains("[SkyflowFlowVault]"),
+                      "FlowVault client should tag its logs [SkyflowFlowVault], got: \(flowVaultOutput)")
+
+        // The actual coexistence guarantee: the two tags are not the same string. "[Skyflow]" is
+        // not a substring of "[SkyflowFlowVault]" - the closing bracket is what separates them.
+        XCTAssertFalse(legacyOutput.contains("[SkyflowFlowVault]"),
+                       "legacy output must not claim to be FlowVault")
+        XCTAssertFalse(flowVaultOutput.contains("[Skyflow]"),
+                       "FlowVault output must not claim to be the legacy SDK")
+    }
+
     // MARK: - Initialization
 
     func testBothClientsInitializeSideBySide() {
