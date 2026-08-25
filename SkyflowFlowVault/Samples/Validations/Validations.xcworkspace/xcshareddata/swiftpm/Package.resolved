@@ -1,0 +1,15 @@
+{
+  "originHash" : "9d7a641543031e54b3470012de29bf3cd9a042920b5fe71a347a8d0e07ccefe2",
+  "pins" : [
+    {
+      "identity" : "skyflow-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/skyflowapi/skyflow-iOS.git",
+      "state" : {
+        "branch" : "release/26.8.2",
+        "revision" : "b34a78eb5e579e1f51053c9b576cd552eec21081"
+      }
+    }
+  ],
+  "version" : 3
+}

@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2022 Skyflow
+*/
+
+// Initialize the FlowVault SDK, SkyflowFlowVault.initialize
+
+import Foundation
+
+public func initialize(_ skyflowConfig: Configuration) -> Client {
+    return Client(skyflowConfig)
+}
