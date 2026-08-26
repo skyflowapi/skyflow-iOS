@@ -122,8 +122,11 @@ class ViewController: UIViewController {
             collectButton.addTarget(self, action: #selector(submitForm), for: .touchUpInside)
 
             do {
-                let composableView = try container?.getComposableView()
-                stackView.addArrangedSubview(composableView)
+                if let composableView = try container?.getComposableView() {
+                    stackView.addArrangedSubview(composableView)
+                } else {
+                    print("error")
+                }
             } catch {
                 print(error)
             }

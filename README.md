@@ -10,8 +10,8 @@ This repository publishes two SDKs from a shared codebase. Pick the one that mat
 
 | SDK | Vault type | Install (CocoaPods / SPM product) | Import | Documentation |
 |-----|------------|-----------------------------------|--------|---------------|
-| **Skyflow** | PDB vault (v1 API) | `pod 'Skyflow'` / `Skyflow` | `import Skyflow` | [Skyflow/README.md](Skyflow/README.md) |
-| **SkyflowFlowVault** | Flow vault (v2 API, beta) | `pod 'SkyflowFlowVault'` / `SkyflowFlowVault` | `import SkyflowFlowVault` | [SkyflowFlowVault/README.md](SkyflowFlowVault/README.md) |
+| **Skyflow** | PDB vault | `pod 'Skyflow'` / `Skyflow` | `import Skyflow` | [Skyflow/README.md](Skyflow/README.md) |
+| **SkyflowFlowVault** | Flow vault | `pod 'SkyflowFlowVault'` / `SkyflowFlowVault` | `import SkyflowFlowVault` | [SkyflowFlowVault/README.md](SkyflowFlowVault/README.md) |
 
 Not sure which one you need? If you are an existing Skyflow iOS customer, stay on **Skyflow** — it is fully backward compatible. **SkyflowFlowVault** is for Flow vaults; if you are moving from a PDB vault, follow its [Upgrading from PDB to FlowDB](SkyflowFlowVault/README.md#upgrading-from-pdb-to-flowdb) migration guide.
 

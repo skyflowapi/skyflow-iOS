@@ -1,0 +1,22 @@
+PODS:
+  - SkyflowFlowVault (1.26.0-beta.1-dev.6c9239a)
+
+DEPENDENCIES:
+  - SkyflowFlowVault (from `https://github.com/skyflowapi/skyflow-iOS.git`, branch `release/26.8.2`)
+
+EXTERNAL SOURCES:
+  SkyflowFlowVault:
+    :branch: release/26.8.2
+    :git: https://github.com/skyflowapi/skyflow-iOS.git
+
+CHECKOUT OPTIONS:
+  SkyflowFlowVault:
+    :commit: 43898bdc465957743bd0a0228f7d256cd2a773f1
+    :git: https://github.com/skyflowapi/skyflow-iOS.git
+
+SPEC CHECKSUMS:
+  SkyflowFlowVault: c26dd555a81453de5feabea0a1170c4cc4337a27
+
+PODFILE CHECKSUM: f64eb7f85dd52ab54335e7833ca22738496cca33
+
+COCOAPODS: 1.16.2

@@ -35,7 +35,7 @@ Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensiti
     #Otherwise you can add cocoapod trunk as the source
     #source 'https://github.com/skyflowapi/skyflow-iOS-spec.git'
     
-    pod 'Skyflow'
+    pod 'Skyflow', '1.26.0'
     ```
  
  

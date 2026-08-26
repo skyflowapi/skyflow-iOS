@@ -433,8 +433,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/skyflowapi/skyflow-iOS.git";
 			requirement = {
-				branch = release/26.8.2;
-				kind = branch;
+				kind = exactVersion;
+				version = 1.26.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

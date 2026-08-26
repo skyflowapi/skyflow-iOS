@@ -31,7 +31,7 @@ Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensiti
 - [Error Handling Reference](#error-handling-reference)
 - [Reporting a Vulnerability](#reporting-a-vulnerability)
 # Upgrading from PDB to FlowDB
-Starting in **v1.26.0-beta.1**, Collect and Reveal run on Skyflow's FlowDB backend. If you're upgrading from an earlier version, a few things changed:
+Starting in **v1.26.0**, Collect and Reveal run on Skyflow's FlowDB backend. If you're upgrading from an earlier version, a few things changed:
 
 - **`CollectElementInput.altText` is deprecated and now a no-op** - it's accepted but never read or stored. Use `placeholder` instead.
 - **`CollectOptions.tokens` (`Bool`) was removed** - tokens are always returned now; there's no way to opt out.
@@ -115,9 +115,9 @@ That's the whole round trip both ways - no card data ever touches your app code 
 ## Configuration
 ---
 ### SPM (Swift Package Manager)
-- Go to File -> Swift Packages -> New Package Dependency (in Xcode IDE)
-- Enter https://github.com/skyflowapi/skyflow-iOS.git and press ok.
-- In the "Choose Package Products" dialog, check the **SkyflowFlowVault** product and add it to your app target.
+- In Xcode: File → Add Package Dependencies → enter `https://github.com/skyflowapi/skyflow-iOS.git`.
+- Set Dependency Rule to **Exact Version** and enter `1.26.0`.
+- In the "Choose Package Products" dialog, check the **SkyflowFlowVault** product (not Skyflow) and add it to your app target.
  
 ### Cocoapods
 - To integrate skyflow-iOS into your Xcode project using CocoaPods, specify it in your Podfile:
@@ -126,7 +126,7 @@ That's the whole round trip both ways - no card data ever touches your app code 
     #Otherwise you can add cocoapod trunk as the source
     #source 'https://github.com/skyflowapi/skyflow-iOS-spec.git'
     
-    pod 'SkyflowFlowVault'
+    pod 'SkyflowFlowVault', '1.26.0'
     ```
  
  
@@ -2183,7 +2183,7 @@ onFailure: { (skyflowError: SkyflowFlowVault.SkyflowError) in
 ```
 `grpcCode`, `httpStatus`, and `details` are only populated for this whole-request-failure shape - they're `nil` for client-side validation failures (empty `vaultID`, unmounted element, missing required field, etc.), which only populate `httpCode` and `message`:
 - `httpCode` is a client-assigned code describing the kind of problem (typically `400`, sometimes `404` for a "not found"-shaped issue like an empty records array) - it was never returned by an actual HTTP response, so don't treat it as a real server status.
-- `message` is a description prefixed with the SDK name and version, e.g. `"iOS SDK v1.26.0-beta.1 Validation error.'table' key not found in collect element. Specify a valid value for 'table' key."`
+- `message` is a description prefixed with the SDK name and version, e.g. `"SkyflowFlowVault iOS SDK v1.26.0 Validation error.'table' key not found in collect element. Specify a valid value for 'table' key."`
 
 In short: if `grpcCode`/`httpStatus`/`details` are all `nil`, you're looking at a client-side validation failure (bad input, caught before any network call) - use `message` to see which check failed. If they're populated, the vault itself rejected or couldn't process the request.
 
