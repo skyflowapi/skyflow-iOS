@@ -3,7 +3,7 @@ target 'Validations' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod 'SkyflowFlowVault', :git => 'https://github.com/skyflowapi/skyflow-iOS.git', :branch => 'release/26.8.2'
+  pod 'SkyflowFlowVault', '1.26.0'
 
   # Pods for Validations
 

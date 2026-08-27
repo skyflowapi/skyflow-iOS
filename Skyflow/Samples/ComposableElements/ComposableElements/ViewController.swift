@@ -129,10 +129,11 @@ class ViewController: UIViewController {
             revealButton.addTarget(self, action: #selector(revealForm), for: .touchUpInside)
 
             do {
-                 let composableView = try container?.getComposableView() else {
+                if let composableView = try container?.getComposableView() {
+                    stackView.addArrangedSubview(composableView)
+                } else {
                     print("error")
                 }
-                stackView.addArrangedSubview(composableView)
             } catch {
                 print(error)
             }
