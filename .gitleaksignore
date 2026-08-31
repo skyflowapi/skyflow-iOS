@@ -1,0 +1,10 @@
+# False positives: sample response/reveal tokens (UUID record identifiers) used in docs and tests, not real secrets.
+20dd3ee7bb959d55147c47ba9982ef161d494315:SkyflowFlowVault/Tests/skyflow-iOS-revealTests/RevealSkyflowLabelViewTests.swift:generic-api-key:38
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:1875
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:1878
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:1891
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:1895
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:2188
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:2200
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:2250
+ccca50e3ae51a73b665b78be24cb214621ee0120:Skyflow/README.md:generic-api-key:2253
