@@ -741,7 +741,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "fields": {
                 "skyflow_id": "431eaa6c-5c15-4513-aa15-29f50babe882",
                 "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-                "first_name": "131e70dc-6f76-4319-bdd3-96281e051051"
+                "first_name": "<TOKEN_3>"
             }
         }
     ]
@@ -1808,7 +1808,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "fields": {
                 "skyflow_id": "431eaa6c-5c15-4513-aa15-29f50babe882",
                 "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-                "first_name": "131e70dc-6f76-4319-bdd3-96281e051051",
+                "first_name": "<TOKEN_3>",
                 "cvv": "098834fe-de99-4fc8-abdf-88c18a28a2cf"
             }
         }
@@ -1824,7 +1824,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "fields": {
                 "skyflow_id": "431eaa6c-5c15-4513-aa15-29f50babe882",
                 "cardNumber": "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
-                "first_name": "131e70dc-6f76-4319-bdd3-96281e051051",
+                "first_name": "<TOKEN_3>",
                 "cvv": "098834fe-de99-4fc8-abdf-88c18a28a2cf"
             }
         }
@@ -1872,10 +1872,10 @@ The following example code makes a detokenize call to reveal the masked value of
   let records = [
                   "records": [
                     [
-                      "token": "45012507-f72b-4f5c-9bf9-86b133bae719",
+                      "token": "<TOKEN_1>",
                     ],
                     [
-                      "token": "1r434532-6f76-4319-bdd3-96281e051051",
+                      "token": "<TOKEN_2>",
                       "redaction": Skyflow.RedactionType.MASKED
                     ]
                   ]
@@ -1888,11 +1888,11 @@ The following example code makes a detokenize call to reveal the masked value of
   {
     "records": [
       {
-        "token": "131e70dc-6f76-4319-bdd3-96281e051051",
+        "token": "<TOKEN_3>",
         "value": "1990-01-01"
       },
       {
-        "token": "1r434532-6f76-4319-bdd3-96281e051051",
+        "token": "<TOKEN_2>",
         "value": "xxxxxxer",
       }
      ]
@@ -2012,7 +2012,7 @@ The following example code makes a detokenize call to reveal the masked value of
     {
       "fields": {
         "card_number": "9802-3257-3113-0294",
-        "expiry_date": "45012507-f72b-4f5c-9bf9-86b133bae719",
+        "expiry_date": "<TOKEN_1>",
         "fullname": "131e2507-f72b-4f5c-9bf9-86b133bae719",
         "id": "f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"
       },
@@ -2022,7 +2022,7 @@ The following example code makes a detokenize call to reveal the masked value of
       "fields": {
         "card_number": "0294-3213-3157-9802",
         "expiry_date": "131e2507-f72b-4f5c-9bf9-86b133bae719",
-        "fullname": "45012507-f72b-4f5c-9bf9-86b133bae719",
+        "fullname": "<TOKEN_1>",
         "id": "ed2e7851-9f84-4d70-9e5d-182f6d8d4fa3"
       },
       "table": "cards"
@@ -2185,7 +2185,7 @@ let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
 
 // Create Reveal Elements
 let cardNumberInput = Skyflow.RevealElementInput(
-    token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+    token: "<TOKEN_4>",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -2197,7 +2197,7 @@ let cardNumberInput = Skyflow.RevealElementInput(
 let cardNumberElement = container?.create(input: cardNumberInput)
 
 let cvvInput = Skyflow.RevealElementInput(
-    token: "89024714-6a26-4256-b9d4-55ad69aa4047",
+    token: "<TOKEN_5>",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -2207,7 +2207,7 @@ let cvvInput = Skyflow.RevealElementInput(
 let cvvElement = container?.create(input: cvvInput)
 
 let expiryDateInput = Skyflow.RevealElementInput(
-    token: "a4b24714-6a26-4256-b9d4-55ad69aa4047",
+    token: "<TOKEN_6>",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -2247,16 +2247,16 @@ The response below shows that some tokens assigned to the reveal elements get re
 ```json
 {
     "success": [ {
-        "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75"
+        "token": "<TOKEN_4>"
     },
     {
-        "token": "89024714-6a26-4256-b9d4-55ad69aa4047"
+        "token": "<TOKEN_5>"
     }],
     "errors": [ {
-        "id": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
+        "id": "<TOKEN_6>",
         "error": {
             "code": 404,
-            "description": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047"
+            "description": "Tokens not found for <TOKEN_6>"
         }
     }]
 }

@@ -85,7 +85,7 @@ Reveal a token back to its real value (using the same `skyflowClient` from above
 // 1. Create a container and a Reveal Element for the token
 let revealContainer = skyflowClient.container(type: SkyflowFlowVault.ContainerType.REVEAL)
 let cardNumberReveal = SkyflowFlowVault.RevealElementInput(
-    token: "f3907186-e7e2-466f-91e5-48e12c2bcbc1",
+    token: "<TOKEN_1>",
     label: "Card Number"
 )
 let revealElement = revealContainer?.create(input: cardNumberReveal)
@@ -578,7 +578,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -586,7 +586,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "tokens": {
-                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+                "gender": [{"token": "<TOKEN_2>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         }
@@ -603,7 +603,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -777,7 +777,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "tokens": {
-                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+                "gender": [{"token": "<TOKEN_2>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -785,8 +785,8 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
-                "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}],
+                "first_name": [{"token": "<TOKEN_3>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         }
@@ -803,7 +803,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -1328,7 +1328,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -1336,7 +1336,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "tokens": {
-                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+                "gender": [{"token": "<TOKEN_2>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         }
@@ -1353,7 +1353,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -1774,7 +1774,7 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "persons",
             "skyflowId": "77dc3caf-c452-49e1-8625-07219d7567bf",
             "tokens": {
-                "gender": [{"token": "12f670af-6c7d-4837-83fb-30365fbc0b1e", "tokenGroupName": "deterministic_string"}]
+                "gender": [{"token": "<TOKEN_2>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -1782,9 +1782,9 @@ container?.collect(callback: insertCallback, options: collectOptions)
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
-                "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
-                "cvv": [{"token": "098834fe-de99-4fc8-abdf-88c18a28a2cf", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}],
+                "first_name": [{"token": "<TOKEN_3>", "tokenGroupName": "deterministic_string"}],
+                "cvv": [{"token": "<TOKEN_4>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         }
@@ -1800,9 +1800,9 @@ See the [Error Handling Reference](#error-handling-reference) for how successful
             "tableName": "cards",
             "skyflowId": "431eaa6c-5c15-4513-aa15-29f50babe882",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}],
-                "first_name": [{"token": "131e70dc-6f76-4319-bdd3-96281e051051", "tokenGroupName": "deterministic_string"}],
-                "cvv": [{"token": "098834fe-de99-4fc8-abdf-88c18a28a2cf", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}],
+                "first_name": [{"token": "<TOKEN_3>", "tokenGroupName": "deterministic_string"}],
+                "cvv": [{"token": "<TOKEN_4>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -1990,7 +1990,7 @@ let errorTextStyles = SkyflowFlowVault.Styles(base: baseTextStyle)
 
 // Create Reveal Elements
 let cardNumberInput = SkyflowFlowVault.RevealElementInput(
-    token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+    token: "<TOKEN_5>",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -2001,7 +2001,7 @@ let cardNumberInput = SkyflowFlowVault.RevealElementInput(
 let cardNumberElement = container?.create(input: cardNumberInput)
 
 let cvvInput = SkyflowFlowVault.RevealElementInput(
-    token: "89024714-6a26-4256-b9d4-55ad69aa4047",
+    token: "<TOKEN_6>",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -2011,7 +2011,7 @@ let cvvInput = SkyflowFlowVault.RevealElementInput(
 let cvvElement = container?.create(input: cvvInput)
 
 let expiryDateInput = SkyflowFlowVault.RevealElementInput(
-    token: "a4b24714-6a26-4256-b9d4-55ad69aa4047",
+    token: "<TOKEN_7>",
     inputStyles: inputStyles,
     labelStyles: labelStyles,
     errorTextStyles: errorTextStyles,
@@ -2060,7 +2060,7 @@ container?.reveal(callback: revealCallback, options: revealOptions)
 {
     "records": [
         {
-            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "token": "<TOKEN_5>",
             "tokenGroupName": "deterministic_string",
             "metadata": {
                 "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
@@ -2069,7 +2069,7 @@ container?.reveal(callback: revealCallback, options: revealOptions)
             "httpCode": 200
         },
         {
-            "token": "89024714-6a26-4256-b9d4-55ad69aa4047",
+            "token": "<TOKEN_6>",
             "tokenGroupName": "deterministic_string",
             "metadata": {
                 "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
@@ -2087,7 +2087,7 @@ Some tokens assigned to the reveal elements get revealed successfully, while oth
 {
     "records": [
         {
-            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "token": "<TOKEN_5>",
             "tokenGroupName": "deterministic_string",
             "metadata": {
                 "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
@@ -2096,8 +2096,8 @@ Some tokens assigned to the reveal elements get revealed successfully, while oth
             "httpCode": 200
         },
         {
-            "token": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
-            "error": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047",
+            "token": "<TOKEN_7>",
+            "error": "Tokens not found for <TOKEN_7>",
             "httpCode": 404
         }
     ]
@@ -2120,7 +2120,7 @@ Collect shape:
             "tableName": "cards",
             "skyflowId": "f1714ef8-8deb-489a-a18d-77e0e007f403",
             "tokens": {
-                "cardNumber": [{"token": "f3907186-e7e2-466f-91e5-48e12c2bcbc1", "tokenGroupName": "deterministic_string"}]
+                "cardNumber": [{"token": "<TOKEN_1>", "tokenGroupName": "deterministic_string"}]
             },
             "httpCode": 200
         },
@@ -2139,7 +2139,7 @@ Reveal shape:
 {
     "records": [
         {
-            "token": "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            "token": "<TOKEN_5>",
             "tokenGroupName": "deterministic_string",
             "metadata": {
                 "skyflowId": "3ac0424e-fe45-43a9-9193-2e6d2913cbd2",
@@ -2148,8 +2148,8 @@ Reveal shape:
             "httpCode": 200
         },
         {
-            "token": "a4b24714-6a26-4256-b9d4-55ad69aa4047",
-            "error": "Tokens not found for a4b24714-6a26-4256-b9d4-55ad69aa4047",
+            "token": "<TOKEN_7>",
+            "error": "Tokens not found for <TOKEN_7>",
             "httpCode": 404
         }
     ]

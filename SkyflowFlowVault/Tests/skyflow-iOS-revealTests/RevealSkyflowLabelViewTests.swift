@@ -35,7 +35,7 @@ class RevealSkyflowLabelViewTests: XCTestCase {
         let container = skyflowClient.container(type: ContainerType.REVEAL)
         // Create Reveal Elements
         let cardNumberInput = RevealElementInput(
-            token: "b63ec4e0-bbad-4e43-96e6-6bd50f483f75",
+            token: "<TOKEN_1>",
             label: "cardnumber",
             altText: "XXXX XXXX XXXX XXXX"
         )
