@@ -272,7 +272,7 @@ let collectElementInput = SkyflowFlowVault.CollectElementInput(
     skyflowId: String,               // optional, the skyflowId of the record to update
 )
 ```
-The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. 
+The `tableName` and `column` fields indicate which table and column in the vault the Element corresponds to. 
 **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
 - `altText` (marked `(DEPRECATED)` in the signature) is dead: `CollectElementInput` accepts it but never reads or stores it, so passing a value has zero effect. `placeholder` is the real, supported way to set initial/placeholder text on a collect element. This should not be confused with `SkyflowFlowVault.RevealElementInput.altText` (used when [revealing elements](#step-2-create-a-reveal-element)), which shares the same name but is a distinct, fully supported property with no associated deprecation.
@@ -1983,7 +1983,7 @@ let container = skyflowClient.container(type: SkyflowFlowVault.ContainerType.REV
 
 // Create SkyflowFlowVault.Styles with individual SkyflowFlowVault.Style variants
 let baseStyle = SkyflowFlowVault.Style(borderColor: UIColor.blue)
-let baseTextStyle = SkyflowFlowVault.Style(textColor: UIColor.BLACK)
+let baseTextStyle = SkyflowFlowVault.Style(textColor: UIColor.black)
 let inputStyles = SkyflowFlowVault.Styles(base: baseStyle)
 let labelStyles = SkyflowFlowVault.Styles(base: baseTextStyle)
 let errorTextStyles = SkyflowFlowVault.Styles(base: baseTextStyle)

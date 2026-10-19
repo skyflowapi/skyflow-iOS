@@ -18,15 +18,15 @@ Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensiti
 # Installation
  
 ## Requirements
-- iOS 15.0 and above
+- iOS 13.0 and above
 - Xcode 15 or later (Swift 5.9 toolchain) to build
  
 ## Configuration
 ---
 ### SPM (Swift Package Manager)
-- Go to File -> Swift Packages -> New Package Dependency (in Xcode IDE)
-- Enter https://github.com/skyflowapi/skyflow-iOS.git and press ok.
-- In the "Choose Package Products" dialog, check the **Skyflow** product and add it to your app target.
+- In Xcode: File → Add Package Dependencies → enter `https://github.com/skyflowapi/skyflow-iOS.git`.
+- Set Dependency Rule to **Exact Version** and enter `1.26.0`.
+- In the "Choose Package Products" dialog, check the **Skyflow** product (not SkyflowFlowVault) and add it to your app target.
  
 ### Cocoapods
 - To integrate skyflow-iOS into your Xcode project using CocoaPods, specify it in your Podfile:
@@ -134,6 +134,12 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 `Note`:
   - since `env` is optional, by default the env will be  `PROD`.
   - Use `env` option with caution, make sure the env is set to `PROD` when using `skyflow-iOS` in production. 
+
+> **Security warning: never ship a build with `env: .DEV` to production.** `DEV` doesn't just relax a validation check - it unlocks two things that must never reach a real user:
+> - The **raw, unmasked field value** becomes readable inside the `CHANGE`/`FOCUS`/`BLUR` [event listener](#event-listener-on-collect-elements) state. In `PROD`, that same state only ever contains an empty string (or, for `CARD_NUMBER`, a partially masked value) - never the full value.
+> - [`setValue`/`clearValue`](#set-and-clear-value-for-collect-elements-dev-env-only) become callable and actually take effect.
+>
+> Both fail **silently** - no crash, no thrown error, either way. If `DEV` ships by accident, the raw PAN/CVV/etc. is simply there, with nothing to flag it. Always confirm `env` is `PROD` (or omitted) before release.
  
  
 ---
@@ -237,6 +243,7 @@ let collectElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -246,7 +253,6 @@ let collectElementInput = Skyflow.CollectElementInput(
 ```
 The `table` and `column` fields indicate which table and column in the vault the Element corresponds to. **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
--  `table` and `column` are optional only if the element is being used in invokeConnection()
  
 The `inputStyles` parameter accepts a Skyflow.Styles object which consists of multiple `Skyflow.Styles` objects which should be applied to the form element in the following states:
  
@@ -289,7 +295,7 @@ let styles = Skyflow.Styles(
     empty: style,                   // optional
     focus: style,                   // optional
     invalid: style,                 // optional
-    requiredAsterisk: style        // optional 
+    requiredAstrisk: style        // optional 
 )
 ```
  
@@ -297,7 +303,7 @@ The `labelStyles` and `errorTextStyles` fields accept the above mentioned `Skyfl
  
 The states that are available for `labelStyles` are `base` and `focus`.
 
-`requiredAsterisk`: Styles applied for the Asterisk symbol in the label. Defaults to red.
+`requiredAstrisk`: Styles applied for the Asterisk symbol in the label. Defaults to red.
 
 The state that is available for `errorTextStyles` is only the `base` state, it shows up when there is some error in the collect element.
  
@@ -413,6 +419,7 @@ let collectElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -581,6 +588,7 @@ let collectElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -594,7 +602,6 @@ The `table` and `column` fields indicate which table and column in the vault the
 
 **Note**: 
 -  Use dot delimited strings to specify columns nested inside JSON fields (e.g. `address.street.line1`)
--  `table` and `column` are optional only if the element is being used in invokeConnection()
 
 Along with `CollectElementInput`, you can define other options in the `CollectElementOptions` object which is described below.
  
@@ -1051,6 +1058,7 @@ let composableElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -1169,6 +1177,7 @@ let composableElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -1481,6 +1490,7 @@ let updateElement =  Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -1583,7 +1593,7 @@ do {
 // Subscribing to the `SUBMIT` event, which gets triggered when the user hits `enter` key in any container element input.
 composableContainer?.on(eventName: .SUBMIT){
     // Your implementation when the SUBMIT(enter) event occurs.
-    print('Submit Event Listener is being Triggered.')
+    print("Submit Event Listener is being Triggered.")
 }
 
 ```
@@ -1613,6 +1623,7 @@ let composableElementInput = Skyflow.CollectElementInput(
     inputStyles: Skyflow.Styles,     // optional styles that should be applied to the form element
     labelStyles: Skyflow.Styles,     // optional styles that will be applied to the label of the collect element
     errorTextStyles: Skyflow.Styles, // optional styles that will be applied to the errorText of the collect element
+    iconStyles: Skyflow.Styles,      // optional styles that will be applied to the card icon of the collect element
     label: String,                   // optional label for the form element
     placeholder: String,             // optional placeholder for the form element
     altText: String,                 // (DEPRECATED) optional that acts as an initial value for the collect element
@@ -1918,12 +1929,12 @@ The following example code makes a detokenize call to reveal the masked value of
     [
       "records": [
         [
-          "ids": ArrayList<String>(),           // Array of SkyflowID's of the records to be fetched
+          "ids": [String](),                    // Array of SkyflowID's of the records to be fetched
           "table": String,                      // Name of table holding the above skyflow_id's
           "redaction": Skyflow.RedactionType    // Redaction to be applied to retrieved data
         ],
         [
-          "columnValues": ArrayList<String>(),     // Array of column values of the records to be fetched
+          "columnValues": [String](),              // Array of column values of the records to be fetched
           "table": String,                         // Name of table holding the above skyflow_id's
           "columnName": String,                    // A unique column name
           "redaction": Skyflow.RedactionType       // Redaction to be applied to retrieved data
@@ -2040,6 +2051,34 @@ The following example code makes a detokenize call to reveal the masked value of
 }
   ```
 
+- ### Using Skyflow IDs only with getById()
+    To retrieve record data using only Skyflow IDs (no unique column lookups), use the `getById(records: JSONObject, callback: Skyflow.Callback)` method. The `records` parameter takes a Dictionary object that contains `records` to be fetched as shown below. Unlike `get()`, every field in each entry is required, including `redaction`:
+
+    ```swift
+    [
+      "records": [
+        [
+          "ids": [String](),                    // Required. Array of SkyflowID's of the records to be fetched
+          "table": String,                       // Required. Name of table holding the above skyflow_id's
+          "redaction": Skyflow.RedactionType     // Required. Redaction to be applied to retrieved data
+        ]
+      ]
+    ]
+    ```
+
+  An example of a getById call to fetch records:
+  ```swift
+  let getCallback = GetCallback() // Custom callback - implementation of Skyflow.Callback
+
+  let skyflowIDs = ["f8d8a622-b557-4c6b-a12c-c5ebe0b0bfd9"]
+  let record = ["ids": skyflowIDs, "table": "cards", "redaction": Skyflow.RedactionType.PLAIN_TEXT] as [String : Any]
+
+  let records = ["records": [record]]
+
+  skyflowClient.getById(records: records, callback: getCallback)
+  ```
+  The response has the same `records`/`fields`/`table` shape as [the `get()` example above](#using-skyflow-ids-or-unique-column-values), with one entry per requested Skyflow ID and an `errors` array for any ID that isn't found.
+
  
 ## Using Skyflow Elements to reveal data
 Skyflow Elements can be used to securely reveal data in an application without exposing your front end to the sensitive data. This is great for use-cases like card issuance where you may want to reveal the card number to a user without increasing your PCI compliance scope.
@@ -2058,13 +2097,13 @@ let revealElementInput = Skyflow.RevealElementInput(
     inputStyles: Skyflow.Styles(),       // optional, styles to be applied to the element
     labelStyles: Skyflow.Styles(),       // optional, styles to be applied to the label of the reveal element
     errorTextStyles: Skyflow.Styles(),   // optional styles that will be applied to the errorText of the reveal element
-    label: "cardNumber",                 // optional, label for the element,
+    label: "cardNumber",                 // required, label for the element,
     altText: "XXXX XXXX XXXX XXXX",      // optional, string that is shown before reveal, will show token if it is not provided
     redaction: Skyflow.RedactionType,    // optional. Redaction to apply for retrieved data. E.g. RedactionType.MASKED
 )
 ```
 `Note`: 
-- `token` is optional only if it is being used in invokeConnection()
+- `token` is optional because you can create a reveal Element without one and set it later with [`setToken()`](#set-token-for-reveal-elements).
 - `redaction` defaults to [`RedactionType.PLAIN_TEXT`](#redaction-types).
 
  
@@ -2178,7 +2217,7 @@ let container = skyflowClient.container(type: Skyflow.ContainerType.REVEAL)
 
 // Create Skyflow.Styles with individual Skyflow.Style variants
 let baseStyle = Skyflow.Style(borderColor: UIColor.blue)
-let baseTextStyle = Skyflow.Style(textColor: UIColor.BLACK)
+let baseTextStyle = Skyflow.Style(textColor: UIColor.black)
 let inputStyles = Skyflow.Styles(base: baseStyle)
 let labelStyles = Skyflow.Styles(base: baseTextStyle)
 let errorTextStyles = Skyflow.Styles(base: baseTextStyle)
@@ -2191,7 +2230,7 @@ let cardNumberInput = Skyflow.RevealElementInput(
     errorTextStyles: errorTextStyles,
     label: "cardnumber",
     altText: "XXXX XXXX XXXX XXXX",
-    redaction: SKyflow.RedactionType.MASKED
+    redaction: Skyflow.RedactionType.MASKED
 )
 
 let cardNumberElement = container?.create(input: cardNumberInput)
