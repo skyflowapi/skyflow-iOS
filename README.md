@@ -8,10 +8,14 @@ Skyflow's iOS SDKs let you securely collect, tokenize, and display sensitive dat
 
 This repository publishes two SDKs from a shared codebase. Pick the one that matches your vault type:
 
-| SDK | Vault type | Install (CocoaPods / SPM product) | Import | Documentation |
-|-----|------------|-----------------------------------|--------|---------------|
-| **Skyflow** | PDB vault | `pod 'Skyflow'` / `Skyflow` | `import Skyflow` | [Skyflow/README.md](Skyflow/README.md) |
-| **SkyflowFlowVault** | Flow vault | `pod 'SkyflowFlowVault'` / `SkyflowFlowVault` | `import SkyflowFlowVault` | [SkyflowFlowVault/README.md](SkyflowFlowVault/README.md) |
+| SDK | Vault type | SPM product | Import | Documentation |
+|-----|------------|-------------|--------|---------------|
+| **Skyflow** | PDB vault | `Skyflow` | `import Skyflow` | [Skyflow/README.md](Skyflow/README.md) |
+| **SkyflowFlowVault** | Flow vault | `SkyflowFlowVault` | `import SkyflowFlowVault` | [SkyflowFlowVault/README.md](SkyflowFlowVault/README.md) |
+
+Both SDKs are distributed through **Swift Package Manager** from `https://github.com/skyflowapi/skyflow-iOS.git`.
+
+> **CocoaPods:** CocoaPods trunk became read-only on December 2, 2026. Versions already published there (`pod 'Skyflow'`, `pod 'SkyflowFlowVault'`) remain installable, but new releases are published only through SPM. If you install with CocoaPods today, follow the [CocoaPods → SPM migration guide](MIGRATING_TO_SPM.md) to receive future updates.
 
 Not sure which one you need? If you are an existing Skyflow iOS customer, stay on **Skyflow** — it is fully backward compatible. **SkyflowFlowVault** is for Flow vaults; if you are moving from a PDB vault, follow its [Upgrading from PDB to FlowDB](SkyflowFlowVault/README.md#upgrading-from-pdb-to-flowdb) migration guide.
 

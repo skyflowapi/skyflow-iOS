@@ -24,19 +24,25 @@ Skyflow's iOS SDK can be used to securely collect, tokenize, and display sensiti
 ## Configuration
 ---
 ### SPM (Swift Package Manager)
-- Go to File -> Swift Packages -> New Package Dependency (in Xcode IDE)
-- Enter https://github.com/skyflowapi/skyflow-iOS.git and press ok.
+- In Xcode: File → Add Package Dependencies → enter `https://github.com/skyflowapi/skyflow-iOS.git`.
 - In the "Choose Package Products" dialog, check the **Skyflow** product and add it to your app target.
- 
-### Cocoapods
-- To integrate skyflow-iOS into your Xcode project using CocoaPods, specify it in your Podfile:
+- Or, in a `Package.swift`:
+    ```swift
+    dependencies: [
+        .package(url: "https://github.com/skyflowapi/skyflow-iOS.git", from: "1.26.0")
+    ],
+    targets: [
+        .target(name: "YourApp", dependencies: [
+            .product(name: "Skyflow", package: "skyflow-iOS")
+        ])
+    ]
     ```
-    #Mentioning the below source will pick the podspec from Skyflow repo
-    #Otherwise you can add cocoapod trunk as the source
-    #source 'https://github.com/skyflowapi/skyflow-iOS-spec.git'
-    
-    pod 'Skyflow', '1.26.0'
-    ```
+
+### CocoaPods (no new releases)
+CocoaPods trunk became read-only on December 2, 2026. Versions already published to trunk can still be installed, but new releases are available only through SPM. To switch, follow the [CocoaPods → SPM migration guide](../MIGRATING_TO_SPM.md).
+```
+pod 'Skyflow'
+```
  
  
 # Initializing skyflow-iOS

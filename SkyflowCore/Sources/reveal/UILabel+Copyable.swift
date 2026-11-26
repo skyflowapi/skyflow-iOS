@@ -99,28 +99,12 @@ public extension UILabel {
         if copyAfterReveal {
                 let pasteboard = UIPasteboard.general
             pasteboard.string = actualValue
-                #if SWIFT_PACKAGE
                 let image = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
-                #else
-                let frameworkBundle = Bundle(for: TextField.self)
-                var bundleURL = frameworkBundle.resourceURL
-                bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-                let resourceBundle = Bundle(url: bundleURL!)
-                var image = UIImage(named: "Success-Icon", in: resourceBundle, compatibleWith: nil)
-                #endif
                 copyIconImageView?.image = image
 
                 // Reset the copy icon after a delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    #if SWIFT_PACKAGE
                     let copyImage = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
-                    #else
-                    let frameworkBundle = Bundle(for: TextField.self)
-                    var bundleURL = frameworkBundle.resourceURL
-                    bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-                    let resourceBundle = Bundle(url: bundleURL!)
-                    var copyImage = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
-                    #endif
                     self?.copyIconImageView?.image = copyImage
                 }
             }
@@ -130,15 +114,7 @@ public extension UILabel {
                 let iconSize: CGFloat = 24.0
 
                 if copyIconImageView == nil {
-                #if SWIFT_PACKAGE
                 let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
-                #else
-                let frameworkBundle = Bundle(for: TextField.self)
-                var bundleURL = frameworkBundle.resourceURL
-                bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-                let resourceBundle = Bundle(url: bundleURL!)
-                var image = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
-                #endif
                 let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: iconSize, height: iconSize))
                     imageView.image = image
                     imageView.contentMode = .center
