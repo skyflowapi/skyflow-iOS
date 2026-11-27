@@ -6,7 +6,7 @@ Sample apps for the Skyflow SDK (`pod 'Skyflow'` / `import Skyflow`):
 |--------|-------------|
 | [CollectAndRevealSample](CollectAndRevealSample/) | Collect card data with secure elements and reveal tokens back to values (includes card brand choice) |
 | [ComposableElements](ComposableElements/) | Lay out multiple secure elements together in shared rows using a composable container |
-| [GetSample](GetSample/) | Fetch records by skyflow ID or unique column values using `get()`/`getById()` |
+| [GetSample](GetSample/) | Fetch records by skyflow ID or unique column values using `get()` |
 | [InputFormatting](InputFormatting/) | Apply `format`/`translation` patterns to control how element input is displayed |
 | [UpdateDataUsingElements](UpdateDataUsingElements/) | Update existing vault records through collect elements using a skyflow ID |
 | [UpsertFeature](UpsertFeature/) | Insert-or-update records with upsert options on a unique column |
