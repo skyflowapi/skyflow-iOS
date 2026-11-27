@@ -11,8 +11,8 @@
 
 import Foundation
 
-// Both SDK products share this version (single source of truth, kept in sync
-// with both podspecs by scripts/bump_version.sh). Version feeds error-message
+// Both SDK products share this version (single source of truth, set by
+// scripts/bump_version.sh and matching the release git tag). Version feeds error-message
 // prefixes. The per-instance SDK name (for the sdk_name_version vault metric)
 // lives on ContextOptions.sdkName instead of here, so that both SDKs
 // coexisting in one app process each report their own identity correctly.

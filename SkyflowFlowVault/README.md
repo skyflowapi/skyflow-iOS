@@ -119,15 +119,23 @@ That's the whole round trip both ways - no card data ever touches your app code 
 - Set Dependency Rule to **Exact Version** and enter `1.26.0`.
 - In the "Choose Package Products" dialog, check the **SkyflowFlowVault** product (not Skyflow) and add it to your app target.
  
-### Cocoapods
-- To integrate skyflow-iOS into your Xcode project using CocoaPods, specify it in your Podfile:
+- Or, in a `Package.swift`:
+    ```swift
+    dependencies: [
+        .package(url: "https://github.com/skyflowapi/skyflow-iOS.git", exact: "1.26.0")
+    ],
+    targets: [
+        .target(name: "YourApp", dependencies: [
+            .product(name: "SkyflowFlowVault", package: "skyflow-iOS")
+        ])
+    ]
     ```
-    #Mentioning the below source will pick the podspec from Skyflow repo
-    #Otherwise you can add cocoapod trunk as the source
-    #source 'https://github.com/skyflowapi/skyflow-iOS-spec.git'
-    
-    pod 'SkyflowFlowVault', '1.26.0'
-    ```
+
+### CocoaPods (no new releases)
+CocoaPods trunk became read-only on December 2, 2026. Versions already published to trunk can still be installed, but new releases are available only through SPM. To switch, follow the [CocoaPods → SPM migration guide](../MIGRATING_TO_SPM.md).
+```
+pod 'SkyflowFlowVault'
+```
  
  
 # Initializing skyflow-iOS

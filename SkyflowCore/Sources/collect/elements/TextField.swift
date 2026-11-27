@@ -416,15 +416,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         
         if self.fieldType == .CARD_NUMBER, self.options.enableCardIcon {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-            #if SWIFT_PACKAGE
             var image = UIImage(named: "Unknown-Card", in: Bundle.module, compatibleWith: nil)
-            #else
-            let frameworkBundle = Bundle(for: TextField.self)
-            var bundleURL = frameworkBundle.resourceURL
-            bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-            let resourceBundle = Bundle(url: bundleURL!)
-            var image = UIImage(named: "Unknown-Card", in: resourceBundle, compatibleWith: nil)
-            #endif
             imageView.image = image
             imageView.contentMode = .center
             cardIconContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 20 , height: 24))
@@ -477,15 +469,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
     
     private func addCopyIcon(){
         copyIconImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        #if SWIFT_PACKAGE
         let image = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
-        #else
-        let frameworkBundle = Bundle(for: TextField.self)
-        var bundleURL = frameworkBundle.resourceURL
-        bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-        let resourceBundle = Bundle(url: bundleURL!)
-        var image = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
-        #endif
         copyIconImageView?.image = image
         copyIconImageView?.contentMode = .scaleAspectFit
         copyContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 24 , height: 24))
@@ -502,28 +486,12 @@ public class TextField: SkyflowElement, Element, BaseElement {
     public override func copy(_ sender: Any?) {
         let pasteboard = UIPasteboard.general
         pasteboard.string = actualValue
-        #if SWIFT_PACKAGE
         let image = UIImage(named: "Success-Icon", in: Bundle.module, compatibleWith: nil)
-        #else
-        let frameworkBundle = Bundle(for: TextField.self)
-        var bundleURL = frameworkBundle.resourceURL
-        bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-        let resourceBundle = Bundle(url: bundleURL!)
-        var image = UIImage(named: "Success-Icon", in: resourceBundle, compatibleWith: nil)
-        #endif
         copyIconImageView?.image = image
 
         // Reset the copy icon after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            #if SWIFT_PACKAGE
             let copyImage = UIImage(named: "Copy-Icon", in: Bundle.module, compatibleWith: nil)
-            #else
-            let frameworkBundle = Bundle(for: TextField.self)
-            var bundleURL = frameworkBundle.resourceURL
-            bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-            let resourceBundle = Bundle(url: bundleURL!)
-            var copyImage = UIImage(named: "Copy-Icon", in: resourceBundle, compatibleWith: nil)
-            #endif
             self?.copyIconImageView?.image = copyImage
         }
             
@@ -540,15 +508,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         }
 
         let imageView = UIImageView(frame: CGRect(x: 0, y: 5, width: 40 + (0), height: 24))
-        #if SWIFT_PACKAGE
         let image = UIImage(named: name, in: Bundle.module, compatibleWith: nil)
-        #else
-        let frameworkBundle = Bundle(for: TextField.self)
-        var bundleURL = frameworkBundle.resourceURL
-        bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-        let resourceBundle = Bundle(url: bundleURL!)
-        let image = UIImage(named: name, in: resourceBundle, compatibleWith: nil)
-        #endif
         imageView.image = image
         imageView.layer.cornerRadius = self.collectInput!.iconStyles.base?.cornerRadius ?? 0
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 40))
@@ -625,15 +585,7 @@ public class TextField: SkyflowElement, Element, BaseElement {
         if #available(iOS 14.0, *) {
             setUpMenuView()
             dropdownButton.frame = CGRect(x: 0, y: 0, width: 12, height: 15)
-            #if SWIFT_PACKAGE
             dropdownButton.setImage(UIImage(named: "dropdown", in: Bundle.module, compatibleWith: nil), for: .normal)
-            #else
-            let frameworkBundle = Bundle(for: TextField.self)
-            var bundleURL = frameworkBundle.resourceURL
-            bundleURL!.appendPathComponent(SkyflowAssetBundle.name)
-            let resourceBundle = Bundle(url: bundleURL!)
-            dropdownButton.setImage(UIImage(named: "dropdown", in: resourceBundle, compatibleWith: nil), for: .normal)
-            #endif
             dropdownButton.isHidden = false
             dropdownButton.tintColor = .gray
         }
