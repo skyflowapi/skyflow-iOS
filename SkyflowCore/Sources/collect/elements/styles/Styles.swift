@@ -7,11 +7,11 @@
 import Foundation
 
 public struct Styles {
-    var base: Style?
+    package var base: Style?
     var complete: Style?
     var empty: Style?
     var focus: Style?
-    var invalid: Style?
+    package var invalid: Style?
     var requiredAstrisk: Style?
 
    public init(base: Style? = Style(),

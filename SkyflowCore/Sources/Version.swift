@@ -18,4 +18,4 @@ import Foundation
 // coexisting in one app process each report their own identity correctly.
 package var SDK_VERSION = "1.26.0"
 
-var LangAndVersion: String { "iOS SDK v\(SDK_VERSION)" }
+package var LangAndVersion: String { "iOS SDK v\(SDK_VERSION)" }

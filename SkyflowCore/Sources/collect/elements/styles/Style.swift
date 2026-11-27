@@ -10,15 +10,15 @@ import UIKit
 #endif
 
 public struct Style {
-    var borderColor: UIColor?
-    var cornerRadius: CGFloat?
-    var padding: UIEdgeInsets?
-    var borderWidth: CGFloat?
-    var font: UIFont?
-    var textAlignment: NSTextAlignment?
-    var textColor: UIColor?
+    package var borderColor: UIColor?
+    package var cornerRadius: CGFloat?
+    package var padding: UIEdgeInsets?
+    package var borderWidth: CGFloat?
+    package var font: UIFont?
+    package var textAlignment: NSTextAlignment?
+    package var textColor: UIColor?
     var boxShadow: CALayer?
-    var backgroundColor: UIColor?
+    package var backgroundColor: UIColor?
     var minWidth: CGFloat?
     var maxWidth: CGFloat?
     var minHeight: CGFloat?
