@@ -9,7 +9,7 @@ To keep receiving updates and fixes, move your app from CocoaPods to SPM. The SD
 | Last / current version | 1.26.0 | 1.26.0 and later |
 | Package URL | — | `https://github.com/skyflowapi/skyflow-iOS.git` |
 | PDB vault SDK | `pod 'Skyflow'` | product `Skyflow` |
-| Flow vault SDK | `pod 'SkyflowFlowVault'` | product `SkyflowFlowVault` |
+| Flow vault SDK | `pod 'SkyflowFlowVault'` | product `SkyflowFlowVault` (1.26.0 or later) |
 | Import | `import Skyflow` / `import SkyflowFlowVault` | unchanged |
 | Minimum iOS | 13.0 | 13.0 |
 
@@ -54,7 +54,7 @@ From now on, open `YourApp.xcodeproj` instead of the `.xcworkspace`.
 4. Click **Add Package**.
 5. In **Choose Package Products**, select only the product you were using and add it to your app target:
    - `Skyflow` if you had `pod 'Skyflow'`
-   - `SkyflowFlowVault` if you had `pod 'SkyflowFlowVault'`
+   - `SkyflowFlowVault` if you had `pod 'SkyflowFlowVault'`. This product is available from **1.26.0**. The package manifest of earlier versions exports only `Skyflow`, so the version in your dependency rule must be 1.26.0 or later.
 
    Do not add `SkyflowCore`. It is an internal module that both products already include.
 
@@ -68,7 +68,7 @@ let package = Package(
     name: "YourPackage",
     platforms: [.iOS(.v13)],
     dependencies: [
-        .package(url: "https://github.com/skyflowapi/skyflow-iOS.git", exact: "1.25.1")
+        .package(url: "https://github.com/skyflowapi/skyflow-iOS.git", exact: "1.26.0")
     ],
     targets: [
         .target(
@@ -76,6 +76,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Skyflow", package: "skyflow-iOS")
                 // or: .product(name: "SkyflowFlowVault", package: "skyflow-iOS")
+                //     (requires 1.26.0 or later)
             ]
         )
     ]
@@ -111,6 +112,9 @@ Release notes for every version are on the [GitHub Releases page](https://github
 
 **`No such module 'Skyflow'` (or `'SkyflowFlowVault'`)**
 The product is not linked to the target that imports it. In the target's **General → Frameworks, Libraries, and Embedded Content**, click **+** and add the product. For a `Package.swift`, add the `.product(...)` entry to that target's `dependencies`.
+
+**`product 'SkyflowFlowVault' required by package '…' target '…' not found in package 'skyflow-iOS'`**
+The dependency rule resolves to a version earlier than 1.26.0, whose package manifest exports only `Skyflow`. Set the version to 1.26.0 or later.
 
 **Duplicate symbol, or "ambiguous" type errors**
 The SDK is installed through both CocoaPods and SPM. Make sure the pod is removed from the `Podfile`, run `pod install`, then clean the build folder.
