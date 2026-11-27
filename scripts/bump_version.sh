@@ -1,39 +1,20 @@
-
-
-# Both SDK products share one version line: this bumps Skyflow.podspec,
-# SkyflowFlowVault.podspec, and the shared SDK_VERSION together.
+# Both SDK products share one version line: this sets the shared SDK_VERSION
+# in SkyflowCore/Sources/Version.swift. The release itself is the git tag
+# (SPM resolves versions from tags), which must match this value.
 #
 # Usage:
-#   ./scripts/bump_version.sh 1.27.0            # release version, tag 1.27.0
-#   ./scripts/bump_version.sh 1.27.0 <commit>   # dev version pinned to a commit
+#   ./scripts/bump_version.sh 1.27.0
 
 version=$1
-SEMVER=$version
-
-PODSPECS="Skyflow.podspec SkyflowFlowVault.podspec"
 VERSION_FILE="./SkyflowCore/Sources/Version.swift"
 
-if [ -z $2 ]
+if [ -z "$version" ]
 then
-    for podspec in $PODSPECS
-    do
-        sed -E "s/spec.version .+/spec.version      = \"$SEMVER\"/g" "./$podspec" > tempfile
-        sed -E "s/source .+/source       = { :git => \"https:\/\/github.com\/skyflowapi\/skyflow-iOS.git\", :tag => \"$1\" }/g" tempfile > "./$podspec" && rm -f tempfile
-    done
-    sed -E "s/var SDK_VERSION = .+/var SDK_VERSION = \"$SEMVER\"/g" $VERSION_FILE > tempfile && cat tempfile > $VERSION_FILE && rm -f tempfile
-
-
-    echo --------------------------
-    echo "Done, Pods now at v$1"
-
-else
-    for podspec in $PODSPECS
-    do
-        sed -E "s/spec.version .+/spec.version      = \"$SEMVER-dev.$2\"/g" "./$podspec" > tempfile
-        sed -E "s/source .+/source       = { :git => \"https:\/\/github.com\/skyflowapi\/skyflow-iOS.git\", :commit => \"$2\" }/g" tempfile > "./$podspec" && rm -f tempfile
-    done
-    sed -E "s/var SDK_VERSION = .+/var SDK_VERSION = \"$SEMVER-dev.$2\"/g" $VERSION_FILE > tempfile && cat tempfile > $VERSION_FILE && rm -f tempfile
-
-    echo --------------------------
-    echo "Done, Pods now at v$1-dev.$2"
+    echo "Usage: $0 <version>"
+    exit 1
 fi
+
+sed -E "s/var SDK_VERSION = .+/var SDK_VERSION = \"$version\"/g" $VERSION_FILE > tempfile && cat tempfile > $VERSION_FILE && rm -f tempfile
+
+echo --------------------------
+echo "Done, SDK_VERSION now at v$version"
