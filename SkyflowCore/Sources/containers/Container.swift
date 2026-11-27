@@ -15,6 +15,9 @@ public class Container<T: ContainerProtocol> {
     package var skyflow: Client
     package var elements: [TextField] = []
     package var revealElements: [Label] = []
+    // FileInputElement lives in the Skyflow target only (FlowDB has no file API), so core
+    // cannot name its type; the Skyflow target stores and casts its own instances here.
+    package var fileElements: [AnyObject] = []
     package var containerOptions: BaseContainerOptions? = nil
 
     package init(skyflow: Client) {
