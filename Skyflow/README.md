@@ -151,6 +151,7 @@ For `env` parameter, there are 2 accepted values in Skyflow.Env
 -  [**Event Listener on Collect Elements**](#event-listener-on-collect-elements)
 -  [**UI Error for Collect Elements**](#ui-error-for-collect-elements)
 -  [**Set and Clear value for Collect Elements (DEV ENV ONLY)**](#set-and-clear-value-for-collect-elements-dev-env-only)
+-  [**Using Skyflow file elements to upload files**](#using-skyflow-file-elements-to-upload-files)
  
 ## Insert data into the vault
  
@@ -1013,6 +1014,143 @@ cardNumber.setValue("4111111111111111")
 cardNumber.clearValue()
 ```
  
+## Using Skyflow file elements to upload files
+
+File elements let users pick documents or photos in your app and upload them to a file column in your vault. Your app never receives the file contents, paths, or names. File elements are available in the `Skyflow` SDK only, in collect containers.
+
+There are two file element types in `Skyflow.FileElementType`:
+- `FILE_INPUT`: collects one file.
+- `MULTI_FILE_INPUT`: collects several files. Each file is uploaded as its own record.
+
+Users can pick files from these sources:
+- `FILES`: the Files app.
+- `PHOTOS`: the photo library. Offered only when the allowed file types include images.
+- `CAMERA`: takes a photo and uploads it as a JPEG. Offered only when the allowed file types include JPEG and the device has a camera. To offer it, add `NSCameraUsageDescription` to your app's `Info.plist`. If the user denies camera access, the element shows an error instead of opening the camera.
+
+When more than one source is available, the element shows a menu of sources. Picking again replaces the current selection, for both element types.
+
+### Step 1: Create a file element
+
+Create a file element with `container.create(fileInput:options:)`. Pass a `Skyflow.CollectElementInput` built with a `Skyflow.FileElementType`:
+
+```swift
+let fileElementInput = Skyflow.CollectElementInput(
+    table: String,                          // required, the table that receives the file
+    column: String,                         // required, the file column
+    inputStyles: Skyflow.Styles,            // optional styles for the element
+    labelStyles: Skyflow.Styles,            // optional styles for the label
+    errorTextStyles: Skyflow.Styles,        // optional styles for the error text
+    label: String,                          // optional label for the element
+    placeholder: String,                    // optional title of the button, "Choose File" or "Choose Files" by default
+    type: Skyflow.FileElementType,          // FILE_INPUT or MULTI_FILE_INPUT
+    skyflowID: String?,                     // optional, attaches the file to an existing record. FILE_INPUT only
+    appearance: Skyflow.FileElementAppearance // optional, FIELD (default) or CUSTOM
+)
+```
+
+`appearance` controls how the element looks. Both appearances use the same pickers, validation, events, and upload:
+- `FIELD`: a bordered box with a "Choose File" button and the selected files.
+- `CUSTOM`: no SDK button. Your own control calls `openPicker()` on the element. The element shows only the selected files, their remove buttons, and errors.
+
+The SDK presents pickers from the nearest view controller. To use a different one, set the element's `presentingViewController` property.
+
+Configure file validation with these parameters of `Skyflow.CollectElementOptions`:
+
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `required` | `false` | Fails validation when no file is selected. |
+| `allowedFileType` | `nil` | Allowed types as extensions (`".pdf"`), MIME types (`"application/pdf"`), or MIME wildcards (`"image/*"`). `nil` allows any type except archive and executable files (`zip`, `rar`, `deb`, `exe`, `ipa`), which are always blocked. |
+| `blockEmptyFiles` | `false` | Rejects 0-byte files. |
+| `preserveFileName` | `true` | Uploads the file with its original name, which may contain only letters, digits, and `!-_.*()`. When `false`, the SDK sends a random name with the original extension. |
+| `returnFileMetadata` | `false` | Adds `fileMetadata` to each entry in the upload response. |
+| `maxFileSize` | 32,000,000 | Maximum size of each file, in bytes. `MULTI_FILE_INPUT` only. `FILE_INPUT` is always limited to 32,000,000 bytes. |
+| `maxFileCount` | 4 | Maximum number of files. `MULTI_FILE_INPUT` only. |
+| `sources` | `[.FILES, .PHOTOS, .CAMERA]` | Sources offered to the user, in menu order. |
+
+The element checks file type, size, count, empty files, and file names on the device, and shows an error under the element when a file fails.
+
+```swift
+let container = skyflowClient.container(type: Skyflow.ContainerType.COLLECT)
+
+let documentInput = Skyflow.CollectElementInput(
+    table: "documents",
+    column: "id_scan",
+    label: "ID document",
+    type: Skyflow.FileElementType.MULTI_FILE_INPUT
+)
+
+let documentOptions = Skyflow.CollectElementOptions(
+    required: true,
+    allowedFileType: [".pdf", "image/*"],
+    blockEmptyFiles: true,
+    maxFileSize: 5_000_000,
+    maxFileCount: 2
+)
+
+let documentElement = container!.create(fileInput: documentInput, options: documentOptions)
+```
+
+`create(fileInput:options:)` doesn't fail on invalid settings, such as an empty `table` or `column`, an empty `allowedFileType` array, or `skyflowID` on a `MULTI_FILE_INPUT` element. `uploadFiles(callback:)` reports them instead.
+
+### Step 2: Mount the element
+
+A file element is a `UIView`. Mount it the same way as other collect elements:
+
+```swift
+let stackView = UIStackView()
+stackView.addArrangedSubview(documentElement)
+```
+
+With `appearance: .CUSTOM`, open the picker from your own control:
+
+```swift
+@objc func uploadButtonTapped() {
+    documentElement.openPicker()
+}
+```
+
+### Step 3: Upload files
+
+Call `uploadFiles(callback:)` on the container to upload the selected files from all of its file elements. The SDK validates every file element first and uploads nothing if any element is invalid or unmounted.
+
+```swift
+class UploadCallback: Skyflow.Callback {
+    func onSuccess(_ responseBody: Any) {
+        // ["fileUploadResponse": [[String: Any]]]
+        print(responseBody)
+    }
+    func onFailure(_ error: Any) {
+        // A Skyflow.SkyflowError when nothing was uploaded,
+        // or ["errorResponse": [...], "fileUploadResponse": [...]] when some or all files failed
+        print(error)
+    }
+}
+
+container!.uploadFiles(callback: UploadCallback())
+```
+
+- `onSuccess` receives `fileUploadResponse`, with one entry per file: by element creation order, then by selection order. Each entry contains the `skyflow_id` of the record, plus `fileMetadata` when `returnFileMetadata` is `true`.
+- `onFailure` receives a `Skyflow.SkyflowError` when nothing was sent, for example because of invalid settings, invalid or unmounted elements, or a token provider failure. When the upload started and some files failed, it receives `errorResponse`, plus `fileUploadResponse` for the files that succeeded.
+
+Uploaded files are removed from their elements. Failed files stay selected, so you can call `uploadFiles(callback:)` again to retry them. Optional elements with no file are skipped.
+
+### Listen for events and manage file elements
+
+File elements support the `CHANGE`, `READY`, `FOCUS`, and `BLUR` events of `Skyflow.EventName`. `FOCUS` fires when a picker opens and `BLUR` when it closes. The state object never contains file names or contents:
+
+```swift
+documentElement.on(eventName: Skyflow.EventName.CHANGE) { state in
+    // state: ["elementType": "MULTI_FILE_INPUT", "isEmpty": false, "isFocused": false,
+    //         "isValid": true, "isRequired": true, "fileCount": 2, "value": ""]
+    print(state)
+}
+```
+
+File elements also have these methods:
+- `setError(_:)` and `resetError()`: show or clear a custom error, as with other [collect elements](#ui-error-for-collect-elements).
+- `clearValue()`: removes all selected files. Unlike text elements, file elements support it in every `env`.
+- `unmount()`: resets the element by removing all selected files.
+
 # Securely collecting data client-side using Composable Elements
 - [Using Skyflow Composable Elements to collect data](#using-skyflow-composable-elements-to-collect-data)
 - [Using Skyflow Composable Elements to update data](#using-skyflow-composable-elements-to-update-data)
